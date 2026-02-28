@@ -10,6 +10,24 @@
 <meta name="theme-color" content="#0d0d1a">
 <title>Tasks</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- CRITICAL: set bg before first paint so Safari never shows white/wrong color -->
+<script>
+(function(){
+  var h=240,s=75,l=70;
+  try{ var t=JSON.parse(localStorage.getItem('kw_theme_v1')||'{}'); if(t.h!=null){h=t.h;s=t.s;l=t.l;} }catch(e){}
+  var el=document.documentElement;
+  el.style.backgroundColor='hsl('+h+',38%,6%)';
+  el.style.backgroundImage=[
+    'radial-gradient(ellipse 90% 60% at 100% 0%, hsla('+h+',72%,62%,0.28), transparent 65%)',
+    'radial-gradient(ellipse 70% 55% at 0% 105%, hsla('+(h+42)+',65%,55%,0.20), transparent 60%)',
+    'linear-gradient(165deg, hsl('+h+',40%,7%) 0%, hsl('+h+',34%,11%) 60%, hsl('+(h+28)+',42%,16%) 100%)'
+  ].join(',');
+  // Also prime CSS vars so glass tints aren't wrong on first frame
+  el.style.setProperty('--ac-h',h);
+  el.style.setProperty('--ac-s',s+'%');
+  el.style.setProperty('--ac-l',l+'%');
+})();
+</script>
 <style>
 /* ══════════════════════════════════════════
    THEME SYSTEM
@@ -47,22 +65,19 @@
 
 - { margin:0; padding:0; box-sizing:border-box; }
 
-/* ── BG on html directly: Safari needs this, pseudo-elements are unreliable ── */
+/* ── BG: hardcoded fallback, JS sets the real gradient immediately on load ── */
 html {
-min-height:100%;
-background-color: hsl(var(–ac-h), 38%, 6%);
-background-image:
-radial-gradient(ellipse 90% 60% at 100%  0%,   hsla(var(–ac-h),72%,62%,0.28),  transparent 65%),
-radial-gradient(ellipse 70% 55% at   0% 105%,  hsla(calc(var(–ac-h)+42),65%,55%,0.20), transparent 60%),
-radial-gradient(ellipse 55% 40% at  50%  50%,  hsla(calc(var(–ac-h)+18),55%,48%,0.10), transparent 70%),
-linear-gradient(165deg, hsl(var(–ac-h),40%,7%) 0%, hsl(var(–ac-h),34%,11%) 60%, hsl(calc(var(–ac-h)+28),42%,16%) 100%);
+min-height: 100%;
+background-color: #0d0f1a;  /* safe dark navy fallback */
 background-attachment: fixed;
 background-repeat: no-repeat;
 background-size: cover;
 }
 body {
 font-family:‘DM Sans’,sans-serif; font-size:14px;
-color:var(–text); min-height:100vh; overflow-x:hidden; max-width:100vw;
+color:rgba(255,255,255,0.92); /* hardcoded fallback — var(–text) can fail on Safari */
+color:var(–text);
+min-height:100vh; overflow-x:hidden; max-width:100vw;
 -webkit-font-smoothing:antialiased;
 background:transparent;
 }
@@ -107,9 +122,9 @@ padding:52px 20px 14px;
 padding-top:calc(52px + env(safe-area-inset-top));
 }
 .header-top { display:flex; justify-content:space-between; align-items:flex-start; }
-.greeting  { font-size:12px; color:var(–text-3); margin-bottom:3px; }
-.date-line { font-size:26px; font-weight:600; color:var(–text); letter-spacing:-0.025em; line-height:1.1; }
-.date-sub  { font-size:13px; color:var(–text-2); margin-top:3px; }
+.greeting  { font-size:12px; color:rgba(255,255,255,0.3); color:var(–text-3); margin-bottom:3px; }
+.date-line { font-size:26px; font-weight:600; color:#fff; color:var(–text); letter-spacing:-0.025em; line-height:1.1; }
+.date-sub  { font-size:13px; color:rgba(255,255,255,0.55); color:var(–text-2); margin-top:3px; }
 .header-right { display:flex; gap:8px; padding-top:4px; }
 
 .icon-btn {
@@ -303,8 +318,8 @@ transition:background 0.2s, border-color 0.2s, transform 0.15s; cursor:pointer;
 @keyframes cbPop { 0%{transform:scale(1)} 40%{transform:scale(1.3)} 100%{transform:scale(1)} }
 
 .task-body  { flex:1; min-width:0; }
-.task-title { font-size:14px; font-weight:500; color:var(–text); line-height:1.4; margin-bottom:5px; }
-.task.done .task-title { text-decoration:line-through; color:var(–text-3); }
+.task-title { font-size:14px; font-weight:500; color:#fff; color:var(–text); line-height:1.4; margin-bottom:5px; }
+.task.done .task-title { text-decoration:line-through; color:rgba(255,255,255,0.28); color:var(–text-3); }
 .task-row   { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
 
 /* category pills — fixed palette, not accent-dependent so they stay readable */
@@ -746,13 +761,13 @@ function hexToHsl(hex){
   return {h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
 }
 
-function applyTheme(h,s,l,savePreset){
+function applyTheme(h,s,l){
   var root=document.documentElement;
   root.style.setProperty('--ac-h',h);
   root.style.setProperty('--ac-s',s+'%');
   root.style.setProperty('--ac-l',l+'%');
   currentTheme={h:h,s:s,l:l};
-  // Repaint html background directly — Safari doesn't update CSS var in bg-image on html
+  // Set bg with concrete numbers — Safari can't interpolate CSS vars in background-image
   root.style.backgroundColor = 'hsl('+h+',38%,6%)';
   root.style.backgroundImage = [
     'radial-gradient(ellipse 90% 60% at 100% 0%, hsla('+h+',72%,62%,0.28), transparent 65%)',
@@ -760,10 +775,12 @@ function applyTheme(h,s,l,savePreset){
     'radial-gradient(ellipse 55% 40% at 50% 50%, hsla('+(h+18)+',55%,48%,0.10), transparent 70%)',
     'linear-gradient(165deg, hsl('+h+',40%,7%) 0%, hsl('+h+',34%,11%) 60%, hsl('+(h+28)+',42%,16%) 100%)'
   ].join(',');
+  // Guard DOM access — may be called before full DOM is ready
+  var picker=document.getElementById('accentPicker');
+  var preview=document.getElementById('acPreview');
   var hex=hslToHex(h,s,l);
-  document.getElementById('accentPicker').value=hex;
-  document.getElementById('acPreview').textContent=hex.toUpperCase();
-  // mark active swatch
+  if(picker) picker.value=hex;
+  if(preview) preview.textContent=hex.toUpperCase();
   document.querySelectorAll('.theme-swatch').forEach(function(sw){
     sw.classList.toggle('active', +sw.dataset.h===h && +sw.dataset.s===s && +sw.dataset.l===l);
   });
