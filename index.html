@@ -286,7 +286,13 @@ animation: cbPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 .due { font-size: 11px; color: #62636f; margin-left: auto; flex-shrink: 0; }
 .due.overdue { color: #ff7070; }
 .due.soon    { color: #ffbe5c; }
-.note { font-size: 11.5px; color: #62636f; margin-top: 5px; line-height: 1.5; }
+.note { font-size: 11.5px; color: #62636f; margin-top: 5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+.note-mono { font-family: ‘DM Mono’, monospace; font-size: 10.5px; background: #1e1f22; border-radius: 6px; padding: 6px 8px; margin-top: 6px; border: 1px solid #3a3b42; }
+
+/* archive card */
+.task.archived { opacity: 0.6; }
+.archive-meta { font-family: ‘DM Mono’, monospace; font-size: 10px; color: #44454e; margin-top: 4px; }
+.restore-btn { font-size: 11px; color: #8b9eff; cursor: pointer; padding: 2px 0; -webkit-user-select:none; user-select:none; }
 
 /* ── FAB ── */
 .fab {
@@ -525,6 +531,7 @@ pointer-events: none; white-space: nowrap;
   <div class="chip" data-filter="personal">Personal</div>
   <div class="chip" data-filter="hobby">Hobbies</div>
   <div class="chip" data-filter="blocked">Blocked</div>
+  <div class="chip" data-filter="archive">Archive</div>
 </div>
 
 <div id="taskList"></div>
@@ -553,10 +560,13 @@ pointer-events: none; white-space: nowrap;
   </div>
   <div class="sheet-label">Task</div>
   <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing...">
-  <div class="sheet-label">Note</div>
-  <input class="input" id="taskNoteInput" type="text" placeholder="Context, blockers, who's involved...">
-  <div class="sheet-label">Due</div>
-  <input class="input" id="taskDueInput" type="text" placeholder="Today, Tonight, Mar 5, Overdue...">
+  <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
+    Note
+    <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
+  </div>
+  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, R output, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+  <div class="sheet-label">Due Date</div>
+  <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
   <div class="sheet-label">Category</div>
   <div class="chip-row" id="catRow">
     <div class="s-chip" data-val="manuscript">Manuscript</div>
@@ -718,12 +728,46 @@ function formatDate(){
   var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('dateDisplay').textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate();
-  var n=state.tasks.filter(function(t){ return t.section==='today'&&!t.done; }).length;
-  document.getElementById('dateSub').textContent=n ? n+' task'+(n!==1?'s':'')+' due today' : 'All clear today';
+  var todayCount=state.tasks.filter(function(t){ return t.section==='today'&&!t.done; }).length;
+  var overdueCount=state.tasks.filter(function(t){ return !t.done && t.due && dueClass(t.due)==='overdue'; }).length;
+  var sub='';
+  if(overdueCount>0) sub=overdueCount+' overdue';
+  else if(todayCount>0) sub=todayCount+' task'+(todayCount!==1?'s':'')+' today';
+  else sub='All clear today';
+  document.getElementById('dateSub').textContent=sub;
 }
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function dueClass(due){ if(!due) return ''; var l=due.toLowerCase(); if(l==='overdue') return 'overdue'; if(l==='today'||l==='tonight'||l.indexOf('today')===0) return 'soon'; return ''; }
+// due is stored as ISO date string YYYY-MM-DD
+function dueClass(due){
+  if(!due) return '';
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = new Date(due + 'T00:00:00');
+  if(isNaN(d)) return '';
+  var diff = Math.round((d - today) / 86400000);
+  if(diff < 0)  return 'overdue';
+  if(diff === 0) return 'soon';
+  if(diff <= 3)  return 'soon';
+  return '';
+}
+
+function fmtDue(due){
+  if(!due) return '';
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = new Date(due + 'T00:00:00');
+  if(isNaN(d)) return due;
+  var diff = Math.round((d - today) / 86400000);
+  if(diff < 0)  return 'Overdue (' + fmtShort(d) + ')';
+  if(diff === 0) return 'Today';
+  if(diff === 1) return 'Tomorrow';
+  if(diff <= 6)  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  return fmtShort(d);
+}
+
+function fmtShort(d){
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate();
+}
 function catCls(cat){ var m={manuscript:'cat-manuscript',lab:'cat-lab',phd:'cat-phd',conf:'cat-conf',bel:'cat-bel',personal:'cat-personal',hobby:'cat-hobby'}; return m[cat]||''; }
 
 function makeTaskWrap(t, delay) {
@@ -747,8 +791,8 @@ function makeTaskWrap(t, delay) {
   var statusMap={waiting:'waiting on',blocked:'blocked',review:'in review'};
   var statusHtml=(t.status&&t.status!=='active')?'<span class="status '+t.status+'">'+esc(statusMap[t.status]||t.status)+'</span>':'';
   var dc=dueClass(t.due);
-  var dueHtml=t.due?'<span class="due '+dc+'">'+esc(t.due)+'</span>':'';
-  var noteHtml=t.note?'<div class="note">'+esc(t.note)+'</div>':'';
+  var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
+  var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
 
   el.innerHTML=
     '<div class="cb">'+(t.done?'&#10003;':'')+'</div>'+
@@ -775,7 +819,60 @@ function makeTaskWrap(t, delay) {
   return wrap;
 }
 
-// ── SWIPE TO DELETE ──
+// ── ARCHIVE CARD ──
+function makeArchiveWrap(t, delay) {
+  var wrap = document.createElement('div');
+  wrap.className = 'task-wrap entering';
+  wrap.style.animationDelay = (delay||0)+'ms';
+
+  var el = document.createElement('div');
+  el.className = 'task '+(t.priority||'md')+' done archived';
+
+  var catHtml=t.category?'<span class="cat '+catCls(t.category)+'">'+esc(CAT_LABEL[t.category]||t.category)+'</span>':'';
+  var completedStr='';
+  if(t.completedAt){
+    var cd=new Date(t.completedAt);
+    completedStr='Completed '+fmtShort(cd);
+  }
+  var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
+
+  el.innerHTML=
+    '<div class="cb">&#10003;</div>'+
+    '<div class="task-body">'+
+      '<div class="task-title">'+esc(t.title)+'</div>'+
+      '<div class="task-row">'+catHtml+'</div>'+
+      (completedStr?'<div class="archive-meta">'+completedStr+'</div>':'')+
+      noteHtml+
+      '<div style="margin-top:6px;display:-webkit-flex;display:flex;gap:12px;">'+
+        '<span class="restore-btn" data-id="'+t.id+'">&#x21BA; Restore</span>'+
+        '<span class="restore-btn" style="color:#ff7070;" data-del="'+t.id+'">&#x1F5D1; Delete</span>'+
+      '</div>'+
+    '</div>';
+
+  el.querySelector('[data-id]').addEventListener('click', function(e){
+    e.stopPropagation();
+    restoreTask(t.id);
+  });
+  el.querySelector('[data-del]').addEventListener('click', function(e){
+    e.stopPropagation();
+    if(confirm('Permanently delete "'+t.title+'"?')) deleteTask(t.id);
+  });
+
+  wrap.appendChild(el);
+  return wrap;
+}
+
+function restoreTask(id){
+  for(var i=0;i<state.tasks.length;i++){
+    if(state.tasks[i].id===id){
+      state.tasks[i].done=false;
+      delete state.tasks[i].completedAt;
+      break;
+    }
+  }
+  saveLocal(); render(); ghPush();
+  showToast('Task restored');
+}
 function attachSwipe(wrap, el, bg, id) {
   var startX=0, startY=0, currentX=0, dragging=false, maybeSwipe=false;
   var THRESHOLD = 80;
@@ -833,7 +930,9 @@ function animateCheck(id, el) {
 
 function filterTask(t){
   var f=state.filter;
-  if(state.focusMode) return t.section==='today';
+  if(state.focusMode) return t.section==='today' && !t.done;
+  if(f==='archive') return t.done;
+  if(t.done) return false; // hide done from all other views
   if(f==='all') return true;
   if(f==='today') return t.section==='today';
   if(f==='blocked') return t.status==='blocked'||t.status==='waiting';
@@ -881,25 +980,44 @@ function render(){
   list.innerHTML='';
   var anyVisible=false;
   var sectionsToShow=state.focusMode?['today']:SECTIONS;
+  var isArchive = state.filter==='archive';
   var delayBase=0;
 
-  sectionsToShow.forEach(function(sec){
-    var tasks=state.tasks.filter(function(t){ return t.section===sec&&filterTask(t)&&searchMatch(t,searchQ); });
-    if(tasks.length===0) return;
-    anyVisible=true;
-    var section=document.createElement('div');
-    section.className='section';
-    var header=document.createElement('div');
-    header.className='sec-header';
-    header.innerHTML='<div class="sec-title">'+SECTION_LABELS[sec]+'</div><div class="sec-count">'+tasks.length+'</div>';
-    section.appendChild(header);
-    tasks.forEach(function(t,i){ section.appendChild(makeTaskWrap(t, delayBase + i*30)); });
-    delayBase+=tasks.length*30+50;
-    list.appendChild(section);
-  });
-
-  if(!anyVisible){
-    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#10003;</div><div>'+(state.focusMode?'Nothing due today':'No tasks here')+'</div></div>';
+  if(isArchive){
+    // archive view: single flat section of all done tasks, sorted by completedAt desc
+    var archived = state.tasks.filter(function(t){ return t.done && searchMatch(t,searchQ); });
+    archived.sort(function(a,b){ return (b.completedAt||'') > (a.completedAt||'') ? 1 : -1; });
+    if(archived.length===0){
+      list.innerHTML='<div class="empty-state"><div class="empty-icon">&#x1F4C2;</div><div>Nothing archived yet</div></div>';
+    } else {
+      anyVisible=true;
+      var section=document.createElement('div');
+      section.className='section';
+      var header=document.createElement('div');
+      header.className='sec-header';
+      header.innerHTML='<div class="sec-title">Completed</div><div class="sec-count">'+archived.length+'</div>';
+      section.appendChild(header);
+      archived.forEach(function(t,i){ section.appendChild(makeArchiveWrap(t, i*25)); });
+      list.appendChild(section);
+    }
+  } else {
+    sectionsToShow.forEach(function(sec){
+      var tasks=state.tasks.filter(function(t){ return t.section===sec&&filterTask(t)&&searchMatch(t,searchQ); });
+      if(tasks.length===0) return;
+      anyVisible=true;
+      var section=document.createElement('div');
+      section.className='section';
+      var header=document.createElement('div');
+      header.className='sec-header';
+      header.innerHTML='<div class="sec-title">'+SECTION_LABELS[sec]+'</div><div class="sec-count">'+tasks.length+'</div>';
+      section.appendChild(header);
+      tasks.forEach(function(t,i){ section.appendChild(makeTaskWrap(t, delayBase + i*30)); });
+      delayBase+=tasks.length*30+50;
+      list.appendChild(section);
+    });
+    if(!anyVisible){
+      list.innerHTML='<div class="empty-state"><div class="empty-icon">&#10003;</div><div>'+(state.focusMode?'Nothing due today':'No tasks here')+'</div></div>';
+    }
   }
 
   // focus mode UI
@@ -911,7 +1029,17 @@ function render(){
 // TASK ACTIONS
 // ══════════════════════════════════════════
 function toggleDone(id){
-  for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===id){ state.tasks[i].done=!state.tasks[i].done; break; } }
+  for(var i=0;i<state.tasks.length;i++){
+    if(state.tasks[i].id===id){
+      state.tasks[i].done=!state.tasks[i].done;
+      if(state.tasks[i].done){
+        state.tasks[i].completedAt=new Date().toISOString();
+      } else {
+        delete state.tasks[i].completedAt;
+      }
+      break;
+    }
+  }
   saveLocal(); render(); ghPush();
 }
 
@@ -933,7 +1061,11 @@ function openEdit(id){
   document.getElementById('focusPinBtn').style.display='block';
   document.getElementById('focusPinBtn').textContent=state.focus===id?'Unpin Focus':'Set as Focus';
   document.getElementById('taskTitleInput').value=t.title||'';
-  document.getElementById('taskNoteInput').value=t.note||'';
+  var noteEl=document.getElementById('taskNoteInput');
+  noteEl.value=t.note||'';
+  noteEl.style.fontFamily=t.noteIsMono?"'DM Mono',monospace":"'DM Sans',sans-serif";
+  document.getElementById('monoToggle').textContent=t.noteIsMono?'mono on':'mono off';
+  document.getElementById('monoToggle').style.color=t.noteIsMono?'#8b9eff':'#62636f';
   document.getElementById('taskDueInput').value=t.due||'';
   setChip('catRow',t.category||null);
   setChip('statusRow',t.status||'active');
@@ -950,18 +1082,19 @@ function saveTask(){
   var priority=getChip('priRow')||'md';
   var section=getChip('sectionRow')||'today';
   var note=document.getElementById('taskNoteInput').value.trim();
-  var due=document.getElementById('taskDueInput').value.trim();
+  var due=document.getElementById('taskDueInput').value; // YYYY-MM-DD
+  var noteIsMono=document.getElementById('taskNoteInput').style.fontFamily.indexOf('Mono')!==-1;
 
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,note:note,due:due});
+        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,done:false});
+    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono,done:false});
     showToast('Task added');
   }
   closeSheets(); saveLocal(); render(); ghPush();
@@ -1011,6 +1144,9 @@ function closeSheets(){
   document.getElementById('focusPinBtn').style.display='none';
   document.getElementById('taskTitleInput').value='';
   document.getElementById('taskNoteInput').value='';
+  document.getElementById('taskNoteInput').style.fontFamily="'DM Sans',sans-serif";
+  document.getElementById('monoToggle').textContent='mono off';
+  document.getElementById('monoToggle').style.color='#62636f';
   document.getElementById('taskDueInput').value='';
   setChip('catRow',null); setChip('statusRow','active'); setChip('priRow','md'); setChip('sectionRow','today');
 }
@@ -1093,6 +1229,15 @@ document.getElementById('filterRow').addEventListener('click',function(e){
 // ══════════════════════════════════════════
 // WIRING
 // ══════════════════════════════════════════
+document.getElementById('monoToggle').addEventListener('click', function(){
+  var noteEl = document.getElementById('taskNoteInput');
+  var isMono = noteEl.style.fontFamily.indexOf('Mono') !== -1;
+  isMono = !isMono;
+  noteEl.style.fontFamily = isMono ? "'DM Mono',monospace" : "'DM Sans',sans-serif";
+  this.textContent = isMono ? 'mono on' : 'mono off';
+  this.style.color = isMono ? '#8b9eff' : '#62636f';
+});
+
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
 document.getElementById('closeSettingsSheet').addEventListener('click', closeSheets);
 
