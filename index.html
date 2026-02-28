@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Tasks</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+html, body {
+  background: #1e1f22;
+}
+:root {
+  --bg:       #1e1f22;
+  --surface:  #26272c;
+  --surface2: #2e2f35;
+  --surface3: #35363d;
+  --border:   #3a3b42;
+  --border2:  #44454e;
+  --text:     #dddde3;
+  --text2:    #9a9aaa;
+  --text3:    #62636f;
+
+–c-manuscript: #8b9eff;
+–c-lab:        #52d9a0;
+–c-phd:        #ff8b8b;
+–c-conf:       #ffbe5c;
+–c-personal:   #d08bff;
+–c-bel:        #ff8bca;
+–c-hobby:      #5ccaff;
+
+–pri-high: #ff7070;
+–pri-med:  #ffbe5c;
+–pri-low:  #44454e;
+–green:    #52d9a0;
+–r: 13px;
+}
+
+- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 14px;
+min-height: 100vh;
+overflow-x: hidden;
+padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ── SYNC STATUS BAR ── */
+.sync-bar {
+position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+padding: 10px 20px;
+padding-top: calc(10px + env(safe-area-inset-top));
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+display: flex; align-items: center; gap: 8px;
+transform: translateY(-100%);
+transition: transform 0.3s ease;
+pointer-events: none;
+}
+.sync-bar.show { transform: translateY(0); pointer-events: all; }
+.sync-bar.syncing { background: #2e2f35dd; color: var(–text2); backdrop-filter: blur(8px); }
+.sync-bar.success { background: #52d9a022; color: var(–green); border-bottom: 1px solid #52d9a033; }
+.sync-bar.error   { background: #ff707022; color: var(–pri-high); border-bottom: 1px solid #ff707033; }
+.sync-bar.offline { background: #ffbe5c22; color: var(–pri-med); border-bottom: 1px solid #ffbe5c33; }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.sync-bar.syncing .sync-dot { animation: blink 0.8s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── HEADER ── */
+.header {
+padding: 52px 20px 14px;
+padding-top: calc(52px + env(safe-area-inset-top));
+}
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.greeting { font-size: 12px; color: var(–text3); margin-bottom: 3px; }
+.date-line { font-size: 26px; font-weight: 600; color: var(–text); letter-spacing: -0.02em; line-height: 1.1; }
+.date-sub { font-size: 13px; color: var(–text3); margin-top: 3px; }
+.header-right { display: flex; gap: 8px; padding-top: 4px; }
+.icon-btn {
+width: 34px; height: 34px;
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 10px; display: flex; align-items: center; justify-content: center;
+cursor: pointer; color: var(–text2); font-size: 15px; transition: background 0.12s;
+user-select: none;
+}
+.icon-btn:active { background: var(–surface3); }
+
+/* ── FOCUS STRIP ── */
+.focus-strip {
+margin: 0 20px 14px;
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–r); padding: 13px 14px;
+display: flex; align-items: center; gap: 11px;
+position: relative; overflow: hidden; cursor: pointer;
+}
+.focus-strip::after {
+content: ‘’; position: absolute; left: 0; top: 0; bottom: 0;
+width: 3px; background: var(–c-manuscript); border-radius: 2px 0 0 2px;
+}
+.focus-dot {
+width: 7px; height: 7px; background: var(–c-manuscript);
+border-radius: 50%; flex-shrink: 0;
+box-shadow: 0 0 6px var(–c-manuscript);
+animation: glow 2.4s ease-in-out infinite;
+}
+@keyframes glow { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.focus-text { flex: 1; min-width: 0; }
+.focus-eye {
+font-family: ‘DM Mono’, monospace; font-size: 9px;
+letter-spacing: 0.13em; text-transform: uppercase;
+color: var(–c-manuscript); margin-bottom: 3px;
+}
+.focus-title { font-size: 13.5px; font-weight: 500; color: var(–text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.focus-sub { font-size: 11px; color: var(–text3); margin-top: 2px; }
+.focus-arr { color: var(–text3); font-size: 16px; flex-shrink: 0; }
+.focus-empty { font-size: 13px; color: var(–text3); font-style: italic; }
+
+/* ── STATS ── */
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; padding: 0 20px 14px; }
+.stat {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 12px; padding: 11px 8px; text-align: center;
+}
+.stat-n { font-family: ‘DM Mono’, monospace; font-size: 20px; font-weight: 500; line-height: 1; margin-bottom: 5px; }
+.stat-l { font-size: 11px; color: var(–text3); }
+
+/* ── PROGRESS ── */
+.prog-wrap {
+margin: 0 20px 14px;
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–r); padding: 13px 15px;
+}
+.prog-top { display: flex; justify-content: space-between; margin-bottom: 9px; }
+.prog-label { font-size: 12px; color: var(–text3); }
+.prog-pct { font-family: ‘DM Mono’, monospace; font-size: 12px; color: var(–green); }
+.prog-track { height: 5px; background: var(–surface3); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(–c-manuscript), var(–green)); border-radius: 3px; transition: width 0.5s ease; }
+
+/* ── FILTERS ── */
+.filter-scroll {
+display: flex; gap: 6px; padding: 0 20px 16px;
+overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+.chip {
+flex-shrink: 0; padding: 6px 13px; border-radius: 20px;
+border: 1px solid var(–border); background: transparent;
+color: var(–text2); font-family: ‘DM Mono’, monospace;
+font-size: 11px; cursor: pointer; white-space: nowrap; transition: all 0.12s;
+user-select: none;
+}
+.chip.active { background: var(–surface3); border-color: var(–border2); color: var(–text); }
+.chip:active { opacity: 0.7; }
+
+/* ── SECTION ── */
+.section { padding: 0 20px; margin-bottom: 22px; }
+.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+.sec-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(–text3); }
+.sec-count {
+font-family: ‘DM Mono’, monospace; font-size: 11px; color: var(–text3);
+background: var(–surface2); border: 1px solid var(–border); padding: 1px 7px; border-radius: 8px;
+}
+.section-empty { padding: 16px; text-align: center; color: var(–text3); font-size: 13px; font-style: italic; }
+
+/* ── TASK CARD ── */
+.task {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: var(–r); padding: 12px 13px 12px 14px;
+margin-bottom: 7px; display: flex; gap: 11px; align-items: flex-start;
+position: relative; overflow: hidden;
+transition: background 0.12s, transform 0.1s, opacity 0.2s;
+}
+.task::before {
+content: ‘’; position: absolute; left: 0; top: 0; bottom: 0;
+width: 3px; border-radius: 2px 0 0 2px;
+}
+.task.hi::before { background: var(–pri-high); }
+.task.md::before { background: var(–pri-med); }
+.task.lo::before { background: var(–pri-low); }
+.task:active { transform: scale(0.988); background: var(–surface2); }
+.task.done { opacity: 0.45; }
+.task.dimmed { opacity: 0.55; border-style: dashed; }
+.task.hidden { display: none; }
+
+/* swipe-to-delete visual */
+.task { overflow: visible; }
+
+.cb {
+width: 20px; height: 20px; border-radius: 6px;
+border: 1.5px solid var(–border2); flex-shrink: 0; margin-top: 1px;
+display: flex; align-items: center; justify-content: center;
+font-size: 11px; color: #0d0d0f; transition: all 0.15s; cursor: pointer;
+user-select: none;
+}
+.task.done .cb { background: var(–green); border-color: var(–green); }
+
+.task-body { flex: 1; min-width: 0; }
+.task-title { font-size: 14px; font-weight: 500; color: var(–text); line-height: 1.4; margin-bottom: 5px; }
+.task.done .task-title { text-decoration: line-through; color: var(–text3); }
+.task-row { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+
+.cat { font-family: ‘DM Mono’, monospace; font-size: 10px; padding: 2px 8px; border-radius: 6px; }
+.cat-manuscript { background:#8b9eff18; color:var(–c-manuscript); border:1px solid #8b9eff30; }
+.cat-lab        { background:#52d9a018; color:var(–c-lab);        border:1px solid #52d9a030; }
+.cat-phd        { background:#ff8b8b18; color:var(–c-phd);        border:1px solid #ff8b8b30; }
+.cat-conf       { background:#ffbe5c18; color:var(–c-conf);       border:1px solid #ffbe5c30; }
+.cat-personal   { background:#d08bff18; color:var(–c-personal);   border:1px solid #d08bff30; }
+.cat-bel        { background:#ff8bca18; color:var(–c-bel);        border:1px solid #ff8bca30; }
+.cat-hobby      { background:#5ccaff18; color:var(–c-hobby);      border:1px solid #5ccaff30; }
+
+.status { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 8px; border-radius:6px; border:1px solid var(–border); color:var(–text3); }
+.status.waiting { color:var(–c-conf);  border-color:#ffbe5c30; background:#ffbe5c0a; }
+.status.blocked { color:var(–c-phd);   border-color:#ff8b8b30; background:#ff8b8b0a; }
+.status.review  { color:var(–c-hobby); border-color:#5ccaff30; background:#5ccaff0a; }
+
+.due { font-size:11px; color:var(–text3); margin-left:auto; flex-shrink:0; }
+.due.overdue { color:var(–pri-high); }
+.due.soon    { color:var(–c-conf); }
+
+.note { font-size:11.5px; color:var(–text3); margin-top:5px; line-height:1.5; }
+
+.task-actions {
+display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
+margin-top: 1px;
+}
+.task-del {
+width: 28px; height: 28px; border-radius: 8px;
+background: transparent; border: none;
+color: var(–text3); font-size: 16px;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; transition: all 0.12s; opacity: 0;
+user-select: none;
+}
+.task:hover .task-del,
+.task.show-actions .task-del { opacity: 1; }
+.task-del:active { background: #ff707022; color: var(–pri-high); }
+
+/* ── FAB ── */
+.fab {
+position: fixed; bottom: 28px; right: 20px;
+bottom: calc(28px + env(safe-area-inset-bottom));
+width: 52px; height: 52px;
+background: var(–surface3); border: 1px solid var(–border2);
+border-radius: 16px; display: flex; align-items: center; justify-content: center;
+font-size: 26px; font-weight: 300; color: var(–text);
+cursor: pointer; z-index: 100;
+box-shadow: 0 4px 20px #00000055; transition: all 0.12s;
+user-select: none;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ── OVERLAYS / SHEETS ── */
+.overlay {
+position: fixed; inset: 0; background: #00000077;
+z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+backdrop-filter: blur(2px);
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+
+.sheet {
+position: fixed; bottom: 0; left: 0; right: 0;
+background: var(–surface); border-top: 1px solid var(–border);
+border-radius: 20px 20px 0 0;
+padding: 18px 20px;
+padding-bottom: calc(24px + env(safe-area-inset-bottom));
+z-index: 200; transform: translateY(100%);
+transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+max-height: 90vh; overflow-y: auto;
+}
+.sheet.open { transform: translateY(0); }
+
+.handle { width: 34px; height: 4px; background: var(–border2); border-radius: 2px; margin: 0 auto 18px; }
+.sheet-title { font-size: 16px; font-weight: 600; color: var(–text); margin-bottom: 16px; }
+.sheet-label { font-size: 11px; color: var(–text3); font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
+
+.input {
+width: 100%; background: var(–surface2); border: 1px solid var(–border);
+border-radius: 11px; padding: 11px 13px; color: var(–text);
+font-family: ‘DM Sans’, sans-serif; font-size: 15px;
+outline: none; margin-bottom: 14px; transition: border-color 0.15s;
+}
+.input:focus { border-color: var(–border2); }
+.input::placeholder { color: var(–text3); }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.s-chip {
+padding: 5px 12px; border-radius: 8px;
+border: 1px solid var(–border); background: transparent;
+color: var(–text2); font-family: ‘DM Mono’, monospace;
+font-size: 11px; cursor: pointer; transition: all 0.12s;
+user-select: none;
+}
+.s-chip.active { background: var(–surface3); border-color: var(–border2); color: var(–text); }
+
+.sheet-btn {
+width: 100%; padding: 13px;
+background: var(–surface3); border: 1px solid var(–border2);
+border-radius: 12px; color: var(–text);
+font-family: ‘DM Sans’, sans-serif; font-size: 14px; font-weight: 500;
+cursor: pointer; margin-top: 4px; transition: background 0.12s;
+}
+.sheet-btn:active { background: var(–border2); }
+.sheet-btn.primary { background: #8b9eff; border-color: #8b9eff; color: #0d0d0f; font-weight: 600; }
+.sheet-btn.primary:active { opacity: 0.85; }
+.sheet-btn.danger { background: #ff707015; border-color: #ff707033; color: var(–pri-high); margin-top: 8px; }
+
+.divider { height: 1px; background: var(–border); margin: 14px 0; }
+
+/* settings form */
+.settings-field { margin-bottom: 12px; }
+.settings-field label { display: block; font-size: 11px; color: var(–text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.settings-status {
+display: flex; align-items: center; gap: 8px;
+padding: 10px 12px; border-radius: 10px;
+background: var(–surface2); border: 1px solid var(–border);
+font-size: 12px; color: var(–text3); margin-bottom: 14px;
+}
+.settings-status.connected { color: var(–green); border-color: #52d9a030; background: #52d9a00a; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* ── TASK DETAIL SHEET ── */
+.detail-label { font-size: 11px; color: var(–text3); text-transform: uppercase; letter-spacing: 0.06em; margin: 14px 0 6px; }
+.detail-label:first-child { margin-top: 0; }
+
+/* ── TOAST ── */
+.toast {
+position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+bottom: calc(100px + env(safe-area-inset-bottom));
+background: var(–surface3); border: 1px solid var(–border2);
+color: var(–text); font-size: 13px; font-weight: 500;
+padding: 10px 18px; border-radius: 20px;
+z-index: 400; opacity: 0; transition: all 0.2s ease;
+pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.spacer { height: 100px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+text-align: center; padding: 40px 20px;
+color: var(–text3); font-size: 14px;
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
+
+/* ── SEARCH BAR ── */
+.search-wrap {
+padding: 0 20px 14px;
+display: none;
+}
+.search-wrap.open { display: block; }
+.search-input {
+width: 100%; background: var(–surface2); border: 1px solid var(–border);
+border-radius: 11px; padding: 10px 13px; color: var(–text);
+font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
+}
+.search-input::placeholder { color: var(–text3); }
+.search-input:focus { border-color: var(–border2); }
+
+@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+</style>
+
+</head>
+<body>
+
+<!-- SYNC STATUS BAR -->
+
+<div class="sync-bar" id="syncBar">
+  <div class="sync-dot"></div>
+  <span id="syncMsg">Syncing...</span>
+</div>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="greeting">Hey Keegan</div>
+      <div class="date-line" id="dateDisplay"></div>
+      <div class="date-sub" id="dateSub"></div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn" id="searchBtn" title="Search">🔍</div>
+      <div class="icon-btn" id="settingsBtn" title="Settings">⚙️</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+
+<div class="search-wrap" id="searchWrap">
+  <input class="search-input" id="searchInput" type="text" placeholder="Search tasks...">
+</div>
+
+<!-- FOCUS -->
+
+<div class="focus-strip" id="focusStrip">
+  <div class="focus-dot"></div>
+  <div class="focus-text">
+    <div class="focus-eye">Current Focus</div>
+    <div class="focus-title" id="focusTitle">No task pinned</div>
+    <div class="focus-sub" id="focusSub">Tap a task to pin it as focus</div>
+  </div>
+  <div class="focus-arr">›</div>
+</div>
+
+<!-- STATS -->
+
+<div class="stats-row">
+  <div class="stat"><div class="stat-n" id="statOpen" style="color:var(--text)">0</div><div class="stat-l">Open</div></div>
+  <div class="stat"><div class="stat-n" id="statBlocked" style="color:var(--pri-high)">0</div><div class="stat-l">Blocked</div></div>
+  <div class="stat"><div class="stat-n" id="statWaiting" style="color:var(--c-conf)">0</div><div class="stat-l">Waiting</div></div>
+  <div class="stat"><div class="stat-n" id="statDone" style="color:var(--green)">0</div><div class="stat-l">Done</div></div>
+</div>
+
+<!-- PROGRESS -->
+
+<div class="prog-wrap">
+  <div class="prog-top">
+    <span class="prog-label">Week progress</span>
+    <span class="prog-pct" id="progPct">0%</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- FILTERS -->
+
+<div class="filter-scroll" id="filterRow">
+  <div class="chip active" data-filter="all">All</div>
+  <div class="chip" data-filter="today">Today</div>
+  <div class="chip" data-filter="manuscript">Manuscript</div>
+  <div class="chip" data-filter="lab">Lab Ops</div>
+  <div class="chip" data-filter="phd">PhD Apps</div>
+  <div class="chip" data-filter="conf">Conference</div>
+  <div class="chip" data-filter="bel">Bel ♡</div>
+  <div class="chip" data-filter="personal">Personal</div>
+  <div class="chip" data-filter="hobby">Hobbies</div>
+  <div class="chip" data-filter="blocked">Blocked</div>
+</div>
+
+<!-- TASK LIST -->
+
+<div id="taskList"></div>
+
+<div class="spacer"></div>
+
+<!-- FAB -->
+
+<div class="fab" id="fab">+</div>
+
+<!-- OVERLAY -->
+
+<div class="overlay" id="overlay"></div>
+
+<!-- ADD / EDIT SHEET -->
+
+<div class="sheet" id="addSheet">
+  <div class="handle"></div>
+  <div class="sheet-title" id="addSheetTitle">New Task</div>
+
+  <div class="sheet-label">Task</div>
+  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing...">
+
+  <div class="sheet-label">Note</div>
+  <input class="input" id="taskNoteInput" type="text" placeholder="Context, blockers, notes...">
+
+  <div class="sheet-label">Due</div>
+  <input class="input" id="taskDueInput" type="text" placeholder="Today, Mar 5, Tonight, Overdue...">
+
+  <div class="sheet-label">Category</div>
+  <div class="chip-row" id="catRow">
+    <div class="s-chip" data-val="manuscript">Manuscript</div>
+    <div class="s-chip" data-val="lab">Lab Ops</div>
+    <div class="s-chip" data-val="phd">PhD Apps</div>
+    <div class="s-chip" data-val="conf">Conference</div>
+    <div class="s-chip" data-val="bel">Bel ♡</div>
+    <div class="s-chip" data-val="personal">Personal</div>
+    <div class="s-chip" data-val="hobby">Hobby</div>
+  </div>
+
+  <div class="sheet-label">Status</div>
+  <div class="chip-row" id="statusRow">
+    <div class="s-chip active" data-val="active">Active</div>
+    <div class="s-chip" data-val="waiting">Waiting on</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip" data-val="review">In Review</div>
+  </div>
+
+  <div class="sheet-label">Priority</div>
+  <div class="chip-row" id="priRow">
+    <div class="s-chip" data-val="hi">High</div>
+    <div class="s-chip active" data-val="md">Med</div>
+    <div class="s-chip" data-val="lo">Low</div>
+  </div>
+
+  <div class="sheet-label">Section</div>
+  <div class="chip-row" id="sectionRow">
+    <div class="s-chip active" data-val="today">Today</div>
+    <div class="s-chip" data-val="personal">Bel & Personal</div>
+    <div class="s-chip" data-val="hobby">Hobbies & Games</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip" data-val="upcoming">Upcoming</div>
+  </div>
+
+<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
+<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
+
+</div>
+
+<!-- SETTINGS SHEET -->
+
+<div class="sheet" id="settingsSheet">
+  <div class="handle"></div>
+  <div class="sheet-title">Settings</div>
+
+  <div class="settings-status" id="ghStatus">
+    <div class="status-dot"></div>
+    <span id="ghStatusText">Not connected to GitHub</span>
+  </div>
+
+  <div class="settings-field">
+    <label>GitHub Username</label>
+    <input class="input" id="ghUser" type="text" placeholder="yourusername" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Repository Name</label>
+    <input class="input" id="ghRepo" type="text" placeholder="my-tasks" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Personal Access Token</label>
+    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" style="margin-bottom:0">
+  </div>
+  <div style="font-size:11px; color:var(--text3); margin-bottom:14px; line-height:1.6;">
+    Token needs <strong style="color:var(--text2)">repo</strong> scope. Stored only in localStorage on this device.
+    <br>GitHub → Settings → Developer Settings → Personal Access Tokens (classic)
+  </div>
+
+<button class="sheet-btn primary" id="saveSettingsBtn">Save & Test Connection</button>
+
+  <div class="divider"></div>
+  <div class="sheet-label">Danger Zone</div>
+  <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA MODEL
+// ══════════════════════════════════════════════
+const STORE_KEY = 'kw_tasks_v1';
+const SETTINGS_KEY = 'kw_settings_v1';
+const FOCUS_KEY = 'kw_focus_v1';
+const PENDING_KEY = 'kw_pending_v1';
+
+const SECTIONS = ['today','personal','hobby','blocked','upcoming'];
+const SECTION_LABELS = {
+  today: 'Today',
+  personal: 'Bel & Personal',
+  hobby: 'Hobbies & Games',
+  blocked: 'Blocked / Waiting',
+  upcoming: 'Upcoming'
+};
+
+const CAT_LABEL = {
+  manuscript:'manuscript', lab:'lab ops', phd:'phd apps',
+  conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby'
+};
+
+let state = {
+  tasks: [],
+  settings: { ghUser:'', ghRepo:'', ghToken:'' },
+  focus: null,   // task id
+  filter: 'all',
+  editingId: null,
+  pendingSync: false,
+  isOnline: navigator.onLine,
+  sha: null       // github file sha for updates
+};
+
+// ── LOAD FROM LOCALSTORAGE ──
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) state.tasks = JSON.parse(raw);
+  } catch(e) {}
+  try {
+    const s = localStorage.getItem(SETTINGS_KEY);
+    if (s) state.settings = { ...state.settings, ...JSON.parse(s) };
+  } catch(e) {}
+  try {
+    const f = localStorage.getItem(FOCUS_KEY);
+    if (f) state.focus = f;
+  } catch(e) {}
+  try {
+    const p = localStorage.getItem(PENDING_KEY);
+    if (p) state.pendingSync = JSON.parse(p);
+  } catch(e) {}
+}
+
+function saveLocal() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state.tasks));
+  localStorage.setItem(FOCUS_KEY, state.focus || '');
+}
+
+function savePending(v) {
+  state.pendingSync = v;
+  localStorage.setItem(PENDING_KEY, JSON.stringify(v));
+}
+
+// ── ID GENERATION ──
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+
+// ══════════════════════════════════════════════
+// GITHUB SYNC
+// ══════════════════════════════════════════════
+const GH_API = 'https://api.github.com';
+
+function ghHeaders() {
+  return {
+    'Authorization': `token ${state.settings.ghToken}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github.v3+json'
+  };
+}
+
+function ghPath() {
+  const { ghUser, ghRepo } = state.settings;
+  return `${GH_API}/repos/${ghUser}/${ghRepo}/contents/tasks.json`;
+}
+
+async function ghFetch() {
+  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) return;
+  try {
+    showSyncBar('syncing', 'Fetching from GitHub...');
+    const res = await fetch(ghPath(), { headers: ghHeaders() });
+    if (res.status === 404) {
+      // file doesn't exist yet — push current state
+      await ghPush();
+      return;
+    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    state.sha = data.sha;
+    const decoded = JSON.parse(atob(data.content.replace(/\n/g,'')));
+    // merge: remote wins for tasks not modified locally
+    // simple strategy: if pending sync, push; otherwise pull
+    if (state.pendingSync) {
+      await ghPush();
+    } else {
+      state.tasks = decoded.tasks || decoded;
+      saveLocal();
+      render();
+    }
+    showSyncBar('success', 'Synced with GitHub');
+  } catch(e) {
+    console.error('GH fetch error:', e);
+    if (!navigator.onLine) {
+      showSyncBar('offline', 'Offline — changes saved locally');
+    } else {
+      showSyncBar('error', 'Sync failed — changes saved locally');
+    }
+  }
+}
+
+async function ghPush() {
+  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) {
+    // no github — just save locally and mark pending
+    savePending(true);
+    return;
+  }
+  if (!navigator.onLine) {
+    savePending(true);
+    showSyncBar('offline', 'Offline — will sync when reconnected');
+    return;
+  }
+  try {
+    showSyncBar('syncing', 'Saving to GitHub...');
+    const payload = { tasks: state.tasks, updated: new Date().toISOString() };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const body = {
+      message: `Update tasks ${new Date().toLocaleTimeString()}`,
+      content,
+      ...(state.sha ? { sha: state.sha } : {})
+    };
+    const res = await fetch(ghPath(), {
+      method: 'PUT',
+      headers: ghHeaders(),
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    state.sha = data.content.sha;
+    savePending(false);
+    showSyncBar('success', 'Saved to GitHub');
+  } catch(e) {
+    console.error('GH push error:', e);
+    savePending(true);
+    showSyncBar('error', 'Save failed — stored locally');
+  }
+}
+
+async function testGhConnection() {
+  const { ghUser, ghRepo, ghToken } = state.settings;
+  if (!ghToken || !ghUser || !ghRepo) return false;
+  try {
+    const res = await fetch(`${GH_API}/repos/${ghUser}/${ghRepo}`, { headers: ghHeaders() });
+    return res.ok;
+  } catch(e) { return false; }
+}
+
+// auto-sync when coming back online
+window.addEventListener('online', () => {
+  state.isOnline = true;
+  if (state.pendingSync) ghPush();
+});
+window.addEventListener('offline', () => {
+  state.isOnline = false;
+});
+
+// ══════════════════════════════════════════════
+// SYNC BAR
+// ══════════════════════════════════════════════
+let syncTimer = null;
+function showSyncBar(type, msg) {
+  const bar = document.getElementById('syncBar');
+  const msgEl = document.getElementById('syncMsg');
+  bar.className = `sync-bar show ${type}`;
+  msgEl.textContent = msg;
+  if (syncTimer) clearTimeout(syncTimer);
+  if (type !== 'syncing') {
+    syncTimer = setTimeout(() => {
+      bar.classList.remove('show');
+    }, 2500);
+  }
+}
+
+// ══════════════════════════════════════════════
+// DATE HELPERS
+// ══════════════════════════════════════════════
+function formatDate() {
+  const d = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('dateDisplay').textContent =
+    `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
+  const todayCount = state.tasks.filter(t => t.section === 'today' && !t.done).length;
+  document.getElementById('dateSub').textContent =
+    todayCount ? `${todayCount} task${todayCount !== 1 ? 's' : ''} due today` : 'All clear today';
+}
+
+function isDueUrgency(dueStr) {
+  if (!dueStr) return '';
+  const low = dueStr.toLowerCase();
+  if (low === 'today' || low === 'tonight') return 'soon';
+  if (low === 'overdue') return 'overdue';
+  return '';
+}
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function catClass(cat) {
+  const map = { manuscript:'cat-manuscript', lab:'cat-lab', phd:'cat-phd',
+    conf:'cat-conf', bel:'cat-bel', personal:'cat-personal', hobby:'cat-hobby' };
+  return map[cat] || '';
+}
+
+function renderTask(t) {
+  const div = document.createElement('div');
+  div.className = `task ${t.priority || 'md'} ${t.done ? 'done' : ''} ${(t.status === 'blocked' || t.status === 'waiting') && !t.done ? 'dimmed' : ''}`;
+  div.dataset.id = t.id;
+
+  const urg = isDueUrgency(t.due);
+  const dueHtml = t.due ? `<span class="due ${urg}">${t.due}</span>` : '';
+  const catHtml = t.category ? `<span class="cat ${catClass(t.category)}">${CAT_LABEL[t.category] || t.category}</span>` : '';
+  const statusMap = { waiting:'waiting', blocked:'blocked', review:'review' };
+  const statusHtml = (t.status && t.status !== 'active')
+    ? `<span class="status ${statusMap[t.status] || ''}">${t.status === 'waiting' ? 'waiting on' : t.status}</span>` : '';
+  const noteHtml = t.note ? `<div class="note">${escHtml(t.note)}</div>` : '';
+
+  div.innerHTML = `
+    <div class="cb">${t.done ? '✓' : ''}</div>
+    <div class="task-body">
+      <div class="task-title">${escHtml(t.title)}</div>
+      <div class="task-row">${catHtml}${statusHtml}${dueHtml}</div>
+      ${noteHtml}
+    </div>
+    <button class="task-del" title="Delete">✕</button>
+  `;
+
+  div.querySelector('.cb').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleDone(t.id);
+  });
+
+  div.querySelector('.task-del').addEventListener('click', e => {
+    e.stopPropagation();
+    deleteTask(t.id);
+  });
+
+  div.addEventListener('click', () => openEdit(t.id));
+
+  // long press to show delete btn on mobile
+  let pressTimer;
+  div.addEventListener('touchstart', () => {
+    pressTimer = setTimeout(() => div.classList.toggle('show-actions'), 500);
+  }, { passive: true });
+  div.addEventListener('touchend', () => clearTimeout(pressTimer), { passive: true });
+
+  return div;
+}
+
+function filterTask(t) {
+  const f = state.filter;
+  if (f === 'all') return true;
+  if (f === 'today') return t.section === 'today';
+  if (f === 'blocked') return t.status === 'blocked' || t.status === 'waiting';
+  return t.category === f;
+}
+
+function searchMatch(t, q) {
+  if (!q) return true;
+  const ql = q.toLowerCase();
+  return (t.title || '').toLowerCase().includes(ql) ||
+         (t.note || '').toLowerCase().includes(ql);
+}
+
+function render() {
+  formatDate();
+
+  const searchQ = document.getElementById('searchInput').value.trim();
+
+  // stats
+  const open = state.tasks.filter(t => !t.done).length;
+  const blocked = state.tasks.filter(t => !t.done && t.status === 'blocked').length;
+  const waiting = state.tasks.filter(t => !t.done && t.status === 'waiting').length;
+  const done = state.tasks.filter(t => t.done).length;
+  const total = state.tasks.length;
+
+  document.getElementById('statOpen').textContent = open;
+  document.getElementById('statBlocked').textContent = blocked;
+  document.getElementById('statWaiting').textContent = waiting;
+  document.getElementById('statDone').textContent = done;
+
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progPct').textContent = `${pct}%`;
+  document.getElementById('progFill').style.width = `${pct}%`;
+
+  // focus
+  const focusTask = state.tasks.find(t => t.id === state.focus && !t.done);
+  if (focusTask) {
+    document.getElementById('focusTitle').textContent = focusTask.title;
+    document.getElementById('focusSub').textContent =
+      [focusTask.category ? CAT_LABEL[focusTask.category] : null, focusTask.due].filter(Boolean).join(' · ') || 'Pinned focus';
+  } else {
+    document.getElementById('focusTitle').textContent = 'No task pinned';
+    document.getElementById('focusSub').textContent = 'Tap a task to set focus';
+    state.focus = null;
+  }
+
+  // task list
+  const list = document.getElementById('taskList');
+  list.innerHTML = '';
+
+  let anyVisible = false;
+
+  SECTIONS.forEach(sec => {
+    const tasks = state.tasks.filter(t =>
+      t.section === sec && filterTask(t) && searchMatch(t, searchQ)
+    );
+    if (tasks.length === 0) return;
+    anyVisible = true;
+
+    const section = document.createElement('div');
+    section.className = 'section';
+
+    const header = document.createElement('div');
+    header.className = 'sec-header';
+    header.innerHTML = `<div class="sec-title">${SECTION_LABELS[sec]}</div><div class="sec-count">${tasks.length}</div>`;
+    section.appendChild(header);
+
+    tasks.forEach(t => section.appendChild(renderTask(t)));
+    list.appendChild(section);
+  });
+
+  if (!anyVisible) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">✓</div>
+        <div>${searchQ ? 'No tasks match your search' : 'No tasks here'}</div>
+      </div>`;
+  }
+}
+
+function escHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════
+// TASK ACTIONS
+// ══════════════════════════════════════════════
+function toggleDone(id) {
+  const t = state.tasks.find(t => t.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  saveLocal();
+  render();
+  ghPush();
+}
+
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  if (state.focus === id) state.focus = null;
+  saveLocal();
+  render();
+  ghPush();
+  toast('Task deleted');
+}
+
+function openEdit(id) {
+  const t = state.tasks.find(t => t.id === id);
+  if (!t) return;
+  state.editingId = id;
+  document.getElementById('addSheetTitle').textContent = 'Edit Task';
+  document.getElementById('saveTaskBtn').textContent = 'Save Changes';
+  document.getElementById('deleteTaskBtn').style.display = 'block';
+  document.getElementById('taskTitleInput').value = t.title || '';
+  document.getElementById('taskNoteInput').value = t.note || '';
+  document.getElementById('taskDueInput').value = t.due || '';
+  setChip('catRow', t.category || null);
+  setChip('statusRow', t.status || 'active');
+  setChip('priRow', t.priority || 'md');
+  setChip('sectionRow', t.section || 'today');
+
+  // set focus option
+  document.getElementById('focusStrip').style.outline =
+    state.focus === id ? '2px solid var(--c-manuscript)' : 'none';
+
+  openSheet('addSheet');
+}
+
+function saveTask() {
+  const title = document.getElementById('taskTitleInput').value.trim();
+  if (!title) { toast('Enter a task title'); return; }
+
+  const category = getChip('catRow');
+  const status   = getChip('statusRow') || 'active';
+  const priority = getChip('priRow')    || 'md';
+  const section  = getChip('sectionRow')|| 'today';
+  const note = document.getElementById('taskNoteInput').value.trim();
+  const due  = document.getElementById('taskDueInput').value.trim();
+
+  if (state.editingId) {
+    const t = state.tasks.find(t => t.id === state.editingId);
+    if (t) Object.assign(t, { title, category, status, priority, section, note, due });
+    toast('Task updated');
+  } else {
+    state.tasks.push({ id: uid(), title, category, status, priority, section, note, due, done: false });
+    toast('Task added');
+  }
+
+  closeSheets();
+  saveLocal();
+  render();
+  ghPush();
+}
+
+// ══════════════════════════════════════════════
+// SHEETS
+// ══════════════════════════════════════════════
+function openSheet(id) {
+  document.getElementById(id).classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
+  document.getElementById('overlay').classList.remove('open');
+  state.editingId = null;
+  document.getElementById('addSheetTitle').textContent = 'New Task';
+  document.getElementById('saveTaskBtn').textContent = 'Add Task';
+  document.getElementById('deleteTaskBtn').style.display = 'none';
+  // reset form
+  document.getElementById('taskTitleInput').value = '';
+  document.getElementById('taskNoteInput').value = '';
+  document.getElementById('taskDueInput').value = '';
+  setChip('catRow', null);
+  setChip('statusRow', 'active');
+  setChip('priRow', 'md');
+  setChip('sectionRow', 'today');
+}
+
+function openAddSheet() {
+  state.editingId = null;
+  document.getElementById('addSheetTitle').textContent = 'New Task';
+  document.getElementById('saveTaskBtn').textContent = 'Add Task';
+  document.getElementById('deleteTaskBtn').style.display = 'none';
+  openSheet('addSheet');
+}
+
+// ══════════════════════════════════════════════
+// CHIP HELPERS
+// ══════════════════════════════════════════════
+function getChip(rowId) {
+  const active = document.querySelector(`#${rowId} .s-chip.active`);
+  return active ? active.dataset.val : null;
+}
+
+function setChip(rowId, val) {
+  document.querySelectorAll(`#${rowId} .s-chip`).forEach(c => {
+    c.classList.toggle('active', c.dataset.val === val);
+  });
+}
+
+['catRow','statusRow','priRow','sectionRow'].forEach(rowId => {
+  document.getElementById(rowId).addEventListener('click', e => {
+    const chip = e.target.closest('.s-chip');
+    if (!chip) return;
+    document.querySelectorAll(`#${rowId} .s-chip`).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function loadSettingsUI() {
+  document.getElementById('ghUser').value  = state.settings.ghUser || '';
+  document.getElementById('ghRepo').value  = state.settings.ghRepo || '';
+  document.getElementById('ghToken').value = state.settings.ghToken || '';
+  updateGhStatusUI(!!state.settings.ghToken);
+}
+
+function updateGhStatusUI(connected) {
+  const el = document.getElementById('ghStatus');
+  const txt = document.getElementById('ghStatusText');
+  if (connected) {
+    el.className = 'settings-status connected';
+    txt.textContent = `Connected: ${state.settings.ghUser}/${state.settings.ghRepo}`;
+  } else {
+    el.className = 'settings-status';
+    txt.textContent = 'Not connected to GitHub';
+  }
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+  const u = document.getElementById('ghUser').value.trim();
+  const r = document.getElementById('ghRepo').value.trim();
+  const t = document.getElementById('ghToken').value.trim();
+  state.settings = { ghUser: u, ghRepo: r, ghToken: t };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+  document.getElementById('saveSettingsBtn').textContent = 'Testing...';
+  const ok = await testGhConnection();
+  document.getElementById('saveSettingsBtn').textContent = 'Save & Test Connection';
+  if (ok) {
+    updateGhStatusUI(true);
+    toast('Connected! Fetching tasks...');
+    state.sha = null;
+    await ghFetch();
+  } else {
+    updateGhStatusUI(false);
+    toast('Connection failed — check token & repo name');
+  }
+});
+
+document.getElementById('clearDataBtn').addEventListener('click', () => {
+  if (!confirm('Clear all local data? This cannot be undone.')) return;
+  localStorage.clear();
+  state.tasks = [];
+  state.focus = null;
+  render();
+  closeSheets();
+  toast('Local data cleared');
+});
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ══════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════
+document.getElementById('searchBtn').addEventListener('click', () => {
+  const wrap = document.getElementById('searchWrap');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) {
+    document.getElementById('searchInput').focus();
+  } else {
+    document.getElementById('searchInput').value = '';
+    render();
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input', render);
+
+// ══════════════════════════════════════════════
+// FILTER CHIPS
+// ══════════════════════════════════════════════
+document.getElementById('filterRow').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('#filterRow .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.filter = chip.dataset.filter;
+  render();
+});
+
+// ══════════════════════════════════════════════
+// EVENTS
+// ══════════════════════════════════════════════
+document.getElementById('fab').addEventListener('click', openAddSheet);
+document.getElementById('overlay').addEventListener('click', closeSheets);
+document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
+document.getElementById('deleteTaskBtn').addEventListener('click', () => {
+  if (state.editingId) deleteTask(state.editingId);
+  closeSheets();
+});
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  loadSettingsUI();
+  openSheet('settingsSheet');
+});
+
+// focus strip tap — clear focus
+document.getElementById('focusStrip').addEventListener('click', () => {
+  if (state.focus) {
+    state.focus = null;
+    saveLocal();
+    render();
+    toast('Focus cleared');
+  }
+});
+
+// keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheets();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+    document.getElementById('searchWrap').classList.add('open');
+  }
+});
+
+// ══════════════════════════════════════════════
+// SERVICE WORKER (inline registration)
+// ══════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  // We register a minimal SW for offline shell caching
+  const swCode = `
+    const CACHE = 'kw-tasks-v1';
+    const SHELL = [self.location.pathname];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      ));
+      self.clients.claim();
+    });
+    self.addEventListener('fetch', e => {
+      // Only cache-first for same-origin navigation (the app shell)
+      if (e.request.mode === 'navigate') {
+        e.respondWith(
+          fetch(e.request).catch(() => caches.match(e.request))
+        );
+        return;
+      }
+      // For Google Fonts and other assets — network first, fallback cache
+      if (e.request.url.includes('fonts.googleapis') || e.request.url.includes('fonts.gstatic')) {
+        e.respondWith(
+          caches.open(CACHE).then(cache =>
+            fetch(e.request).then(res => { cache.put(e.request, res.clone()); return res; })
+              .catch(() => cache.match(e.request))
+          )
+        );
+        return;
+      }
+    });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ══════════════════════════════════════════════
+// SEED DATA (only if no existing tasks)
+// ══════════════════════════════════════════════
+function seedData() {
+  if (state.tasks.length > 0) return;
+  state.tasks = [
+    { id: uid(), title: 'Finalize SAS poster methods section', category: 'conf', status: 'active', priority: 'hi', section: 'today', due: 'Today 5pm', note: '', done: false },
+    { id: uid(), title: 'Email Lindquist re: language & emotion revisions', category: 'manuscript', status: 'waiting', priority: 'hi', section: 'today', due: '', note: 'Clarify authorship order before submitting', done: false },
+    { id: uid(), title: 'Update lab meeting Slack canvas — March schedule', category: 'lab', status: 'active', priority: 'md', section: 'today', due: 'Mar 1', note: '', done: false },
+    { id: uid(), title: 'Look up ramen place for date night with Bel', category: 'bel', status: 'active', priority: 'md', section: 'today', due: 'Tonight', note: '', done: false },
+    { id: uid(), title: 'Submit AFSP education committee notes', category: 'lab', status: 'active', priority: 'lo', section: 'today', due: 'Done 9am', note: '', done: true },
+    { id: uid(), title: 'Plan spring trip — check Bel\'s schedule', category: 'bel', status: 'active', priority: 'md', section: 'personal', due: 'Mar 5', note: '', done: false },
+    { id: uid(), title: 'Anniversary gift — have a few ideas', category: 'bel', status: 'active', priority: 'lo', section: 'personal', due: 'Mar 12', note: 'Something tied to that thing she mentioned last month', done: false },
+    { id: uid(), title: 'Schedule dentist appointment', category: 'personal', status: 'active', priority: 'lo', section: 'personal', due: 'Overdue', note: '', done: false },
+    { id: uid(), title: 'Call mom back', category: 'personal', status: 'active', priority: 'lo', section: 'personal', due: 'Today', note: '', done: false },
+    { id: uid(), title: 'Finish current chapter — reading', category: 'hobby', status: 'active', priority: 'lo', section: 'hobby', due: '', note: '', done: false },
+    { id: uid(), title: 'Pick up new game this weekend', category: 'hobby', status: 'active', priority: 'lo', section: 'hobby', due: 'This weekend', note: '', done: false },
+    { id: uid(), title: 'Submit Applied Cognitive Psychology revisions', category: 'manuscript', status: 'blocked', priority: 'hi', section: 'blocked', due: '', note: 'Waiting on co-author feedback — discussion section', done: false },
+    { id: uid(), title: 'Interoception analysis — maltreatment paper', category: 'manuscript', status: 'blocked', priority: 'md', section: 'blocked', due: '', note: 'Need R script from Peter re: LPA output format', done: false },
+    { id: uid(), title: 'UNC Chapel Hill SOP — draft 2', category: 'phd', status: 'waiting', priority: 'lo', section: 'blocked', due: '', note: '', done: false },
+    { id: uid(), title: 'SAS 2026 — early bird registration', category: 'conf', status: 'active', priority: 'hi', section: 'upcoming', due: 'Mar 3', note: '', done: false },
+    { id: uid(), title: 'Handbook of Emotion Dev — chapter outline', category: 'manuscript', status: 'review', priority: 'md', section: 'upcoming', due: 'Mar 10', note: '', done: false },
+    { id: uid(), title: '988 cert renewal — annual training hours', category: 'lab', status: 'active', priority: 'lo', section: 'upcoming', due: 'Mar 15', note: '', done: false },
+    { id: uid(), title: 'Add sleep perception project to website', category: 'phd', status: 'active', priority: 'lo', section: 'upcoming', due: 'Mar 20', note: '', done: false },
+  ];
+  saveLocal();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadLocal();
+seedData();
+render();
+loadSettingsUI();
+
+// Background GitHub fetch after local render
+setTimeout(() => {
+  if (state.settings.ghToken) ghFetch();
+  else if (state.pendingSync) {
+    showSyncBar('offline', 'GitHub not configured — data saved locally');
+  }
+}, 300);
+</script>
+
+</body>
+</html>
