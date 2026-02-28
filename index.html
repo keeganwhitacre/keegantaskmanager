@@ -6,68 +6,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tasks">
+<meta name="theme-color" content="#1e1f22">
+<link rel="manifest" href="manifest.json">
+<!-- Inline manifest as data URI for single-file deployment -->
 <title>Tasks</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 html, body {
   background: #1e1f22;
+  margin: 0; padding: 0;
 }
-:root {
-  --bg:       #1e1f22;
-  --surface:  #26272c;
-  --surface2: #2e2f35;
-  --surface3: #35363d;
-  --border:   #3a3b42;
-  --border2:  #44454e;
-  --text:     #dddde3;
-  --text2:    #9a9aaa;
-  --text3:    #62636f;
-
-–c-manuscript: #8b9eff;
-–c-lab:        #52d9a0;
-–c-phd:        #ff8b8b;
-–c-conf:       #ffbe5c;
-–c-personal:   #d08bff;
-–c-bel:        #ff8bca;
-–c-hobby:      #5ccaff;
-
-–pri-high: #ff7070;
-–pri-med:  #ffbe5c;
-–pri-low:  #44454e;
-–green:    #52d9a0;
-–r: 13px;
-}
-
-- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
 body {
-color: var(–text);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 14px;
-min-height: 100vh;
-overflow-x: hidden;
-padding-bottom: env(safe-area-inset-bottom);
+  color: #dddde3;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ── SYNC STATUS BAR ── */
+/* ── FOCUS MODE ── */
+body.focus-mode .hide-in-focus { display: none !important; }
+body.focus-mode #focusModeBtn { color: #8b9eff; border-color: rgba(139,158,255,0.3); background: rgba(139,158,255,0.1); }
+body.focus-mode .header { padding-bottom: 8px; }
+
+/* ── SYNC BAR ── */
 .sync-bar {
 position: fixed; top: 0; left: 0; right: 0; z-index: 300;
 padding: 10px 20px;
 padding-top: calc(10px + env(safe-area-inset-top));
-font-family: ‘DM Mono’, monospace;
-font-size: 11px;
-display: flex; align-items: center; gap: 8px;
-transform: translateY(-100%);
-transition: transform 0.3s ease;
+font-family: ‘DM Mono’, monospace; font-size: 11px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+gap: 8px;
+-webkit-transform: translateY(-100%); transform: translateY(-100%);
+-webkit-transition: transform 0.3s ease; transition: transform 0.3s ease;
 pointer-events: none;
 }
-.sync-bar.show { transform: translateY(0); pointer-events: all; }
-.sync-bar.syncing { background: #2e2f35dd; color: var(–text2); backdrop-filter: blur(8px); }
-.sync-bar.success { background: #52d9a022; color: var(–green); border-bottom: 1px solid #52d9a033; }
-.sync-bar.error   { background: #ff707022; color: var(–pri-high); border-bottom: 1px solid #ff707033; }
-.sync-bar.offline { background: #ffbe5c22; color: var(–pri-med); border-bottom: 1px solid #ffbe5c33; }
+.sync-bar.show { -webkit-transform: translateY(0); transform: translateY(0); }
+.sync-bar.syncing { background: rgba(46,47,53,0.95); color: #9a9aaa; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.sync-bar.success { background: rgba(82,217,160,0.1); color: #52d9a0; border-bottom: 1px solid rgba(82,217,160,0.2); }
+.sync-bar.error   { background: rgba(255,112,112,0.1); color: #ff7070; border-bottom: 1px solid rgba(255,112,112,0.2); }
+.sync-bar.offline { background: rgba(255,190,92,0.1);  color: #ffbe5c; border-bottom: 1px solid rgba(255,190,92,0.2); }
 .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-.sync-bar.syncing .sync-dot { animation: blink 0.8s ease-in-out infinite; }
+.sync-bar.syncing .sync-dot { -webkit-animation: blink 0.8s ease-in-out infinite; animation: blink 0.8s ease-in-out infinite; }
+@-webkit-keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
 /* ── HEADER ── */
@@ -75,304 +59,381 @@ pointer-events: none;
 padding: 52px 20px 14px;
 padding-top: calc(52px + env(safe-area-inset-top));
 }
-.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.greeting { font-size: 12px; color: var(–text3); margin-bottom: 3px; }
-.date-line { font-size: 26px; font-weight: 600; color: var(–text); letter-spacing: -0.02em; line-height: 1.1; }
-.date-sub { font-size: 13px; color: var(–text3); margin-top: 3px; }
-.header-right { display: flex; gap: 8px; padding-top: 4px; }
+.header-top {
+display: -webkit-flex; display: flex;
+-webkit-justify-content: space-between; justify-content: space-between;
+-webkit-align-items: flex-start; align-items: flex-start;
+}
+.greeting { font-size: 12px; color: #62636f; margin-bottom: 3px; }
+.date-line { font-size: 26px; font-weight: 600; color: #dddde3; letter-spacing: -0.02em; line-height: 1.1; }
+.date-sub { font-size: 13px; color: #62636f; margin-top: 3px; }
+.header-right { display: -webkit-flex; display: flex; gap: 8px; padding-top: 4px; }
 .icon-btn {
 width: 34px; height: 34px;
-background: var(–surface2); border: 1px solid var(–border);
-border-radius: 10px; display: flex; align-items: center; justify-content: center;
-cursor: pointer; color: var(–text2); font-size: 15px; transition: background 0.12s;
-user-select: none;
+background: #2e2f35; border: 1px solid #3a3b42;
+border-radius: 10px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+cursor: pointer; -webkit-user-select: none; user-select: none;
+-webkit-transition: background 0.12s, border-color 0.12s; transition: background 0.12s, border-color 0.12s;
 }
-.icon-btn:active { background: var(–surface3); }
+.icon-btn:active { background: #35363d; }
+.icon-btn svg { width: 16px; height: 16px; stroke: #9a9aaa; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── FOCUS MODE BANNER ── */
+.focus-banner {
+display: none;
+margin: 0 20px 14px;
+background: rgba(139,158,255,0.08);
+border: 1px solid rgba(139,158,255,0.2);
+border-radius: 13px;
+padding: 10px 14px;
+font-size: 12px; color: #8b9eff;
+-webkit-align-items: center; align-items: center;
+gap: 8px;
+font-family: ‘DM Mono’, monospace;
+letter-spacing: 0.04em;
+}
+body.focus-mode .focus-banner { display: -webkit-flex; display: flex; }
 
 /* ── FOCUS STRIP ── */
 .focus-strip {
 margin: 0 20px 14px;
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–r); padding: 13px 14px;
-display: flex; align-items: center; gap: 11px;
-position: relative; overflow: hidden; cursor: pointer;
+background: #26272c; border: 1px solid #3a3b42;
+border-radius: 13px; padding: 13px 14px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+gap: 11px; position: relative; overflow: hidden; cursor: pointer;
 }
 .focus-strip::after {
 content: ‘’; position: absolute; left: 0; top: 0; bottom: 0;
-width: 3px; background: var(–c-manuscript); border-radius: 2px 0 0 2px;
+width: 3px; background: #8b9eff; border-radius: 2px 0 0 2px;
 }
 .focus-dot {
-width: 7px; height: 7px; background: var(–c-manuscript);
-border-radius: 50%; flex-shrink: 0;
-box-shadow: 0 0 6px var(–c-manuscript);
-animation: glow 2.4s ease-in-out infinite;
+width: 7px; height: 7px; background: #8b9eff; border-radius: 50%; flex-shrink: 0;
+box-shadow: 0 0 6px #8b9eff;
+-webkit-animation: glow 2.4s ease-in-out infinite; animation: glow 2.4s ease-in-out infinite;
 }
+@-webkit-keyframes glow { 0%,100%{opacity:1} 50%{opacity:0.4} }
 @keyframes glow { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .focus-text { flex: 1; min-width: 0; }
-.focus-eye {
-font-family: ‘DM Mono’, monospace; font-size: 9px;
-letter-spacing: 0.13em; text-transform: uppercase;
-color: var(–c-manuscript); margin-bottom: 3px;
-}
-.focus-title { font-size: 13.5px; font-weight: 500; color: var(–text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.focus-sub { font-size: 11px; color: var(–text3); margin-top: 2px; }
-.focus-arr { color: var(–text3); font-size: 16px; flex-shrink: 0; }
-.focus-empty { font-size: 13px; color: var(–text3); font-style: italic; }
+.focus-eye { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.13em; text-transform: uppercase; color: #8b9eff; margin-bottom: 3px; }
+.focus-title { font-size: 13.5px; font-weight: 500; color: #dddde3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.focus-sub { font-size: 11px; color: #62636f; margin-top: 2px; }
+.focus-arr { color: #62636f; font-size: 16px; flex-shrink: 0; }
 
 /* ── STATS ── */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; padding: 0 20px 14px; }
-.stat {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: 12px; padding: 11px 8px; text-align: center;
-}
+.stats-row { display: -webkit-flex; display: flex; gap: 8px; padding: 0 20px 14px; }
+.stat { flex: 1; background: #26272c; border: 1px solid #3a3b42; border-radius: 12px; padding: 11px 8px; text-align: center; }
 .stat-n { font-family: ‘DM Mono’, monospace; font-size: 20px; font-weight: 500; line-height: 1; margin-bottom: 5px; }
-.stat-l { font-size: 11px; color: var(–text3); }
+.stat-l { font-size: 11px; color: #62636f; }
 
 /* ── PROGRESS ── */
-.prog-wrap {
-margin: 0 20px 14px;
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–r); padding: 13px 15px;
-}
-.prog-top { display: flex; justify-content: space-between; margin-bottom: 9px; }
-.prog-label { font-size: 12px; color: var(–text3); }
-.prog-pct { font-family: ‘DM Mono’, monospace; font-size: 12px; color: var(–green); }
-.prog-track { height: 5px; background: var(–surface3); border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; background: linear-gradient(90deg, var(–c-manuscript), var(–green)); border-radius: 3px; transition: width 0.5s ease; }
+.prog-wrap { margin: 0 20px 14px; background: #26272c; border: 1px solid #3a3b42; border-radius: 13px; padding: 13px 15px; }
+.prog-top { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; margin-bottom: 9px; }
+.prog-label { font-size: 12px; color: #62636f; }
+.prog-pct { font-family: ‘DM Mono’, monospace; font-size: 12px; color: #52d9a0; }
+.prog-track { height: 5px; background: #35363d; border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: -webkit-linear-gradient(left, #8b9eff, #52d9a0); background: linear-gradient(90deg, #8b9eff, #52d9a0); border-radius: 3px; -webkit-transition: width 0.6s ease; transition: width 0.6s ease; }
 
 /* ── FILTERS ── */
-.filter-scroll {
-display: flex; gap: 6px; padding: 0 20px 16px;
-overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-}
+.filter-scroll { display: -webkit-flex; display: flex; gap: 6px; padding: 0 20px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .filter-scroll::-webkit-scrollbar { display: none; }
-.chip {
-flex-shrink: 0; padding: 6px 13px; border-radius: 20px;
-border: 1px solid var(–border); background: transparent;
-color: var(–text2); font-family: ‘DM Mono’, monospace;
-font-size: 11px; cursor: pointer; white-space: nowrap; transition: all 0.12s;
-user-select: none;
-}
-.chip.active { background: var(–surface3); border-color: var(–border2); color: var(–text); }
-.chip:active { opacity: 0.7; }
+.chip { flex-shrink: 0; padding: 6px 13px; border-radius: 20px; border: 1px solid #3a3b42; background: transparent; color: #9a9aaa; font-family: ‘DM Mono’, monospace; font-size: 11px; cursor: pointer; white-space: nowrap; -webkit-transition: all 0.12s; transition: all 0.12s; -webkit-user-select: none; user-select: none; }
+.chip.active { background: #35363d; border-color: #44454e; color: #dddde3; }
 
 /* ── SECTION ── */
 .section { padding: 0 20px; margin-bottom: 22px; }
-.sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
-.sec-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(–text3); }
-.sec-count {
-font-family: ‘DM Mono’, monospace; font-size: 11px; color: var(–text3);
-background: var(–surface2); border: 1px solid var(–border); padding: 1px 7px; border-radius: 8px;
+.sec-header { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; margin-bottom: 9px; }
+.sec-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #62636f; }
+.sec-count { font-family: ‘DM Mono’, monospace; font-size: 11px; color: #62636f; background: #2e2f35; border: 1px solid #3a3b42; padding: 1px 7px; border-radius: 8px; }
+
+/* ── TASK CARD SWIPE WRAPPER ── */
+.task-wrap {
+position: relative;
+margin-bottom: 7px;
+border-radius: 13px;
+overflow: hidden;
 }
-.section-empty { padding: 16px; text-align: center; color: var(–text3); font-size: 13px; font-style: italic; }
+
+.swipe-bg {
+position: absolute; inset: 0;
+background: rgba(255,112,112,0.15);
+border-radius: 13px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: flex-end; justify-content: flex-end;
+padding-right: 20px;
+opacity: 0;
+-webkit-transition: opacity 0.1s; transition: opacity 0.1s;
+pointer-events: none;
+}
+.swipe-bg svg { width: 20px; height: 20px; stroke: #ff7070; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── TASK CARD ── */
 .task {
-background: var(–surface); border: 1px solid var(–border);
-border-radius: var(–r); padding: 12px 13px 12px 14px;
-margin-bottom: 7px; display: flex; gap: 11px; align-items: flex-start;
-position: relative; overflow: hidden;
-transition: background 0.12s, transform 0.1s, opacity 0.2s;
+background: #26272c; border: 1px solid #3a3b42;
+border-radius: 13px; padding: 12px 13px 12px 14px;
+display: -webkit-flex; display: flex;
+gap: 11px; -webkit-align-items: flex-start; align-items: flex-start;
+position: relative; overflow: hidden; cursor: pointer;
+-webkit-transition: background 0.12s; transition: background 0.12s;
+will-change: transform;
+-webkit-user-select: none; user-select: none;
+/* swipe transform handled via JS inline style */
 }
 .task::before {
 content: ‘’; position: absolute; left: 0; top: 0; bottom: 0;
 width: 3px; border-radius: 2px 0 0 2px;
 }
-.task.hi::before { background: var(–pri-high); }
-.task.md::before { background: var(–pri-med); }
-.task.lo::before { background: var(–pri-low); }
-.task:active { transform: scale(0.988); background: var(–surface2); }
+.task.hi::before { background: #ff7070; }
+.task.md::before { background: #ffbe5c; }
+.task.lo::before { background: #44454e; }
 .task.done { opacity: 0.45; }
 .task.dimmed { opacity: 0.55; border-style: dashed; }
-.task.hidden { display: none; }
 
-/* swipe-to-delete visual */
-.task { overflow: visible; }
+/* check-off animation */
+.task.completing .task-title {
+-webkit-animation: strikeThrough 0.3s ease forwards; animation: strikeThrough 0.3s ease forwards;
+}
+@-webkit-keyframes strikeThrough {
+0%   { opacity: 1; }
+100% { opacity: 0.5; text-decoration: line-through; }
+}
+@keyframes strikeThrough {
+0%   { opacity: 1; }
+100% { opacity: 0.5; text-decoration: line-through; }
+}
+
+/* task entering */
+.task-wrap.entering {
+-webkit-animation: taskIn 0.25s ease both; animation: taskIn 0.25s ease both;
+}
+@-webkit-keyframes taskIn {
+from { opacity: 0; -webkit-transform: translateY(8px); transform: translateY(8px); }
+to   { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+}
+@keyframes taskIn {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* task removing */
+.task-wrap.removing {
+-webkit-animation: taskOut 0.2s ease forwards; animation: taskOut 0.2s ease forwards;
+pointer-events: none;
+}
+@-webkit-keyframes taskOut {
+to { opacity: 0; -webkit-transform: translateX(-30px); transform: translateX(-30px); max-height: 0; margin-bottom: 0; padding: 0; }
+}
+@keyframes taskOut {
+to { opacity: 0; transform: translateX(-30px); max-height: 0; margin-bottom: 0; padding: 0; }
+}
 
 .cb {
 width: 20px; height: 20px; border-radius: 6px;
-border: 1.5px solid var(–border2); flex-shrink: 0; margin-top: 1px;
-display: flex; align-items: center; justify-content: center;
-font-size: 11px; color: #0d0d0f; transition: all 0.15s; cursor: pointer;
-user-select: none;
+border: 1.5px solid #44454e; flex-shrink: 0; margin-top: 1px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+font-size: 11px; color: #0d0d0f;
+-webkit-transition: background 0.2s, border-color 0.2s, -webkit-transform 0.15s;
+transition: background 0.2s, border-color 0.2s, transform 0.15s;
+cursor: pointer;
 }
-.task.done .cb { background: var(–green); border-color: var(–green); }
+.cb:active { -webkit-transform: scale(0.85); transform: scale(0.85); }
+.task.done .cb { background: #52d9a0; border-color: #52d9a0; }
+
+/* cb pop animation */
+.cb.popping {
+-webkit-animation: cbPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+animation: cbPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@-webkit-keyframes cbPop {
+0%   { -webkit-transform: scale(1); }
+40%  { -webkit-transform: scale(1.3); }
+100% { -webkit-transform: scale(1); }
+}
+@keyframes cbPop {
+0%   { transform: scale(1); }
+40%  { transform: scale(1.3); }
+100% { transform: scale(1); }
+}
 
 .task-body { flex: 1; min-width: 0; }
-.task-title { font-size: 14px; font-weight: 500; color: var(–text); line-height: 1.4; margin-bottom: 5px; }
-.task.done .task-title { text-decoration: line-through; color: var(–text3); }
-.task-row { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.task-title { font-size: 14px; font-weight: 500; color: #dddde3; line-height: 1.4; margin-bottom: 5px; -webkit-transition: color 0.2s; transition: color 0.2s; }
+.task.done .task-title { text-decoration: line-through; color: #62636f; }
+.task-row { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 5px; -webkit-align-items: center; align-items: center; }
 
 .cat { font-family: ‘DM Mono’, monospace; font-size: 10px; padding: 2px 8px; border-radius: 6px; }
-.cat-manuscript { background:#8b9eff18; color:var(–c-manuscript); border:1px solid #8b9eff30; }
-.cat-lab        { background:#52d9a018; color:var(–c-lab);        border:1px solid #52d9a030; }
-.cat-phd        { background:#ff8b8b18; color:var(–c-phd);        border:1px solid #ff8b8b30; }
-.cat-conf       { background:#ffbe5c18; color:var(–c-conf);       border:1px solid #ffbe5c30; }
-.cat-personal   { background:#d08bff18; color:var(–c-personal);   border:1px solid #d08bff30; }
-.cat-bel        { background:#ff8bca18; color:var(–c-bel);        border:1px solid #ff8bca30; }
-.cat-hobby      { background:#5ccaff18; color:var(–c-hobby);      border:1px solid #5ccaff30; }
+.cat-manuscript { background: rgba(139,158,255,0.1); color: #8b9eff; border: 1px solid rgba(139,158,255,0.2); }
+.cat-lab        { background: rgba(82,217,160,0.1);  color: #52d9a0; border: 1px solid rgba(82,217,160,0.2); }
+.cat-phd        { background: rgba(255,139,139,0.1); color: #ff8b8b; border: 1px solid rgba(255,139,139,0.2); }
+.cat-conf       { background: rgba(255,190,92,0.1);  color: #ffbe5c; border: 1px solid rgba(255,190,92,0.2); }
+.cat-personal   { background: rgba(208,139,255,0.1); color: #d08bff; border: 1px solid rgba(208,139,255,0.2); }
+.cat-bel        { background: rgba(255,139,202,0.1); color: #ff8bca; border: 1px solid rgba(255,139,202,0.2); }
+.cat-hobby      { background: rgba(92,202,255,0.1);  color: #5ccaff; border: 1px solid rgba(92,202,255,0.2); }
 
-.status { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 8px; border-radius:6px; border:1px solid var(–border); color:var(–text3); }
-.status.waiting { color:var(–c-conf);  border-color:#ffbe5c30; background:#ffbe5c0a; }
-.status.blocked { color:var(–c-phd);   border-color:#ff8b8b30; background:#ff8b8b0a; }
-.status.review  { color:var(–c-hobby); border-color:#5ccaff30; background:#5ccaff0a; }
+.status { font-family: ‘DM Mono’, monospace; font-size: 10px; padding: 2px 8px; border-radius: 6px; border: 1px solid #3a3b42; color: #62636f; }
+.status.waiting { color: #ffbe5c; border-color: rgba(255,190,92,0.2);  background: rgba(255,190,92,0.06); }
+.status.blocked { color: #ff8b8b; border-color: rgba(255,139,139,0.2); background: rgba(255,139,139,0.06); }
+.status.review  { color: #5ccaff; border-color: rgba(92,202,255,0.2);  background: rgba(92,202,255,0.06); }
 
-.due { font-size:11px; color:var(–text3); margin-left:auto; flex-shrink:0; }
-.due.overdue { color:var(–pri-high); }
-.due.soon    { color:var(–c-conf); }
-
-.note { font-size:11.5px; color:var(–text3); margin-top:5px; line-height:1.5; }
-
-.task-actions {
-display: flex; flex-direction: column; gap: 6px; flex-shrink: 0;
-margin-top: 1px;
-}
-.task-del {
-width: 28px; height: 28px; border-radius: 8px;
-background: transparent; border: none;
-color: var(–text3); font-size: 16px;
-display: flex; align-items: center; justify-content: center;
-cursor: pointer; transition: all 0.12s; opacity: 0;
-user-select: none;
-}
-.task:hover .task-del,
-.task.show-actions .task-del { opacity: 1; }
-.task-del:active { background: #ff707022; color: var(–pri-high); }
+.due { font-size: 11px; color: #62636f; margin-left: auto; flex-shrink: 0; }
+.due.overdue { color: #ff7070; }
+.due.soon    { color: #ffbe5c; }
+.note { font-size: 11.5px; color: #62636f; margin-top: 5px; line-height: 1.5; }
 
 /* ── FAB ── */
 .fab {
 position: fixed; bottom: 28px; right: 20px;
 bottom: calc(28px + env(safe-area-inset-bottom));
 width: 52px; height: 52px;
-background: var(–surface3); border: 1px solid var(–border2);
-border-radius: 16px; display: flex; align-items: center; justify-content: center;
-font-size: 26px; font-weight: 300; color: var(–text);
+background: #35363d; border: 1px solid #44454e;
+border-radius: 16px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+font-size: 28px; font-weight: 300; color: #dddde3; line-height: 1;
 cursor: pointer; z-index: 100;
-box-shadow: 0 4px 20px #00000055; transition: all 0.12s;
-user-select: none;
+box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+-webkit-transition: all 0.12s; transition: all 0.12s;
+-webkit-user-select: none; user-select: none;
 }
-.fab:active { transform: scale(0.92); }
+.fab:active { -webkit-transform: scale(0.92); transform: scale(0.92); }
 
-/* ── OVERLAYS / SHEETS ── */
+/* ── FOCUS MODE BUTTON ── */
+#focusModeBtn {
+position: fixed; bottom: 28px; left: 20px;
+bottom: calc(28px + env(safe-area-inset-bottom));
+height: 52px; padding: 0 18px;
+background: #2e2f35; border: 1px solid #3a3b42;
+border-radius: 16px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+gap: 8px;
+font-family: ‘DM Mono’, monospace; font-size: 11px; letter-spacing: 0.06em;
+color: #62636f; cursor: pointer; z-index: 100;
+box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+-webkit-transition: all 0.15s; transition: all 0.15s;
+-webkit-user-select: none; user-select: none;
+}
+#focusModeBtn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+#focusModeBtn:active { -webkit-transform: scale(0.95); transform: scale(0.95); }
+
+/* ── SHEETS ── */
 .overlay {
-position: fixed; inset: 0; background: #00000077;
-z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.25s;
-backdrop-filter: blur(2px);
+position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+z-index: 150; opacity: 0; pointer-events: none;
+-webkit-transition: opacity 0.25s; transition: opacity 0.25s;
+-webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
 }
 .overlay.open { opacity: 1; pointer-events: all; }
 
 .sheet {
 position: fixed; bottom: 0; left: 0; right: 0;
-background: var(–surface); border-top: 1px solid var(–border);
+background: #26272c; border-top: 1px solid #3a3b42;
 border-radius: 20px 20px 0 0;
 padding: 18px 20px;
 padding-bottom: calc(24px + env(safe-area-inset-bottom));
-z-index: 200; transform: translateY(100%);
-transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-max-height: 90vh; overflow-y: auto;
+z-index: 200;
+-webkit-transform: translateY(100%); transform: translateY(100%);
+-webkit-transition: -webkit-transform 0.3s cubic-bezier(0.4,0,0.2,1);
+transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
-.sheet.open { transform: translateY(0); }
+.sheet.open { -webkit-transform: translateY(0); transform: translateY(0); }
 
-.handle { width: 34px; height: 4px; background: var(–border2); border-radius: 2px; margin: 0 auto 18px; }
-.sheet-title { font-size: 16px; font-weight: 600; color: var(–text); margin-bottom: 16px; }
-.sheet-label { font-size: 11px; color: var(–text3); font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
+.handle { width: 34px; height: 4px; background: #44454e; border-radius: 2px; margin: 0 auto 18px; }
+.sheet-title { font-size: 16px; font-weight: 600; color: #dddde3; margin-bottom: 16px; }
+.sheet-label { font-size: 11px; color: #62636f; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
 
 .input {
-width: 100%; background: var(–surface2); border: 1px solid var(–border);
-border-radius: 11px; padding: 11px 13px; color: var(–text);
+width: 100%; background: #2e2f35; border: 1px solid #3a3b42;
+border-radius: 11px; padding: 11px 13px; color: #dddde3;
 font-family: ‘DM Sans’, sans-serif; font-size: 15px;
-outline: none; margin-bottom: 14px; transition: border-color 0.15s;
+outline: none; margin-bottom: 14px;
+-webkit-appearance: none; appearance: none;
+-webkit-transition: border-color 0.15s; transition: border-color 0.15s;
 }
-.input:focus { border-color: var(–border2); }
-.input::placeholder { color: var(–text3); }
+.input:focus { border-color: #44454e; }
+.input::-webkit-input-placeholder { color: #62636f; }
+.input::placeholder { color: #62636f; }
 
-.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.chip-row { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .s-chip {
 padding: 5px 12px; border-radius: 8px;
-border: 1px solid var(–border); background: transparent;
-color: var(–text2); font-family: ‘DM Mono’, monospace;
-font-size: 11px; cursor: pointer; transition: all 0.12s;
-user-select: none;
+border: 1px solid #3a3b42; background: transparent;
+color: #9a9aaa; font-family: ‘DM Mono’, monospace; font-size: 11px;
+cursor: pointer; -webkit-transition: all 0.12s; transition: all 0.12s;
+-webkit-user-select: none; user-select: none;
 }
-.s-chip.active { background: var(–surface3); border-color: var(–border2); color: var(–text); }
+.s-chip.active { background: #35363d; border-color: #44454e; color: #dddde3; }
 
 .sheet-btn {
 width: 100%; padding: 13px;
-background: var(–surface3); border: 1px solid var(–border2);
-border-radius: 12px; color: var(–text);
+background: #35363d; border: 1px solid #44454e;
+border-radius: 12px; color: #dddde3;
 font-family: ‘DM Sans’, sans-serif; font-size: 14px; font-weight: 500;
-cursor: pointer; margin-top: 4px; transition: background 0.12s;
+cursor: pointer; margin-top: 4px;
+-webkit-transition: background 0.12s; transition: background 0.12s;
+-webkit-appearance: none; appearance: none;
 }
-.sheet-btn:active { background: var(–border2); }
+.sheet-btn:active { background: #44454e; }
 .sheet-btn.primary { background: #8b9eff; border-color: #8b9eff; color: #0d0d0f; font-weight: 600; }
 .sheet-btn.primary:active { opacity: 0.85; }
-.sheet-btn.danger { background: #ff707015; border-color: #ff707033; color: var(–pri-high); margin-top: 8px; }
+.sheet-btn.danger  { background: rgba(255,112,112,0.08); border-color: rgba(255,112,112,0.2); color: #ff7070; margin-top: 8px; }
 
-.divider { height: 1px; background: var(–border); margin: 14px 0; }
+.divider { height: 1px; background: #3a3b42; margin: 14px 0; }
 
-/* settings form */
 .settings-field { margin-bottom: 12px; }
-.settings-field label { display: block; font-size: 11px; color: var(–text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
-.settings-status {
-display: flex; align-items: center; gap: 8px;
-padding: 10px 12px; border-radius: 10px;
-background: var(–surface2); border: 1px solid var(–border);
-font-size: 12px; color: var(–text3); margin-bottom: 14px;
-}
-.settings-status.connected { color: var(–green); border-color: #52d9a030; background: #52d9a00a; }
+.settings-field label { display: block; font-size: 11px; color: #62636f; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.settings-status { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; background: #2e2f35; border: 1px solid #3a3b42; font-size: 12px; color: #62636f; margin-bottom: 14px; }
+.settings-status.connected { color: #52d9a0; border-color: rgba(82,217,160,0.2); background: rgba(82,217,160,0.06); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-/* ── TASK DETAIL SHEET ── */
-.detail-label { font-size: 11px; color: var(–text3); text-transform: uppercase; letter-spacing: 0.06em; margin: 14px 0 6px; }
-.detail-label:first-child { margin-top: 0; }
+/* ── SEARCH ── */
+.search-wrap { padding: 0 20px 14px; display: none; }
+.search-wrap.open { display: block; }
+.search-input { width: 100%; background: #2e2f35; border: 1px solid #3a3b42; border-radius: 11px; padding: 10px 13px; color: #dddde3; font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none; -webkit-appearance: none; appearance: none; }
+.search-input::-webkit-input-placeholder { color: #62636f; }
+.search-input:focus { border-color: #44454e; }
 
 /* ── TOAST ── */
 .toast {
-position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+position: fixed;
 bottom: calc(100px + env(safe-area-inset-bottom));
-background: var(–surface3); border: 1px solid var(–border2);
-color: var(–text); font-size: 13px; font-weight: 500;
+left: 50%;
+-webkit-transform: translateX(-50%) translateY(20px); transform: translateX(-50%) translateY(20px);
+background: #35363d; border: 1px solid #44454e;
+color: #dddde3; font-size: 13px; font-weight: 500;
 padding: 10px 18px; border-radius: 20px;
-z-index: 400; opacity: 0; transition: all 0.2s ease;
+z-index: 400; opacity: 0;
+-webkit-transition: all 0.2s ease; transition: all 0.2s ease;
 pointer-events: none; white-space: nowrap;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.show { opacity: 1; -webkit-transform: translateX(-50%) translateY(0); transform: translateX(-50%) translateY(0); }
 
-.spacer { height: 100px; }
+.empty-state { text-align: center; padding: 40px 20px; color: #62636f; font-size: 14px; }
+.empty-icon { font-size: 28px; margin-bottom: 10px; }
+.spacer { height: 120px; }
 
-/* ── EMPTY STATE ── */
-.empty-state {
-text-align: center; padding: 40px 20px;
-color: var(–text3); font-size: 14px;
-}
-.empty-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.4; }
-
-/* ── SEARCH BAR ── */
-.search-wrap {
-padding: 0 20px 14px;
-display: none;
-}
-.search-wrap.open { display: block; }
-.search-input {
-width: 100%; background: var(–surface2); border: 1px solid var(–border);
-border-radius: 11px; padding: 10px 13px; color: var(–text);
-font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
-}
-.search-input::placeholder { color: var(–text3); }
-.search-input:focus { border-color: var(–border2); }
-
-@keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+/* staggered section entry */
+.section { opacity: 0; -webkit-animation: secIn 0.4s ease forwards; animation: secIn 0.4s ease forwards; padding: 0 20px; margin-bottom: 22px; }
+.section:nth-child(1) { -webkit-animation-delay: 0.05s; animation-delay: 0.05s; }
+.section:nth-child(2) { -webkit-animation-delay: 0.1s;  animation-delay: 0.1s; }
+.section:nth-child(3) { -webkit-animation-delay: 0.15s; animation-delay: 0.15s; }
+.section:nth-child(4) { -webkit-animation-delay: 0.2s;  animation-delay: 0.2s; }
+.section:nth-child(5) { -webkit-animation-delay: 0.25s; animation-delay: 0.25s; }
+@-webkit-keyframes secIn { from{opacity:0;-webkit-transform:translateY(10px)} to{opacity:1;-webkit-transform:translateY(0)} }
+@keyframes secIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 </style>
 
 </head>
 <body>
 
-<!-- SYNC STATUS BAR -->
-
-<div class="sync-bar" id="syncBar">
-  <div class="sync-dot"></div>
-  <span id="syncMsg">Syncing...</span>
-</div>
+<div class="sync-bar" id="syncBar"><div class="sync-dot"></div><span id="syncMsg"></span></div>
 
 <!-- HEADER -->
 
@@ -384,8 +445,12 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
       <div class="date-sub" id="dateSub"></div>
     </div>
     <div class="header-right">
-      <div class="icon-btn" id="searchBtn" title="Search">🔍</div>
-      <div class="icon-btn" id="settingsBtn" title="Settings">⚙️</div>
+      <div class="icon-btn" id="searchBtn">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      </div>
+      <div class="icon-btn" id="settingsBtn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
     </div>
   </div>
 </div>
@@ -393,33 +458,45 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
 <!-- SEARCH -->
 
 <div class="search-wrap" id="searchWrap">
-  <input class="search-input" id="searchInput" type="text" placeholder="Search tasks...">
+  <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
 </div>
 
-<!-- FOCUS -->
+<!-- FOCUS BANNER (only in focus mode) -->
 
-<div class="focus-strip" id="focusStrip">
+<div class="focus-banner hide-in-focus" style="display:none">
+  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  FOCUS MODE &mdash; Today only
+</div>
+<!-- fix: banner should show IN focus mode -->
+<div class="focus-banner" id="focusBanner" style="display:none">
+  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  FOCUS MODE &mdash; Today only
+</div>
+
+<!-- FOCUS STRIP -->
+
+<div class="focus-strip hide-in-focus" id="focusStrip">
   <div class="focus-dot"></div>
   <div class="focus-text">
     <div class="focus-eye">Current Focus</div>
     <div class="focus-title" id="focusTitle">No task pinned</div>
-    <div class="focus-sub" id="focusSub">Tap a task to pin it as focus</div>
+    <div class="focus-sub" id="focusSub">Tap a task to set as focus</div>
   </div>
   <div class="focus-arr">›</div>
 </div>
 
 <!-- STATS -->
 
-<div class="stats-row">
-  <div class="stat"><div class="stat-n" id="statOpen" style="color:var(--text)">0</div><div class="stat-l">Open</div></div>
-  <div class="stat"><div class="stat-n" id="statBlocked" style="color:var(--pri-high)">0</div><div class="stat-l">Blocked</div></div>
-  <div class="stat"><div class="stat-n" id="statWaiting" style="color:var(--c-conf)">0</div><div class="stat-l">Waiting</div></div>
-  <div class="stat"><div class="stat-n" id="statDone" style="color:var(--green)">0</div><div class="stat-l">Done</div></div>
+<div class="stats-row hide-in-focus">
+  <div class="stat"><div class="stat-n" id="statOpen" style="color:#dddde3">0</div><div class="stat-l">Open</div></div>
+  <div class="stat"><div class="stat-n" id="statBlocked" style="color:#ff7070">0</div><div class="stat-l">Blocked</div></div>
+  <div class="stat"><div class="stat-n" id="statWaiting" style="color:#ffbe5c">0</div><div class="stat-l">Waiting</div></div>
+  <div class="stat"><div class="stat-n" id="statDone" style="color:#52d9a0">0</div><div class="stat-l">Done</div></div>
 </div>
 
 <!-- PROGRESS -->
 
-<div class="prog-wrap">
+<div class="prog-wrap hide-in-focus">
   <div class="prog-top">
     <span class="prog-label">Week progress</span>
     <span class="prog-pct" id="progPct">0%</span>
@@ -429,7 +506,7 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
 
 <!-- FILTERS -->
 
-<div class="filter-scroll" id="filterRow">
+<div class="filter-scroll hide-in-focus" id="filterRow">
   <div class="chip active" data-filter="all">All</div>
   <div class="chip" data-filter="today">Today</div>
   <div class="chip" data-filter="manuscript">Manuscript</div>
@@ -442,35 +519,33 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
   <div class="chip" data-filter="blocked">Blocked</div>
 </div>
 
-<!-- TASK LIST -->
-
 <div id="taskList"></div>
-
 <div class="spacer"></div>
+
+<!-- FOCUS MODE BUTTON -->
+
+<div id="focusModeBtn">
+  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  <span id="focusBtnLabel">Focus</span>
+</div>
 
 <!-- FAB -->
 
 <div class="fab" id="fab">+</div>
 
-<!-- OVERLAY -->
-
 <div class="overlay" id="overlay"></div>
 
-<!-- ADD / EDIT SHEET -->
+<!-- ADD/EDIT SHEET -->
 
 <div class="sheet" id="addSheet">
   <div class="handle"></div>
   <div class="sheet-title" id="addSheetTitle">New Task</div>
-
   <div class="sheet-label">Task</div>
   <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing...">
-
   <div class="sheet-label">Note</div>
-  <input class="input" id="taskNoteInput" type="text" placeholder="Context, blockers, notes...">
-
+  <input class="input" id="taskNoteInput" type="text" placeholder="Context, blockers, who's involved...">
   <div class="sheet-label">Due</div>
-  <input class="input" id="taskDueInput" type="text" placeholder="Today, Mar 5, Tonight, Overdue...">
-
+  <input class="input" id="taskDueInput" type="text" placeholder="Today, Tonight, Mar 5, Overdue...">
   <div class="sheet-label">Category</div>
   <div class="chip-row" id="catRow">
     <div class="s-chip" data-val="manuscript">Manuscript</div>
@@ -481,7 +556,6 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
     <div class="s-chip" data-val="personal">Personal</div>
     <div class="s-chip" data-val="hobby">Hobby</div>
   </div>
-
   <div class="sheet-label">Status</div>
   <div class="chip-row" id="statusRow">
     <div class="s-chip active" data-val="active">Active</div>
@@ -489,14 +563,12 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
     <div class="s-chip" data-val="blocked">Blocked</div>
     <div class="s-chip" data-val="review">In Review</div>
   </div>
-
   <div class="sheet-label">Priority</div>
   <div class="chip-row" id="priRow">
     <div class="s-chip" data-val="hi">High</div>
     <div class="s-chip active" data-val="md">Med</div>
     <div class="s-chip" data-val="lo">Low</div>
   </div>
-
   <div class="sheet-label">Section</div>
   <div class="chip-row" id="sectionRow">
     <div class="s-chip active" data-val="today">Today</div>
@@ -505,10 +577,9 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
     <div class="s-chip" data-val="blocked">Blocked</div>
     <div class="s-chip" data-val="upcoming">Upcoming</div>
   </div>
-
-<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
-<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
-
+  <button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
+  <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
+  <button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
 </div>
 
 <!-- SETTINGS SHEET -->
@@ -516,733 +587,616 @@ font-family: ‘DM Sans’, sans-serif; font-size: 14px; outline: none;
 <div class="sheet" id="settingsSheet">
   <div class="handle"></div>
   <div class="sheet-title">Settings</div>
-
-  <div class="settings-status" id="ghStatus">
-    <div class="status-dot"></div>
-    <span id="ghStatusText">Not connected to GitHub</span>
-  </div>
-
+  <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
   <div class="settings-field">
     <label>GitHub Username</label>
-    <input class="input" id="ghUser" type="text" placeholder="yourusername" style="margin-bottom:0">
+    <input class="input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
   </div>
   <div class="settings-field">
     <label>Repository Name</label>
-    <input class="input" id="ghRepo" type="text" placeholder="my-tasks" style="margin-bottom:0">
+    <input class="input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
   </div>
   <div class="settings-field">
     <label>Personal Access Token</label>
-    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" style="margin-bottom:0">
+    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
   </div>
-  <div style="font-size:11px; color:var(--text3); margin-bottom:14px; line-height:1.6;">
-    Token needs <strong style="color:var(--text2)">repo</strong> scope. Stored only in localStorage on this device.
-    <br>GitHub → Settings → Developer Settings → Personal Access Tokens (classic)
+  <div style="font-size:11px; color:#62636f; margin-bottom:14px; line-height:1.7;">
+    Token needs <strong style="color:#9a9aaa">repo</strong> scope. Stored only in localStorage — never sent anywhere except GitHub's API.
   </div>
-
-<button class="sheet-btn primary" id="saveSettingsBtn">Save & Test Connection</button>
-
+  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
   <div class="divider"></div>
   <div class="sheet-label">Danger Zone</div>
   <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
 </div>
 
-<!-- TOAST -->
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
-// DATA MODEL
-// ══════════════════════════════════════════════
-const STORE_KEY = 'kw_tasks_v1';
-const SETTINGS_KEY = 'kw_settings_v1';
-const FOCUS_KEY = 'kw_focus_v1';
-const PENDING_KEY = 'kw_pending_v1';
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+var STORE_KEY    = 'kw_tasks_v3';
+var SETTINGS_KEY = 'kw_settings_v3';
+var FOCUS_KEY    = 'kw_focus_v3';
+var PENDING_KEY  = 'kw_pending_v3';
 
-const SECTIONS = ['today','personal','hobby','blocked','upcoming'];
-const SECTION_LABELS = {
-  today: 'Today',
-  personal: 'Bel & Personal',
-  hobby: 'Hobbies & Games',
-  blocked: 'Blocked / Waiting',
-  upcoming: 'Upcoming'
-};
+var SECTIONS = ['today','personal','hobby','blocked','upcoming'];
+var SECTION_LABELS = { today:'Today', personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
+var CAT_LABEL = { manuscript:'manuscript', lab:'lab ops', phd:'phd apps', conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby' };
 
-const CAT_LABEL = {
-  manuscript:'manuscript', lab:'lab ops', phd:'phd apps',
-  conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby'
-};
+var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false };
 
-let state = {
-  tasks: [],
-  settings: { ghUser:'', ghRepo:'', ghToken:'' },
-  focus: null,   // task id
-  filter: 'all',
-  editingId: null,
-  pendingSync: false,
-  isOnline: navigator.onLine,
-  sha: null       // github file sha for updates
-};
-
-// ── LOAD FROM LOCALSTORAGE ──
 function loadLocal() {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) state.tasks = JSON.parse(raw);
-  } catch(e) {}
-  try {
-    const s = localStorage.getItem(SETTINGS_KEY);
-    if (s) state.settings = { ...state.settings, ...JSON.parse(s) };
-  } catch(e) {}
-  try {
-    const f = localStorage.getItem(FOCUS_KEY);
-    if (f) state.focus = f;
-  } catch(e) {}
-  try {
-    const p = localStorage.getItem(PENDING_KEY);
-    if (p) state.pendingSync = JSON.parse(p);
-  } catch(e) {}
+  try { var r=localStorage.getItem(STORE_KEY); if(r) state.tasks=JSON.parse(r); } catch(e){}
+  try { var s=localStorage.getItem(SETTINGS_KEY); if(s) state.settings=JSON.parse(s); } catch(e){}
+  try { var f=localStorage.getItem(FOCUS_KEY); if(f) state.focus=f; } catch(e){}
+  try { var p=localStorage.getItem(PENDING_KEY); if(p) state.pendingSync=JSON.parse(p); } catch(e){}
 }
 
 function saveLocal() {
   localStorage.setItem(STORE_KEY, JSON.stringify(state.tasks));
-  localStorage.setItem(FOCUS_KEY, state.focus || '');
+  localStorage.setItem(FOCUS_KEY, state.focus||'');
 }
 
-function savePending(v) {
-  state.pendingSync = v;
-  localStorage.setItem(PENDING_KEY, JSON.stringify(v));
+function savePending(v) { state.pendingSync=v; localStorage.setItem(PENDING_KEY,JSON.stringify(v)); }
+function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+// ══════════════════════════════════════════
+// GITHUB
+// ══════════════════════════════════════════
+var GH_API='https://api.github.com';
+function ghHeaders(){ return {'Authorization':'token '+state.settings.ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'}; }
+function ghPath(){ return GH_API+'/repos/'+state.settings.ghUser+'/'+state.settings.ghRepo+'/contents/tasks.json'; }
+
+function ghFetch(){
+  if(!state.settings.ghToken||!state.settings.ghUser||!state.settings.ghRepo) return;
+  showSync('syncing','Fetching from GitHub\u2026');
+  fetch(ghPath(),{headers:ghHeaders()})
+    .then(function(r){ if(r.status===404){ghPush();return null;} if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d){
+      if(!d) return;
+      state.sha=d.sha;
+      var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+      if(state.pendingSync){ ghPush(); } else { state.tasks=dec.tasks||dec; saveLocal(); render(); showSync('success','Synced'); }
+    })
+    .catch(function(){ showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline \u2014 saved locally'); });
 }
 
-// ── ID GENERATION ──
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+function ghPush(){
+  if(!state.settings.ghToken||!state.settings.ghUser||!state.settings.ghRepo){ savePending(true); return; }
+  if(!navigator.onLine){ savePending(true); showSync('offline','Offline \u2014 will sync when reconnected'); return; }
+  showSync('syncing','Saving to GitHub\u2026');
+  var payload={tasks:state.tasks,updated:new Date().toISOString()};
+  var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+  var body={message:'Update tasks '+new Date().toLocaleTimeString(),content:content};
+  if(state.sha) body.sha=state.sha;
+  fetch(ghPath(),{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d){ state.sha=d.content.sha; savePending(false); showSync('success','Saved'); })
+    .catch(function(){ savePending(true); showSync('error','Save failed \u2014 stored locally'); });
 }
 
-// ══════════════════════════════════════════════
-// GITHUB SYNC
-// ══════════════════════════════════════════════
-const GH_API = 'https://api.github.com';
-
-function ghHeaders() {
-  return {
-    'Authorization': `token ${state.settings.ghToken}`,
-    'Content-Type': 'application/json',
-    'Accept': 'application/vnd.github.v3+json'
-  };
+function testGhConnection(){
+  var s=state.settings;
+  if(!s.ghToken||!s.ghUser||!s.ghRepo) return Promise.resolve(false);
+  return fetch(GH_API+'/repos/'+s.ghUser+'/'+s.ghRepo,{headers:ghHeaders()}).then(function(r){return r.ok;}).catch(function(){return false;});
 }
 
-function ghPath() {
-  const { ghUser, ghRepo } = state.settings;
-  return `${GH_API}/repos/${ghUser}/${ghRepo}/contents/tasks.json`;
-}
+window.addEventListener('online', function(){ if(state.pendingSync) ghPush(); });
 
-async function ghFetch() {
-  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) return;
-  try {
-    showSyncBar('syncing', 'Fetching from GitHub...');
-    const res = await fetch(ghPath(), { headers: ghHeaders() });
-    if (res.status === 404) {
-      // file doesn't exist yet — push current state
-      await ghPush();
-      return;
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    state.sha = data.sha;
-    const decoded = JSON.parse(atob(data.content.replace(/\n/g,'')));
-    // merge: remote wins for tasks not modified locally
-    // simple strategy: if pending sync, push; otherwise pull
-    if (state.pendingSync) {
-      await ghPush();
-    } else {
-      state.tasks = decoded.tasks || decoded;
-      saveLocal();
-      render();
-    }
-    showSyncBar('success', 'Synced with GitHub');
-  } catch(e) {
-    console.error('GH fetch error:', e);
-    if (!navigator.onLine) {
-      showSyncBar('offline', 'Offline — changes saved locally');
-    } else {
-      showSyncBar('error', 'Sync failed — changes saved locally');
-    }
-  }
-}
-
-async function ghPush() {
-  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) {
-    // no github — just save locally and mark pending
-    savePending(true);
-    return;
-  }
-  if (!navigator.onLine) {
-    savePending(true);
-    showSyncBar('offline', 'Offline — will sync when reconnected');
-    return;
-  }
-  try {
-    showSyncBar('syncing', 'Saving to GitHub...');
-    const payload = { tasks: state.tasks, updated: new Date().toISOString() };
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-    const body = {
-      message: `Update tasks ${new Date().toLocaleTimeString()}`,
-      content,
-      ...(state.sha ? { sha: state.sha } : {})
-    };
-    const res = await fetch(ghPath(), {
-      method: 'PUT',
-      headers: ghHeaders(),
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    state.sha = data.content.sha;
-    savePending(false);
-    showSyncBar('success', 'Saved to GitHub');
-  } catch(e) {
-    console.error('GH push error:', e);
-    savePending(true);
-    showSyncBar('error', 'Save failed — stored locally');
-  }
-}
-
-async function testGhConnection() {
-  const { ghUser, ghRepo, ghToken } = state.settings;
-  if (!ghToken || !ghUser || !ghRepo) return false;
-  try {
-    const res = await fetch(`${GH_API}/repos/${ghUser}/${ghRepo}`, { headers: ghHeaders() });
-    return res.ok;
-  } catch(e) { return false; }
-}
-
-// auto-sync when coming back online
-window.addEventListener('online', () => {
-  state.isOnline = true;
-  if (state.pendingSync) ghPush();
-});
-window.addEventListener('offline', () => {
-  state.isOnline = false;
-});
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // SYNC BAR
-// ══════════════════════════════════════════════
-let syncTimer = null;
-function showSyncBar(type, msg) {
-  const bar = document.getElementById('syncBar');
-  const msgEl = document.getElementById('syncMsg');
-  bar.className = `sync-bar show ${type}`;
-  msgEl.textContent = msg;
-  if (syncTimer) clearTimeout(syncTimer);
-  if (type !== 'syncing') {
-    syncTimer = setTimeout(() => {
-      bar.classList.remove('show');
-    }, 2500);
-  }
+// ══════════════════════════════════════════
+var syncTimer=null;
+function showSync(type,msg){
+  var bar=document.getElementById('syncBar');
+  bar.className='sync-bar show '+type;
+  document.getElementById('syncMsg').textContent=msg;
+  if(syncTimer) clearTimeout(syncTimer);
+  if(type!=='syncing') syncTimer=setTimeout(function(){ bar.classList.remove('show'); },2500);
 }
 
-// ══════════════════════════════════════════════
-// DATE HELPERS
-// ══════════════════════════════════════════════
-function formatDate() {
-  const d = new Date();
-  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('dateDisplay').textContent =
-    `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}`;
-  const todayCount = state.tasks.filter(t => t.section === 'today' && !t.done).length;
-  document.getElementById('dateSub').textContent =
-    todayCount ? `${todayCount} task${todayCount !== 1 ? 's' : ''} due today` : 'All clear today';
-}
-
-function isDueUrgency(dueStr) {
-  if (!dueStr) return '';
-  const low = dueStr.toLowerCase();
-  if (low === 'today' || low === 'tonight') return 'soon';
-  if (low === 'overdue') return 'overdue';
-  return '';
-}
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // RENDER
-// ══════════════════════════════════════════════
-function catClass(cat) {
-  const map = { manuscript:'cat-manuscript', lab:'cat-lab', phd:'cat-phd',
-    conf:'cat-conf', bel:'cat-bel', personal:'cat-personal', hobby:'cat-hobby' };
-  return map[cat] || '';
+// ══════════════════════════════════════════
+function formatDate(){
+  var d=new Date();
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('dateDisplay').textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate();
+  var n=state.tasks.filter(function(t){ return t.section==='today'&&!t.done; }).length;
+  document.getElementById('dateSub').textContent=n ? n+' task'+(n!==1?'s':'')+' due today' : 'All clear today';
 }
 
-function renderTask(t) {
-  const div = document.createElement('div');
-  div.className = `task ${t.priority || 'md'} ${t.done ? 'done' : ''} ${(t.status === 'blocked' || t.status === 'waiting') && !t.done ? 'dimmed' : ''}`;
-  div.dataset.id = t.id;
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function dueClass(due){ if(!due) return ''; var l=due.toLowerCase(); if(l==='overdue') return 'overdue'; if(l==='today'||l==='tonight'||l.indexOf('today')===0) return 'soon'; return ''; }
+function catCls(cat){ var m={manuscript:'cat-manuscript',lab:'cat-lab',phd:'cat-phd',conf:'cat-conf',bel:'cat-bel',personal:'cat-personal',hobby:'cat-hobby'}; return m[cat]||''; }
 
-  const urg = isDueUrgency(t.due);
-  const dueHtml = t.due ? `<span class="due ${urg}">${t.due}</span>` : '';
-  const catHtml = t.category ? `<span class="cat ${catClass(t.category)}">${CAT_LABEL[t.category] || t.category}</span>` : '';
-  const statusMap = { waiting:'waiting', blocked:'blocked', review:'review' };
-  const statusHtml = (t.status && t.status !== 'active')
-    ? `<span class="status ${statusMap[t.status] || ''}">${t.status === 'waiting' ? 'waiting on' : t.status}</span>` : '';
-  const noteHtml = t.note ? `<div class="note">${escHtml(t.note)}</div>` : '';
+function makeTaskWrap(t, delay) {
+  // outer wrapper for swipe
+  var wrap = document.createElement('div');
+  wrap.className = 'task-wrap entering';
+  wrap.dataset.id = t.id;
+  wrap.style.animationDelay = (delay||0)+'ms';
 
-  div.innerHTML = `
-    <div class="cb">${t.done ? '✓' : ''}</div>
-    <div class="task-body">
-      <div class="task-title">${escHtml(t.title)}</div>
-      <div class="task-row">${catHtml}${statusHtml}${dueHtml}</div>
-      ${noteHtml}
-    </div>
-    <button class="task-del" title="Delete">✕</button>
-  `;
+  // swipe bg (red delete reveal)
+  var bg = document.createElement('div');
+  bg.className = 'swipe-bg';
+  bg.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+  wrap.appendChild(bg);
 
-  div.querySelector('.cb').addEventListener('click', e => {
+  var el = document.createElement('div');
+  el.className = 'task '+(t.priority||'md')+(t.done?' done':'')+(((t.status==='blocked'||t.status==='waiting')&&!t.done)?' dimmed':'');
+  el.dataset.id = t.id;
+
+  var catHtml=t.category?'<span class="cat '+catCls(t.category)+'">'+esc(CAT_LABEL[t.category]||t.category)+'</span>':'';
+  var statusMap={waiting:'waiting on',blocked:'blocked',review:'in review'};
+  var statusHtml=(t.status&&t.status!=='active')?'<span class="status '+t.status+'">'+esc(statusMap[t.status]||t.status)+'</span>':'';
+  var dc=dueClass(t.due);
+  var dueHtml=t.due?'<span class="due '+dc+'">'+esc(t.due)+'</span>':'';
+  var noteHtml=t.note?'<div class="note">'+esc(t.note)+'</div>':'';
+
+  el.innerHTML=
+    '<div class="cb">'+(t.done?'&#10003;':'')+'</div>'+
+    '<div class="task-body">'+
+      '<div class="task-title">'+esc(t.title)+'</div>'+
+      '<div class="task-row">'+catHtml+statusHtml+dueHtml+'</div>'+
+      noteHtml+
+    '</div>';
+
+  // checkbox
+  el.querySelector('.cb').addEventListener('click', function(e){
     e.stopPropagation();
-    toggleDone(t.id);
+    animateCheck(t.id, el);
   });
 
-  div.querySelector('.task-del').addEventListener('click', e => {
-    e.stopPropagation();
-    deleteTask(t.id);
-  });
+  // tap to edit
+  el.addEventListener('click', function(){ openEdit(t.id); });
 
-  div.addEventListener('click', () => openEdit(t.id));
+  wrap.appendChild(el);
 
-  // long press to show delete btn on mobile
-  let pressTimer;
-  div.addEventListener('touchstart', () => {
-    pressTimer = setTimeout(() => div.classList.toggle('show-actions'), 500);
-  }, { passive: true });
-  div.addEventListener('touchend', () => clearTimeout(pressTimer), { passive: true });
+  // swipe to delete
+  attachSwipe(wrap, el, bg, t.id);
 
-  return div;
+  return wrap;
 }
 
-function filterTask(t) {
-  const f = state.filter;
-  if (f === 'all') return true;
-  if (f === 'today') return t.section === 'today';
-  if (f === 'blocked') return t.status === 'blocked' || t.status === 'waiting';
-  return t.category === f;
+// ── SWIPE TO DELETE ──
+function attachSwipe(wrap, el, bg, id) {
+  var startX=0, startY=0, currentX=0, dragging=false, maybeSwipe=false;
+  var THRESHOLD = 80;
+
+  el.addEventListener('touchstart', function(e){
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    dragging = false;
+    maybeSwipe = true;
+    currentX = 0;
+  }, {passive:true});
+
+  el.addEventListener('touchmove', function(e){
+    if(!maybeSwipe) return;
+    var dx = e.touches[0].clientX - startX;
+    var dy = e.touches[0].clientY - startY;
+
+    if(!dragging && Math.abs(dy) > Math.abs(dx) + 5) {
+      maybeSwipe = false; return; // vertical scroll — bail
+    }
+    if(dx > 0) { maybeSwipe=false; return; } // right swipe — ignore
+
+    dragging = true;
+    currentX = dx;
+    el.style.transform = 'translateX('+Math.max(dx,-120)+'px)';
+    var pct = Math.min(Math.abs(dx)/THRESHOLD, 1);
+    bg.style.opacity = pct;
+    e.preventDefault(); // prevent scroll while swiping left
+  }, {passive:false});
+
+  el.addEventListener('touchend', function(){
+    if(!dragging){ maybeSwipe=false; return; }
+    maybeSwipe=false; dragging=false;
+    if(Math.abs(currentX) >= THRESHOLD) {
+      // commit delete
+      wrap.classList.add('removing');
+      setTimeout(function(){ deleteTask(id); }, 200);
+    } else {
+      // snap back
+      el.style.transition = 'transform 0.2s ease';
+      el.style.transform = 'translateX(0)';
+      bg.style.opacity = 0;
+      setTimeout(function(){ el.style.transition=''; }, 200);
+    }
+  }, {passive:true});
 }
 
-function searchMatch(t, q) {
-  if (!q) return true;
-  const ql = q.toLowerCase();
-  return (t.title || '').toLowerCase().includes(ql) ||
-         (t.note || '').toLowerCase().includes(ql);
+// ── CHECK ANIMATION ──
+function animateCheck(id, el) {
+  var cb = el.querySelector('.cb');
+  cb.classList.add('popping');
+  setTimeout(function(){ cb.classList.remove('popping'); }, 300);
+  toggleDone(id);
 }
 
-function render() {
+function filterTask(t){
+  var f=state.filter;
+  if(state.focusMode) return t.section==='today';
+  if(f==='all') return true;
+  if(f==='today') return t.section==='today';
+  if(f==='blocked') return t.status==='blocked'||t.status==='waiting';
+  return t.category===f;
+}
+
+function searchMatch(t,q){
+  if(!q) return true;
+  var ql=q.toLowerCase();
+  return (t.title||'').toLowerCase().indexOf(ql)!==-1||(t.note||'').toLowerCase().indexOf(ql)!==-1;
+}
+
+function render(){
   formatDate();
+  var searchQ = document.getElementById('searchInput').value.trim();
 
-  const searchQ = document.getElementById('searchInput').value.trim();
+  var open    = state.tasks.filter(function(t){return !t.done;}).length;
+  var blocked = state.tasks.filter(function(t){return !t.done&&t.status==='blocked';}).length;
+  var waiting = state.tasks.filter(function(t){return !t.done&&t.status==='waiting';}).length;
+  var done    = state.tasks.filter(function(t){return t.done;}).length;
+  var total   = state.tasks.length;
+  document.getElementById('statOpen').textContent=open;
+  document.getElementById('statBlocked').textContent=blocked;
+  document.getElementById('statWaiting').textContent=waiting;
+  document.getElementById('statDone').textContent=done;
+  var pct=total?Math.round((done/total)*100):0;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('progFill').style.width=pct+'%';
 
-  // stats
-  const open = state.tasks.filter(t => !t.done).length;
-  const blocked = state.tasks.filter(t => !t.done && t.status === 'blocked').length;
-  const waiting = state.tasks.filter(t => !t.done && t.status === 'waiting').length;
-  const done = state.tasks.filter(t => t.done).length;
-  const total = state.tasks.length;
-
-  document.getElementById('statOpen').textContent = open;
-  document.getElementById('statBlocked').textContent = blocked;
-  document.getElementById('statWaiting').textContent = waiting;
-  document.getElementById('statDone').textContent = done;
-
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('progPct').textContent = `${pct}%`;
-  document.getElementById('progFill').style.width = `${pct}%`;
-
-  // focus
-  const focusTask = state.tasks.find(t => t.id === state.focus && !t.done);
-  if (focusTask) {
-    document.getElementById('focusTitle').textContent = focusTask.title;
-    document.getElementById('focusSub').textContent =
-      [focusTask.category ? CAT_LABEL[focusTask.category] : null, focusTask.due].filter(Boolean).join(' · ') || 'Pinned focus';
+  // focus strip
+  var ft=null;
+  if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
+  if(ft){
+    document.getElementById('focusTitle').textContent=ft.title;
+    var parts=[]; if(ft.category) parts.push(CAT_LABEL[ft.category]||ft.category); if(ft.due) parts.push(ft.due);
+    document.getElementById('focusSub').textContent=parts.join(' \u00b7 ')||'Pinned';
   } else {
-    document.getElementById('focusTitle').textContent = 'No task pinned';
-    document.getElementById('focusSub').textContent = 'Tap a task to set focus';
-    state.focus = null;
+    state.focus=null;
+    document.getElementById('focusTitle').textContent='No task pinned';
+    document.getElementById('focusSub').textContent='Tap a task to set as focus';
   }
 
   // task list
-  const list = document.getElementById('taskList');
-  list.innerHTML = '';
+  var list=document.getElementById('taskList');
+  list.innerHTML='';
+  var anyVisible=false;
+  var sectionsToShow=state.focusMode?['today']:SECTIONS;
+  var delayBase=0;
 
-  let anyVisible = false;
-
-  SECTIONS.forEach(sec => {
-    const tasks = state.tasks.filter(t =>
-      t.section === sec && filterTask(t) && searchMatch(t, searchQ)
-    );
-    if (tasks.length === 0) return;
-    anyVisible = true;
-
-    const section = document.createElement('div');
-    section.className = 'section';
-
-    const header = document.createElement('div');
-    header.className = 'sec-header';
-    header.innerHTML = `<div class="sec-title">${SECTION_LABELS[sec]}</div><div class="sec-count">${tasks.length}</div>`;
+  sectionsToShow.forEach(function(sec){
+    var tasks=state.tasks.filter(function(t){ return t.section===sec&&filterTask(t)&&searchMatch(t,searchQ); });
+    if(tasks.length===0) return;
+    anyVisible=true;
+    var section=document.createElement('div');
+    section.className='section';
+    var header=document.createElement('div');
+    header.className='sec-header';
+    header.innerHTML='<div class="sec-title">'+SECTION_LABELS[sec]+'</div><div class="sec-count">'+tasks.length+'</div>';
     section.appendChild(header);
-
-    tasks.forEach(t => section.appendChild(renderTask(t)));
+    tasks.forEach(function(t,i){ section.appendChild(makeTaskWrap(t, delayBase + i*30)); });
+    delayBase+=tasks.length*30+50;
     list.appendChild(section);
   });
 
-  if (!anyVisible) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">✓</div>
-        <div>${searchQ ? 'No tasks match your search' : 'No tasks here'}</div>
-      </div>`;
+  if(!anyVisible){
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">&#10003;</div><div>'+(state.focusMode?'Nothing due today':'No tasks here')+'</div></div>';
   }
+
+  // focus mode UI
+  document.getElementById('focusBanner').style.display = state.focusMode ? 'flex' : 'none';
+  document.getElementById('focusBtnLabel').textContent = state.focusMode ? 'Exit Focus' : 'Focus';
 }
 
-function escHtml(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // TASK ACTIONS
-// ══════════════════════════════════════════════
-function toggleDone(id) {
-  const t = state.tasks.find(t => t.id === id);
-  if (!t) return;
-  t.done = !t.done;
-  saveLocal();
-  render();
-  ghPush();
+// ══════════════════════════════════════════
+function toggleDone(id){
+  for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===id){ state.tasks[i].done=!state.tasks[i].done; break; } }
+  saveLocal(); render(); ghPush();
 }
 
-function deleteTask(id) {
-  state.tasks = state.tasks.filter(t => t.id !== id);
-  if (state.focus === id) state.focus = null;
-  saveLocal();
-  render();
-  ghPush();
-  toast('Task deleted');
+function deleteTask(id){
+  state.tasks=state.tasks.filter(function(t){return t.id!==id;});
+  if(state.focus===id) state.focus=null;
+  saveLocal(); render(); ghPush();
+  showToast('Task deleted');
 }
 
-function openEdit(id) {
-  const t = state.tasks.find(t => t.id === id);
-  if (!t) return;
-  state.editingId = id;
-  document.getElementById('addSheetTitle').textContent = 'Edit Task';
-  document.getElementById('saveTaskBtn').textContent = 'Save Changes';
-  document.getElementById('deleteTaskBtn').style.display = 'block';
-  document.getElementById('taskTitleInput').value = t.title || '';
-  document.getElementById('taskNoteInput').value = t.note || '';
-  document.getElementById('taskDueInput').value = t.due || '';
-  setChip('catRow', t.category || null);
-  setChip('statusRow', t.status || 'active');
-  setChip('priRow', t.priority || 'md');
-  setChip('sectionRow', t.section || 'today');
-
-  // set focus option
-  document.getElementById('focusStrip').style.outline =
-    state.focus === id ? '2px solid var(--c-manuscript)' : 'none';
-
+function openEdit(id){
+  var t=null;
+  for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===id){t=state.tasks[i];break;} }
+  if(!t) return;
+  state.editingId=id;
+  document.getElementById('addSheetTitle').textContent='Edit Task';
+  document.getElementById('saveTaskBtn').textContent='Save Changes';
+  document.getElementById('deleteTaskBtn').style.display='block';
+  document.getElementById('focusPinBtn').style.display='block';
+  document.getElementById('focusPinBtn').textContent=state.focus===id?'Unpin Focus':'Set as Focus';
+  document.getElementById('taskTitleInput').value=t.title||'';
+  document.getElementById('taskNoteInput').value=t.note||'';
+  document.getElementById('taskDueInput').value=t.due||'';
+  setChip('catRow',t.category||null);
+  setChip('statusRow',t.status||'active');
+  setChip('priRow',t.priority||'md');
+  setChip('sectionRow',t.section||'today');
   openSheet('addSheet');
 }
 
-function saveTask() {
-  const title = document.getElementById('taskTitleInput').value.trim();
-  if (!title) { toast('Enter a task title'); return; }
+function saveTask(){
+  var title=document.getElementById('taskTitleInput').value.trim();
+  if(!title){ showToast('Enter a task title'); return; }
+  var category=getChip('catRow');
+  var status=getChip('statusRow')||'active';
+  var priority=getChip('priRow')||'md';
+  var section=getChip('sectionRow')||'today';
+  var note=document.getElementById('taskNoteInput').value.trim();
+  var due=document.getElementById('taskDueInput').value.trim();
 
-  const category = getChip('catRow');
-  const status   = getChip('statusRow') || 'active';
-  const priority = getChip('priRow')    || 'md';
-  const section  = getChip('sectionRow')|| 'today';
-  const note = document.getElementById('taskNoteInput').value.trim();
-  const due  = document.getElementById('taskDueInput').value.trim();
-
-  if (state.editingId) {
-    const t = state.tasks.find(t => t.id === state.editingId);
-    if (t) Object.assign(t, { title, category, status, priority, section, note, due });
-    toast('Task updated');
+  if(state.editingId){
+    for(var i=0;i<state.tasks.length;i++){
+      if(state.tasks[i].id===state.editingId){
+        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,note:note,due:due});
+        break;
+      }
+    }
+    showToast('Task updated');
   } else {
-    state.tasks.push({ id: uid(), title, category, status, priority, section, note, due, done: false });
-    toast('Task added');
+    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,done:false});
+    showToast('Task added');
   }
+  closeSheets(); saveLocal(); render(); ghPush();
+}
 
-  closeSheets();
+// focus pin from edit sheet
+document.getElementById('focusPinBtn').addEventListener('click', function(){
+  if(!state.editingId) return;
+  state.focus = (state.focus===state.editingId) ? null : state.editingId;
+  document.getElementById('focusPinBtn').textContent = state.focus===state.editingId ? 'Unpin Focus' : 'Set as Focus';
   saveLocal();
+  showToast(state.focus ? 'Focus set' : 'Focus cleared');
+  closeSheets(); render();
+});
+
+// clear focus by tapping strip
+document.getElementById('focusStrip').addEventListener('click', function(){
+  if(state.focus){ state.focus=null; saveLocal(); render(); showToast('Focus cleared'); }
+});
+
+// ── FOCUS MODE ──
+document.getElementById('focusModeBtn').addEventListener('click', function(){
+  state.focusMode = !state.focusMode;
+  document.body.classList.toggle('focus-mode', state.focusMode);
   render();
-  ghPush();
-}
+  showToast(state.focusMode ? 'Focus mode on — Today only' : 'Showing all tasks');
+});
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // SHEETS
-// ══════════════════════════════════════════════
-function openSheet(id) {
-  document.getElementById(id).classList.add('open');
-  document.getElementById('overlay').classList.add('open');
-}
+// ══════════════════════════════════════════
+function openSheet(id){ document.getElementById(id).classList.add('open'); document.getElementById('overlay').classList.add('open'); }
 
-function closeSheets() {
-  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
+function closeSheets(){
+  document.querySelectorAll('.sheet').forEach(function(s){s.classList.remove('open');});
   document.getElementById('overlay').classList.remove('open');
-  state.editingId = null;
-  document.getElementById('addSheetTitle').textContent = 'New Task';
-  document.getElementById('saveTaskBtn').textContent = 'Add Task';
-  document.getElementById('deleteTaskBtn').style.display = 'none';
-  // reset form
-  document.getElementById('taskTitleInput').value = '';
-  document.getElementById('taskNoteInput').value = '';
-  document.getElementById('taskDueInput').value = '';
-  setChip('catRow', null);
-  setChip('statusRow', 'active');
-  setChip('priRow', 'md');
-  setChip('sectionRow', 'today');
+  state.editingId=null;
+  document.getElementById('addSheetTitle').textContent='New Task';
+  document.getElementById('saveTaskBtn').textContent='Add Task';
+  document.getElementById('deleteTaskBtn').style.display='none';
+  document.getElementById('focusPinBtn').style.display='none';
+  document.getElementById('taskTitleInput').value='';
+  document.getElementById('taskNoteInput').value='';
+  document.getElementById('taskDueInput').value='';
+  setChip('catRow',null); setChip('statusRow','active'); setChip('priRow','md'); setChip('sectionRow','today');
 }
 
-function openAddSheet() {
-  state.editingId = null;
-  document.getElementById('addSheetTitle').textContent = 'New Task';
-  document.getElementById('saveTaskBtn').textContent = 'Add Task';
-  document.getElementById('deleteTaskBtn').style.display = 'none';
-  openSheet('addSheet');
+function openAddSheet(){
+  state.editingId=null;
+  closeSheets();
+  setTimeout(function(){ openSheet('addSheet'); },10);
 }
 
-// ══════════════════════════════════════════════
-// CHIP HELPERS
-// ══════════════════════════════════════════════
-function getChip(rowId) {
-  const active = document.querySelector(`#${rowId} .s-chip.active`);
-  return active ? active.dataset.val : null;
-}
+function getChip(rowId){ var a=document.querySelector('#'+rowId+' .s-chip.active'); return a?a.dataset.val:null; }
+function setChip(rowId,val){ document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.toggle('active',c.dataset.val===val);}); }
 
-function setChip(rowId, val) {
-  document.querySelectorAll(`#${rowId} .s-chip`).forEach(c => {
-    c.classList.toggle('active', c.dataset.val === val);
-  });
-}
-
-['catRow','statusRow','priRow','sectionRow'].forEach(rowId => {
-  document.getElementById(rowId).addEventListener('click', e => {
-    const chip = e.target.closest('.s-chip');
-    if (!chip) return;
-    document.querySelectorAll(`#${rowId} .s-chip`).forEach(c => c.classList.remove('active'));
+['catRow','statusRow','priRow','sectionRow'].forEach(function(rowId){
+  document.getElementById(rowId).addEventListener('click',function(e){
+    var chip=e.target.closest('.s-chip'); if(!chip) return;
+    document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.remove('active');});
     chip.classList.add('active');
   });
 });
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // SETTINGS
-// ══════════════════════════════════════════════
-function loadSettingsUI() {
-  document.getElementById('ghUser').value  = state.settings.ghUser || '';
-  document.getElementById('ghRepo').value  = state.settings.ghRepo || '';
-  document.getElementById('ghToken').value = state.settings.ghToken || '';
-  updateGhStatusUI(!!state.settings.ghToken);
+// ══════════════════════════════════════════
+function loadSettingsUI(){
+  document.getElementById('ghUser').value=state.settings.ghUser||'';
+  document.getElementById('ghRepo').value=state.settings.ghRepo||'';
+  document.getElementById('ghToken').value=state.settings.ghToken||'';
+  updateGhUI(!!state.settings.ghToken);
 }
 
-function updateGhStatusUI(connected) {
-  const el = document.getElementById('ghStatus');
-  const txt = document.getElementById('ghStatusText');
-  if (connected) {
-    el.className = 'settings-status connected';
-    txt.textContent = `Connected: ${state.settings.ghUser}/${state.settings.ghRepo}`;
-  } else {
-    el.className = 'settings-status';
-    txt.textContent = 'Not connected to GitHub';
-  }
+function updateGhUI(connected){
+  var el=document.getElementById('ghStatus'), txt=document.getElementById('ghStatusText');
+  if(connected){ el.className='settings-status connected'; txt.textContent='Connected: '+state.settings.ghUser+'/'+state.settings.ghRepo; }
+  else { el.className='settings-status'; txt.textContent='Not connected to GitHub'; }
 }
 
-document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-  const u = document.getElementById('ghUser').value.trim();
-  const r = document.getElementById('ghRepo').value.trim();
-  const t = document.getElementById('ghToken').value.trim();
-  state.settings = { ghUser: u, ghRepo: r, ghToken: t };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
-  document.getElementById('saveSettingsBtn').textContent = 'Testing...';
-  const ok = await testGhConnection();
-  document.getElementById('saveSettingsBtn').textContent = 'Save & Test Connection';
-  if (ok) {
-    updateGhStatusUI(true);
-    toast('Connected! Fetching tasks...');
-    state.sha = null;
-    await ghFetch();
-  } else {
-    updateGhStatusUI(false);
-    toast('Connection failed — check token & repo name');
-  }
+document.getElementById('saveSettingsBtn').addEventListener('click',function(){
+  var u=document.getElementById('ghUser').value.trim();
+  var r=document.getElementById('ghRepo').value.trim();
+  var t=document.getElementById('ghToken').value.trim();
+  state.settings={ghUser:u,ghRepo:r,ghToken:t};
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(state.settings));
+  document.getElementById('saveSettingsBtn').textContent='Testing\u2026';
+  testGhConnection().then(function(ok){
+    document.getElementById('saveSettingsBtn').textContent='Save & Test Connection';
+    if(ok){ updateGhUI(true); showToast('Connected! Fetching tasks\u2026'); state.sha=null; ghFetch(); }
+    else { updateGhUI(false); showToast('Connection failed \u2014 check token & repo'); }
+  });
 });
 
-document.getElementById('clearDataBtn').addEventListener('click', () => {
-  if (!confirm('Clear all local data? This cannot be undone.')) return;
-  localStorage.clear();
-  state.tasks = [];
-  state.focus = null;
-  render();
-  closeSheets();
-  toast('Local data cleared');
+document.getElementById('clearDataBtn').addEventListener('click',function(){
+  if(!confirm('Clear all local data? Cannot be undone.')) return;
+  localStorage.clear(); state.tasks=[]; state.focus=null;
+  render(); closeSheets(); showToast('Local data cleared');
 });
 
-// ══════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
-}
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // SEARCH
-// ══════════════════════════════════════════════
-document.getElementById('searchBtn').addEventListener('click', () => {
-  const wrap = document.getElementById('searchWrap');
+// ══════════════════════════════════════════
+document.getElementById('searchBtn').addEventListener('click',function(){
+  var wrap=document.getElementById('searchWrap');
   wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) {
-    document.getElementById('searchInput').focus();
-  } else {
-    document.getElementById('searchInput').value = '';
-    render();
-  }
+  if(wrap.classList.contains('open')) document.getElementById('searchInput').focus();
+  else { document.getElementById('searchInput').value=''; render(); }
 });
+document.getElementById('searchInput').addEventListener('input',render);
 
-document.getElementById('searchInput').addEventListener('input', render);
-
-// ══════════════════════════════════════════════
-// FILTER CHIPS
-// ══════════════════════════════════════════════
-document.getElementById('filterRow').addEventListener('click', e => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  document.querySelectorAll('#filterRow .chip').forEach(c => c.classList.remove('active'));
+// ══════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════
+document.getElementById('filterRow').addEventListener('click',function(e){
+  var chip=e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('#filterRow .chip').forEach(function(c){c.classList.remove('active');});
   chip.classList.add('active');
-  state.filter = chip.dataset.filter;
+  state.filter=chip.dataset.filter;
   render();
 });
 
-// ══════════════════════════════════════════════
-// EVENTS
-// ══════════════════════════════════════════════
-document.getElementById('fab').addEventListener('click', openAddSheet);
-document.getElementById('overlay').addEventListener('click', closeSheets);
-document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
-document.getElementById('deleteTaskBtn').addEventListener('click', () => {
-  if (state.editingId) deleteTask(state.editingId);
-  closeSheets();
-});
-document.getElementById('settingsBtn').addEventListener('click', () => {
-  loadSettingsUI();
-  openSheet('settingsSheet');
-});
+// ══════════════════════════════════════════
+// WIRING
+// ══════════════════════════════════════════
+document.getElementById('fab').addEventListener('click',openAddSheet);
+document.getElementById('overlay').addEventListener('click',closeSheets);
+document.getElementById('saveTaskBtn').addEventListener('click',saveTask);
+document.getElementById('deleteTaskBtn').addEventListener('click',function(){ if(state.editingId) deleteTask(state.editingId); closeSheets(); });
+document.getElementById('settingsBtn').addEventListener('click',function(){ loadSettingsUI(); openSheet('settingsSheet'); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheets(); });
 
-// focus strip tap — clear focus
-document.getElementById('focusStrip').addEventListener('click', () => {
-  if (state.focus) {
-    state.focus = null;
-    saveLocal();
-    render();
-    toast('Focus cleared');
-  }
-});
-
-// keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeSheets();
-  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-    e.preventDefault();
-    document.getElementById('searchInput').focus();
-    document.getElementById('searchWrap').classList.add('open');
-  }
-});
-
-// ══════════════════════════════════════════════
-// SERVICE WORKER (inline registration)
-// ══════════════════════════════════════════════
-if ('serviceWorker' in navigator) {
-  // We register a minimal SW for offline shell caching
-  const swCode = `
-    const CACHE = 'kw-tasks-v1';
-    const SHELL = [self.location.pathname];
-    self.addEventListener('install', e => {
-      e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-      ));
-      self.clients.claim();
-    });
-    self.addEventListener('fetch', e => {
-      // Only cache-first for same-origin navigation (the app shell)
-      if (e.request.mode === 'navigate') {
-        e.respondWith(
-          fetch(e.request).catch(() => caches.match(e.request))
-        );
-        return;
-      }
-      // For Google Fonts and other assets — network first, fallback cache
-      if (e.request.url.includes('fonts.googleapis') || e.request.url.includes('fonts.gstatic')) {
-        e.respondWith(
-          caches.open(CACHE).then(cache =>
-            fetch(e.request).then(res => { cache.put(e.request, res.clone()); return res; })
-              .catch(() => cache.match(e.request))
-          )
-        );
-        return;
-      }
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+var toastTimer;
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){el.classList.remove('show');},2000);
 }
 
-// ══════════════════════════════════════════════
-// SEED DATA (only if no existing tasks)
-// ══════════════════════════════════════════════
-function seedData() {
-  if (state.tasks.length > 0) return;
-  state.tasks = [
-    { id: uid(), title: 'Finalize SAS poster methods section', category: 'conf', status: 'active', priority: 'hi', section: 'today', due: 'Today 5pm', note: '', done: false },
-    { id: uid(), title: 'Email Lindquist re: language & emotion revisions', category: 'manuscript', status: 'waiting', priority: 'hi', section: 'today', due: '', note: 'Clarify authorship order before submitting', done: false },
-    { id: uid(), title: 'Update lab meeting Slack canvas — March schedule', category: 'lab', status: 'active', priority: 'md', section: 'today', due: 'Mar 1', note: '', done: false },
-    { id: uid(), title: 'Look up ramen place for date night with Bel', category: 'bel', status: 'active', priority: 'md', section: 'today', due: 'Tonight', note: '', done: false },
-    { id: uid(), title: 'Submit AFSP education committee notes', category: 'lab', status: 'active', priority: 'lo', section: 'today', due: 'Done 9am', note: '', done: true },
-    { id: uid(), title: 'Plan spring trip — check Bel\'s schedule', category: 'bel', status: 'active', priority: 'md', section: 'personal', due: 'Mar 5', note: '', done: false },
-    { id: uid(), title: 'Anniversary gift — have a few ideas', category: 'bel', status: 'active', priority: 'lo', section: 'personal', due: 'Mar 12', note: 'Something tied to that thing she mentioned last month', done: false },
-    { id: uid(), title: 'Schedule dentist appointment', category: 'personal', status: 'active', priority: 'lo', section: 'personal', due: 'Overdue', note: '', done: false },
-    { id: uid(), title: 'Call mom back', category: 'personal', status: 'active', priority: 'lo', section: 'personal', due: 'Today', note: '', done: false },
-    { id: uid(), title: 'Finish current chapter — reading', category: 'hobby', status: 'active', priority: 'lo', section: 'hobby', due: '', note: '', done: false },
-    { id: uid(), title: 'Pick up new game this weekend', category: 'hobby', status: 'active', priority: 'lo', section: 'hobby', due: 'This weekend', note: '', done: false },
-    { id: uid(), title: 'Submit Applied Cognitive Psychology revisions', category: 'manuscript', status: 'blocked', priority: 'hi', section: 'blocked', due: '', note: 'Waiting on co-author feedback — discussion section', done: false },
-    { id: uid(), title: 'Interoception analysis — maltreatment paper', category: 'manuscript', status: 'blocked', priority: 'md', section: 'blocked', due: '', note: 'Need R script from Peter re: LPA output format', done: false },
-    { id: uid(), title: 'UNC Chapel Hill SOP — draft 2', category: 'phd', status: 'waiting', priority: 'lo', section: 'blocked', due: '', note: '', done: false },
-    { id: uid(), title: 'SAS 2026 — early bird registration', category: 'conf', status: 'active', priority: 'hi', section: 'upcoming', due: 'Mar 3', note: '', done: false },
-    { id: uid(), title: 'Handbook of Emotion Dev — chapter outline', category: 'manuscript', status: 'review', priority: 'md', section: 'upcoming', due: 'Mar 10', note: '', done: false },
-    { id: uid(), title: '988 cert renewal — annual training hours', category: 'lab', status: 'active', priority: 'lo', section: 'upcoming', due: 'Mar 15', note: '', done: false },
-    { id: uid(), title: 'Add sleep perception project to website', category: 'phd', status: 'active', priority: 'lo', section: 'upcoming', due: 'Mar 20', note: '', done: false },
+// ══════════════════════════════════════════
+// PWA MANIFEST (injected inline)
+// ══════════════════════════════════════════
+(function(){
+  var manifest = {
+    name: 'Tasks — Keegan',
+    short_name: 'Tasks',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#1e1f22',
+    theme_color: '#1e1f22',
+    orientation: 'portrait',
+    icons: [
+      { src: 'data:image/svg+xml,' + encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">' +
+          '<rect width="512" height="512" rx="112" fill="#26272c"/>' +
+          '<rect x="80" y="80" width="352" height="352" rx="60" fill="#2e2f35"/>' +
+          '<line x1="160" y1="200" x2="352" y2="200" stroke="#8b9eff" stroke-width="28" stroke-linecap="round"/>' +
+          '<line x1="160" y1="256" x2="300" y2="256" stroke="#52d9a0" stroke-width="28" stroke-linecap="round"/>' +
+          '<line x1="160" y1="312" x2="260" y2="312" stroke="#44454e" stroke-width="28" stroke-linecap="round"/>' +
+          '</svg>'
+        ), sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+    ]
+  };
+  var blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('link');
+  link.rel = 'manifest'; link.href = url;
+  document.head.appendChild(link);
+})();
+
+// ══════════════════════════════════════════
+// APPLE TOUCH ICON (inline SVG → canvas → link)
+// ══════════════════════════════════════════
+(function(){
+  try {
+    var canvas = document.createElement('canvas');
+    canvas.width = 180; canvas.height = 180;
+    var ctx = canvas.getContext('2d');
+    // background
+    var r=30;
+    ctx.beginPath();
+    ctx.moveTo(r,0); ctx.lineTo(180-r,0);
+    ctx.quadraticCurveTo(180,0,180,r);
+    ctx.lineTo(180,180-r); ctx.quadraticCurveTo(180,180,180-r,180);
+    ctx.lineTo(r,180); ctx.quadraticCurveTo(0,180,0,180-r);
+    ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+    ctx.closePath();
+    ctx.fillStyle = '#1e1f22'; ctx.fill();
+    // card
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(24,24,132,132,20) : (function(){ ctx.rect(24,24,132,132); })();
+    ctx.closePath();
+    ctx.fillStyle = '#26272c'; ctx.fill();
+    // lines
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#8b9eff'; ctx.lineWidth = 10;
+    ctx.beginPath(); ctx.moveTo(52,78); ctx.lineTo(128,78); ctx.stroke();
+    ctx.strokeStyle = '#52d9a0';
+    ctx.beginPath(); ctx.moveTo(52,100); ctx.lineTo(112,100); ctx.stroke();
+    ctx.strokeStyle = '#44454e';
+    ctx.beginPath(); ctx.moveTo(52,122); ctx.lineTo(96,122); ctx.stroke();
+
+    var link = document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = canvas.toDataURL('image/png');
+    document.head.appendChild(link);
+  } catch(e){}
+})();
+
+// ══════════════════════════════════════════
+// SEED DATA
+// ══════════════════════════════════════════
+function seedData(){
+  if(state.tasks.length>0) return;
+  state.tasks=[
+    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'today',due:'Today 5pm',note:'',done:false},
+    {id:uid(),title:'Email Lindquist re: language & emotion revisions',category:'manuscript',status:'waiting',priority:'hi',section:'today',due:'',note:'Clarify authorship order before submitting',done:false},
+    {id:uid(),title:'Update lab meeting Slack canvas \u2014 March',category:'lab',status:'active',priority:'md',section:'today',due:'Mar 1',note:'',done:false},
+    {id:uid(),title:'Look up ramen place for date night with Bel',category:'bel',status:'active',priority:'md',section:'today',due:'Tonight',note:'',done:false},
+    {id:uid(),title:'Submit AFSP education committee notes',category:'lab',status:'active',priority:'lo',section:'today',due:'',note:'',done:true},
+    {id:uid(),title:'Plan spring trip \u2014 check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:'Mar 5',note:'',done:false},
+    {id:uid(),title:'Anniversary gift',category:'bel',status:'active',priority:'lo',section:'personal',due:'Mar 12',note:'Something tied to that thing she mentioned',done:false},
+    {id:uid(),title:'Schedule dentist appointment',category:'personal',status:'active',priority:'lo',section:'personal',due:'Overdue',note:'',done:false},
+    {id:uid(),title:'Call mom back',category:'personal',status:'active',priority:'lo',section:'personal',due:'Today',note:'',done:false},
+    {id:uid(),title:'Finish current chapter',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'',note:'',done:false},
+    {id:uid(),title:'Pick up new game this weekend',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'This weekend',note:'',done:false},
+    {id:uid(),title:'Submit Applied Cognitive Psychology revisions',category:'manuscript',status:'blocked',priority:'hi',section:'blocked',due:'',note:'Waiting on co-author \u2014 discussion section',done:false},
+    {id:uid(),title:'Interoception analysis \u2014 maltreatment paper',category:'manuscript',status:'blocked',priority:'md',section:'blocked',due:'',note:'Need R script from Peter re: LPA output',done:false},
+    {id:uid(),title:'UNC Chapel Hill SOP \u2014 draft 2',category:'phd',status:'waiting',priority:'lo',section:'blocked',due:'',note:'',done:false},
+    {id:uid(),title:'SAS 2026 \u2014 early bird registration',category:'conf',status:'active',priority:'hi',section:'upcoming',due:'Mar 3',note:'',done:false},
+    {id:uid(),title:'Handbook of Emotion Dev \u2014 chapter outline',category:'manuscript',status:'review',priority:'md',section:'upcoming',due:'Mar 10',note:'',done:false},
+    {id:uid(),title:'988 cert renewal',category:'lab',status:'active',priority:'lo',section:'upcoming',due:'Mar 15',note:'',done:false},
+    {id:uid(),title:'Add sleep perception project to website',category:'phd',status:'active',priority:'lo',section:'upcoming',due:'Mar 20',note:'',done:false},
   ];
   saveLocal();
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 loadLocal();
 seedData();
 render();
 loadSettingsUI();
-
-// Background GitHub fetch after local render
-setTimeout(() => {
-  if (state.settings.ghToken) ghFetch();
-  else if (state.pendingSync) {
-    showSyncBar('offline', 'GitHub not configured — data saved locally');
-  }
-}, 300);
+setTimeout(function(){ if(state.settings.ghToken) ghFetch(); }, 400);
 </script>
 
 </body>
