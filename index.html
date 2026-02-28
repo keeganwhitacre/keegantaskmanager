@@ -46,21 +46,25 @@
 }
 
 - { margin:0; padding:0; box-sizing:border-box; }
-  html, body { background:var(–bg-from); overflow-x:hidden; max-width:100vw; }
-  body {
-  font-family:‘DM Sans’,sans-serif; font-size:14px;
-  color:var(–text); min-height:100vh;
-  -webkit-font-smoothing:antialiased; position:relative;
-  }
 
-/* animated gradient bg — reacts to theme */
-body::before {
-content:’’; position:fixed; inset:0; z-index:0; pointer-events:none;
-background:
-radial-gradient(ellipse 80% 55% at 85% -5%,  var(–ac-glow), transparent),
-radial-gradient(ellipse 55% 45% at -5% 85%,  hsla(calc(var(–ac-h)+38),55%,48%,0.11), transparent),
-linear-gradient(155deg, var(–bg-from) 0%, var(–bg-mid) 50%, var(–bg-to) 100%);
-transition:background 0.5s ease;
+/* ── BG on html directly: Safari needs this, pseudo-elements are unreliable ── */
+html {
+min-height:100%;
+background-color: hsl(var(–ac-h), 38%, 6%);
+background-image:
+radial-gradient(ellipse 90% 60% at 100%  0%,   hsla(var(–ac-h),72%,62%,0.28),  transparent 65%),
+radial-gradient(ellipse 70% 55% at   0% 105%,  hsla(calc(var(–ac-h)+42),65%,55%,0.20), transparent 60%),
+radial-gradient(ellipse 55% 40% at  50%  50%,  hsla(calc(var(–ac-h)+18),55%,48%,0.10), transparent 70%),
+linear-gradient(165deg, hsl(var(–ac-h),40%,7%) 0%, hsl(var(–ac-h),34%,11%) 60%, hsl(calc(var(–ac-h)+28),42%,16%) 100%);
+background-attachment: fixed;
+background-repeat: no-repeat;
+background-size: cover;
+}
+body {
+font-family:‘DM Sans’,sans-serif; font-size:14px;
+color:var(–text); min-height:100vh; overflow-x:hidden; max-width:100vw;
+-webkit-font-smoothing:antialiased;
+background:transparent;
 }
 
 /* ── MODES ── */
@@ -109,14 +113,18 @@ padding-top:calc(52px + env(safe-area-inset-top));
 .header-right { display:flex; gap:8px; padding-top:4px; }
 
 .icon-btn {
-width:34px; height:34px;
-background:var(–glass); border:1px solid var(–glass-border);
-border-radius:11px; display:flex; align-items:center; justify-content:center;
+width:36px; height:36px;
+background:linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+border:1px solid rgba(255,255,255,0.18);
+border-bottom-color: rgba(255,255,255,0.06);
+border-radius:50%; display:flex; align-items:center; justify-content:center;
 cursor:pointer; user-select:none;
-backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-transition:background 0.14s, border-color 0.14s; position:relative; z-index:2;
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset;
+transition:opacity 0.14s; position:relative; z-index:2;
 }
-.icon-btn:active { background:var(–glass-hi); }
+.icon-btn:active { opacity:0.7; }
 .icon-btn svg { width:16px; height:16px; stroke:var(–text-2); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 
 /* ── FOCUS BANNER ── */
@@ -124,7 +132,7 @@ transition:background 0.14s, border-color 0.14s; position:relative; z-index:2;
 display:none; position:relative; z-index:2;
 margin:0 20px 14px;
 background:var(–ac-dimmer); border:1px solid var(–ac-border);
-border-radius:14px; padding:10px 14px;
+border-radius:20px; padding:10px 14px;
 font-size:12px; color:var(–ac);
 align-items:center; gap:8px;
 font-family:‘DM Mono’,monospace; letter-spacing:0.04em;
@@ -135,12 +143,18 @@ body.focus-mode #focusBanner { display:flex; }
 /* ── FOCUS STRIP ── */
 .focus-strip {
 position:relative; z-index:2;
-margin:0 20px 12px;
-background:var(–ac-dimmer); border:1px solid var(–ac-border);
-border-radius:17px; padding:13px 15px;
+margin:0 20px 14px;
+background:
+linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%),
+var(–ac-dimmer);
+border:1px solid var(–ac-border);
+border-top-color: hsla(var(–ac-h),80%,80%,0.25);
+border-radius:22px; padding:14px 16px;
 display:flex; align-items:center; gap:11px;
 cursor:pointer; overflow:hidden;
-backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 4px 20px rgba(0,0,0,0.15);
 }
 .focus-strip::before {
 content:’’; position:absolute; left:0; top:0; bottom:0;
@@ -166,9 +180,15 @@ display:grid; grid-template-columns:repeat(4,1fr);
 gap:8px; padding:0 20px 12px;
 }
 .stat {
-background:var(–glass); border:1px solid var(–glass-border);
-border-radius:15px; padding:12px 6px; text-align:center;
-backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+background:
+linear-gradient(145deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 100%),
+rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.15);
+border-top-color: rgba(255,255,255,0.2);
+border-radius:26px; padding:14px 6px; text-align:center;
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset;
 }
 .stat-n { font-family:‘DM Mono’,monospace; font-size:20px; font-weight:500; line-height:1; margin-bottom:4px; }
 .stat-l { font-size:10px; color:var(–text-3); }
@@ -176,10 +196,16 @@ backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
 /* ── PROGRESS ── */
 .prog-wrap {
 position:relative; z-index:2;
-margin:0 20px 12px;
-background:var(–glass); border:1px solid var(–glass-border);
-border-radius:15px; padding:13px 15px;
-backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+margin:0 20px 14px;
+background:
+linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%),
+rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.15);
+border-top-color: rgba(255,255,255,0.2);
+border-radius:26px; padding:14px 16px;
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset;
 }
 .prog-top   { display:flex; justify-content:space-between; margin-bottom:9px; }
 .prog-label { font-size:12px; color:var(–text-3); }
@@ -218,10 +244,10 @@ opacity:0; animation:secIn 0.4s ease forwards;
 @keyframes secIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 .sec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
 .sec-title  { font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(–text-3); }
-.sec-count  { font-family:‘DM Mono’,monospace; font-size:11px; color:var(–text-3); background:var(–glass); border:1px solid var(–glass-border); padding:1px 7px; border-radius:8px; }
+.sec-count  { font-family:‘DM Mono’,monospace; font-size:11px; color:var(–text-3); background:var(–glass); border:1px solid var(–glass-border); padding:1px 9px; border-radius:99px; }
 
 /* ── TASK WRAP / SWIPE ── */
-.task-wrap  { position:relative; margin-bottom:8px; border-radius:17px; overflow:hidden; }
+.task-wrap  { position:relative; margin-bottom:10px; border-radius:22px; overflow:hidden; }
 .task-wrap.entering { animation:taskIn 0.25s ease both; }
 @keyframes taskIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .task-wrap.removing { animation:taskOut 0.2s ease forwards; pointer-events:none; }
@@ -229,27 +255,34 @@ opacity:0; animation:secIn 0.4s ease forwards;
 
 .swipe-bg {
 position:absolute; inset:0; background:rgba(210,50,50,0.18);
-border-radius:17px; display:flex; align-items:center; justify-content:flex-end;
+border-radius:22px; display:flex; align-items:center; justify-content:flex-end;
 padding-right:20px; opacity:0; transition:opacity 0.1s; pointer-events:none;
 }
 .swipe-bg svg { width:20px; height:20px; stroke:var(–red); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 
-/* ── TASK CARD ── */
+/* ── TASK CARD — true frosted glass ── */
 .task {
-background:var(–glass); border:1px solid var(–glass-border);
-border-radius:17px; padding:12px 14px 12px 16px;
+/* layered glass: shimmer on top, tint in middle, translucent base */
+background:
+linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.06) 100%),
+rgba(255,255,255,0.07);
+border:1px solid rgba(255,255,255,0.18);
+border-bottom-color: rgba(255,255,255,0.06);
+border-radius:22px; padding:14px 15px 14px 18px;
 display:flex; gap:11px; align-items:flex-start;
 position:relative; overflow:hidden; cursor:pointer;
-backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
 transition:background 0.12s; will-change:transform; user-select:none;
+box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 4px 20px rgba(0,0,0,0.2);
 }
 .task::before {
 content:’’; position:absolute; left:0; top:0; bottom:0;
-width:3px; border-radius:2px 0 0 2px;
+width:4px; border-radius:3px 0 0 3px;
 }
 .task.hi::before { background:var(–red); }
 .task.md::before { background:var(–yellow); }
-.task.lo::before { background:var(–glass-border); }
+.task.lo::before { background:rgba(255,255,255,0.15); }
 .task.done   { opacity:0.38; }
 .task.dimmed { opacity:0.5; border-style:dashed; }
 
@@ -258,7 +291,7 @@ width:3px; border-radius:2px 0 0 2px;
 @keyframes strikeAnim { to{opacity:0.5;text-decoration:line-through} }
 
 .cb {
-width:20px; height:20px; border-radius:7px;
+width:22px; height:22px; border-radius:50%;
 border:1.5px solid var(–glass-border); flex-shrink:0; margin-top:1px;
 display:flex; align-items:center; justify-content:center;
 font-size:11px; color:#0d0d0f;
@@ -275,7 +308,7 @@ transition:background 0.2s, border-color 0.2s, transform 0.15s; cursor:pointer;
 .task-row   { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
 
 /* category pills — fixed palette, not accent-dependent so they stay readable */
-.cat { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 8px; border-radius:6px; }
+.cat { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 9px; border-radius:99px; }
 .cat-manuscript { background:rgba(139,158,255,0.13); color:#a8b4ff; border:1px solid rgba(139,158,255,0.25); }
 .cat-lab        { background:rgba(82,217,160,0.13);  color:#5adfa0; border:1px solid rgba(82,217,160,0.25); }
 .cat-phd        { background:rgba(255,120,120,0.13); color:#ff9898; border:1px solid rgba(255,120,120,0.25); }
@@ -284,7 +317,7 @@ transition:background 0.2s, border-color 0.2s, transform 0.15s; cursor:pointer;
 .cat-bel        { background:rgba(255,130,190,0.13); color:#ff8bc8; border:1px solid rgba(255,130,190,0.25); }
 .cat-hobby      { background:rgba(80,200,255,0.13);  color:#50c8ff; border:1px solid rgba(80,200,255,0.25); }
 
-.status { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 8px; border-radius:6px; border:1px solid var(–glass-border); color:var(–text-3); }
+.status { font-family:‘DM Mono’,monospace; font-size:10px; padding:2px 9px; border-radius:99px; border:1px solid var(–glass-border); color:var(–text-3); }
 .status.waiting { color:var(–yellow); border-color:rgba(255,190,80,0.3);  background:rgba(255,190,80,0.08); }
 .status.blocked { color:var(–red);    border-color:rgba(255,100,100,0.3); background:rgba(255,100,100,0.08); }
 .status.review  { color:#50c8ff;       border-color:rgba(80,200,255,0.3);  background:rgba(80,200,255,0.08); }
@@ -294,7 +327,7 @@ transition:background 0.2s, border-color 0.2s, transform 0.15s; cursor:pointer;
 .due.soon    { color:var(–yellow); }
 
 .note      { font-size:11.5px; color:var(–text-2); margin-top:5px; line-height:1.55; white-space:pre-wrap; word-break:break-word; }
-.note-mono { font-family:‘DM Mono’,monospace; font-size:10.5px; background:rgba(0,0,0,0.28); border-radius:8px; padding:8px 10px; margin-top:6px; border:1px solid var(–glass-border); }
+.note-mono { font-family:‘DM Mono’,monospace; font-size:10.5px; background:rgba(0,0,0,0.28); border-radius:14px; padding:8px 12px; margin-top:6px; border:1px solid var(–glass-border); }
 
 .archive-meta { font-family:‘DM Mono’,monospace; font-size:10px; color:var(–text-3); margin-top:4px; }
 .restore-btn  { font-size:11px; color:var(–ac); cursor:pointer; padding:2px 0; user-select:none; }
@@ -302,13 +335,16 @@ transition:background 0.2s, border-color 0.2s, transform 0.15s; cursor:pointer;
 /* ── FAB ── */
 .fab {
 position:fixed; right:20px; bottom:calc(28px + env(safe-area-inset-bottom));
-width:54px; height:54px;
-background:var(–ac-dim); border:1px solid var(–ac-border);
-border-radius:17px; display:flex; align-items:center; justify-content:center;
-font-size:28px; font-weight:300; color:var(–text); line-height:1;
+width:56px; height:56px;
+background: linear-gradient(145deg, hsla(var(–ac-h),80%,72%,0.32), hsla(var(–ac-h),70%,55%,0.18));
+border:1px solid hsla(var(–ac-h),80%,75%,0.4);
+border-bottom-color: hsla(var(–ac-h),60%,40%,0.2);
+border-radius:50%; display:flex; align-items:center; justify-content:center;
+font-size:28px; font-weight:300; color:rgba(255,255,255,0.95); line-height:1;
 cursor:pointer; z-index:100;
-backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-box-shadow:0 4px 28px var(–ac-glow);
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 6px 30px hsla(var(–ac-h),70%,50%,0.3);
 transition:all 0.13s; user-select:none;
 }
 .fab:active { transform:scale(0.92); }
@@ -316,13 +352,16 @@ transition:all 0.13s; user-select:none;
 /* ── FOCUS MODE BTN ── */
 #focusModeBtn {
 position:fixed; left:20px; bottom:calc(28px + env(safe-area-inset-bottom));
-height:54px; padding:0 18px;
-background:var(–glass); border:1px solid var(–glass-border);
-border-radius:17px; display:flex; align-items:center; gap:8px;
+height:56px; padding:0 20px;
+background:linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+border:1px solid rgba(255,255,255,0.18);
+border-bottom-color: rgba(255,255,255,0.06);
+border-radius:99px; display:flex; align-items:center; gap:8px;
 font-family:‘DM Mono’,monospace; font-size:11px; letter-spacing:0.06em;
 color:var(–text-2); cursor:pointer; z-index:100;
-backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-box-shadow:0 4px 20px rgba(0,0,0,0.3);
+-webkit-backdrop-filter:blur(20px) saturate(160%);
+backdrop-filter:blur(20px) saturate(160%);
+box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 4px 20px rgba(0,0,0,0.25);
 transition:all 0.15s; user-select:none;
 }
 #focusModeBtn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -341,7 +380,7 @@ backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
 position:fixed; bottom:0; left:0; right:0;
 background:hsla(var(–ac-h),28%,10%,0.94);
 border-top:1px solid var(–glass-border);
-border-radius:22px 22px 0 0;
+border-radius:32px 32px 0 0;
 padding:18px 20px; padding-bottom:calc(24px + env(safe-area-inset-bottom));
 z-index:200; transform:translateY(100%);
 transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -358,7 +397,7 @@ backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
 
 .input {
 width:100%; background:rgba(255,255,255,0.06); border:1px solid var(–glass-border);
-border-radius:12px; padding:11px 13px; color:var(–text);
+border-radius:16px; padding:11px 13px; color:var(–text);
 font-family:‘DM Sans’,sans-serif; font-size:15px;
 outline:none; margin-bottom:14px;
 -webkit-appearance:none; appearance:none;
@@ -372,7 +411,7 @@ textarea.input { resize:vertical; min-height:80px; max-height:220px; line-height
 
 .chip-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; max-width:100%; overflow:hidden; }
 .s-chip {
-padding:5px 12px; border-radius:8px;
+padding:5px 13px; border-radius:99px;
 border:1px solid var(–glass-border); background:transparent;
 color:var(–text-2); font-family:‘DM Mono’,monospace; font-size:11px;
 cursor:pointer; transition:all 0.12s; user-select:none;
@@ -382,7 +421,7 @@ cursor:pointer; transition:all 0.12s; user-select:none;
 .sheet-btn {
 width:100%; padding:13px;
 background:rgba(255,255,255,0.07); border:1px solid var(–glass-border);
-border-radius:13px; color:var(–text);
+border-radius:99px; color:var(–text);
 font-family:‘DM Sans’,sans-serif; font-size:14px; font-weight:500;
 cursor:pointer; margin-top:4px;
 transition:background 0.12s; -webkit-appearance:none; appearance:none; box-sizing:border-box;
@@ -396,17 +435,17 @@ transition:background 0.12s; -webkit-appearance:none; appearance:none; box-sizin
 
 .settings-field { margin-bottom:12px; }
 .settings-field label { display:block; font-size:11px; color:var(–text-3); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px; }
-.settings-status { display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:11px; background:rgba(255,255,255,0.05); border:1px solid var(–glass-border); font-size:12px; color:var(–text-3); margin-bottom:14px; }
+.settings-status { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:99px; background:rgba(255,255,255,0.05); border:1px solid var(–glass-border); font-size:12px; color:var(–text-3); margin-bottom:14px; }
 .settings-status.connected { color:var(–green); border-color:rgba(70,190,120,0.32); background:rgba(70,190,120,0.08); }
 .status-dot { width:7px; height:7px; border-radius:50%; background:currentColor; flex-shrink:0; }
-.close-btn { width:30px; height:30px; background:rgba(255,255,255,0.07); border:1px solid var(–glass-border); border-radius:9px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:var(–text-3); flex-shrink:0; user-select:none; }
+.close-btn { width:30px; height:30px; background:rgba(255,255,255,0.07); border:1px solid var(–glass-border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; color:var(–text-3); flex-shrink:0; user-select:none; }
 
 /* ── SEARCH ── */
 .search-wrap { position:relative; z-index:2; padding:0 20px 14px; display:none; }
 .search-wrap.open { display:block; }
 .search-input {
 width:100%; background:var(–glass); border:1px solid var(–glass-border);
-border-radius:12px; padding:10px 13px; color:var(–text);
+border-radius:99px; padding:10px 16px; color:var(–text);
 font-family:‘DM Sans’,sans-serif; font-size:14px; outline:none;
 -webkit-appearance:none; appearance:none;
 backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
@@ -457,14 +496,14 @@ text-shadow:0 1px 4px rgba(0,0,0,0.6);
 .picker-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
 .picker-row label { font-size:12px; color:var(–text-2); white-space:nowrap; min-width:90px; }
 #accentPicker {
-width:42px; height:34px; border-radius:9px;
+width:42px; height:34px; border-radius:12px;
 border:1px solid var(–glass-border); background:transparent;
 cursor:pointer; -webkit-appearance:none; appearance:none; padding:2px;
 }
 #accentPicker::-webkit-color-swatch-wrapper { padding:0; border-radius:7px; }
 #accentPicker::-webkit-color-swatch { border:none; border-radius:7px; }
 .ac-preview {
-flex:1; height:34px; border-radius:9px;
+flex:1; height:34px; border-radius:99px;
 border:1px solid var(–glass-border);
 background:var(–ac); transition:background 0.3s;
 display:flex; align-items:center; justify-content:center;
@@ -554,12 +593,12 @@ letter-spacing:0.06em;
     <div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3)">Scratchpad</div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span id="notesSyncStatus" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-3)"></span>
-      <span id="notesMonoToggle" style="font-size:10px;color:var(--text-3);cursor:pointer;padding:2px 8px;border:1px solid var(--glass-border);border-radius:6px;font-family:'DM Mono',monospace;user-select:none">mono off</span>
+      <span id="notesMonoToggle" style="font-size:10px;color:var(--text-3);cursor:pointer;padding:2px 8px;border:1px solid var(--glass-border);border-radius:99px;font-family:'DM Mono',monospace;user-select:none">mono off</span>
     </div>
   </div>
   <textarea id="scratchpad"
     placeholder="Dump thoughts here… ideas, R output, half-formed hypotheses."
-    style="width:100%;min-height:calc(100vh - 280px);background:var(--glass);border:1px solid var(--glass-border);border-radius:17px;padding:16px;color:var(--text);-webkit-text-fill-color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;outline:none;resize:none;-webkit-appearance:none;box-sizing:border-box;backdrop-filter:blur(14px)"></textarea>
+    style="width:100%;min-height:calc(100vh - 280px);background:var(--glass);border:1px solid var(--glass-border);border-radius:26px;padding:16px;color:var(--text);-webkit-text-fill-color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;outline:none;resize:none;-webkit-appearance:none;box-sizing:border-box;backdrop-filter:blur(14px)"></textarea>
 </div>
 
 <div class="spacer" id="spacerEl"></div>
@@ -583,7 +622,7 @@ letter-spacing:0.06em;
   <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing…">
   <div class="sheet-label" style="display:flex;justify-content:space-between;align-items:center;">
     Note
-    <span id="monoToggle" style="font-size:10px;color:var(--text-3);cursor:pointer;padding:2px 8px;border:1px solid var(--glass-border);border-radius:6px;font-family:'DM Mono',monospace;user-select:none">mono off</span>
+    <span id="monoToggle" style="font-size:10px;color:var(--text-3);cursor:pointer;padding:2px 8px;border:1px solid var(--glass-border);border-radius:99px;font-family:'DM Mono',monospace;user-select:none">mono off</span>
   </div>
   <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, R output, links…" rows="4"></textarea>
   <div class="sheet-label">Due Date</div>
@@ -713,6 +752,14 @@ function applyTheme(h,s,l,savePreset){
   root.style.setProperty('--ac-s',s+'%');
   root.style.setProperty('--ac-l',l+'%');
   currentTheme={h:h,s:s,l:l};
+  // Repaint html background directly — Safari doesn't update CSS var in bg-image on html
+  root.style.backgroundColor = 'hsl('+h+',38%,6%)';
+  root.style.backgroundImage = [
+    'radial-gradient(ellipse 90% 60% at 100% 0%, hsla('+h+',72%,62%,0.28), transparent 65%)',
+    'radial-gradient(ellipse 70% 55% at 0% 105%, hsla('+(h+42)+',65%,55%,0.20), transparent 60%)',
+    'radial-gradient(ellipse 55% 40% at 50% 50%, hsla('+(h+18)+',55%,48%,0.10), transparent 70%)',
+    'linear-gradient(165deg, hsl('+h+',40%,7%) 0%, hsl('+h+',34%,11%) 60%, hsl('+(h+28)+',42%,16%) 100%)'
+  ].join(',');
   var hex=hslToHex(h,s,l);
   document.getElementById('accentPicker').value=hex;
   document.getElementById('acPreview').textContent=hex.toUpperCase();
