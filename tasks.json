@@ -42,8 +42,9 @@
       "priority": "hi",
       "section": "blocked",
       "due": "",
-      "note": "Waiting on co-author — discussion section",
-      "done": false
+      "note": "Waiting on Kiana and Bluck",
+      "done": false,
+      "noteIsMono": false
     },
     {
       "id": "mm7swxj4gte4",
@@ -125,5 +126,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:41:16.832Z"
+  "updated": "2026-03-01T14:41:29.828Z"
 }
