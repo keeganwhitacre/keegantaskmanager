@@ -81,8 +81,20 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm7uzqmabyo0",
+      "title": "Light load of laundry",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:42:10.208Z"
+  "updated": "2026-03-01T14:42:20.677Z"
 }
