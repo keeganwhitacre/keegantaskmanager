@@ -35,61 +35,6 @@
       "done": false
     },
     {
-      "id": "mm7swxj4w5dj",
-      "title": "Anniversary gift",
-      "category": "bel",
-      "status": "active",
-      "priority": "lo",
-      "section": "personal",
-      "due": "Mar 12",
-      "note": "Something tied to that thing she mentioned",
-      "done": false
-    },
-    {
-      "id": "mm7swxj4iocp",
-      "title": "Schedule dentist appointment",
-      "category": "personal",
-      "status": "active",
-      "priority": "lo",
-      "section": "personal",
-      "due": "Overdue",
-      "note": "",
-      "done": false
-    },
-    {
-      "id": "mm7swxj41fl7",
-      "title": "Call mom back",
-      "category": "personal",
-      "status": "active",
-      "priority": "lo",
-      "section": "personal",
-      "due": "Today",
-      "note": "",
-      "done": false
-    },
-    {
-      "id": "mm7swxj4f7jq",
-      "title": "Finish current chapter",
-      "category": "hobby",
-      "status": "active",
-      "priority": "lo",
-      "section": "hobby",
-      "due": "",
-      "note": "",
-      "done": false
-    },
-    {
-      "id": "mm7swxj4ya3i",
-      "title": "Pick up new game this weekend",
-      "category": "hobby",
-      "status": "active",
-      "priority": "lo",
-      "section": "hobby",
-      "due": "This weekend",
-      "note": "",
-      "done": false
-    },
-    {
       "id": "mm7swxj4molq",
       "title": "Submit Applied Cognitive Psychology revisions",
       "category": "manuscript",
@@ -177,19 +122,8 @@
       "due": "",
       "noteIsMono": false,
       "done": false
-    },
-    {
-      "id": "mm7swxj4u5db",
-      "title": "Look up ramen place for date night with Bel",
-      "category": "bel",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "due": "Tonight",
-      "note": "",
-      "done": false
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T13:55:15.737Z"
+  "updated": "2026-03-01T14:41:16.832Z"
 }
