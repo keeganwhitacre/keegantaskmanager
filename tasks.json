@@ -54,8 +54,9 @@
       "priority": "md",
       "section": "blocked",
       "due": "",
-      "note": "Need R script from Peter re: LPA output",
-      "done": false
+      "note": "Talk to Kristen about possibility",
+      "done": false,
+      "noteIsMono": false
     },
     {
       "id": "mm7swxj4m86e",
@@ -115,5 +116,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:41:36.732Z"
+  "updated": "2026-03-01T14:41:45.286Z"
 }
