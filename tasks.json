@@ -121,7 +121,7 @@
     {
       "id": "mm7v54zsyqnh",
       "title": "Work on SAS poster for people",
-      "category": null,
+      "category": "lab",
       "status": "active",
       "priority": "md",
       "section": "today",
@@ -132,5 +132,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:46:32.587Z"
+  "updated": "2026-03-01T14:46:38.924Z"
 }
