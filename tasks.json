@@ -108,18 +108,6 @@
       "done": false
     },
     {
-      "id": "mm7v4yicr1ca",
-      "title": "Fallout!",
-      "category": "hobby",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
       "id": "mm7v54zsyqnh",
       "title": "Work on SAS poster for people",
       "category": "lab",
@@ -141,9 +129,10 @@
       "note": "",
       "due": "",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-01T23:57:31.158Z"
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T20:09:57.315Z"
+  "updated": "2026-03-01T23:57:31.163Z"
 }
