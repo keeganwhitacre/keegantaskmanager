@@ -12,17 +12,6 @@
       "done": false
     },
     {
-      "id": "mm7swxj4ts0j",
-      "title": "Update lab meeting Slack canvas — March",
-      "category": "lab",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "due": "Mar 1",
-      "note": "",
-      "done": false
-    },
-    {
       "id": "mm7swxj4u5db",
       "title": "Look up ramen place for date night with Bel",
       "category": "bel",
@@ -201,5 +190,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T13:44:46.235Z"
+  "updated": "2026-03-01T13:52:50.270Z"
 }
