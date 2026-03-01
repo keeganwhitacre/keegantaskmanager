@@ -12,17 +12,6 @@
       "done": false
     },
     {
-      "id": "mm7swxj452kc",
-      "title": "Email Lindquist re: language & emotion revisions",
-      "category": "manuscript",
-      "status": "waiting",
-      "priority": "hi",
-      "section": "today",
-      "due": "",
-      "note": "Clarify authorship order before submitting",
-      "done": false
-    },
-    {
       "id": "mm7swxj4ts0j",
       "title": "Update lab meeting Slack canvas — March",
       "category": "lab",
@@ -200,5 +189,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T13:44:33.887Z"
+  "updated": "2026-03-01T13:44:43.817Z"
 }
