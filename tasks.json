@@ -97,8 +97,8 @@
     {
       "id": "mm7v07lfa1vi",
       "title": "Bel coming over?",
-      "category": null,
-      "status": "active",
+      "category": "bel",
+      "status": "waiting",
       "priority": "md",
       "section": "today",
       "note": "",
@@ -108,5 +108,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:42:42.678Z"
+  "updated": "2026-03-01T14:42:46.357Z"
 }
