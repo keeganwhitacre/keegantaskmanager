@@ -1013,11 +1013,13 @@ window.addEventListener('online', function(){ if(state.pendingSync) ghPush(); })
 // ══════════════════════════════════════════
 var syncTimer=null;
 function showSync(type,msg){
+  // silent on syncing + success — only surface errors and offline state
+  if(type==='syncing'||type==='success') return;
   var bar=document.getElementById('syncBar');
   bar.className='sync-bar show '+type;
   document.getElementById('syncMsg').textContent=msg;
   if(syncTimer) clearTimeout(syncTimer);
-  if(type!=='syncing') syncTimer=setTimeout(function(){ bar.classList.remove('show'); },2500);
+  syncTimer=setTimeout(function(){ bar.classList.remove('show'); },4000);
 }
 
 // ══════════════════════════════════════════
