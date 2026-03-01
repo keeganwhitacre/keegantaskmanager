@@ -134,7 +134,7 @@
     {
       "id": "mm845zzqrsvy",
       "title": "Go to Bels, dinner w/ parents",
-      "category": null,
+      "category": "bel",
       "status": "active",
       "priority": "md",
       "section": "today",
@@ -145,5 +145,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T18:59:09.306Z"
+  "updated": "2026-03-01T18:59:13.900Z"
 }
