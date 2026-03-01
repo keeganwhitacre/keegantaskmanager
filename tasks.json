@@ -1,0 +1,204 @@
+{
+  "tasks": [
+    {
+      "id": "mm7swxj4qgv6",
+      "title": "Finalize SAS poster methods section",
+      "category": "conf",
+      "status": "active",
+      "priority": "hi",
+      "section": "today",
+      "due": "Today 5pm",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj452kc",
+      "title": "Email Lindquist re: language & emotion revisions",
+      "category": "manuscript",
+      "status": "waiting",
+      "priority": "hi",
+      "section": "today",
+      "due": "",
+      "note": "Clarify authorship order before submitting",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4ts0j",
+      "title": "Update lab meeting Slack canvas — March",
+      "category": "lab",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "due": "Mar 1",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4u5db",
+      "title": "Look up ramen place for date night with Bel",
+      "category": "bel",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "due": "Tonight",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4zpp1",
+      "title": "Submit AFSP education committee notes",
+      "category": "lab",
+      "status": "active",
+      "priority": "lo",
+      "section": "today",
+      "due": "",
+      "note": "",
+      "done": true
+    },
+    {
+      "id": "mm7swxj4yez9",
+      "title": "Plan spring trip — check Bel's schedule",
+      "category": "bel",
+      "status": "active",
+      "priority": "md",
+      "section": "personal",
+      "due": "Mar 5",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4w5dj",
+      "title": "Anniversary gift",
+      "category": "bel",
+      "status": "active",
+      "priority": "lo",
+      "section": "personal",
+      "due": "Mar 12",
+      "note": "Something tied to that thing she mentioned",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4iocp",
+      "title": "Schedule dentist appointment",
+      "category": "personal",
+      "status": "active",
+      "priority": "lo",
+      "section": "personal",
+      "due": "Overdue",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj41fl7",
+      "title": "Call mom back",
+      "category": "personal",
+      "status": "active",
+      "priority": "lo",
+      "section": "personal",
+      "due": "Today",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4f7jq",
+      "title": "Finish current chapter",
+      "category": "hobby",
+      "status": "active",
+      "priority": "lo",
+      "section": "hobby",
+      "due": "",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4ya3i",
+      "title": "Pick up new game this weekend",
+      "category": "hobby",
+      "status": "active",
+      "priority": "lo",
+      "section": "hobby",
+      "due": "This weekend",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4molq",
+      "title": "Submit Applied Cognitive Psychology revisions",
+      "category": "manuscript",
+      "status": "blocked",
+      "priority": "hi",
+      "section": "blocked",
+      "due": "",
+      "note": "Waiting on co-author — discussion section",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4gte4",
+      "title": "Interoception analysis — maltreatment paper",
+      "category": "manuscript",
+      "status": "blocked",
+      "priority": "md",
+      "section": "blocked",
+      "due": "",
+      "note": "Need R script from Peter re: LPA output",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4gox4",
+      "title": "UNC Chapel Hill SOP — draft 2",
+      "category": "phd",
+      "status": "waiting",
+      "priority": "lo",
+      "section": "blocked",
+      "due": "",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4m86e",
+      "title": "SAS 2026 — early bird registration",
+      "category": "conf",
+      "status": "active",
+      "priority": "hi",
+      "section": "upcoming",
+      "due": "Mar 3",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4c7b1",
+      "title": "Handbook of Emotion Dev — chapter outline",
+      "category": "manuscript",
+      "status": "review",
+      "priority": "md",
+      "section": "upcoming",
+      "due": "Mar 10",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj42erb",
+      "title": "988 cert renewal",
+      "category": "lab",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "due": "Mar 15",
+      "note": "",
+      "done": false
+    },
+    {
+      "id": "mm7swxj4rtxq",
+      "title": "Add sleep perception project to website",
+      "category": "phd",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "due": "Mar 20",
+      "note": "",
+      "done": false
+    }
+  ],
+  "scratchpad": "",
+  "updated": "2026-03-01T13:44:33.887Z"
+}
