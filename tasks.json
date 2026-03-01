@@ -60,14 +60,15 @@
     },
     {
       "id": "mm7swxj4rtxq",
-      "title": "Add sleep perception project to website",
-      "category": "phd",
+      "title": "Update website description of sleep project",
+      "category": "personal",
       "status": "active",
       "priority": "lo",
       "section": "upcoming",
-      "due": "Mar 20",
+      "due": "",
       "note": "",
-      "done": false
+      "done": false,
+      "noteIsMono": false
     },
     {
       "id": "mm7sxp5id19v",
@@ -83,5 +84,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:41:55.986Z"
+  "updated": "2026-03-01T14:42:10.208Z"
 }
