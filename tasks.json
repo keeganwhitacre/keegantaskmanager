@@ -9,7 +9,8 @@
       "section": "today",
       "due": "Today 5pm",
       "note": "",
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-01T13:54:58.356Z"
     },
     {
       "id": "mm7swxj4u5db",
@@ -190,5 +191,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T13:52:50.270Z"
+  "updated": "2026-03-01T13:54:58.361Z"
 }
