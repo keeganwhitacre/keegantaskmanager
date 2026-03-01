@@ -713,6 +713,308 @@ body.theme-paper    .theme-swatch.active { outline-color: #4a5580; }
 body.theme-neon     .theme-swatch.active { outline-color: #ff2d78; }
 body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
 
+/* ══ TAB SYSTEM ══════════════════════════════════════════════════ */
+.tab-bar {
+display: -webkit-flex; display: flex;
+gap: 6px; padding: 0 20px 16px;
+}
+.tab-btn {
+padding: 7px 18px; border-radius: 99px;
+border: 1px solid #1a1a1a; background: transparent;
+color: #444; font-family: ‘DM Mono’, monospace; font-size: 11px;
+letter-spacing: 0.06em; cursor: pointer; user-select: none;
+-webkit-user-select: none; -webkit-appearance: none;
+transition: all 0.12s;
+}
+.tab-btn.active { background: #0f0f1e; border-color: rgba(168,180,255,0.3); color: #a8b4ff; }
+.tab-btn:active  { opacity: 0.7; }
+
+/* hide tasks UI in dashboard mode */
+body.dash-mode .hide-in-dash { display: none !important; }
+body.dash-mode #dashView     { display: block !important; }
+body.dash-mode .bottom-fade  { display: none !important; }
+body.dash-mode #fab          { display: none !important; }
+body.dash-mode #focusModeBtn { display: none !important; }
+body.dash-mode .quick-add-wrap { display: none !important; }
+
+/* theme overrides for tab bar */
+body.theme-terminal .tab-btn        { border-color: #00cc4425; color: #00cc4450; }
+body.theme-terminal .tab-btn.active { background: #00cc4415; border-color: #00cc4440; color: #00cc44; }
+body.theme-paper    .tab-btn        { border-color: #c9b99060; color: #8a7355; }
+body.theme-paper    .tab-btn.active { background: rgba(74,85,128,0.08); border-color: rgba(74,85,128,0.3); color: #4a5580; }
+body.theme-neon     .tab-btn        { border-color: #2d1f3d; color: #4a3a5e; }
+body.theme-neon     .tab-btn.active { background: rgba(255,45,120,0.08); border-color: rgba(255,45,120,0.3); color: #ff2d78; }
+body.theme-newsprint .tab-btn        { border-color: #ddd; color: #888; border-radius: 4px; }
+body.theme-newsprint .tab-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #f8f6f0; border-radius: 4px; }
+
+/* ══ DASHBOARD VIEW ══════════════════════════════════════════════ */
+#dashView {
+display: none;
+padding: 0 20px;
+padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+
+/* cards */
+.d-card {
+background: #0a0a0a; border: 1px solid #1a1a1a;
+border-radius: 18px; padding: 16px;
+margin-bottom: 12px;
+}
+.d-card-label {
+font-family: ‘DM Mono’, monospace; font-size: 9px;
+letter-spacing: 0.14em; text-transform: uppercase;
+color: #333; margin-bottom: 10px;
+}
+.d-grid-2 {
+display: -webkit-flex; display: flex;
+gap: 10px; margin-bottom: 12px;
+}
+.d-grid-2 .d-card { -webkit-flex: 1; flex: 1; margin-bottom: 0; }
+
+/* clock */
+.d-clock { font-family: ‘DM Mono’, monospace; font-size: 38px; font-weight: 400; color: #e8e8ed; line-height: 1; }
+.d-clock-ampm { font-size: 14px; color: #555; margin-left: 4px; vertical-align: middle; }
+.d-date-small { font-size: 11px; color: #444; margin-top: 4px; font-family: ‘DM Mono’, monospace; }
+
+/* weather */
+.d-weather-temp { font-family: ‘DM Mono’, monospace; font-size: 32px; color: #e8e8ed; line-height: 1; }
+.d-weather-desc { font-size: 11px; color: #555; margin-top: 4px; }
+.d-weather-row  { display: -webkit-flex; display: flex; gap: 10px; margin-top: 8px; }
+.d-weather-stat { font-size: 10px; color: #444; font-family: ‘DM Mono’, monospace; }
+
+/* intention */
+.d-intention-input {
+width: 100%; background: transparent; border: none; outline: none;
+color: #e8e8ed; font-family: ‘DM Sans’, sans-serif; font-size: 14px;
+font-style: italic; line-height: 1.6; resize: none; min-height: 48px;
+-webkit-appearance: none; -webkit-text-fill-color: #e8e8ed;
+box-sizing: border-box;
+}
+.d-intention-input::placeholder { color: #2a2a2a; font-style: italic; }
+.d-week-meta { font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.12em; color: #2e2e2e; margin-bottom: 8px; }
+
+/* tasks preview */
+.d-task-row { display: -webkit-flex; display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #111; }
+.d-task-row:last-child { border-bottom: none; }
+.d-task-dot { width: 6px; height: 6px; border-radius: 50%; background: #222; flex-shrink: 0; }
+.d-task-dot.hi { background: #ff6b6b; }
+.d-task-dot.md { background: #ffbe5c; }
+.d-task-dot.lo { background: #333; }
+.d-task-name { font-size: 13px; color: #ccc; -webkit-flex: 1; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d-task-due  { font-family: ‘DM Mono’, monospace; font-size: 10px; color: #444; flex-shrink: 0; }
+.d-task-due.overdue { color: #ff6b6b; }
+.d-open-tasks { font-size: 12px; color: #a8b4ff; margin-top: 10px; cursor: pointer; font-family: ‘DM Mono’, monospace; letter-spacing: 0.04em; }
+
+/* countdown */
+.d-countdown-big { font-family: ‘DM Mono’, monospace; font-size: 28px; color: #e8e8ed; line-height: 1; }
+.d-countdown-unit { font-size: 10px; color: #444; margin-top: 3px; }
+.d-countdown-event { font-size: 11px; color: #555; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.d-countdown-set { font-size: 11px; color: #a8b4ff; cursor: pointer; font-family: ‘DM Mono’, monospace; margin-top: 8px; display: inline-block; }
+
+/* quotes */
+.d-quote-text { font-size: 14px; color: #aaa; line-height: 1.65; font-style: italic; }
+.d-quote-attr { font-size: 11px; color: #444; margin-top: 8px; font-family: ‘DM Mono’, monospace; }
+.d-quote-nav  { display: -webkit-flex; display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.d-quote-idx  { font-family: ‘DM Mono’, monospace; font-size: 10px; color: #333; -webkit-flex: 1; flex: 1; }
+.d-quote-btn  { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #1e1e1e; background: #111; color: #555; font-size: 14px; cursor: pointer; display: -webkit-flex; display: flex; align-items: center; justify-content: center; -webkit-appearance: none; }
+.d-quote-btn:active { opacity: 0.6; }
+
+/* reflection */
+.d-prompt { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 10px; font-style: italic; }
+.d-reflect-input {
+width: 100%; background: #060606; border: 1px solid #1a1a1a;
+border-radius: 12px; padding: 12px; color: #e8e8ed;
+font-family: ‘DM Sans’, sans-serif; font-size: 16px;
+line-height: 1.6; resize: none; min-height: 80px; outline: none;
+-webkit-appearance: none; -webkit-text-fill-color: #e8e8ed;
+box-sizing: border-box; transition: border-color 0.14s;
+}
+.d-reflect-input:focus { border-color: rgba(168,180,255,0.25); }
+.d-reflect-input::placeholder { color: #2a2a2a; }
+
+/* habits */
+.d-habit-header { display: -webkit-flex; display: flex; margin-bottom: 6px; }
+.d-habit-name-col { -webkit-flex: 1; flex: 1; font-family: ‘DM Mono’, monospace; font-size: 9px; letter-spacing: 0.1em; color: #2e2e2e; text-transform: uppercase; }
+.d-habit-days-col { display: -webkit-flex; display: flex; gap: 4px; }
+.d-day-label { width: 22px; text-align: center; font-family: ‘DM Mono’, monospace; font-size: 9px; color: #2e2e2e; }
+.d-habit-row { display: -webkit-flex; display: flex; align-items: center; padding: 8px 0; border-top: 1px solid #0f0f0f; }
+.d-habit-label { -webkit-flex: 1; flex: 1; font-size: 13px; color: #ccc; }
+.d-habit-checks { display: -webkit-flex; display: flex; gap: 4px; }
+.d-habit-cb { width: 22px; height: 22px; border-radius: 6px; border: 1px solid #1e1e1e; background: transparent; cursor: pointer; display: -webkit-flex; display: flex; align-items: center; justify-content: center; transition: all 0.12s; -webkit-user-select: none; user-select: none; }
+.d-habit-cb.checked { background: #52d9a0; border-color: #52d9a0; }
+.d-habit-cb.checked::after { content: ‘✓’; font-size: 12px; color: #000; font-weight: 700; }
+.d-habit-cb.today { border-color: #333; }
+
+/* today dot on habit */
+.d-day-label.today-col { color: #a8b4ff; }
+.d-habit-cb.today-col.checked { background: #a8b4ff; border-color: #a8b4ff; }
+
+/* countdown edit inline */
+.d-countdown-edit { display: none; margin-top: 8px; gap: 6px; -webkit-flex-direction: column; flex-direction: column; }
+.d-countdown-edit.open { display: -webkit-flex; display: flex; }
+.d-countdown-edit input {
+background: #060606; border: 1px solid #1e1e1e; border-radius: 10px;
+padding: 8px 12px; color: #e8e8ed; font-family: ‘DM Sans’, sans-serif;
+font-size: 16px; outline: none; -webkit-appearance: none;
+-webkit-text-fill-color: #e8e8ed; box-sizing: border-box; width: 100%;
+transition: border-color 0.14s;
+}
+.d-countdown-edit input:focus { border-color: rgba(168,180,255,0.25); }
+.d-countdown-save {
+background: rgba(168,180,255,0.1); border: 1px solid rgba(168,180,255,0.25);
+border-radius: 99px; color: #a8b4ff; font-family: ‘DM Mono’, monospace;
+font-size: 11px; padding: 8px 16px; cursor: pointer; -webkit-appearance: none;
+}
+
+/* ── theme overrides for dashboard ── */
+body.theme-terminal .d-card { background: #000; border-color: #00cc4420; }
+body.theme-terminal .d-card-label { color: #00cc4430; }
+body.theme-terminal .d-clock { color: #00cc44; font-family: ‘IBM Plex Mono’, monospace; }
+body.theme-terminal .d-clock-ampm { color: #00cc4450; }
+body.theme-terminal .d-date-small { color: #00cc4440; }
+body.theme-terminal .d-weather-temp { color: #00cc44; }
+body.theme-terminal .d-weather-desc { color: #00cc4450; }
+body.theme-terminal .d-weather-stat { color: #00cc4440; }
+body.theme-terminal .d-intention-input { color: #00cc44; -webkit-text-fill-color: #00cc44; }
+body.theme-terminal .d-intention-input::placeholder { color: #00cc4420; }
+body.theme-terminal .d-week-meta { color: #00cc4430; }
+body.theme-terminal .d-task-name { color: #00cc44; font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; }
+body.theme-terminal .d-task-due { color: #00cc4440; font-family: ‘IBM Plex Mono’, monospace; }
+body.theme-terminal .d-task-due.overdue { color: #ff5555; }
+body.theme-terminal .d-task-row { border-bottom-color: #00cc4410; }
+body.theme-terminal .d-open-tasks { color: #00cc44; }
+body.theme-terminal .d-countdown-big { color: #00cc44; font-family: ‘IBM Plex Mono’, monospace; }
+body.theme-terminal .d-countdown-unit { color: #00cc4440; }
+body.theme-terminal .d-countdown-event { color: #00cc4450; }
+body.theme-terminal .d-countdown-set { color: #00cc44; }
+body.theme-terminal .d-quote-text { color: #00cc44; }
+body.theme-terminal .d-quote-attr { color: #00cc4440; }
+body.theme-terminal .d-quote-btn { background: #000; border-color: #00cc4820; color: #00cc4450; }
+body.theme-terminal .d-quote-idx { color: #00cc4430; }
+body.theme-terminal .d-prompt { color: #00cc4450; }
+body.theme-terminal .d-reflect-input { background: #000; border-color: #00cc4820; color: #00cc44; -webkit-text-fill-color: #00cc44; }
+body.theme-terminal .d-reflect-input::placeholder { color: #00cc4420; }
+body.theme-terminal .d-habit-label { color: #00cc44; font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; }
+body.theme-terminal .d-habit-cb { border-color: #00cc4825; }
+body.theme-terminal .d-habit-cb.checked { background: #00cc44; border-color: #00cc44; }
+body.theme-terminal .d-habit-row { border-top-color: #00cc4410; }
+body.theme-terminal .d-day-label { color: #00cc4430; }
+body.theme-terminal .d-day-label.today-col { color: #00cc44; }
+body.theme-terminal .d-habit-name-col { color: #00cc4430; }
+body.theme-terminal .d-countdown-edit input { background: #000; border-color: #00cc4820; color: #00cc44; -webkit-text-fill-color: #00cc44; }
+body.theme-terminal .d-countdown-save { background: #00cc4412; border-color: #00cc4440; color: #00cc44; }
+
+body.theme-paper .d-card { background: #ede4cf; border-color: #c9b99050; }
+body.theme-paper .d-card-label { color: #c9b990; }
+body.theme-paper .d-clock { color: #2a1f0e; font-family: ‘Crimson Pro’, serif; font-style: italic; }
+body.theme-paper .d-clock-ampm { color: #8a7355; }
+body.theme-paper .d-date-small { color: #8a7355; }
+body.theme-paper .d-weather-temp { color: #2a1f0e; font-family: ‘Crimson Pro’, serif; }
+body.theme-paper .d-weather-desc { color: #8a7355; }
+body.theme-paper .d-weather-stat { color: #8a7355; }
+body.theme-paper .d-intention-input { color: #2a1f0e; -webkit-text-fill-color: #2a1f0e; font-family: ‘Crimson Pro’, serif; font-size: 16px; }
+body.theme-paper .d-intention-input::placeholder { color: #c9b990; }
+body.theme-paper .d-week-meta { color: #c9b990; }
+body.theme-paper .d-task-name { color: #2a1f0e; font-family: ‘Crimson Pro’, serif; font-size: 15px; }
+body.theme-paper .d-task-due { color: #8a7355; }
+body.theme-paper .d-task-due.overdue { color: #c0392b; }
+body.theme-paper .d-task-row { border-bottom-color: #c9b99040; }
+body.theme-paper .d-open-tasks { color: #4a5580; }
+body.theme-paper .d-countdown-big { color: #2a1f0e; font-family: ‘Crimson Pro’, serif; font-size: 36px; }
+body.theme-paper .d-countdown-unit { color: #8a7355; }
+body.theme-paper .d-countdown-event { color: #8a7355; }
+body.theme-paper .d-countdown-set { color: #4a5580; }
+body.theme-paper .d-quote-text { color: #5a4535; font-family: ‘Crimson Pro’, serif; font-size: 16px; }
+body.theme-paper .d-quote-attr { color: #c9b990; }
+body.theme-paper .d-quote-btn { background: #e5dcc8; border-color: #c9b99060; color: #8a7355; }
+body.theme-paper .d-quote-idx { color: #c9b990; }
+body.theme-paper .d-prompt { color: #8a7355; font-family: ‘Crimson Pro’, serif; font-size: 15px; }
+body.theme-paper .d-reflect-input { background: #e5dcc8; border-color: #c9b99060; color: #2a1f0e; -webkit-text-fill-color: #2a1f0e; }
+body.theme-paper .d-reflect-input::placeholder { color: #c9b990; }
+body.theme-paper .d-habit-label { color: #2a1f0e; }
+body.theme-paper .d-habit-cb { border-color: #c9b990; }
+body.theme-paper .d-habit-cb.checked { background: #4a7c59; border-color: #4a7c59; }
+body.theme-paper .d-habit-row { border-top-color: #c9b99030; }
+body.theme-paper .d-day-label { color: #c9b990; }
+body.theme-paper .d-day-label.today-col { color: #4a5580; }
+body.theme-paper .d-habit-name-col { color: #c9b990; }
+body.theme-paper .d-countdown-edit input { background: #e5dcc8; border-color: #c9b99060; color: #2a1f0e; -webkit-text-fill-color: #2a1f0e; }
+body.theme-paper .d-countdown-save { background: rgba(74,85,128,0.1); border-color: rgba(74,85,128,0.3); color: #4a5580; }
+
+body.theme-neon .d-card { background: #100818; border-color: #1e1028; }
+body.theme-neon .d-card-label { color: #3d2a50; }
+body.theme-neon .d-clock { color: #f0e8ff; font-family: ‘Syne’, sans-serif; font-weight: 800; }
+body.theme-neon .d-clock-ampm { color: #4a3a5e; }
+body.theme-neon .d-date-small { color: #4a3a5e; }
+body.theme-neon .d-weather-temp { color: #00e5ff; font-family: ‘Syne’, sans-serif; font-weight: 700; }
+body.theme-neon .d-weather-desc { color: #4a3a5e; }
+body.theme-neon .d-weather-stat { color: #3d2a50; }
+body.theme-neon .d-intention-input { color: #f0e8ff; -webkit-text-fill-color: #f0e8ff; }
+body.theme-neon .d-intention-input::placeholder { color: #2d1f3d; }
+body.theme-neon .d-week-meta { color: #3d2a50; }
+body.theme-neon .d-task-name { color: #f0e8ff; }
+body.theme-neon .d-task-due { color: #3d2a50; }
+body.theme-neon .d-task-due.overdue { color: #ff2d78; }
+body.theme-neon .d-task-row { border-bottom-color: #1e1028; }
+body.theme-neon .d-open-tasks { color: #ff2d78; }
+body.theme-neon .d-countdown-big { color: #00e5ff; font-family: ‘Syne’, sans-serif; font-weight: 700; }
+body.theme-neon .d-countdown-unit { color: #3d2a50; }
+body.theme-neon .d-countdown-event { color: #4a3a5e; }
+body.theme-neon .d-countdown-set { color: #ff2d78; }
+body.theme-neon .d-quote-text { color: #b090d0; }
+body.theme-neon .d-quote-attr { color: #3d2a50; }
+body.theme-neon .d-quote-btn { background: #130a1a; border-color: #2d1f3d; color: #4a3a5e; }
+body.theme-neon .d-quote-idx { color: #2d1f3d; }
+body.theme-neon .d-prompt { color: #4a3a5e; }
+body.theme-neon .d-reflect-input { background: #0d0810; border-color: #2d1f3d; color: #f0e8ff; -webkit-text-fill-color: #f0e8ff; }
+body.theme-neon .d-reflect-input::placeholder { color: #2d1f3d; }
+body.theme-neon .d-habit-label { color: #f0e8ff; }
+body.theme-neon .d-habit-cb { border-color: #2d1f3d; }
+body.theme-neon .d-habit-cb.checked { background: #39ff14; border-color: #39ff14; }
+body.theme-neon .d-habit-row { border-top-color: #1e1028; }
+body.theme-neon .d-day-label { color: #2d1f3d; }
+body.theme-neon .d-day-label.today-col { color: #00e5ff; }
+body.theme-neon .d-habit-name-col { color: #2d1f3d; }
+body.theme-neon .d-countdown-edit input { background: #0d0810; border-color: #2d1f3d; color: #f0e8ff; -webkit-text-fill-color: #f0e8ff; }
+body.theme-neon .d-countdown-save { background: rgba(255,45,120,0.1); border-color: rgba(255,45,120,0.3); color: #ff2d78; }
+
+body.theme-newsprint .d-card { background: #f0ede6; border-color: #ddd; border-radius: 4px; }
+body.theme-newsprint .d-card-label { color: #aaa; font-size: 8px; }
+body.theme-newsprint .d-clock { color: #1a1a1a; font-family: ‘Bebas Neue’, sans-serif; font-size: 52px; font-weight: 400; letter-spacing: 0.04em; }
+body.theme-newsprint .d-clock-ampm { font-family: ‘IBM Plex Mono’, monospace; font-size: 12px; color: #888; }
+body.theme-newsprint .d-date-small { color: #888; font-family: ‘IBM Plex Mono’, monospace; }
+body.theme-newsprint .d-weather-temp { color: #1a1a1a; font-family: ‘Bebas Neue’, sans-serif; font-size: 40px; font-weight: 400; }
+body.theme-newsprint .d-weather-desc { color: #888; font-family: ‘IBM Plex Mono’, monospace; font-size: 10px; }
+body.theme-newsprint .d-weather-stat { color: #aaa; }
+body.theme-newsprint .d-intention-input { color: #1a1a1a; -webkit-text-fill-color: #1a1a1a; }
+body.theme-newsprint .d-intention-input::placeholder { color: #bbb; }
+body.theme-newsprint .d-week-meta { color: #aaa; }
+body.theme-newsprint .d-task-name { color: #1a1a1a; font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; }
+body.theme-newsprint .d-task-due { color: #888; }
+body.theme-newsprint .d-task-due.overdue { color: #b91c1c; }
+body.theme-newsprint .d-task-row { border-bottom-color: #e0ddd6; }
+body.theme-newsprint .d-open-tasks { color: #1a1a1a; }
+body.theme-newsprint .d-countdown-big { color: #1a1a1a; font-family: ‘Bebas Neue’, sans-serif; font-size: 40px; font-weight: 400; }
+body.theme-newsprint .d-countdown-unit { color: #888; }
+body.theme-newsprint .d-countdown-event { color: #888; font-family: ‘IBM Plex Mono’, monospace; font-size: 10px; }
+body.theme-newsprint .d-countdown-set { color: #1a1a1a; }
+body.theme-newsprint .d-quote-text { color: #333; font-family: ‘IBM Plex Mono’, monospace; font-size: 12px; font-style: normal; }
+body.theme-newsprint .d-quote-attr { color: #888; }
+body.theme-newsprint .d-quote-btn { background: #f0ede6; border-color: #ddd; color: #888; border-radius: 4px; }
+body.theme-newsprint .d-quote-idx { color: #aaa; }
+body.theme-newsprint .d-prompt { color: #888; font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; font-style: normal; }
+body.theme-newsprint .d-reflect-input { background: #fff; border-color: #ddd; color: #1a1a1a; -webkit-text-fill-color: #1a1a1a; border-radius: 4px; }
+body.theme-newsprint .d-reflect-input::placeholder { color: #bbb; }
+body.theme-newsprint .d-habit-label { color: #1a1a1a; font-family: ‘IBM Plex Mono’, monospace; font-size: 11px; }
+body.theme-newsprint .d-habit-cb { border-color: #ccc; border-radius: 3px; }
+body.theme-newsprint .d-habit-cb.checked { background: #1a1a1a; border-color: #1a1a1a; }
+body.theme-newsprint .d-habit-row { border-top-color: #e0ddd6; }
+body.theme-newsprint .d-day-label { color: #bbb; }
+body.theme-newsprint .d-day-label.today-col { color: #1a1a1a; font-weight: 700; }
+body.theme-newsprint .d-habit-name-col { color: #aaa; }
+body.theme-newsprint .d-countdown-edit input { background: #fff; border-color: #ddd; color: #1a1a1a; -webkit-text-fill-color: #1a1a1a; border-radius: 4px; }
+body.theme-newsprint .d-countdown-save { background: #1a1a1a; border-color: #1a1a1a; color: #f8f6f0; border-radius: 6px; }
+
 </style>
 </head>
 <body>
@@ -742,9 +1044,16 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
   </div>
 </div>
 
+<!-- TAB BAR -->
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
+  <button class="tab-btn" id="tabDash" data-tab="dash">Dashboard</button>
+</div>
+
 <!-- SEARCH -->
 
-<div class="search-wrap" id="searchWrap">
+<div class="search-wrap hide-in-dash" id="searchWrap">
   <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
 </div>
 
@@ -755,14 +1064,14 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
   FOCUS MODE &mdash; Today only
 </div>
 <!-- fix: banner should show IN focus mode -->
-<div class="focus-banner" id="focusBanner" style="display:none">
+<div class="focus-banner" id="focusBanner" class="hide-in-dash" style="display:none">
   <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
   FOCUS MODE &mdash; Today only
 </div>
 
 <!-- QUICK ADD -->
 
-<div class="quick-add-wrap" id="quickAddWrap">
+<div class="quick-add-wrap hide-in-dash" id="quickAddWrap">
   <div class="quick-add-row">
     <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today… (return to save)" autocomplete="off" autocorrect="off" autocapitalize="sentences">
     <button class="quick-add-send" id="quickAddSend">
@@ -773,7 +1082,7 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
 
 <!-- FOCUS STRIP -->
 
-<div class="focus-strip hide-in-focus" id="focusStrip">
+<div class="focus-strip hide-in-focus hide-in-dash" id="focusStrip">
   <div class="focus-dot"></div>
   <div class="focus-text">
     <div class="focus-eye">Current Focus</div>
@@ -785,7 +1094,7 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
 
 <!-- FILTERS -->
 
-<div class="filter-scroll hide-in-focus" id="filterRow">
+<div class="filter-scroll hide-in-focus hide-in-dash" id="filterRow">
   <div class="chip active" data-filter="all">All</div>
   <div class="chip" data-filter="today">Today</div>
   <div class="chip" data-filter="manuscript">Manuscript</div>
@@ -799,8 +1108,8 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
   <div class="chip" data-filter="archive">Archive</div>
 </div>
 
-<div id="taskList"></div>
-<div class="spacer" id="spacerEl"></div>
+<div id="taskList" class="hide-in-dash"></div>
+<div class="spacer hide-in-dash" id="spacerEl"></div>
 <div id="notesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
   <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:14px;">
     <div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#62636f;">Scratchpad</div>
@@ -813,6 +1122,92 @@ body.theme-newsprint .theme-swatch.active { outline-color: #1a1a1a; }
     placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses."
     style="width:100%;min-height:calc(100vh - 280px);background:#26272c;border:1px solid #3a3b42;border-radius:13px;padding:16px;color:#dddde3;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;outline:none;resize:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;-webkit-text-fill-color:#dddde3;">
   </textarea>
+</div>
+
+<!-- DASHBOARD VIEW -->
+
+<div id="dashView">
+
+  <!-- WEEKLY INTENTION -->
+
+  <div class="d-card">
+    <div class="d-week-meta" id="dWeekMeta"></div>
+    <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <!-- CLOCK + WEATHER -->
+
+  <div class="d-grid-2">
+    <div class="d-card">
+      <div class="d-card-label">Now</div>
+      <div class="d-clock" id="dClock">--<span class="d-clock-ampm" id="dAmpm"></span></div>
+      <div class="d-date-small" id="dDateSmall"></div>
+    </div>
+    <div class="d-card">
+      <div class="d-card-label" id="dWeatherLabel">Weather</div>
+      <div class="d-weather-temp" id="dWeatherTemp">--</div>
+      <div class="d-weather-desc" id="dWeatherDesc">Loading…</div>
+      <div class="d-weather-row">
+        <span class="d-weather-stat" id="dWeatherHigh"></span>
+        <span class="d-weather-stat" id="dWeatherLow"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODAY'S TASKS PREVIEW -->
+
+  <div class="d-card">
+    <div class="d-card-label">Today's Tasks</div>
+    <div id="dTaskList"></div>
+    <div class="d-open-tasks" id="dOpenTasks"></div>
+  </div>
+
+  <!-- COUNTDOWN + QUOTES -->
+
+  <div class="d-grid-2">
+    <div class="d-card">
+      <div class="d-card-label">Countdown</div>
+      <div class="d-countdown-big" id="dCountdownNum">—</div>
+      <div class="d-countdown-unit" id="dCountdownUnit"></div>
+      <div class="d-countdown-event" id="dCountdownEvent">No event set</div>
+      <span class="d-countdown-set" id="dCountdownSetBtn">+ set event</span>
+      <div class="d-countdown-edit" id="dCountdownEdit">
+        <input type="text" id="dCountdownName" placeholder="Event name" autocorrect="off" autocapitalize="words">
+        <input type="date" id="dCountdownDate">
+        <button class="d-countdown-save" id="dCountdownSave">Save</button>
+      </div>
+    </div>
+    <div class="d-card">
+      <div class="d-card-label">Quote</div>
+      <div class="d-quote-text" id="dQuoteText"></div>
+      <div class="d-quote-attr" id="dQuoteAttr"></div>
+      <div class="d-quote-nav">
+        <span class="d-quote-idx" id="dQuoteIdx"></span>
+        <button class="d-quote-btn" id="dQuotePrev">‹</button>
+        <button class="d-quote-btn" id="dQuoteNext">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY REFLECTION -->
+
+  <div class="d-card">
+    <div class="d-card-label">Daily Reflection</div>
+    <div class="d-prompt" id="dPrompt"></div>
+    <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <!-- HABIT TRACKER -->
+
+  <div class="d-card">
+    <div class="d-card-label">Habits — This Week</div>
+    <div class="d-habit-header">
+      <div class="d-habit-name-col">Habit</div>
+      <div class="d-habit-days-col" id="dHabitDayLabels"></div>
+    </div>
+    <div id="dHabitRows"></div>
+  </div>
+
 </div>
 
 <!-- FOCUS MODE BUTTON -->
@@ -958,6 +1353,7 @@ function loadLocal() {
   try { var p=localStorage.getItem(PENDING_KEY); if(p) state.pendingSync=JSON.parse(p); } catch(e){}
   try { var n=localStorage.getItem(NOTES_KEY); if(n!==null) state.scratchpad=n; } catch(e){}
   try { var col=localStorage.getItem('kw_collapsed_v1'); if(col) state.collapsed=JSON.parse(col); } catch(e){}
+  loadDash();
 }
 
 function saveLocal() {
@@ -1384,6 +1780,9 @@ function render(){
       list.innerHTML='<div class="empty-state"><div class="empty-icon">&#10003;</div><div>'+(state.focusMode?'Nothing due today':'No tasks here')+'</div></div>';
     }
   }
+
+  // update dash task preview if dash is open
+  if (document.body.classList.contains('dash-mode')) renderDashTasks();
 
   // focus mode UI
   document.getElementById('focusBanner').style.display = state.focusMode ? 'flex' : 'none';
@@ -1910,6 +2309,394 @@ function seedData(){
   ];
   saveLocal();
 }
+
+
+// ══════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════════
+
+var DASH_KEY = 'kw_dash_v1';
+
+var QUOTES = [
+  { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
+  { text: "Do not seek to have events happen as you want them to, but instead want them to happen as they do happen, and your life will go well.", attr: "Epictetus" },
+  { text: "You have power over your mind, not outside events. Realize this, and you will find strength.", attr: "Marcus Aurelius" },
+  { text: "Simplicity is the ultimate sophistication.", attr: "Leonardo da Vinci" },
+  { text: "The impediment to action advances action. What stands in the way becomes the way.", attr: "Marcus Aurelius" },
+  { text: "We suffer more in imagination than in reality.", attr: "Seneca" },
+  { text: "Be curious, not judgmental.", attr: "Walt Whitman" },
+  { text: "The unexamined life is not worth living.", attr: "Socrates" },
+  { text: "To know what you know and what you do not know — that is true knowledge.", attr: "Confucius" },
+  { text: "Between stimulus and response there is a space. In that space is our power to choose our response.", attr: "Viktor Frankl" },
+  { text: "Hard choices, easy life. Easy choices, hard life.", attr: "Jerzy Gregorek" },
+  { text: "Most of what we say and do is not essential. Ask yourself at every moment: Is this necessary?", attr: "Marcus Aurelius" },
+  { text: "The mind that is not baffled is not employed. The impeded stream is the one that sings.", attr: "Wendell Berry" },
+  { text: "Perfectionism is the enemy of the good.", attr: "Voltaire" },
+  { text: "A year from now you will wish you had started today.", attr: "Karen Lamb" },
+];
+
+var PROMPTS = [
+  "What's one thing you're avoiding that you already know the answer to?",
+  "What would you do today if you weren't afraid of looking foolish?",
+  "Where are you spending energy that isn't moving anything forward?",
+  "What assumption are you making that might not be true?",
+  "What's the one task that, if done today, would make everything else easier?",
+  "What are you tolerating that you shouldn't be?",
+  "Where are you being less honest with yourself than you should be?",
+  "What does the best version of today look like?",
+  "What would you tell a close friend in your exact situation right now?",
+  "What's something you've been meaning to say to someone?",
+  "What habit is working against you right now?",
+  "What are you grateful for that you haven't acknowledged lately?",
+  "What decision have you been deferring, and what's the cost of that?",
+  "What would finishing strong today actually require?",
+  "If you had twice the confidence, what would you do differently?",
+];
+
+var HABITS = [
+  { id: 'sleep', label: 'Sleep 7h+' },
+  { id: 'move',  label: 'Move' },
+  { id: 'read',  label: 'Read' },
+  { id: 'phone', label: 'No phone before 8am' },
+];
+
+// dash state — loaded from localStorage
+var dState = {
+  intention: '',
+  intentionWeek: '',   // ISO week string like "2026-W09"
+  quoteIdx: 0,
+  countdown: { name: '', date: '' },
+  reflection: '',
+  reflectionDate: '',  // YYYY-MM-DD — resets daily
+  habits: {},          // { "2026-W09": { "sleep": [false,true,...], ... } }
+};
+
+function getISOWeek(d) {
+  var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  var day = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  var weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return date.getUTCFullYear() + '-W' + String(weekNo).padStart(2,'0');
+}
+
+function getWeekStart(d) {
+  // Monday-based
+  var date = new Date(d);
+  var day = date.getDay(); // 0=Sun
+  var diff = (day === 0 ? -6 : 1 - day);
+  date.setDate(date.getDate() + diff);
+  return date;
+}
+
+function getTodayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getDayOfWeek() {
+  // 0=Mon through 6=Sun (Monday-based week)
+  var d = new Date().getDay(); // 0=Sun,1=Mon...
+  return d === 0 ? 6 : d - 1;
+}
+
+function loadDash() {
+  try {
+    var raw = localStorage.getItem(DASH_KEY);
+    if (raw) dState = JSON.parse(raw);
+  } catch(e) {}
+}
+
+function saveDash() {
+  try { localStorage.setItem(DASH_KEY, JSON.stringify(dState)); } catch(e) {}
+}
+
+// ── Clock ──
+var clockTimer = null;
+function updateClock() {
+  var d = new Date();
+  var h = d.getHours(); var m = d.getMinutes();
+  var ampm = h >= 12 ? 'pm' : 'am';
+  var h12 = h % 12 || 12;
+  document.getElementById('dClock').childNodes[0].textContent = h12 + ':' + String(m).padStart(2,'0');
+  document.getElementById('dAmpm').textContent = ampm;
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('dDateSmall').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+// ── Weather (Open-Meteo, no API key) ──
+var weatherLoaded = false;
+function loadWeather() {
+  if (weatherLoaded) return;
+  if (!navigator.geolocation) { document.getElementById('dWeatherDesc').textContent = 'Location unavailable'; return; }
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude.toFixed(4);
+    var lon = pos.coords.longitude.toFixed(4);
+    var url = 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=1';
+    fetch(url)
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        weatherLoaded = true;
+        var cur = d.current;
+        var daily = d.daily;
+        var code = cur.weathercode;
+        var desc = weatherDesc(code);
+        document.getElementById('dWeatherTemp').textContent = Math.round(cur.temperature_2m) + '°';
+        document.getElementById('dWeatherDesc').textContent = desc;
+        document.getElementById('dWeatherHigh').textContent = 'H: ' + Math.round(daily.temperature_2m_max[0]) + '°';
+        document.getElementById('dWeatherLow').textContent  = 'L: ' + Math.round(daily.temperature_2m_min[0]) + '°';
+        // try reverse geocode city
+        fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat='+lat+'&lon='+lon)
+          .then(function(r){ return r.json(); })
+          .then(function(geo) {
+            var city = (geo.address && (geo.address.city || geo.address.town || geo.address.village)) || '';
+            var state = (geo.address && geo.address.state) || '';
+            if (city) document.getElementById('dWeatherLabel').textContent = city + (state ? ', ' + state : '');
+          }).catch(function(){});
+      })
+      .catch(function() { document.getElementById('dWeatherDesc').textContent = 'Unavailable'; });
+  }, function() { document.getElementById('dWeatherDesc').textContent = 'Location denied'; });
+}
+
+function weatherDesc(code) {
+  if (code === 0) return 'Clear sky';
+  if (code <= 2) return 'Partly cloudy';
+  if (code === 3) return 'Overcast';
+  if (code <= 9) return 'Fog';
+  if (code <= 19) return 'Drizzle';
+  if (code <= 29) return 'Rain';
+  if (code <= 39) return 'Snow';
+  if (code <= 49) return 'Fog';
+  if (code <= 59) return 'Drizzle';
+  if (code <= 69) return 'Rain';
+  if (code <= 79) return 'Snow';
+  if (code <= 84) return 'Rain showers';
+  if (code <= 94) return 'Snow showers';
+  return 'Thunderstorm';
+}
+
+// ── Intention (resets weekly) ──
+function renderIntention() {
+  var now = new Date();
+  var week = getISOWeek(now);
+  var ws = getWeekStart(now);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('dWeekMeta').textContent =
+    'Week of ' + months[ws.getMonth()] + ' ' + ws.getDate() + '  ·  ' + week;
+
+  // reset if new week
+  if (dState.intentionWeek !== week) {
+    dState.intention = '';
+    dState.intentionWeek = week;
+    saveDash();
+  }
+  document.getElementById('dIntention').value = dState.intention || '';
+}
+
+document.getElementById('dIntention').addEventListener('input', function() {
+  dState.intention = this.value;
+  saveDash();
+});
+
+// ── Tasks preview ──
+function renderDashTasks() {
+  var todayTasks = state.tasks.filter(function(t) {
+    return !t.done && (t.section === 'today' || isActuallyDueToday(t));
+  }).slice(0, 5);
+  var list = document.getElementById('dTaskList');
+  list.innerHTML = '';
+  if (todayTasks.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:#333;padding:4px 0;">Nothing due today</div>';
+  } else {
+    todayTasks.forEach(function(t) {
+      var row = document.createElement('div');
+      row.className = 'd-task-row';
+      var dc = dueClass(t.due);
+      var dueStr = t.due ? fmtDue(t.due) : '';
+      row.innerHTML =
+        '<div class="d-task-dot '+(t.priority||'md')+'"></div>' +
+        '<div class="d-task-name">' + esc(t.title) + '</div>' +
+        (dueStr ? '<div class="d-task-due '+dc+'">'+esc(dueStr)+'</div>' : '');
+      list.appendChild(row);
+    });
+  }
+  var open = document.getElementById('dOpenTasks');
+  var remaining = state.tasks.filter(function(t){ return !t.done; }).length;
+  open.textContent = remaining + ' open task' + (remaining !== 1 ? 's' : '') + ' → switch to Tasks';
+  open.onclick = function() { switchTab('tasks'); };
+}
+
+// ── Countdown ──
+function renderCountdown() {
+  var cd = dState.countdown;
+  if (!cd || !cd.date) {
+    document.getElementById('dCountdownNum').textContent = '—';
+    document.getElementById('dCountdownUnit').textContent = '';
+    document.getElementById('dCountdownEvent').textContent = 'No event set';
+    return;
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  var target = new Date(cd.date + 'T00:00:00');
+  var diff = Math.round((target - today) / 86400000);
+  if (diff < 0) {
+    document.getElementById('dCountdownNum').textContent = Math.abs(diff);
+    document.getElementById('dCountdownUnit').textContent = 'days ago';
+  } else if (diff === 0) {
+    document.getElementById('dCountdownNum').textContent = 'Today';
+    document.getElementById('dCountdownUnit').textContent = '';
+  } else {
+    document.getElementById('dCountdownNum').textContent = diff;
+    document.getElementById('dCountdownUnit').textContent = diff === 1 ? 'day away' : 'days away';
+  }
+  document.getElementById('dCountdownEvent').textContent = cd.name || cd.date;
+}
+
+document.getElementById('dCountdownSetBtn').addEventListener('click', function() {
+  var edit = document.getElementById('dCountdownEdit');
+  edit.classList.toggle('open');
+  if (edit.classList.contains('open')) {
+    document.getElementById('dCountdownName').value = dState.countdown.name || '';
+    document.getElementById('dCountdownDate').value = dState.countdown.date || '';
+  }
+});
+
+document.getElementById('dCountdownSave').addEventListener('click', function() {
+  var name = document.getElementById('dCountdownName').value.trim();
+  var date = document.getElementById('dCountdownDate').value;
+  if (!date) return;
+  dState.countdown = { name: name, date: date };
+  saveDash();
+  renderCountdown();
+  document.getElementById('dCountdownEdit').classList.remove('open');
+});
+
+// ── Quotes ──
+function renderQuote() {
+  var q = QUOTES[dState.quoteIdx % QUOTES.length];
+  document.getElementById('dQuoteText').textContent = '“' + q.text + '”';
+  document.getElementById('dQuoteAttr').textContent = '— ' + q.attr;
+  document.getElementById('dQuoteIdx').textContent = (dState.quoteIdx % QUOTES.length + 1) + ' / ' + QUOTES.length;
+}
+
+document.getElementById('dQuotePrev').addEventListener('click', function() {
+  dState.quoteIdx = (dState.quoteIdx - 1 + QUOTES.length) % QUOTES.length;
+  saveDash(); renderQuote();
+});
+document.getElementById('dQuoteNext').addEventListener('click', function() {
+  dState.quoteIdx = (dState.quoteIdx + 1) % QUOTES.length;
+  saveDash(); renderQuote();
+});
+
+// ── Reflection (resets daily, prompt rotates daily) ──
+function renderReflection() {
+  var today = getTodayStr();
+  if (dState.reflectionDate !== today) {
+    dState.reflection = '';
+    dState.reflectionDate = today;
+    saveDash();
+  }
+  // pick prompt based on day-of-year for consistency within a day
+  var doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  var prompt = PROMPTS[doy % PROMPTS.length];
+  document.getElementById('dPrompt').textContent = prompt;
+  document.getElementById('dReflect').value = dState.reflection || '';
+}
+
+var reflectTimer = null;
+document.getElementById('dReflect').addEventListener('input', function() {
+  dState.reflection = this.value;
+  if (reflectTimer) clearTimeout(reflectTimer);
+  reflectTimer = setTimeout(saveDash, 800);
+});
+
+// ── Habits ──
+function renderHabits() {
+  var now = new Date();
+  var week = getISOWeek(now);
+  var todayDow = getDayOfWeek(); // 0=Mon...6=Sun
+  var dayLabels = ['M','T','W','T','F','S','S'];
+
+  // init week if needed
+  if (!dState.habits[week]) {
+    dState.habits[week] = {};
+    HABITS.forEach(function(h) { dState.habits[week][h.id] = [false,false,false,false,false,false,false]; });
+    // prune old weeks (keep last 2)
+    var weeks = Object.keys(dState.habits).sort();
+    while (weeks.length > 2) { delete dState.habits[weeks.shift()]; }
+    saveDash();
+  }
+
+  // day labels row
+  var labelRow = document.getElementById('dHabitDayLabels');
+  labelRow.innerHTML = '';
+  dayLabels.forEach(function(l, i) {
+    var el = document.createElement('div');
+    el.className = 'd-day-label' + (i === todayDow ? ' today-col' : '');
+    el.textContent = l;
+    labelRow.appendChild(el);
+  });
+
+  // habit rows
+  var rowsEl = document.getElementById('dHabitRows');
+  rowsEl.innerHTML = '';
+  HABITS.forEach(function(h) {
+    var checks = dState.habits[week][h.id] || [false,false,false,false,false,false,false];
+    var row = document.createElement('div');
+    row.className = 'd-habit-row';
+    var label = document.createElement('div');
+    label.className = 'd-habit-label';
+    label.textContent = h.label;
+    row.appendChild(label);
+    var checksEl = document.createElement('div');
+    checksEl.className = 'd-habit-checks';
+    checks.forEach(function(checked, i) {
+      var cb = document.createElement('div');
+      cb.className = 'd-habit-cb' + (checked ? ' checked' : '') + (i === todayDow ? ' today-col' : '') + (i > todayDow ? ' future' : '');
+      cb.dataset.habit = h.id;
+      cb.dataset.day = i;
+      cb.addEventListener('click', function() {
+        dState.habits[week][h.id][i] = !dState.habits[week][h.id][i];
+        saveDash();
+        cb.classList.toggle('checked', dState.habits[week][h.id][i]);
+      });
+      checksEl.appendChild(cb);
+    });
+    row.appendChild(checksEl);
+    rowsEl.appendChild(row);
+  });
+}
+
+// ── Tab switching ──
+function switchTab(tab) {
+  var isDash = tab === 'dash';
+  document.body.classList.toggle('dash-mode', isDash);
+  document.getElementById('tabTasks').classList.toggle('active', !isDash);
+  document.getElementById('tabDash').classList.toggle('active', isDash);
+  if (isDash) {
+    renderDashFull();
+    if (!weatherLoaded) loadWeather();
+    if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
+  } else {
+    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    render();
+  }
+}
+
+document.getElementById('tabTasks').addEventListener('click', function() { switchTab('tasks'); });
+document.getElementById('tabDash').addEventListener('click',  function() { switchTab('dash'); });
+
+function renderDashFull() {
+  updateClock();
+  renderIntention();
+  renderDashTasks();
+  renderCountdown();
+  renderQuote();
+  renderReflection();
+  renderHabits();
+}
+
+// ── add hide-in-dash to tasks-only elements ──
+// (done via CSS body.dash-mode selectors — no extra classes needed)
 
 // ══════════════════════════════════════════
 // THEME SYSTEM
