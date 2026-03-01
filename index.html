@@ -235,6 +235,20 @@ textarea.input { resize: vertical; min-height: 80px; max-height: 200px; line-hei
 .empty-state { text-align: center; padding: 40px 20px; color: #2a2a2a; font-size: 14px; }
 .spacer { height: 120px; }
 
+/* ── bottom fade overlay ── */
+.bottom-fade {
+position: fixed; bottom: 0; left: 0; right: 0;
+height: calc(100px + env(safe-area-inset-bottom));
+background: linear-gradient(to bottom, transparent, #000);
+pointer-events: none; z-index: 99;
+}
+body.theme-terminal .bottom-fade { background: linear-gradient(to bottom, transparent, #000); }
+body.theme-paper    .bottom-fade { background: linear-gradient(to bottom, transparent, #f5efe0); }
+body.theme-neon     .bottom-fade { background: linear-gradient(to bottom, transparent, #0d0810);
+box-shadow: 0 -20px 60px rgba(255,45,120,0.06); }
+body.theme-newsprint .bottom-fade { background: linear-gradient(to bottom, transparent, #f8f6f0); }
+body.notes-mode .bottom-fade { display: none; }
+
 /* ── smart subtitle spans ── */
 .date-sub .sub-overdue { color: #ff6b6b; }
 .date-sub .sub-blocked { color: #ffbe5c; }
@@ -1936,5 +1950,6 @@ loadSettingsUI();
 setTimeout(function(){ if(state.settings.ghToken) ghFetch(); }, 400);
 </script>
 
+<div class="bottom-fade"></div>
 </body>
 </html>
