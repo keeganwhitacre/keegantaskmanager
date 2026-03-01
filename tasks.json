@@ -59,39 +59,6 @@
       "noteIsMono": false
     },
     {
-      "id": "mm7swxj4m86e",
-      "title": "SAS 2026 — early bird registration",
-      "category": "conf",
-      "status": "active",
-      "priority": "hi",
-      "section": "upcoming",
-      "due": "Mar 3",
-      "note": "",
-      "done": false
-    },
-    {
-      "id": "mm7swxj4c7b1",
-      "title": "Handbook of Emotion Dev — chapter outline",
-      "category": "manuscript",
-      "status": "review",
-      "priority": "md",
-      "section": "upcoming",
-      "due": "Mar 10",
-      "note": "",
-      "done": false
-    },
-    {
-      "id": "mm7swxj42erb",
-      "title": "988 cert renewal",
-      "category": "lab",
-      "status": "active",
-      "priority": "lo",
-      "section": "upcoming",
-      "due": "Mar 15",
-      "note": "",
-      "done": false
-    },
-    {
       "id": "mm7swxj4rtxq",
       "title": "Add sleep perception project to website",
       "category": "phd",
@@ -116,5 +83,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:41:45.286Z"
+  "updated": "2026-03-01T14:41:55.986Z"
 }
