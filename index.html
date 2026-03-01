@@ -960,7 +960,7 @@ function uid() { return Date.now().toString(36)+Math.random().toString(36).slice
 // GITHUB
 // ══════════════════════════════════════════
 var GH_API='https://api.github.com';
-function ghHeaders(){ return {'Authorization':'token '+state.settings.ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'}; }
+function ghHeaders(){ return {'Authorization':'token '+state.settings.ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json','X-GitHub-Api-Version':'2022-11-28'}; }
 function ghPath(){ return GH_API+'/repos/'+state.settings.ghUser+'/'+state.settings.ghRepo+'/contents/tasks.json'; }
 
 function ghFetch(){
@@ -1411,7 +1411,15 @@ function deleteTask(id){
   // remove from state immediately (UI feels instant)
   state.tasks = state.tasks.filter(function(t){ return t.id!==id; });
   if(state.focus===id) state.focus=null;
-  saveLocal(); render();
+  saveLocal();
+  // don't re-render the whole list — the swipe animation already removed
+  // the element visually. just update the subtitle counts.
+  formatDate();
+  // if focus strip was showing this task, update it
+  if(state.focus===null){
+    document.getElementById('focusTitle').textContent='No task pinned';
+    document.getElementById('focusSub').textContent='Tap a task to set as focus';
+  }
   // don't ghPush yet — wait until undo window closes
 
   showUndoToast(t.title);
