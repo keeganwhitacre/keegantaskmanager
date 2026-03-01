@@ -85,7 +85,7 @@
     {
       "id": "mm7uzqmabyo0",
       "title": "Light load of laundry",
-      "category": null,
+      "category": "personal",
       "status": "active",
       "priority": "md",
       "section": "today",
@@ -96,5 +96,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:42:20.677Z"
+  "updated": "2026-03-01T14:42:27.717Z"
 }
