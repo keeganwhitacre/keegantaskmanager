@@ -13,17 +13,6 @@
       "completedAt": "2026-03-01T13:54:58.356Z"
     },
     {
-      "id": "mm7swxj4u5db",
-      "title": "Look up ramen place for date night with Bel",
-      "category": "bel",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "due": "Tonight",
-      "note": "",
-      "done": false
-    },
-    {
       "id": "mm7swxj4zpp1",
       "title": "Submit AFSP education committee notes",
       "category": "lab",
@@ -188,8 +177,19 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm7swxj4u5db",
+      "title": "Look up ramen place for date night with Bel",
+      "category": "bel",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "due": "Tonight",
+      "note": "",
+      "done": false
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T13:54:58.361Z"
+  "updated": "2026-03-01T13:55:15.737Z"
 }
