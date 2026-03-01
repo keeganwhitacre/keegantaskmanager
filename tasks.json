@@ -93,8 +93,20 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm7v07lfa1vi",
+      "title": "Bel coming over?",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:42:30.812Z"
+  "updated": "2026-03-01T14:42:42.678Z"
 }
