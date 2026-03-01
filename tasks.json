@@ -98,7 +98,7 @@
       "id": "mm7v07lfa1vi",
       "title": "Bel coming over?",
       "category": "bel",
-      "status": "waiting",
+      "status": "review",
       "priority": "md",
       "section": "today",
       "note": "",
@@ -132,5 +132,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:46:43.913Z"
+  "updated": "2026-03-01T14:59:14.675Z"
 }
