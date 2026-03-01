@@ -80,7 +80,8 @@
       "note": "",
       "due": "",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-01T18:58:56.832Z"
     },
     {
       "id": "mm7uzqmabyo0",
@@ -132,5 +133,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T18:58:55.677Z"
+  "updated": "2026-03-01T18:58:56.838Z"
 }
