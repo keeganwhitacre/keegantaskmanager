@@ -89,7 +89,7 @@
       "category": "personal",
       "status": "active",
       "priority": "md",
-      "section": "today",
+      "section": "upcoming",
       "note": "",
       "due": "",
       "noteIsMono": false,
@@ -134,5 +134,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T23:57:33.956Z"
+  "updated": "2026-03-01T23:57:45.634Z"
 }
