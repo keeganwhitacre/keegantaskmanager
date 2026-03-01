@@ -58,17 +58,6 @@
       "done": false
     },
     {
-      "id": "mm7swxj4gox4",
-      "title": "UNC Chapel Hill SOP — draft 2",
-      "category": "phd",
-      "status": "waiting",
-      "priority": "lo",
-      "section": "blocked",
-      "due": "",
-      "note": "",
-      "done": false
-    },
-    {
       "id": "mm7swxj4m86e",
       "title": "SAS 2026 — early bird registration",
       "category": "conf",
@@ -126,5 +115,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-01T14:41:29.828Z"
+  "updated": "2026-03-01T14:41:36.732Z"
 }
