@@ -85,7 +85,6 @@ html, body {
   .d-grid-2 { gap: 14px; }
 }
 body.theme-paper { background: #f5efe0; }
-body.theme-paper html { background: #f5efe0; }
 body.theme-newsprint { background: #f8f6f0; }
 
 body.focus-mode .hide-in-focus { display: none !important; }
@@ -288,7 +287,6 @@ textarea.input { resize: vertical; min-height: 80px; max-height: 200px; line-hei
 .settings-status.connected { color: #52d9a0; border-color: rgba(82,217,160,0.2); background: rgba(82,217,160,0.04); }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-#notesView { display: none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
 .notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .notes-title  { font-size: 14px; font-weight: 600; color: #e8e8ed; }
 
@@ -311,8 +309,6 @@ body.theme-neon     .bottom-fade { background: linear-gradient(to bottom, transp
 body.theme-newsprint .bottom-fade { background: linear-gradient(to bottom, transparent, #f8f6f0); }
 body.notes-mode .bottom-fade { display: none; }
 
-
-
 /* ── smart subtitle spans ── */
 .date-sub .sub-overdue { color: #ff6b6b; }
 .date-sub .sub-blocked { color: #ffbe5c; }
@@ -329,7 +325,6 @@ body.theme-neon     .date-sub .sub-done    { color: #39ff14; }
 body.theme-newsprint .date-sub .sub-overdue { color: #b91c1c; }
 body.theme-newsprint .date-sub .sub-blocked { color: #92400e; }
 body.theme-newsprint .date-sub .sub-done    { color: #065f46; }
-
 
 /* ── quick-add bar ── */
 .quick-add-wrap {
@@ -379,7 +374,6 @@ body.theme-newsprint .quick-add-input::placeholder { color: #bbb; }
 body.theme-newsprint .quick-add-send  { background: #1a1a1a; border-radius: 6px; }
 body.theme-newsprint .quick-add-send svg { stroke: #f8f6f0; }
 
-
 /* ── swipe right = defer ── */
 .swipe-bg-defer {
   position: absolute; inset: 0; background: rgba(20,100,50,0.15);
@@ -404,7 +398,6 @@ body.theme-newsprint .swipe-bg-defer { background: rgba(6,95,70,0.1); }
 body.theme-newsprint .swipe-bg-defer svg { stroke: #065f46; }
 body.theme-newsprint .swipe-bg-defer span { color: #065f46; }
 
-
 /* ── collapsible sections ── */
 .section.collapsed .sec-tasks { display: none; }
 .sec-toggle {
@@ -417,7 +410,6 @@ body.theme-terminal .sec-toggle { color: #00cc4440; }
 body.theme-paper    .sec-toggle { color: #c9b990; }
 body.theme-neon     .sec-toggle { color: #3d2a50; }
 body.theme-newsprint .sec-toggle { color: #ccc; }
-
 
 /* ── undo toast ── */
 .toast-undo {
@@ -766,7 +758,6 @@ body.theme-newsprint .status.waiting { color: #92400e; border-color: rgba(146,64
 body.theme-newsprint .status.blocked { color: #b91c1c; border-color: rgba(185,28,28,0.25); background: rgba(185,28,28,0.06); }
 body.theme-newsprint .status.review  { color: #1e40af; border-color: rgba(30,64,175,0.25); background: rgba(30,64,175,0.06); }
 
-
 .theme-swatch {
   width: 60px; height: 60px; border-radius: 12px;
   display: -webkit-flex; display: flex;
@@ -800,8 +791,6 @@ body.theme-pipboy    .theme-swatch.active { outline-color: #39ff5a; }
 #vaultBoyWalker svg { animation: vbStride 0.5s ease-in-out infinite; filter: drop-shadow(0 0 4px rgba(57,255,90,0.7)); }
 body.theme-arcade    .theme-swatch.active { outline-color: #ffdd00; }
 body.theme-ios26     .theme-swatch.active { outline-color: #007aff; }
-
-
 
 /* ── currently reading card ── */
 .d-book-title  { font-size: 15px; color: #e8e8ed; font-weight: 500; line-height: 1.3; margin-bottom: 2px; }
@@ -1473,7 +1462,6 @@ body.theme-pipboy .d-book-title    { color: #39ff5a; font-family: 'Share Tech Mo
 body.theme-pipboy .d-book-author   { color: #2e7830; font-family: 'Share Tech Mono', monospace; }
 body.theme-pipboy .d-book-prog-wrap { background: #0a1a06; }
 body.theme-pipboy .d-book-prog-fill { background: #39ff5a; box-shadow: 0 0 6px rgba(57,255,90,0.5); }
-body.theme-pipboy .d-book-prog-wrap { position: relative; background: #0a1a06; border-radius: 2px; }
 /* block-style segmented bar via repeating gradient */
 body.theme-pipboy .d-book-prog-fill {
   background: repeating-linear-gradient(
@@ -2300,8 +2288,6 @@ body.theme-pipboy .vault-label { display: block; }
 /* hide outside pipboy theme */
 body:not(.theme-pipboy) #perkCard { display: none !important; }
 
-
-
 </style>
 </head>
 <body>
@@ -2331,7 +2317,6 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
   </div>
 </div>
 
-
 <!-- TAB BAR -->
 <div class="tab-bar">
   <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
@@ -2348,12 +2333,7 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
 </div>
 
 <!-- FOCUS BANNER (only in focus mode) -->
-<div class="focus-banner hide-in-focus" style="display:none">
-  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  FOCUS MODE &mdash; Today only
-</div>
-<!-- fix: banner should show IN focus mode -->
-<div class="focus-banner" id="focusBanner" class="hide-in-dash" style="display:none">
+<div class="focus-banner" id="focusBanner" style="display:none">
   <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
   FOCUS MODE &mdash; Today only
 </div>
@@ -2378,8 +2358,6 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
   </div>
   <div class="focus-arr">›</div>
 </div>
-
-
 
 <!-- FILTERS -->
 <div class="filter-scroll hide-in-focus hide-in-dash" id="filterRow">
@@ -2410,7 +2388,6 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
     placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses.">
   </textarea>
 </div>
-
 
 <!-- DASHBOARD VIEW -->
 <div id="dashView">
@@ -2682,6 +2659,7 @@ var FOCUS_KEY    = 'kw_focus_v3';
 var PENDING_KEY  = 'kw_pending_v3';
 var NOTES_KEY    = 'kw_notes_v3';
 var NOTES_MONO_KEY = 'kw_notes_mono_v3';
+var DASH_KEY     = 'kw_dash_v1';
 
 var SECTIONS = ['today','personal','hobby','blocked','upcoming'];
 var SECTION_LABELS = { today:'Today', personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
@@ -3063,8 +3041,6 @@ function searchMatch(t,q){
 function render(){
   formatDate();
   var searchQ = document.getElementById('searchInput').value.trim();
-
-
 
   // focus strip
   var ft=null;
@@ -3536,7 +3512,6 @@ document.querySelectorAll('.sheet').forEach(function(sheet) {
   }, { passive: true });
 });
 
-
 // ══════════════════════════════════════════
 // QUICK ADD
 // ══════════════════════════════════════════
@@ -3570,11 +3545,8 @@ document.getElementById('quickAddInput').addEventListener('keydown', function(e)
 });
 document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd);
 
-
 document.getElementById('fab').addEventListener('click', function(){
-  // short tap = quick add, already open = close it
-  var wrap = document.getElementById('quickAddWrap');
-  if(wrap.classList.contains('open')){ toggleQuickAdd(); } else { toggleQuickAdd(); }
+  toggleQuickAdd();
 });
 // Long-press FAB = open full sheet
 (function(){
@@ -3700,12 +3672,9 @@ function seedData(){
   saveLocal();
 }
 
-
 // ══════════════════════════════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════════════════════════════
-
-var DASH_KEY = 'kw_dash_v1';
 
 var QUOTES = [
   { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
@@ -4293,7 +4262,6 @@ function renderHabits() {
   });
 }
 
-
 // ── Currently Reading ──
 function renderBook() {
   var b = dState.book;
@@ -4437,7 +4405,6 @@ document.getElementById('settingsSheet').addEventListener('click', function(e){
   }
 });
 
-
 // ── Pip-Boy boot sequence ──
 var BOOT_LINES = [
   {t:'ok',  s:'VAULT-TEC OPERATING SYSTEM v3.1.15'},
@@ -4492,7 +4459,6 @@ function runBootSequence(cb) {
   }
   nextLine();
 }
-
 
 // ── Perk system ──
 var PERKS = [
@@ -4627,7 +4593,6 @@ document.getElementById('shopList').addEventListener('click', function(e) {
 document.getElementById('shopClearDone').addEventListener('click', shopClearDone);
 
 loadShop();
-
 
 // ── Visual viewport: keep sheets above keyboard on iOS ──
 if (window.visualViewport) {
