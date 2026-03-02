@@ -159,6 +159,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-02",
+    "book": {
+      "title": "Grapes Of Wrath",
+      "author": "Steinbeck",
+      "current": 0,
+      "total": 0
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -236,13 +242,7 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes Of Wrath",
-      "author": "Steinbeck",
-      "current": 0,
-      "total": 0
     }
   },
-  "updated": "2026-03-02T18:34:49.247Z"
+  "updated": "2026-03-02T18:52:52.919Z"
 }
