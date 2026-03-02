@@ -91,7 +91,7 @@
       "priority": "md",
       "section": "upcoming",
       "note": "",
-      "due": "",
+      "due": "2026-03-02",
       "noteIsMono": false,
       "done": false
     },
@@ -135,5 +135,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-02T01:02:27.341Z"
+  "updated": "2026-03-02T13:01:46.982Z"
 }
