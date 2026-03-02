@@ -43,7 +43,6 @@ html, body {
     margin: 0 auto;
     padding-top: 8px;
   }
-
   .header { padding: 20px 32px 0; }
   .header-top { padding-bottom: 4px; }
   .tab-bar { padding: 0 32px 14px; }
@@ -67,8 +66,6 @@ html, body {
   .d-grid-2 .d-card { min-height: 120px; }
   .greeting { font-size: 13px; }
 }
-
-
 @media (min-width: 1100px) {
   body { max-width: 860px; }
   .header { padding: 24px 40px 0; }
@@ -2541,17 +2538,17 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
     <div id="closeShopSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
   </div>
 
-  <!-- Quick add row -->
-  <div class="shop-add-row">
-    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
-    <button class="shop-add-btn" id="shopAddBtn">Add</button>
-  </div>
-
   <!-- List -->
   <div id="shopList" class="shop-list"></div>
 
   <div style="margin-top:14px;display:-webkit-flex;display:flex;justify-content:flex-end;">
     <div id="shopClearDone" class="sheet-btn" style="width:auto;padding:8px 16px;font-size:12px;opacity:0.6;">Clear checked</div>
+  </div>
+
+  <!-- Quick add row — at bottom so keyboard appears near it -->
+  <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
+    <button class="shop-add-btn" id="shopAddBtn">Add</button>
   </div>
 </div>
 
@@ -4554,6 +4551,7 @@ function loadShop() {
 }
 function saveShop() {
   try { localStorage.setItem(SHOP_KEY, JSON.stringify(shopItems)); } catch(e) {}
+  ghPush();
 }
 function renderShop() {
   var list = document.getElementById('shopList');
@@ -4630,6 +4628,25 @@ document.getElementById('shopClearDone').addEventListener('click', shopClearDone
 
 loadShop();
 
+
+// ── Visual viewport: keep sheets above keyboard on iOS ──
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', function() {
+    var openSheet = document.querySelector('.sheet.open');
+    if (!openSheet) return;
+    var vvHeight = window.visualViewport.height;
+    var fullHeight = window.innerHeight;
+    var keyboardHeight = Math.max(0, fullHeight - vvHeight);
+    var isDesktop = window.innerWidth >= 768;
+    if (keyboardHeight > 50) {
+      openSheet.style.bottom = keyboardHeight + 'px';
+      openSheet.style.maxHeight = (vvHeight * 0.92) + 'px';
+    } else {
+      openSheet.style.bottom = '';
+      openSheet.style.maxHeight = '';
+    }
+  });
+}
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
