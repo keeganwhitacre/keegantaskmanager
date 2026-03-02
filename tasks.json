@@ -132,7 +132,8 @@
       "note": "design with Pittsburgh skyline, circular icons\nverify sizing and scaling on screens, make sure not too web-y",
       "due": "",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-02T21:21:44.766Z"
     },
     {
       "id": "mm97ikl1ctn3",
@@ -256,5 +257,5 @@
       }
     }
   },
-  "updated": "2026-03-02T21:01:57.113Z"
+  "updated": "2026-03-02T21:21:44.768Z"
 }
