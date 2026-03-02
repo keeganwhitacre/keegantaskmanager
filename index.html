@@ -240,7 +240,8 @@ body.focus-mode #focusBanner { display: flex; }
 
 .due { font-size: 11px; color: #333; margin-left: auto; flex-shrink: 0; }
 .due.overdue { color: #ff6b6b; }
-.due.soon    { color: #ffbe5c; }
+.due.today   { color: #ffbe5c; }
+.due.soon    { color: #888; }
 
 .note      { font-size: 11.5px; color: #444; margin-top: 5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 .note-mono { font-family: ‘DM Mono’, monospace; font-size: 10.5px; background: #050505; border-radius: 10px; padding: 8px 11px; margin-top: 6px; border: 1px solid #1a1a1a; color: #444; }
@@ -2289,7 +2290,19 @@ border-radius: 0; background: transparent;
 /* hide outside pipboy theme */
 body:not(.theme-pipboy) #perkCard { display: none !important; }
 
+/* ── drag to reorder ── */
+.task-wrap.dragging { opacity: 0.4; }
+.task-wrap.drag-over { box-shadow: 0 -2px 0 0 #a8b4ff; }
+body.theme-terminal .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #00cc44; }
+body.theme-paper    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #4a5580; }
+body.theme-neon     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #ff2d78; }
+body.theme-newsprint .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #1a1a1a; }
+body.theme-midnight  .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #c9a96e; }
+body.theme-pipboy    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #39ff5a; }
+body.theme-arcade    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #ffdd00; }
+body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
 </style>
+
 </head>
 <body>
 
@@ -2601,10 +2614,16 @@ body:not(.theme-pipboy) #perkCard { display: none !important; }
     <div class="s-chip active" data-val="md">Med</div>
     <div class="s-chip" data-val="lo">Low</div>
   </div>
-  <div class="sheet-label">Section</div>
+    <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
+    Section
+    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
+  </div>
   <div class="chip-row" id="sectionRow">
-    <div class="s-chip active" data-val="today">Today</div>
-    <div class="s-chip" data-val="personal">Bel & Personal</div>
+    <div class="s-chip" data-val="personal">Bel &amp; Personal</div>
+    <div class="s-chip" data-val="hobby">Hobbies &amp; Games</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip active" data-val="upcoming">Upcoming</div>
+  </div>
     <div class="s-chip" data-val="hobby">Hobbies & Games</div>
     <div class="s-chip" data-val="blocked">Blocked</div>
     <div class="s-chip" data-val="upcoming">Upcoming</div>
@@ -2685,9 +2704,9 @@ var NOTES_KEY    = 'kw_notes_v3';
 var NOTES_MONO_KEY = 'kw_notes_mono_v3';
 var DASH_KEY     = 'kw_dash_v1';
 
-var SECTIONS = ['today','personal','hobby','blocked','upcoming'];
-var SECTION_LABELS = { today:'Today', personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
-var SECTION_LABELS_PIPBOY = { today:'[ ACTIVE QUESTS ]', personal:'[ COMPANION QUESTS ]', hobby:'[ SIDE QUESTS ]', blocked:'[ QUEST FAILED / WAITING ]', upcoming:'[ UPCOMING QUESTS ]' };
+var SECTIONS = ['personal','hobby','blocked','upcoming'];
+var SECTION_LABELS = { personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
+var SECTION_LABELS_PIPBOY = { personal:'[ COMPANION QUESTS ]', hobby:'[ SIDE QUESTS ]', blocked:'[ QUEST FAILED / WAITING ]', upcoming:'[ UPCOMING QUESTS ]' };
 function getSectionLabel(sec) {
   if (document.body.classList.contains('theme-pipboy')) return SECTION_LABELS_PIPBOY[sec] || sec;
   return SECTION_LABELS[sec] || sec;
@@ -2705,6 +2724,8 @@ function loadLocal() {
   try { var col=localStorage.getItem('kw_collapsed_v1'); if(col) state.collapsed=JSON.parse(col); } catch(e){}
   // if token is configured, ghFetch will resolve the sha — block pushes until then
   if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
+  // migrate legacy section:'upcoming',pinnedToday:true tasks
+  state.tasks.forEach(function(t){ if(t.section==='today'){ t.pinnedToday=true; t.section='upcoming'; } });
   loadDash();
 }
 
@@ -2724,17 +2745,13 @@ var GH_API='https://api.github.com';
 function ghHeaders(){ return {'Authorization':'token '+state.settings.ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json','X-GitHub-Api-Version':'2022-11-28'}; }
 function ghPath(){ return GH_API+'/repos/'+state.settings.ghUser+'/'+state.settings.ghRepo+'/contents/tasks.json'; }
 
-function ghFetch(){
+function ghFetch(retries){
   if(!state.settings.ghToken||!state.settings.ghUser||!state.settings.ghRepo) return;
-  showSync('syncing','Fetching from GitHub\u2026');
+  retries = retries || 0;
   fetch(ghPath(),{headers:ghHeaders()})
     .then(function(r){
-      if(r.status===404){
-        // file doesn't exist yet — safe to push without sha
-        state._shaLoaded=true;
-        ghPush();
-        return null;
-      }
+      if(r.status===404){ state._shaLoaded=true; ghPush(); return null; }
+      if(r.status===401||r.status===403){ state._shaLoaded=true; showSync('error','Auth failed — check GitHub token'); return null; }
       if(!r.ok) throw new Error(r.status);
       return r.json();
     })
@@ -2743,26 +2760,24 @@ function ghFetch(){
       state.sha=d.sha;
       state._shaLoaded=true;
       var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-      if(state.pendingSync||ghPushQueued){ ghPush(); } else {
-        state.tasks=dec.tasks||dec;
-        if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
-        if(dec.shop !== undefined) { shopItems=dec.shop; saveShop(); }
-        if(dec.dash !== undefined) {
-          Object.assign(dState, dec.dash);
-          saveDash(true);
-          if(document.body.classList.contains('dash-mode')) renderDash();
-        }
-        saveLocal();
-        var sp=document.getElementById('scratchpad');
-        if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
-        render();
-        showSync('success','Synced');
+      state.tasks=dec.tasks||dec;
+      if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
+      if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
+      if(dec.dash !== undefined){
+        Object.assign(dState, dec.dash);
+        saveDash(false);
+        if(document.body.classList.contains('dash-mode')) renderDashFull();
       }
+      saveLocal();
+      var sp=document.getElementById('scratchpad');
+      if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
+      render();
+      if(ghPushQueued){ ghPush(); } else { savePending(false); }
     })
     .catch(function(){
-      // On fetch failure, still mark sha as loaded so pushes aren't blocked forever
       state._shaLoaded=true;
-      showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline \u2014 saved locally');
+      if(retries < 1 && navigator.onLine){ setTimeout(function(){ ghFetch(1); }, 3000); }
+      else { showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline — saved locally'); }
     });
 }
 
@@ -2842,6 +2857,8 @@ function formatDate(){
   if(doneToday>0)    parts.push('<span class="sub-done">'+doneToday+(isPipSub?' XP earned':' done')+'</span>');
   var sub = parts.length ? parts.join(' &middot; ') : 'All clear &#10003;';
   document.getElementById('dateSub').innerHTML = sub;
+  // tab title badge
+  document.title = overdueCount > 0 ? '(' + overdueCount + ') Tasks' : 'Tasks';
 }
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2853,7 +2870,7 @@ function dueClass(due){
   if(isNaN(d)) return '';
   var diff = Math.round((d - today) / 86400000);
   if(diff < 0)  return 'overdue';
-  if(diff === 0) return 'soon';
+  if(diff === 0) return 'today';
   if(diff <= 3)  return 'soon';
   return '';
 }
@@ -2927,6 +2944,8 @@ function makeTaskWrap(t, delay) {
 
   // swipe to delete
   attachSwipe(wrap, el, bg, t.id);
+  // drag to reorder
+  addDragHandles(wrap, t.id);
 
   return wrap;
 }
@@ -3002,6 +3021,7 @@ function deferTask(id){
       }
       // move to upcoming
       t.section='upcoming';
+      t.pinnedToday=false;
       break;
     }
   }
@@ -3069,8 +3089,9 @@ function animateCheck(id, el) {
 }
 
 function isActuallyDueToday(t){
-  // true if due date is today (diff===0) or overdue — regardless of section
-  if(!t.due || t.done) return false;
+  if(t.done) return false;
+  if(t.pinnedToday) return true;
+  if(!t.due) return false;
   var today=new Date(); today.setHours(0,0,0,0);
   var d=new Date(t.due+'T00:00:00');
   if(isNaN(d)) return false;
@@ -3079,11 +3100,11 @@ function isActuallyDueToday(t){
 
 function filterTask(t){
   var f=state.filter;
-  if(state.focusMode) return (t.section==='today'||isActuallyDueToday(t)) && !t.done;
+  if(state.focusMode) return isActuallyDueToday(t) && !t.done;
   if(f==='archive') return t.done;
   if(t.done) return false;
   if(f==='all') return true;
-  if(f==='today') return t.section==='today' || isActuallyDueToday(t);
+  if(f==='today') return isActuallyDueToday(t);
   if(f==='blocked') return t.status==='blocked'||t.status==='waiting';
   return t.category===f;
 }
@@ -3123,6 +3144,48 @@ function render(){
   var isArchive = state.filter==='archive';
   var delayBase=0;
 
+  // ── Today synthetic section ──
+  if(!isArchive){
+    var todayTasks=state.tasks.filter(function(t){
+      if(t.done||!searchMatch(t,searchQ)) return false;
+      if(state.focusMode) return isActuallyDueToday(t);
+      if(state.filter==='all'||state.filter==='today') return isActuallyDueToday(t);
+      return false;
+    });
+    if(todayTasks.length>0){
+      anyVisible=true;
+      var isTodayCollapsed=state.collapsed['today'];
+      var todaySec=document.createElement('div');
+      todaySec.className='section'+(isTodayCollapsed?' collapsed':'');
+      todaySec.dataset.sec='today';
+      var tLabel=document.body.classList.contains('theme-pipboy')?'[ ACTIVE QUESTS ]':'Today';
+      var todayHdr=document.createElement('div');
+      todayHdr.className='sec-header';
+      todayHdr.style.cursor='pointer';
+      todayHdr.innerHTML='<div style="display:-webkit-flex;display:flex;align-items:center;gap:7px;"><div class="sec-title">'+tLabel+'</div><div class="sec-count">'+todayTasks.length+'</div></div><div class="sec-toggle">&#x2304;</div>';
+      todayHdr.addEventListener('click',function(){
+        state.collapsed['today']=!state.collapsed['today'];
+        try{localStorage.setItem('kw_collapsed_v1',JSON.stringify(state.collapsed));}catch(e){}
+        todaySec.classList.toggle('collapsed',state.collapsed['today']);
+      });
+      todaySec.appendChild(todayHdr);
+      var todayWrap=document.createElement('div');
+      todayWrap.className='sec-tasks';
+      todayTasks.sort(function(a,b){
+        var po={hi:0,md:1,lo:2};
+        var pa=po[a.priority||'md']||1,pb=po[b.priority||'md']||1;
+        if(pa!==pb) return pa-pb;
+        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
+        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
+        return da-db;
+      });
+      todayTasks.forEach(function(t,i){ todayWrap.appendChild(makeTaskWrap(t,isTodayCollapsed?0:i*30)); });
+      todaySec.appendChild(todayWrap);
+      delayBase+=todayTasks.length*30+50;
+      list.appendChild(todaySec);
+    }
+  }
+
   if(isArchive){
     // archive view: single flat section of all done tasks, sorted by completedAt desc
     var archived = state.tasks.filter(function(t){ return t.done && searchMatch(t,searchQ); });
@@ -3144,13 +3207,7 @@ function render(){
     sectionsToShow.forEach(function(sec){
       var tasks=state.tasks.filter(function(t){
         if(!filterTask(t)||!searchMatch(t,searchQ)) return false;
-        if(sec==='today'){
-          // Today section shows: tasks in today section + overdue/due-today from any section
-          return t.section==='today' || isActuallyDueToday(t);
-        } else {
-          // Other sections: exclude tasks that are surfaced in Today to avoid duplicates
-          return t.section===sec && !isActuallyDueToday(t);
-        }
+        return t.section===sec && !isActuallyDueToday(t);
       });
       if(tasks.length===0) return;
       anyVisible=true;
@@ -3177,6 +3234,15 @@ function render(){
 
       var tasksWrap=document.createElement('div');
       tasksWrap.className='sec-tasks';
+      tasks.sort(function(a,b){
+        var po={hi:0,md:1,lo:2};
+        var pa=po[a.priority||'md']||1, pb=po[b.priority||'md']||1;
+        if(pa!==pb) return pa-pb;
+        // then by due date (earlier first, no date = last)
+        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
+        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
+        return da-db;
+      });
       tasks.forEach(function(t,i){ tasksWrap.appendChild(makeTaskWrap(t, isCollapsed?0:delayBase + i*30)); });
       section.appendChild(tasksWrap);
       delayBase+=tasks.length*30+50;
@@ -3272,9 +3338,13 @@ function commitUndo(){
   if(!undoBuffer) return;
   clearTimeout(undoTimer);
   undoTimer = null;
-  // restore task
   state.tasks.push(undoBuffer.task);
   if(undoBuffer.focusWas) state.focus = undoBuffer.task.id;
+  // if the task was completed, decrement the perk counter so re-completing awards correctly
+  if(undoBuffer.task.done){
+    var n = Math.max(0, getPerkCount() - 1);
+    setPerkCount(n);
+  }
   undoBuffer = null;
   document.getElementById('toastUndo').classList.remove('show');
   saveLocal(); render(); ghPush();
@@ -3303,7 +3373,8 @@ function openEdit(id){
   setChip('catRow',t.category||null);
   setChip('statusRow',t.status||'active');
   setChip('priRow',t.priority||'md');
-  setChip('sectionRow',t.section||'today');
+  setChip('sectionRow',t.section||'upcoming');
+  var pinChip=document.getElementById('pinTodayChip'); if(pinChip) pinChip.classList.toggle('active',!!(t.pinnedToday));
   openSheet('addSheet');
 }
 
@@ -3313,14 +3384,8 @@ function saveTask(){
   var category=getChip('catRow');
   var status=getChip('statusRow')||'active';
   var priority=getChip('priRow')||'md';
-  var section=getChip('sectionRow')||'today';
-  // auto-promote to today if due date is today or overdue
-  var dueVal=document.getElementById('taskDueInput').value;
-  if(dueVal && section!=='today'){
-    var dTest=new Date(dueVal+'T00:00:00');
-    var todayTest=new Date(); todayTest.setHours(0,0,0,0);
-    if(!isNaN(dTest) && dTest<=todayTest) section='today';
-  }
+  var section=getChip('sectionRow')||'upcoming';
+  var pinnedToday=!!(document.getElementById('pinTodayChip')&&document.getElementById('pinTodayChip').classList.contains('active'));
   var note=document.getElementById('taskNoteInput').value.trim();
   var due=document.getElementById('taskDueInput').value; // YYYY-MM-DD
   var noteIsMono=document.getElementById('taskNoteInput').style.fontFamily.indexOf('Mono')!==-1;
@@ -3328,13 +3393,13 @@ function saveTask(){
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono});
+        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono,done:false});
+    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false});
     showToast('Task added');
   }
   closeSheets(); saveLocal(); render(); ghPush();
@@ -3403,6 +3468,10 @@ function openAddSheet(){
 function getChip(rowId){ var a=document.querySelector('#'+rowId+' .s-chip.active'); return a?a.dataset.val:null; }
 function setChip(rowId,val){ document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.toggle('active',c.dataset.val===val);}); }
 
+document.getElementById('addSheet').addEventListener('click', function(e){
+  var pin = e.target.closest('#pinTodayChip');
+  if(pin) pin.classList.toggle('active');
+});
 ['catRow','statusRow','priRow','sectionRow'].forEach(function(rowId){
   document.getElementById(rowId).addEventListener('click',function(e){
     var chip=e.target.closest('.s-chip'); if(!chip) return;
@@ -3617,7 +3686,18 @@ document.getElementById('overlay').addEventListener('click',closeSheets);
 document.getElementById('saveTaskBtn').addEventListener('click',saveTask);
 document.getElementById('deleteTaskBtn').addEventListener('click',function(){ if(state.editingId) deleteTask(state.editingId); closeSheets(); });
 document.getElementById('settingsBtn').addEventListener('click',function(){ loadSettingsUI(); openSheet('settingsSheet'); });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheets(); });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){ closeSheets(); return; }
+  var tag = (document.activeElement||{}).tagName||'';
+  var inInput = tag==='INPUT'||tag==='TEXTAREA'||document.activeElement.isContentEditable;
+  if(inInput) return;
+  if(e.key==='n'||e.key==='N'){ e.preventDefault(); openAddSheet(); }
+  if(e.key==='/'){ e.preventDefault();
+    var wrap=document.getElementById('searchWrap');
+    wrap.classList.add('open');
+    document.getElementById('searchInput').focus();
+  }
+});
 
 // ══════════════════════════════════════════
 // TOAST
@@ -3706,24 +3786,24 @@ function showToast(msg){
 function seedData(){
   if(state.tasks.length>0) return;
   state.tasks=[
-    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'today',due:'Today 5pm',note:'',done:false},
-    {id:uid(),title:'Email Lindquist re: language & emotion revisions',category:'manuscript',status:'waiting',priority:'hi',section:'today',due:'',note:'Clarify authorship order before submitting',done:false},
-    {id:uid(),title:'Update lab meeting Slack canvas \u2014 March',category:'lab',status:'active',priority:'md',section:'today',due:'Mar 1',note:'',done:false},
-    {id:uid(),title:'Look up ramen place for date night with Bel',category:'bel',status:'active',priority:'md',section:'today',due:'Tonight',note:'',done:false},
-    {id:uid(),title:'Submit AFSP education committee notes',category:'lab',status:'active',priority:'lo',section:'today',due:'',note:'',done:true},
-    {id:uid(),title:'Plan spring trip \u2014 check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:'Mar 5',note:'',done:false},
-    {id:uid(),title:'Anniversary gift',category:'bel',status:'active',priority:'lo',section:'personal',due:'Mar 12',note:'Something tied to that thing she mentioned',done:false},
-    {id:uid(),title:'Schedule dentist appointment',category:'personal',status:'active',priority:'lo',section:'personal',due:'Overdue',note:'',done:false},
-    {id:uid(),title:'Call mom back',category:'personal',status:'active',priority:'lo',section:'personal',due:'Today',note:'',done:false},
+    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
+    {id:uid(),title:'Email Lindquist re: language & emotion revisions',category:'manuscript',status:'waiting',priority:'hi',section:'upcoming',pinnedToday:true,due:'',note:'Clarify authorship order before submitting',done:false},
+    {id:uid(),title:'Update lab meeting Slack canvas \u2014 March',category:'lab',status:'active',priority:'md',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
+    {id:uid(),title:'Look up ramen place for date night with Bel',category:'bel',status:'active',priority:'md',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
+    {id:uid(),title:'Submit AFSP education committee notes',category:'lab',status:'active',priority:'lo',section:'upcoming',pinnedToday:true,due:'',note:'',done:true},
+    {id:uid(),title:'Plan spring trip \u2014 check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'Anniversary gift',category:'bel',status:'active',priority:'lo',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()+10);return d.toISOString().split('T')[0];})(),note:'Something tied to that thing she mentioned',done:false},
+    {id:uid(),title:'Schedule dentist appointment',category:'personal',status:'active',priority:'lo',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()-3);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'Call mom back',category:'personal',status:'active',priority:'lo',section:'personal',due:getTodayStr(),note:'',done:false},
     {id:uid(),title:'Finish current chapter',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'',note:'',done:false},
-    {id:uid(),title:'Pick up new game this weekend',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'This weekend',note:'',done:false},
+    {id:uid(),title:'Pick up new game this weekend',category:'hobby',status:'active',priority:'lo',section:'hobby',due:(function(){var d=new Date();var day=d.getDay();var diff=day===0?6:6-day;d.setDate(d.getDate()+diff);return d.toISOString().split('T')[0];})(),note:'',done:false},
     {id:uid(),title:'Submit Applied Cognitive Psychology revisions',category:'manuscript',status:'blocked',priority:'hi',section:'blocked',due:'',note:'Waiting on co-author \u2014 discussion section',done:false},
     {id:uid(),title:'Interoception analysis \u2014 maltreatment paper',category:'manuscript',status:'blocked',priority:'md',section:'blocked',due:'',note:'Need R script from Peter re: LPA output',done:false},
     {id:uid(),title:'UNC Chapel Hill SOP \u2014 draft 2',category:'phd',status:'waiting',priority:'lo',section:'blocked',due:'',note:'',done:false},
-    {id:uid(),title:'SAS 2026 \u2014 early bird registration',category:'conf',status:'active',priority:'hi',section:'upcoming',due:'Mar 3',note:'',done:false},
-    {id:uid(),title:'Handbook of Emotion Dev \u2014 chapter outline',category:'manuscript',status:'review',priority:'md',section:'upcoming',due:'Mar 10',note:'',done:false},
-    {id:uid(),title:'988 cert renewal',category:'lab',status:'active',priority:'lo',section:'upcoming',due:'Mar 15',note:'',done:false},
-    {id:uid(),title:'Add sleep perception project to website',category:'phd',status:'active',priority:'lo',section:'upcoming',due:'Mar 20',note:'',done:false},
+    {id:uid(),title:'SAS 2026 \u2014 early bird registration',category:'conf',status:'active',priority:'hi',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'Handbook of Emotion Dev \u2014 chapter outline',category:'manuscript',status:'review',priority:'md',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+8);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'988 cert renewal',category:'lab',status:'active',priority:'lo',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+13);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'Add sleep perception project to website',category:'phd',status:'active',priority:'lo',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+18);return d.toISOString().split('T')[0];})(),note:'',done:false},
   ];
   saveLocal();
 }
@@ -4441,7 +4521,7 @@ function updateVaultBoy() {
 }
 
 function loadTheme() {
-  var saved = 'oled';
+  var saved = 'ios26';
   try { saved = localStorage.getItem(THEME_KEY) || 'ios26'; } catch(e){}
   applyTheme(saved);
 }
@@ -4668,6 +4748,66 @@ if (window.visualViewport) {
     }
   });
 }
+
+// ══════════════════════════════════════════
+// DRAG TO REORDER
+// ══════════════════════════════════════════
+var dragSrc = null;
+
+function addDragHandles(wrap, taskId) {
+  wrap.setAttribute('draggable', 'true');
+
+  wrap.addEventListener('dragstart', function(e) {
+    dragSrc = wrap;
+    wrap.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', taskId);
+  });
+
+  wrap.addEventListener('dragend', function() {
+    wrap.classList.remove('dragging');
+    document.querySelectorAll('.task-wrap.drag-over').forEach(function(el){
+      el.classList.remove('drag-over');
+    });
+    dragSrc = null;
+  });
+
+  wrap.addEventListener('dragover', function(e) {
+    if(!dragSrc || dragSrc===wrap) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.querySelectorAll('.task-wrap.drag-over').forEach(function(el){
+      el.classList.remove('drag-over');
+    });
+    wrap.classList.add('drag-over');
+  });
+
+  wrap.addEventListener('dragleave', function() {
+    wrap.classList.remove('drag-over');
+  });
+
+  wrap.addEventListener('drop', function(e) {
+    e.preventDefault();
+    wrap.classList.remove('drag-over');
+    if(!dragSrc || dragSrc===wrap) return;
+
+    var srcId  = e.dataTransfer.getData('text/plain');
+    var dstId  = taskId;
+    var tasks  = state.tasks;
+
+    var srcIdx = tasks.findIndex(function(t){ return t.id===srcId; });
+    var dstIdx = tasks.findIndex(function(t){ return t.id===dstId; });
+    if(srcIdx===-1||dstIdx===-1) return;
+
+    // move src to dst position
+    var moved = tasks.splice(srcIdx, 1)[0];
+    var newDst = tasks.findIndex(function(t){ return t.id===dstId; });
+    tasks.splice(newDst, 0, moved);
+
+    saveLocal(); render(); ghPush();
+  });
+}
+
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
