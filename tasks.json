@@ -132,8 +132,20 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm97ikl1ctn3",
+      "title": "Organize slack features",
+      "category": "lab",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-02T13:20:22.168Z"
+  "updated": "2026-03-02T13:20:40.892Z"
 }
