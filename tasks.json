@@ -60,6 +60,18 @@
       "noteIsMono": false
     },
     {
+      "id": "mm7swxj4rtxq",
+      "title": "Update website description of sleep project",
+      "category": "personal",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "due": "",
+      "note": "",
+      "done": false,
+      "noteIsMono": false
+    },
+    {
       "id": "mm97ikl1ctn3",
       "title": "Organize slack features",
       "category": "lab",
@@ -146,18 +158,6 @@
       "due": "",
       "noteIsMono": false,
       "done": false
-    },
-    {
-      "id": "mm7swxj4rtxq",
-      "title": "Update website description of sleep project",
-      "category": "personal",
-      "status": "active",
-      "priority": "lo",
-      "section": "upcoming",
-      "due": "",
-      "note": "",
-      "done": false,
-      "noteIsMono": false
     },
     {
       "id": "mm9pi4r1vstj",
@@ -292,5 +292,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T23:44:23.599Z"
+  "updated": "2026-03-02T23:44:26.973Z"
 }
