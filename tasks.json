@@ -60,6 +60,18 @@
       "noteIsMono": false
     },
     {
+      "id": "mm97ikl1ctn3",
+      "title": "Organize slack features",
+      "category": "lab",
+      "status": "active",
+      "priority": "md",
+      "section": "upcoming",
+      "note": "Talk to kristen about centralizing lab operations around slack\nworking on research poster, lab team sas poster, centralizing slack, communication + future directions as RAs + lab managers",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
+    },
+    {
       "id": "mm7swxj4rtxq",
       "title": "Update website description of sleep project",
       "category": "personal",
@@ -134,18 +146,6 @@
       "noteIsMono": false,
       "done": true,
       "completedAt": "2026-03-02T21:21:44.766Z"
-    },
-    {
-      "id": "mm97ikl1ctn3",
-      "title": "Organize slack features",
-      "category": "lab",
-      "status": "active",
-      "priority": "md",
-      "section": "upcoming",
-      "note": "Talk to kristen about centralizing lab operations around slack\nworking on research poster, lab team sas poster, centralizing slack, communication + future directions as RAs + lab managers",
-      "due": "2026-03-03",
-      "noteIsMono": false,
-      "done": false
     },
     {
       "id": "mm9ndmyjrxng",
@@ -292,5 +292,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T23:44:12.242Z"
+  "updated": "2026-03-02T23:44:16.692Z"
 }
