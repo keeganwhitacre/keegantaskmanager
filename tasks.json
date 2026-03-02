@@ -39,11 +39,11 @@
       "id": "mm7swxj4molq",
       "title": "Submit Applied Cognitive Psychology revisions",
       "category": "manuscript",
-      "status": "blocked",
+      "status": "active",
       "priority": "hi",
       "section": "blocked",
-      "due": "",
-      "note": "Waiting on Kiana and Bluck",
+      "due": "2026-03-03",
+      "note": "Check latest revisions comments",
       "done": false,
       "noteIsMono": false
     },
@@ -244,5 +244,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T18:34:20.506Z"
+  "updated": "2026-03-02T18:34:49.247Z"
 }
