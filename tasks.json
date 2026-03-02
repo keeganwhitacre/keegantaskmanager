@@ -165,7 +165,7 @@
       "category": "conf",
       "status": "active",
       "priority": "lo",
-      "section": "today",
+      "section": "upcoming",
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
@@ -269,5 +269,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T21:44:13.462Z"
+  "updated": "2026-03-02T21:44:18.018Z"
 }
