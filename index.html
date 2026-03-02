@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 
 <html lang="en" style="background:#000">
+<script>
+// Instant splash: apply saved theme bg before anything renders
+(function(){
+  var bg={paper:'#f5efe0',neon:'#0d0810',newsprint:'#f8f6f0',midnight:'#0c1122',pipboy:'#050a03',arcade:'#060600',ios26:'#e8eaf0'};
+  try{var t=localStorage.getItem('kw_theme_v2');if(t&&bg[t])document.documentElement.style.background=bg[t];}catch(e){}
+})();
+</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -1928,6 +1935,67 @@ border-radius: 10px;
 }
 body.theme-ios26 .d-book-empty    { color: rgba(100,100,140,0.4); font-style: italic; }
 
+/* ── scratchpad / notes view ── */
+.notes-header { display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:14px; }
+.notes-label { font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#62636f; }
+.notes-header-right { display:-webkit-flex;display:flex;gap:8px;-webkit-align-items:center;align-items:center; }
+.notes-sync-status { font-family:‘DM Mono’,monospace;font-size:10px;color:#44454e; }
+.notes-mono-toggle { font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:‘DM Mono’,monospace;-webkit-user-select:none;user-select:none; }
+.notes-textarea { width:100%;min-height:calc(100vh - 280px);background:#26272c;border:1px solid #3a3b42;border-radius:13px;padding:16px;color:#dddde3;font-family:‘DM Sans’,sans-serif;font-size:14px;line-height:1.7;outline:none;resize:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;-webkit-text-fill-color:#dddde3; }
+.notes-textarea::placeholder { color:#44454e; }
+.notes-textarea.mono { font-family:‘DM Mono’,monospace; }
+
+/* ── notes theme overrides ── */
+body.theme-paper    .notes-label        { color:#8a7355; }
+body.theme-paper    .notes-sync-status  { color:#b8a890; }
+body.theme-paper    .notes-mono-toggle  { color:#8a7355;border-color:#c9b99050; }
+body.theme-paper    .notes-textarea     { background:#ede4cf;border-color:#c9b99060;color:#2a1f0e;-webkit-text-fill-color:#2a1f0e; }
+body.theme-paper    .notes-textarea::placeholder { color:#c9b990; }
+
+body.theme-neon     .notes-label        { color:#4a3a5e; }
+body.theme-neon     .notes-sync-status  { color:#3d2a50; }
+body.theme-neon     .notes-mono-toggle  { color:#4a3a5e;border-color:#2d1f3d; }
+body.theme-neon     .notes-textarea     { background:#130a1a;border-color:#2d1f3d;color:#f0e8ff;-webkit-text-fill-color:#f0e8ff; }
+body.theme-neon     .notes-textarea::placeholder { color:#3d2a50; }
+
+body.theme-newsprint .notes-label       { color:#888;font-family:‘IBM Plex Mono’,monospace; }
+body.theme-newsprint .notes-sync-status { color:#aaa; }
+body.theme-newsprint .notes-mono-toggle { color:#888;border-color:#ddd;border-radius:2px; }
+body.theme-newsprint .notes-textarea    { background:#f0ede6;border-color:#ddd;color:#1a1a1a;-webkit-text-fill-color:#1a1a1a;border-radius:4px; }
+body.theme-newsprint .notes-textarea::placeholder { color:#bbb; }
+
+body.theme-midnight .notes-label        { color:#2a3355;font-family:‘Libre Baskerville’,serif;font-style:italic; }
+body.theme-midnight .notes-sync-status  { color:#1e2840; }
+body.theme-midnight .notes-mono-toggle  { color:#2a3355;border-color:#161e36; }
+body.theme-midnight .notes-textarea     { background:#080e1e;border-color:#161e36;color:#ddd4b8;-webkit-text-fill-color:#ddd4b8; }
+body.theme-midnight .notes-textarea::placeholder { color:#1e2840; }
+
+body.theme-pipboy   .notes-label        { color:#1e5018;font-family:‘Share Tech Mono’,monospace;letter-spacing:0.2em; }
+body.theme-pipboy   .notes-sync-status  { color:#1a3a14;font-family:‘Share Tech Mono’,monospace; }
+body.theme-pipboy   .notes-mono-toggle  { color:#1e5018;border-color:#0f2009;border-radius:2px;font-family:‘Share Tech Mono’,monospace; }
+body.theme-pipboy   .notes-textarea     { background:#030803;border-color:#0f2009;color:#39ff5a;-webkit-text-fill-color:#39ff5a;font-family:‘Share Tech Mono’,monospace;border-radius:4px; }
+body.theme-pipboy   .notes-textarea::placeholder { color:#1a3a14; }
+
+body.theme-arcade   .notes-label        { color:#333300;font-family:‘Press Start 2P’,monospace;font-size:7px;letter-spacing:0.1em; }
+body.theme-arcade   .notes-sync-status  { color:#1a1800;font-family:‘Press Start 2P’,monospace;font-size:7px; }
+body.theme-arcade   .notes-mono-toggle  { color:#333300;border-color:#1e1a00;border-radius:4px;font-family:‘Press Start 2P’,monospace;font-size:7px; }
+body.theme-arcade   .notes-textarea     { background:#0a0900;border-color:#1e1a00;color:#ffdd00;-webkit-text-fill-color:#ffdd00;font-family:‘Press Start 2P’,monospace;font-size:10px;border-radius:4px; }
+body.theme-arcade   .notes-textarea::placeholder { color:#1a1800; }
+
+body.theme-ios26    .notes-label        { color:rgba(60,60,90,0.5);font-size:10px;font-weight:700;letter-spacing:0.07em; }
+body.theme-ios26    .notes-sync-status  { color:rgba(60,60,90,0.4); }
+body.theme-ios26    .notes-mono-toggle  { color:rgba(60,60,100,0.55);border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.4);box-shadow:inset 0 1px 0 rgba(255,255,255,0.6); }
+body.theme-ios26    .notes-textarea     { background:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.68);color:#1a1a2e;-webkit-text-fill-color:#1a1a2e;border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6); }
+body.theme-ios26    .notes-textarea::placeholder { color:rgba(100,100,140,0.4); }
+
+.notes-mono-toggle.mono-active { color: #8b9eff; border-color: rgba(139,158,255,0.4); }
+body.theme-paper    .notes-mono-toggle.mono-active { color: #4a5580; border-color: rgba(74,85,128,0.4); }
+body.theme-newsprint .notes-mono-toggle.mono-active { color: #1a1a1a; border-color: #888; }
+body.theme-midnight  .notes-mono-toggle.mono-active { color: #c9a96e; border-color: rgba(201,169,110,0.4); }
+body.theme-pipboy    .notes-mono-toggle.mono-active { color: #39ff5a; border-color: rgba(57,255,90,0.4); }
+body.theme-arcade    .notes-mono-toggle.mono-active { color: #ffdd00; border-color: rgba(255,221,0,0.4); }
+body.theme-ios26     .notes-mono-toggle.mono-active { color: #007aff; border-color: rgba(0,122,255,0.4); background: rgba(0,122,255,0.1); }
+
 </style>
 </head>
 <body>
@@ -2021,19 +2089,18 @@ body.theme-ios26 .d-book-empty    { color: rgba(100,100,140,0.4); font-style: it
   <div class="chip" data-filter="archive">Archive</div>
 </div>
 
-<div id="taskList" class="hide-in-dash"></div>
+<div id="taskList" class="hide-in-dash" style="min-height:calc(100vh - 320px);"></div>
 <div class="spacer hide-in-dash" id="spacerEl"></div>
 <div id="notesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:14px;">
-    <div style="font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#62636f;">Scratchpad</div>
-    <div style="display:-webkit-flex;display:flex;gap:8px;-webkit-align-items:center;align-items:center;">
-      <span id="notesSyncStatus" style="font-family:'DM Mono',monospace;font-size:10px;color:#44454e;"></span>
-      <span id="notesMonoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
+  <div class="notes-header">
+    <div class="notes-label">Scratchpad</div>
+    <div class="notes-header-right">
+      <span id="notesSyncStatus" class="notes-sync-status"></span>
+      <span id="notesMonoToggle" class="notes-mono-toggle">mono off</span>
     </div>
   </div>
-  <textarea id="scratchpad"
-    placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses."
-    style="width:100%;min-height:calc(100vh - 280px);background:#26272c;border:1px solid #3a3b42;border-radius:13px;padding:16px;color:#dddde3;font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;outline:none;resize:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;-webkit-text-fill-color:#dddde3;">
+  <textarea id="scratchpad" class="notes-textarea"
+    placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses.">
   </textarea>
 </div>
 
@@ -3052,9 +3119,9 @@ function openNotes(){
   var sp = document.getElementById('scratchpad');
   sp.value = state.scratchpad || '';
   var isMono = localStorage.getItem(NOTES_MONO_KEY) === 'true';
-  sp.style.fontFamily = isMono ? "'DM Mono',monospace" : "'DM Sans',sans-serif";
+  sp.classList.toggle('mono', isMono);
   document.getElementById('notesMonoToggle').textContent = isMono ? 'mono on' : 'mono off';
-  document.getElementById('notesMonoToggle').style.color = isMono ? '#8b9eff' : '#62636f';
+  document.getElementById('notesMonoToggle').classList.toggle('mono-active', isMono);
   document.getElementById('notesBtn').style.background = 'rgba(139,158,255,0.12)';
   document.getElementById('notesBtn').style.borderColor = 'rgba(139,158,255,0.3)';
   document.getElementById('notesBtn').querySelector('svg').style.stroke = '#8b9eff';
@@ -3086,11 +3153,10 @@ document.getElementById('scratchpad').addEventListener('input', function(){
 
 document.getElementById('notesMonoToggle').addEventListener('click', function(){
   var sp = document.getElementById('scratchpad');
-  var isMono = sp.style.fontFamily.indexOf('Mono') !== -1;
-  isMono = !isMono;
-  sp.style.fontFamily = isMono ? "'DM Mono',monospace" : "'DM Sans',sans-serif";
+  var isMono = !sp.classList.contains('mono');
+  sp.classList.toggle('mono', isMono);
   this.textContent = isMono ? 'mono on' : 'mono off';
-  this.style.color = isMono ? '#8b9eff' : '#62636f';
+  this.classList.toggle('mono-active', isMono);
   localStorage.setItem(NOTES_MONO_KEY, isMono ? 'true' : 'false');
 });
 
