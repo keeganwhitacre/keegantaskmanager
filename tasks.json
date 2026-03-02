@@ -151,7 +151,7 @@
       "title": "Fallout / the finals",
       "category": "hobby",
       "status": "active",
-      "priority": "hi",
+      "priority": "lo",
       "section": "today",
       "note": "",
       "due": "",
@@ -256,5 +256,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T20:44:44.544Z"
+  "updated": "2026-03-02T20:44:53.098Z"
 }
