@@ -158,6 +158,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm9pi4r1vstj",
+      "title": "Add induced affect to yuritza poster",
+      "category": "conf",
+      "status": "active",
+      "priority": "lo",
+      "section": "today",
+      "note": "",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -257,5 +269,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T21:43:56.999Z"
+  "updated": "2026-03-02T21:44:13.462Z"
 }
