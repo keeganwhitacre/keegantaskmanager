@@ -91,7 +91,7 @@
       "priority": "md",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-02",
+      "due": "2026-03-03",
       "noteIsMono": false,
       "done": false
     },
@@ -147,5 +147,101 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-02T13:20:40.892Z"
+  "shop": [],
+  "dash": {
+    "intention": "",
+    "intentionWeek": "2026-W10",
+    "quoteIdx": 0,
+    "countdown": {
+      "name": "SAS Pittsburgh",
+      "date": "2026-03-11"
+    },
+    "reflection": "",
+    "reflectionDate": "2026-03-02",
+    "habits": {
+      "2026-W09": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "move": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "2026-W10": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "move": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    },
+    "book": {
+      "title": "Grapes Of Wrath",
+      "author": "Steinbeck",
+      "current": 0,
+      "total": 0
+    }
+  },
+  "updated": "2026-03-02T15:38:39.575Z"
 }
