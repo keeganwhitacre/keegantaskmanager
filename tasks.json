@@ -30,9 +30,10 @@
       "status": "active",
       "priority": "md",
       "section": "personal",
-      "due": "Mar 5",
-      "note": "",
-      "done": false
+      "due": "",
+      "note": "Plan out spring break trip!",
+      "done": false,
+      "noteIsMono": false
     },
     {
       "id": "mm7swxj4molq",
@@ -90,7 +91,7 @@
       "status": "active",
       "priority": "md",
       "section": "today",
-      "note": "",
+      "note": "just small load from weekend + work clothes",
       "due": "2026-03-02",
       "noteIsMono": false,
       "done": false
@@ -128,7 +129,7 @@
       "status": "active",
       "priority": "md",
       "section": "today",
-      "note": "",
+      "note": "design with Pittsburgh skyline, circular icons",
       "due": "",
       "noteIsMono": false,
       "done": false
@@ -140,7 +141,7 @@
       "status": "active",
       "priority": "md",
       "section": "today",
-      "note": "",
+      "note": "Talk to kristen about centralizing lab operations around slack",
       "due": "",
       "noteIsMono": false,
       "done": false
@@ -158,6 +159,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-02",
+    "book": {
+      "title": "Grapes Of Wrath",
+      "author": "Steinbeck",
+      "current": 0,
+      "total": 0
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -235,13 +242,7 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes Of Wrath",
-      "author": "Steinbeck",
-      "current": 0,
-      "total": 0
     }
   },
-  "updated": "2026-03-02T15:45:02.320Z"
+  "updated": "2026-03-02T16:19:12.016Z"
 }
