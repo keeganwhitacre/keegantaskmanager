@@ -114,7 +114,7 @@
       "category": "lab",
       "status": "active",
       "priority": "md",
-      "section": "today",
+      "section": "upcoming",
       "note": "",
       "due": "",
       "noteIsMono": false,
@@ -135,5 +135,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-02T01:02:25.523Z"
+  "updated": "2026-03-02T01:02:27.341Z"
 }
