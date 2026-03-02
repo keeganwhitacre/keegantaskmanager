@@ -72,18 +72,6 @@
       "done": false
     },
     {
-      "id": "mm7swxj4rtxq",
-      "title": "Update website description of sleep project",
-      "category": "personal",
-      "status": "active",
-      "priority": "lo",
-      "section": "upcoming",
-      "due": "",
-      "note": "",
-      "done": false,
-      "noteIsMono": false
-    },
-    {
       "id": "mm7sxp5id19v",
       "title": "Drive home",
       "category": null,
@@ -158,6 +146,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm7swxj4rtxq",
+      "title": "Update website description of sleep project",
+      "category": "personal",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "due": "",
+      "note": "",
+      "done": false,
+      "noteIsMono": false
     },
     {
       "id": "mm9pi4r1vstj",
@@ -292,5 +292,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T23:44:21.164Z"
+  "updated": "2026-03-02T23:44:23.599Z"
 }
