@@ -89,9 +89,9 @@
       "category": "personal",
       "status": "active",
       "priority": "md",
-      "section": "upcoming",
+      "section": "today",
       "note": "",
-      "due": "2026-03-03",
+      "due": "2026-03-02",
       "noteIsMono": false,
       "done": false
     },
@@ -243,5 +243,5 @@
       }
     }
   },
-  "updated": "2026-03-02T15:40:42.136Z"
+  "updated": "2026-03-02T15:41:04.081Z"
 }
