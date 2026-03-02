@@ -185,7 +185,13 @@
     }
   ],
   "scratchpad": "",
-  "shop": [],
+  "shop": [
+    {
+      "id": 1772488075153.201,
+      "text": "Toothpaste",
+      "done": false
+    }
+  ],
   "dash": {
     "intention": "",
     "intentionWeek": "2026-W10",
@@ -281,5 +287,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T21:47:46.737Z"
+  "updated": "2026-03-02T21:47:55.153Z"
 }
