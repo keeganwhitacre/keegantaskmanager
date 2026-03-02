@@ -129,7 +129,7 @@
       "status": "active",
       "priority": "md",
       "section": "today",
-      "note": "design with Pittsburgh skyline, circular icons",
+      "note": "design with Pittsburgh skyline, circular icons\nverify sizing and scaling on screens, make sure not too web-y",
       "due": "",
       "noteIsMono": false,
       "done": false
@@ -244,5 +244,5 @@
       }
     }
   },
-  "updated": "2026-03-02T18:32:13.641Z"
+  "updated": "2026-03-02T18:32:43.730Z"
 }
