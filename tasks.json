@@ -109,18 +109,6 @@
       "completedAt": "2026-03-02T01:02:25.519Z"
     },
     {
-      "id": "mm7v54zsyqnh",
-      "title": "Work on SAS poster for people",
-      "category": "lab",
-      "status": "active",
-      "priority": "md",
-      "section": "upcoming",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
       "id": "mm845zzqrsvy",
       "title": "Go to Bels, dinner w/ parents",
       "category": "bel",
@@ -147,5 +135,5 @@
     }
   ],
   "scratchpad": "",
-  "updated": "2026-03-02T13:20:14.547Z"
+  "updated": "2026-03-02T13:20:22.168Z"
 }
