@@ -170,6 +170,18 @@
       "due": "2026-03-03",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm9pmpbavoia",
+      "title": "Groceries?",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -269,5 +281,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-02T21:47:25.873Z"
+  "updated": "2026-03-02T21:47:46.737Z"
 }
