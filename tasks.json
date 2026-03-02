@@ -141,7 +141,7 @@
       "status": "active",
       "priority": "md",
       "section": "today",
-      "note": "Talk to kristen about centralizing lab operations around slack",
+      "note": "Talk to kristen about centralizing lab operations around slack\nworking on research poster, lab team sas poster, centralizing slack, communication + future directions as RAs + lab managers",
       "due": "",
       "noteIsMono": false,
       "done": false
@@ -244,5 +244,5 @@
       }
     }
   },
-  "updated": "2026-03-02T18:32:43.730Z"
+  "updated": "2026-03-02T18:33:34.944Z"
 }
