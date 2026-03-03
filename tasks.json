@@ -337,6 +337,19 @@
       "due": "2026-03-07",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "1772559203122",
+      "title": "This should delete",
+      "text": "This should delete",
+      "category": "personal",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -460,5 +473,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T17:32:38.144Z"
+  "updated": "2026-03-03T17:33:23.127Z"
 }
