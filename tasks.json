@@ -394,7 +394,7 @@
       "due": "2026-03-03",
       "noteIsMono": false,
       "done": false,
-      "pinnedToday": false
+      "pinnedToday": true
     }
   ],
   "scratchpad": "",
@@ -518,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:50:33.171Z"
+  "updated": "2026-03-03T19:50:43.345Z"
 }
