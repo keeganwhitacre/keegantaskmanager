@@ -421,12 +421,12 @@
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
-    "quoteIdx": 4,
+    "quoteIdx": 5,
     "countdown": {
       "name": "SAS Pittsburgh",
       "date": "2026-03-11"
     },
-    "reflection": "",
+    "reflection": "Enough means being happy at the end of the day. Not wishing I had more, done something differently, or things had happened another way. Enough means just being able to close my eyes and be satisfied. I don't feel like I need all that much, and much of it is not material at all. Enough is looking around and saying, this is good.",
     "reflectionDate": "2026-03-03",
     "book": {
       "title": "Grapes Of Wrath",
@@ -531,5 +531,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:56:25.050Z"
+  "updated": "2026-03-03T20:31:09.243Z"
 }
