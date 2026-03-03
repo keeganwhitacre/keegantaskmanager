@@ -322,8 +322,9 @@
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false,
-      "pinnedToday": false
+      "done": true,
+      "pinnedToday": false,
+      "completedAt": "2026-03-03T18:44:51.047Z"
     },
     {
       "id": "mmaoc3w0j226",
@@ -357,6 +358,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-03",
+    "book": {
+      "title": "Grapes Of Wrath",
+      "author": "Steinbeck",
+      "current": 0,
+      "total": 0
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -452,13 +459,7 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes Of Wrath",
-      "author": "Steinbeck",
-      "current": 0,
-      "total": 0
     }
   },
-  "updated": "2026-03-03T18:02:31.642Z"
+  "updated": "2026-03-03T18:44:51.054Z"
 }
