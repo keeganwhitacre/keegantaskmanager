@@ -94,7 +94,7 @@
       "priority": "lo",
       "section": "upcoming",
       "pinnedToday": false,
-      "note": "Fix shopping list swipe\nfix swipe to delete\nSimplify code? Remove themes?",
+      "note": "Fix shopping list swipe\nfix deletion\nSimplify code? Remove themes?",
       "due": "2026-03-06",
       "noteIsMono": false,
       "done": false
@@ -460,5 +460,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T17:33:28.804Z"
+  "updated": "2026-03-03T17:33:43.213Z"
 }
