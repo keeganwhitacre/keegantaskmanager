@@ -3528,6 +3528,9 @@ function openSheet(id){ document.getElementById(id).classList.add('open'); docum
 
 function closeSheets(){
   document.querySelectorAll('.sheet').forEach(function(s){
+    s.style.bottom = '';     // Clears the "lift" from the keyboard
+    s.style.maxHeight = '';  // Clears the "squish" from the keyboard
+    s.style.height = '';     // Clears any forced heights
     s.classList.remove('open');
     s.style.webkitTransform = '';
     s.style.transform = '';
