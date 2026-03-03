@@ -79,9 +79,10 @@
       "priority": "lo",
       "section": "upcoming",
       "due": "",
-      "note": "",
+      "note": "Upload new pdf",
       "done": false,
-      "noteIsMono": false
+      "noteIsMono": false,
+      "pinnedToday": false
     },
     {
       "id": "mm9wrd0jj2hq",
@@ -324,5 +325,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T11:17:00.219Z"
+  "updated": "2026-03-03T11:17:08.982Z"
 }
