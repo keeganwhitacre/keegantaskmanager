@@ -389,7 +389,7 @@
       "category": "bel",
       "status": "active",
       "priority": "lo",
-      "section": "upcoming",
+      "section": "personal",
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
@@ -518,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:47:42.389Z"
+  "updated": "2026-03-03T19:50:33.171Z"
 }
