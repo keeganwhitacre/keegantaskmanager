@@ -4826,18 +4826,24 @@ function shopClearDone() {
 
 // Events
 document.getElementById('shopBtn').addEventListener('click', function() {
+  // 1. Render and Open as usual
   renderShop();
   openSheet('shopSheet');
 
-  // The "Second Image" Fix:
-  // We wait 300ms for the slide-up animation to finish, then focus the input.
-  // This pops the keyboard and triggers your visualViewport resize logic automatically.
+  // 2. IMMEDIATE FOCUS (This "primes" the keyboard on iOS)
+  var inp = document.getElementById('shopInput');
+  if (inp) {
+    inp.focus();
+  }
+
+  // 3. DELAYED FOCUS (This ensures it stays focused after the sheet slides up)
   setTimeout(function() {
-    var inp = document.getElementById('shopInput');
     if (inp) {
       inp.focus();
+      // Force a scroll to the bottom so the "Add item" bar is visible
+      inp.scrollIntoView({ behavior: 'smooth' });
     }
-  }, 300); 
+  }, 350); 
 });
 document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
 document.getElementById('shopAddBtn').addEventListener('click', function() {
