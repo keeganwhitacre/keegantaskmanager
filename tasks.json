@@ -386,14 +386,15 @@
       "id": "1772567258866",
       "title": "bel PT",
       "text": "bel PT",
-      "category": "personal",
+      "category": "bel",
       "status": "active",
-      "priority": "md",
-      "section": "today",
+      "priority": "lo",
+      "section": "upcoming",
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false
+      "done": false,
+      "pinnedToday": false
     }
   ],
   "scratchpad": "",
@@ -517,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:47:38.869Z"
+  "updated": "2026-03-03T19:47:42.389Z"
 }
