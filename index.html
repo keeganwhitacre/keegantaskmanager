@@ -15,15 +15,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Tasks">
 <meta name="theme-color" content="#000000">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <link rel="manifest" href="manifest.json">
 <!-- Inline manifest as data URI for single-file deployment -->
 <title>Tasks</title>
-<!-- KW Tasks v2.4 - habit migration, touch drag, ios26 pills -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700;800&family=Bebas+Neue&family=Share+Tech+Mono&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -92,6 +86,7 @@ body { max-width: 860px; }
 .d-grid-2 { gap: 14px; }
 }
 body.theme-paper { background: #f5efe0; }
+body.theme-paper html { background: #f5efe0; }
 body.theme-newsprint { background: #f8f6f0; }
 
 body.focus-mode .hide-in-focus { display: none !important; }
@@ -200,7 +195,7 @@ body.focus-mode #focusBanner { display: flex; }
 .sec-title  { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #2e2e2e; }
 .sec-count  { font-family: ‘DM Mono’, monospace; font-size: 11px; color: #333; background: #0a0a0a; border: 1px solid #1a1a1a; padding: 1px 9px; border-radius: 99px; }
 
-.task-wrap { position: relative; margin-bottom: 8px; border-radius: 20px; overflow: hidden; }
+.task-wrap { position: relative; margin-bottom: 8px; border-radius: 16px; overflow: hidden; }
 .task-wrap.entering { animation: taskIn 0.22s ease both; }
 @keyframes taskIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .task-wrap.removing { animation: taskOut 0.18s ease forwards; pointer-events: none; }
@@ -208,7 +203,7 @@ body.focus-mode #focusBanner { display: flex; }
 .swipe-bg { position: absolute; inset: 0; background: rgba(160,20,20,0.15); border-radius: 16px; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
 .swipe-bg svg { width: 18px; height: 18px; stroke: #ff6b6b; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.task { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px; padding: 12px 14px 12px 16px; display: flex; gap: 11px; align-items: flex-start; position: relative; overflow: hidden; cursor: pointer; transition: background 0.1s; will-change: transform; user-select: none; }
+.task { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 16px; padding: 12px 14px 12px 16px; display: flex; gap: 11px; align-items: flex-start; position: relative; overflow: hidden; cursor: pointer; transition: background 0.1s; will-change: transform; user-select: none; }
 .task:active { background: #0f0f0f; }
 .task::before { content: ‘’; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 2px 0 0 2px; }
 .task.hi::before { background: #ff6b6b; }
@@ -246,8 +241,7 @@ body.focus-mode #focusBanner { display: flex; }
 
 .due { font-size: 11px; color: #333; margin-left: auto; flex-shrink: 0; }
 .due.overdue { color: #ff6b6b; }
-.due.today   { color: #ffbe5c; }
-.due.soon    { color: #888; }
+.due.soon    { color: #ffbe5c; }
 
 .note      { font-size: 11.5px; color: #444; margin-top: 5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 .note-mono { font-family: ‘DM Mono’, monospace; font-size: 10.5px; background: #050505; border-radius: 10px; padding: 8px 11px; margin-top: 6px; border: 1px solid #1a1a1a; color: #444; }
@@ -265,7 +259,7 @@ body.focus-mode #focusBanner { display: flex; }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
 .overlay.open { opacity: 1; pointer-events: all; }
 
-.sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0a; border-top: 1px solid #1a1a1a; border-radius: 26px 26px 0 0; padding: 18px 20px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 200; transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch; width: 100%; box-sizing: border-box; overscroll-behavior: contain; isolation: isolate; }
+.sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0a; border-top: 1px solid #1a1a1a; border-radius: 26px 26px 0 0; padding: 18px 20px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 200; transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch; width: 100%; box-sizing: border-box; }
 .sheet.open { transform: translateY(0); }
 .handle { width: 36px; height: 4px; background: #1e1e1e; border-radius: 2px; margin: 0 auto 18px; }
 .sheet-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 16px; }
@@ -278,7 +272,7 @@ body.focus-mode #focusBanner { display: flex; }
 .input::placeholder { color: #2e2e2e; }
 textarea.input { resize: vertical; min-height: 80px; max-height: 200px; line-height: 1.55; }
 
-.chip-row { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .s-chip { padding: 5px 13px; border-radius: 99px; border: 1px solid #1a1a1a; background: transparent; color: #444; font-family: ‘DM Mono’, monospace; font-size: 11px; cursor: pointer; transition: all 0.12s; user-select: none; }
 .s-chip.active { background: #0f0f1e; border-color: rgba(168,180,255,0.3); color: #a8b4ff; }
 
@@ -295,6 +289,7 @@ textarea.input { resize: vertical; min-height: 80px; max-height: 200px; line-hei
 .settings-status.connected { color: #52d9a0; border-color: rgba(82,217,160,0.2); background: rgba(82,217,160,0.04); }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
+#notesView { display: none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
 .notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .notes-title  { font-size: 14px; font-weight: 600; color: #e8e8ed; }
 
@@ -632,7 +627,7 @@ body.theme-neon .chip        { background: #130a1a; border-color: #2d1f3d; color
 body.theme-neon .chip.active { background: #1e0a2a; border-color: #ff2d78; color: #ff2d78; }
 body.theme-neon .sec-title   { color: #2d1f3d; font-family: ‘Syne’, sans-serif; letter-spacing: 0.12em; }
 body.theme-neon .sec-count   { background: #130a1a; border-color: #2d1f3d; color: #3d2a50; }
-body.theme-neon .task        { background: #100818; border-color: #2d1545; box-shadow: 0 2px 12px rgba(168,85,255,0.08); }
+body.theme-neon .task        { background: #100818; border-color: #1e1028; }
 body.theme-neon .task:active { background: #160d20; }
 body.theme-neon .task.lo::before { background: #2d1f3d; }
 body.theme-neon .task.hi::before { background: #ff2d78; }
@@ -996,13 +991,10 @@ box-sizing: border-box; transition: border-color 0.14s;
 .d-habit-label { -webkit-flex: 1; flex: 1; font-size: 13px; color: #ccc; }
 .d-habit-checks { display: -webkit-flex; display: flex; gap: 4px; }
 .d-habit-cb { width: 22px; height: 22px; border-radius: 6px; border: 1px solid #1e1e1e; background: transparent; cursor: pointer; display: -webkit-flex; display: flex; align-items: center; justify-content: center; transition: all 0.12s; -webkit-user-select: none; user-select: none; }
-
-.d-habit-cb.checked { background: #52d9a0; border-color: #52d9a0; display: flex; align-items: center; justify-content: center; }
-.d-habit-cb.checked::after { content: ‘✓’; font-size: 11px; color: #000; font-weight: 700; line-height: 1; }
-.d-habit-cb.checked-bad,
-.d-habit-cb.today-col.checked-bad { background: rgba(255,55,55,0.22) !important; border-color: #ff4444 !important; }
-.d-habit-cb.checked-bad::after,
-.d-habit-cb.today-col.checked-bad::after { content: ‘✗’ !important; color: #ff4444 !important; font-size: 11px !important; font-weight: 700; line-height: 1; }
+.d-habit-cb.checked { background: #52d9a0; border-color: #52d9a0; }
+.d-habit-cb.checked::after { content: ‘✓’; font-size: 12px; color: #000; font-weight: 700; }
+.d-habit-cb.checked-bad { background: rgba(255,60,60,0.2) !important; border-color: #ff4444 !important; display: flex; align-items: center; justify-content: center; }
+.d-habit-cb.checked-bad::after { content: ‘✗’; font-size: 12px; color: #ff4444; font-weight: 700; }
 .d-habit-cb.today { border-color: #333; }
 
 /* today dot on habit */
@@ -1475,6 +1467,7 @@ body.theme-pipboy .d-book-title    { color: #39ff5a; font-family: ‘Share Tech 
 body.theme-pipboy .d-book-author   { color: #2e7830; font-family: ‘Share Tech Mono’, monospace; }
 body.theme-pipboy .d-book-prog-wrap { background: #0a1a06; }
 body.theme-pipboy .d-book-prog-fill { background: #39ff5a; box-shadow: 0 0 6px rgba(57,255,90,0.5); }
+body.theme-pipboy .d-book-prog-wrap { position: relative; background: #0a1a06; border-radius: 2px; }
 /* block-style segmented bar via repeating gradient */
 body.theme-pipboy .d-book-prog-fill {
 background: repeating-linear-gradient(
@@ -1798,15 +1791,14 @@ body.theme-ios26 .sec-toggle    { color: rgba(60,60,90,0.4); }
 
 /* task cards — main glass surface */
 body.theme-ios26 .task {
-background: rgba(255,255,255,0.62);
-border-color: rgba(255,255,255,0.75);
-border-left-color: rgba(0,122,255,0.4);
--webkit-backdrop-filter: blur(24px) saturate(180%);
-backdrop-filter: blur(24px) saturate(180%);
-box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 16px rgba(0,0,40,0.08);
-border-radius: 22px;
+background: rgba(255,255,255,0.48);
+border-color: rgba(255,255,255,0.68);
+border-left-color: rgba(0,122,255,0.35);
+-webkit-backdrop-filter: blur(24px) saturate(170%);
+backdrop-filter: blur(24px) saturate(170%);
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 14px rgba(0,0,40,0.06);
+border-radius: 14px;
 }
-body.theme-ios26 .task-wrap { border-radius: 22px; }
 body.theme-ios26 .task-title    { color: #1a1a2e; font-weight: 400; }
 body.theme-ios26 .task-note     { color: rgba(100,100,140,0.55); }
 body.theme-ios26 .task-cb       { border-color: rgba(180,180,210,0.7); background: rgba(255,255,255,0.4); }
@@ -2302,38 +2294,7 @@ border-radius: 0; background: transparent;
 /* hide outside pipboy theme */
 body:not(.theme-pipboy) #perkCard { display: none !important; }
 
-/* ── priority stripe per theme ── */
-body.theme-midnight .task.hi::before { background: #ff6b6b; }
-body.theme-midnight .task.md::before { background: #c9a96e; }
-body.theme-midnight .task.lo::before { background: #1a2240; }
-body.theme-pipboy .task.hi::before   { background: #ff3333; }
-body.theme-pipboy .task.md::before   { background: #39ff5a; }
-body.theme-pipboy .task.lo::before   { background: #0f2009; }
-body.theme-neon .task.hi::before     { background: #ff2d78; }
-body.theme-neon .task.md::before     { background: #a855ff; }
-body.theme-neon .task.lo::before     { background: #2d1545; }
-body.theme-arcade .task.hi::before   { background: #ff2222; }
-body.theme-arcade .task.md::before   { background: #ffdd00; }
-body.theme-arcade .task.lo::before   { background: #111100; }
-body.theme-newsprint .task.hi::before { background: #c0392b; }
-body.theme-newsprint .task.md::before { background: #8a7355; }
-body.theme-newsprint .task.lo::before { background: #ddd; }
-body.theme-ios26 .task.hi::before    { background: #ff3b30; }
-body.theme-ios26 .task.md::before    { background: #ff9500; }
-body.theme-ios26 .task.lo::before    { background: rgba(100,100,160,0.18); }
-/* ── drag to reorder ── */
-.task-wrap.dragging { opacity: 0.4; }
-.task-wrap.drag-over { box-shadow: 0 -3px 0 0 #a8b4ff; transform: scale(1.01); transition: transform 0.1s; }
-body.theme-terminal .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #00cc44; }
-body.theme-paper    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #4a5580; }
-body.theme-neon     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #ff2d78; }
-body.theme-newsprint .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #1a1a1a; }
-body.theme-midnight  .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #c9a96e; }
-body.theme-pipboy    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #39ff5a; }
-body.theme-arcade    .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #ffdd00; }
-body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
 </style>
-
 </head>
 <body>
 
@@ -2382,7 +2343,12 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
 
 <!-- FOCUS BANNER (only in focus mode) -->
 
-<div class="focus-banner" id="focusBanner" style="display:none">
+<div class="focus-banner hide-in-focus" style="display:none">
+  <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  FOCUS MODE &mdash; Today only
+</div>
+<!-- fix: banner should show IN focus mode -->
+<div class="focus-banner" id="focusBanner" class="hide-in-dash" style="display:none">
   <svg viewBox="0 0 24 24" width="14" height="14" stroke="#8b9eff" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
   FOCUS MODE &mdash; Today only
 </div>
@@ -2402,13 +2368,12 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
 
 <div class="focus-strip hide-in-focus hide-in-dash" id="focusStrip">
   <div class="focus-dot"></div>
-  <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
-    <div class="focus-eye">Pinned Focus</div>
+  <div class="focus-text">
+    <div class="focus-eye">Current Focus</div>
     <div class="focus-title" id="focusTitle">No task pinned</div>
-    <div class="focus-sub" id="focusSub">Long-press any task to pin</div>
+    <div class="focus-sub" id="focusSub">Tap a task to set as focus</div>
   </div>
-  <div id="focusDoneBtn" style="display:none;font-size:18px;padding:6px 10px;cursor:pointer;color:#52d9a0;-webkit-user-select:none;user-select:none;" title="Complete focus task">✓</div>
-  <div class="focus-arr" id="focusArr">›</div>
+  <div class="focus-arr">›</div>
 </div>
 
 <!-- FILTERS -->
@@ -2446,76 +2411,16 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
 
 <div id="dashView">
 
-  <!-- VAULT BOY (pipboy theme only) — static pixel art with glow border -->
+  <!-- VAULT BOY (pipboy theme only) -->
 
-  <div id="vaultBoyStrip" style="display:none; height:90px; margin: 0 0 10px; position:relative; border: 1px solid rgba(57,255,90,0.25); border-radius: 10px; background: #030a02; overflow:hidden; box-shadow: 0 0 18px rgba(57,255,90,0.08), inset 0 0 30px rgba(0,0,0,0.5);">
-    <!-- scanlines -->
-    <div style="position:absolute;inset:0;pointer-events:none;z-index:2;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px);"></div>
-    <!-- phosphor glow corners -->
-    <div style="position:absolute;inset:0;pointer-events:none;z-index:1;box-shadow:inset 0 0 40px rgba(57,255,90,0.06);"></div>
-    <!-- Vault Boy SVG — clean linework -->
-    <svg id="vaultBoySvg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg" style="position:absolute;right:12px;bottom:0;height:86px;width:auto;z-index:3;filter:drop-shadow(0 0 10px rgba(57,255,90,0.8)) drop-shadow(0 0 4px rgba(57,255,90,1));">
-      <g fill="none" stroke="#39ff5a" stroke-linecap="round" stroke-linejoin="round">
-        <!-- helmet top -->
-        <path d="M35 28 Q35 10 50 8 Q65 10 65 28" stroke-width="2.5"/>
-        <!-- helmet visor band -->
-        <rect x="33" y="24" width="34" height="7" rx="3" stroke-width="2" fill="rgba(57,255,90,0.12)"/>
-        <!-- head sides -->
-        <path d="M35 28 L32 42 Q33 48 50 50 Q67 48 68 42 L65 28" stroke-width="2.5"/>
-        <!-- eyes -->
-        <ellipse cx="42" cy="35" rx="4" ry="4.5" stroke-width="1.8" fill="rgba(57,255,90,0.15)"/>
-        <ellipse cx="58" cy="35" rx="4" ry="4.5" stroke-width="1.8" fill="rgba(57,255,90,0.15)"/>
-        <!-- pupils -->
-        <circle cx="43" cy="35" r="1.5" fill="#39ff5a" stroke="none"/>
-        <circle cx="59" cy="35" r="1.5" fill="#39ff5a" stroke="none"/>
-        <!-- nose -->
-        <path d="M49 40 Q50 43 51 40" stroke-width="1.5"/>
-        <!-- big smile -->
-        <path d="M40 45 Q44 51 50 52 Q56 51 60 45" stroke-width="2"/>
-        <!-- cheeks -->
-        <ellipse cx="37" cy="44" rx="4" ry="2.5" stroke-width="1.2" fill="rgba(57,255,90,0.1)"/>
-        <ellipse cx="63" cy="44" rx="4" ry="2.5" stroke-width="1.2" fill="rgba(57,255,90,0.1)"/>
-        <!-- neck -->
-        <path d="M44 50 L43 56 M56 50 L57 56" stroke-width="2"/>
-        <!-- collar / jumpsuit top -->
-        <path d="M38 56 Q50 60 62 56 L65 58 Q50 63 35 58 Z" stroke-width="1.5" fill="rgba(57,255,90,0.08)"/>
-        <!-- torso -->
-        <path d="M33 60 L30 95 Q50 100 70 95 L67 60 Q50 65 33 60 Z" stroke-width="2.5" fill="rgba(57,255,90,0.06)"/>
-        <!-- vault suit vertical stripe -->
-        <line x1="50" y1="62" x2="50" y2="92" stroke-width="1" opacity="0.4"/>
-        <!-- 111 badge on chest -->
-        <rect x="41" y="68" width="18" height="13" rx="2" stroke-width="1.5" fill="rgba(57,255,90,0.12)"/>
-        <text x="50" y="78.5" text-anchor="middle" font-family="monospace" font-size="6" fill="#39ff5a" stroke="none" font-weight="bold">111</text>
-        <!-- belt -->
-        <path d="M32 92 Q50 96 68 92" stroke-width="2"/>
-        <!-- left arm raised with thumbs up -->
-        <path d="M33 64 L22 55 L16 46 L14 40" stroke-width="2.5"/>
-        <!-- thumb up hand -->
-        <path d="M14 40 L10 36 Q9 33 12 32 Q15 31 16 35 L18 38" stroke-width="2"/>
-        <path d="M10 36 L9 32 Q9 29 12 29 Q14 29 14 32 L14 36" stroke-width="1.8"/>
-        <path d="M14 32 L14 30 Q14 27 17 27 Q19 28 19 31 L18 34" stroke-width="1.5"/>
-        <path d="M18 30 L18 28 Q19 26 21 27 Q23 28 22 31 L21 33" stroke-width="1.3"/>
-        <!-- right arm down -->
-        <path d="M67 64 L78 72 L80 85 L78 93" stroke-width="2.5"/>
-        <!-- right hand -->
-        <path d="M76 93 Q72 98 76 100 Q82 100 82 95 L80 88" stroke-width="2"/>
-        <!-- legs -->
-        <path d="M38 95 L35 118 L33 124" stroke-width="3"/>
-        <path d="M62 95 L65 118 L67 124" stroke-width="3"/>
-        <!-- boots -->
-        <path d="M30 124 Q28 127 30 128 L44 128 L44 124" stroke-width="2" fill="rgba(57,255,90,0.15)"/>
-        <path d="M64 124 Q64 128 68 128 L72 128 Q74 127 72 124" stroke-width="2" fill="rgba(57,255,90,0.15)"/>
-        <!-- boot soles -->
-        <line x1="28" y1="128" x2="46" y2="128" stroke-width="2.5"/>
-        <line x1="62" y1="128" x2="74" y2="128" stroke-width="2.5"/>
-      </g>
-    </svg>
-    <!-- VAULT 111 text -->
-    <div style="position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:3;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(57,255,90,0.4);letter-spacing:0.12em;margin-bottom:3px;">VAULT-TEC</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:22px;color:#39ff5a;letter-spacing:0.06em;line-height:1;text-shadow:0 0 10px rgba(57,255,90,0.6);">111</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(57,255,90,0.4);letter-spacing:0.1em;margin-top:2px;">DWELLER READY</div>
+  <div id="vaultBoyStrip" style="display:none; overflow:hidden; height:72px; margin: 0 0 6px; position:relative; border-bottom: 1px solid #0f2009;">
+    <div id="vaultBoyWalker" style="position:absolute; bottom:0; left:-80px; animation: vbWalk 12s linear infinite;">
+      <img id="vaultBoyImg" src="vaultboy-walk.gif" alt="Vault Boy" style="height:68px; width:auto; image-rendering:pixelated; filter: drop-shadow(0 0 5px rgba(57,255,90,0.6));">
     </div>
+    <!-- scanline overlay on strip -->
+    <div style="position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,0.04) 2px,rgba(0,255,65,0.04) 4px);"></div>
+    <!-- ground line -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(57,255,90,0.2);"></div>
   </div>
 
   <!-- WEEKLY INTENTION -->
@@ -2672,7 +2577,7 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
   <div class="handle"></div>
   <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
     <div class="sheet-title" id="addSheetTitle" style="margin-bottom:0">New Task</div>
-    <div id="closeAddSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+    <div id="closeAddSheet" style="width:30px;height:30px;background:#35363d;border:1px solid #44454e;border-radius:9px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;cursor:pointer;font-size:16px;color:#9a9aaa;flex-shrink:0;-webkit-user-select:none;user-select:none;">&#x2715;</div>
   </div>
   <div class="sheet-label">Task</div>
   <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing...">
@@ -2706,15 +2611,13 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
     <div class="s-chip active" data-val="md">Med</div>
     <div class="s-chip" data-val="lo">Low</div>
   </div>
-    <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
-    Section
-    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
-  </div>
+  <div class="sheet-label">Section</div>
   <div class="chip-row" id="sectionRow">
-    <div class="s-chip" data-val="personal">Bel &amp; Personal</div>
-    <div class="s-chip" data-val="hobby">Hobbies &amp; Games</div>
+    <div class="s-chip active" data-val="today">Today</div>
+    <div class="s-chip" data-val="personal">Bel & Personal</div>
+    <div class="s-chip" data-val="hobby">Hobbies & Games</div>
     <div class="s-chip" data-val="blocked">Blocked</div>
-    <div class="s-chip active" data-val="upcoming">Upcoming</div>
+    <div class="s-chip" data-val="upcoming">Upcoming</div>
   </div>
   <button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
   <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
@@ -2727,7 +2630,7 @@ body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
   <div class="handle"></div>
   <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
     <div class="sheet-title" style="margin-bottom:0">Settings</div>
-    <div id="closeSettingsSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+    <div id="closeSettingsSheet" style="width:30px;height:30px;background:#35363d;border:1px solid #44454e;border-radius:9px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;cursor:pointer;font-size:16px;color:#9a9aaa;flex-shrink:0;-webkit-user-select:none;user-select:none;">&#x2715;</div>
   </div>
   <div class="sheet-label">Appearance</div>
   <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
@@ -2790,18 +2693,17 @@ var FOCUS_KEY    = 'kw_focus_v3';
 var PENDING_KEY  = 'kw_pending_v3';
 var NOTES_KEY    = 'kw_notes_v3';
 var NOTES_MONO_KEY = 'kw_notes_mono_v3';
-var DASH_KEY     = 'kw_dash_v1';
 
-var SECTIONS = ['personal','hobby','blocked','upcoming'];
-var SECTION_LABELS = { personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
-var SECTION_LABELS_PIPBOY = { personal:'[ COMPANION QUESTS ]', hobby:'[ SIDE QUESTS ]', blocked:'[ QUEST FAILED / WAITING ]', upcoming:'[ UPCOMING QUESTS ]' };
+var SECTIONS = ['today','personal','hobby','blocked','upcoming'];
+var SECTION_LABELS = { today:'Today', personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
+var SECTION_LABELS_PIPBOY = { today:'[ ACTIVE QUESTS ]', personal:'[ COMPANION QUESTS ]', hobby:'[ SIDE QUESTS ]', blocked:'[ QUEST FAILED / WAITING ]', upcoming:'[ UPCOMING QUESTS ]' };
 function getSectionLabel(sec) {
   if (document.body.classList.contains('theme-pipboy')) return SECTION_LABELS_PIPBOY[sec] || sec;
   return SECTION_LABELS[sec] || sec;
 }
 var CAT_LABEL = { manuscript:'manuscript', lab:'lab ops', phd:'phd apps', conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby' };
 
-var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false, notesOpen:false, scratchpad:'', collapsed:{}, _shaLoaded:true };
+var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false, notesOpen:false, scratchpad:'', collapsed:{} };
 
 function loadLocal() {
   try { var r=localStorage.getItem(STORE_KEY); if(r) state.tasks=JSON.parse(r); } catch(e){}
@@ -2810,10 +2712,6 @@ function loadLocal() {
   try { var p=localStorage.getItem(PENDING_KEY); if(p) state.pendingSync=JSON.parse(p); } catch(e){}
   try { var n=localStorage.getItem(NOTES_KEY); if(n!==null) state.scratchpad=n; } catch(e){}
   try { var col=localStorage.getItem('kw_collapsed_v1'); if(col) state.collapsed=JSON.parse(col); } catch(e){}
-  // if token is configured, ghFetch will resolve the sha — block pushes until then
-  if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
-  // migrate legacy section:'upcoming',pinnedToday:true tasks
-  state.tasks.forEach(function(t){ if(t.section==='today'){ t.pinnedToday=true; t.section='upcoming'; } });
   loadDash();
 }
 
@@ -2833,78 +2731,48 @@ var GH_API='https://api.github.com';
 function ghHeaders(){ return {'Authorization':'token '+state.settings.ghToken,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json','X-GitHub-Api-Version':'2022-11-28'}; }
 function ghPath(){ return GH_API+'/repos/'+state.settings.ghUser+'/'+state.settings.ghRepo+'/contents/tasks.json'; }
 
-function ghFetch(retries){
+function ghFetch(){
   if(!state.settings.ghToken||!state.settings.ghUser||!state.settings.ghRepo) return;
-  retries = retries || 0;
+  showSync('syncing','Fetching from GitHub\u2026');
   fetch(ghPath(),{headers:ghHeaders()})
-    .then(function(r){
-      if(r.status===404){ state._shaLoaded=true; ghPush(); return null; }
-      if(r.status===401||r.status===403){ state._shaLoaded=true; showSync('error','Auth failed — check GitHub token'); return null; }
-      if(!r.ok) throw new Error(r.status);
-      return r.json();
-    })
+    .then(function(r){ if(r.status===404){ghPush();return null;} if(!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(d){
       if(!d) return;
       state.sha=d.sha;
-      state._shaLoaded=true;
       var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-      state.tasks=dec.tasks||dec;
-      if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
-      if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
-      if(dec.dash !== undefined){
-        Object.assign(dState, dec.dash);
-        // migrate habit keys after sync (old data may have different habit IDs)
-        var today2 = new Date();
-        var syncWeek = getISOWeek(today2);
-        if(!dState.habits) dState.habits = {};
-        if(!dState.habits[syncWeek]) dState.habits[syncWeek] = {};
-        HABITS.forEach(function(h){
-          if(!dState.habits[syncWeek][h.id]) dState.habits[syncWeek][h.id]=[false,false,false,false,false,false,false];
-        });
-        saveDash(false);
-        if(document.body.classList.contains('dash-mode')) renderDashFull();
+      if(state.pendingSync){ ghPush(); } else {
+        state.tasks=dec.tasks||dec;
+        if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
+        if(dec.shop !== undefined) { shopItems=dec.shop; saveShop(); }
+        if(dec.dash !== undefined) {
+          // merge fetched dash into dState, preserving any keys not in payload
+          Object.assign(dState, dec.dash);
+          var sw=getISOWeek(new Date()); if(!dState.habits)dState.habits={}; if(!dState.habits[sw])dState.habits[sw]={};
+          HABITS.forEach(function(h){if(!dState.habits[sw][h.id])dState.habits[sw][h.id]=[false,false,false,false,false,false,false];});
+          saveDash(true);
+          if(document.body.classList.contains('dash-mode')) renderDash();
+        }
+        saveLocal();
+        // update textarea if notes view is open
+        var sp=document.getElementById('scratchpad');
+        if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
+        render();
+        showSync('success','Synced');
       }
-      saveLocal();
-      var sp=document.getElementById('scratchpad');
-      if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
-      render();
-      if(ghPushQueued){ ghPush(); } else { savePending(false); }
     })
-    .catch(function(){
-      state._shaLoaded=true;
-      if(retries < 1 && navigator.onLine){ setTimeout(function(){ ghFetch(1); }, 3000); }
-      else { showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline — saved locally'); }
-    });
+    .catch(function(){ showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline \u2014 saved locally'); });
 }
 
-var ghPushQueued = false;
 function ghPush(){
   if(!state.settings.ghToken||!state.settings.ghUser||!state.settings.ghRepo){ savePending(true); return; }
   if(!navigator.onLine){ savePending(true); showSync('offline','Offline \u2014 will sync when reconnected'); return; }
-  // sha not yet resolved from startup fetch — queue and let ghFetch() fire it
-  if(!state._shaLoaded){ ghPushQueued = true; return; }
-  ghPushQueued = false;
   showSync('syncing','Saving to GitHub\u2026');
   var payload={tasks:state.tasks,scratchpad:state.scratchpad,shop:shopItems,dash:dState,updated:new Date().toISOString()};
   var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
   var body={message:'Update tasks '+new Date().toLocaleTimeString(),content:content};
   if(state.sha) body.sha=state.sha;
   fetch(ghPath(),{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)})
-    .then(function(r){
-      // 409 conflict or 422 sha mismatch: re-fetch current sha and retry once
-      if(r.status===409||r.status===422){
-        return fetch(ghPath(),{headers:ghHeaders()})
-          .then(function(r2){ return r2.json(); })
-          .then(function(d2){
-            state.sha=d2.sha;
-            body.sha=state.sha;
-            return fetch(ghPath(),{method:'PUT',headers:ghHeaders(),body:JSON.stringify(body)});
-          })
-          .then(function(r3){ if(!r3.ok) throw new Error(r3.status); return r3.json(); });
-      }
-      if(!r.ok) throw new Error(r.status);
-      return r.json();
-    })
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(d){ state.sha=d.content.sha; savePending(false); showSync('success','Saved'); })
     .catch(function(){ savePending(true); showSync('error','Save failed \u2014 stored locally'); });
 }
@@ -2953,8 +2821,6 @@ function formatDate(){
   if(doneToday>0)    parts.push('<span class="sub-done">'+doneToday+(isPipSub?' XP earned':' done')+'</span>');
   var sub = parts.length ? parts.join(' &middot; ') : 'All clear &#10003;';
   document.getElementById('dateSub').innerHTML = sub;
-  // tab title badge
-  document.title = overdueCount > 0 ? '(' + overdueCount + ') Tasks' : 'Tasks';
 }
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2966,7 +2832,7 @@ function dueClass(due){
   if(isNaN(d)) return '';
   var diff = Math.round((d - today) / 86400000);
   if(diff < 0)  return 'overdue';
-  if(diff === 0) return 'today';
+  if(diff === 0) return 'soon';
   if(diff <= 3)  return 'soon';
   return '';
 }
@@ -3040,8 +2906,6 @@ function makeTaskWrap(t, delay) {
 
   // swipe to delete
   attachSwipe(wrap, el, bg, t.id);
-  // drag to reorder
-  addDragHandles(wrap, t.id);
 
   return wrap;
 }
@@ -3117,7 +2981,6 @@ function deferTask(id){
       }
       // move to upcoming
       t.section='upcoming';
-      t.pinnedToday=false;
       break;
     }
   }
@@ -3185,9 +3048,8 @@ function animateCheck(id, el) {
 }
 
 function isActuallyDueToday(t){
-  if(t.done) return false;
-  if(t.pinnedToday) return true;
-  if(!t.due) return false;
+  // true if due date is today (diff===0) or overdue — regardless of section
+  if(!t.due || t.done) return false;
   var today=new Date(); today.setHours(0,0,0,0);
   var d=new Date(t.due+'T00:00:00');
   if(isNaN(d)) return false;
@@ -3196,11 +3058,11 @@ function isActuallyDueToday(t){
 
 function filterTask(t){
   var f=state.filter;
-  if(state.focusMode) return isActuallyDueToday(t) && !t.done;
+  if(state.focusMode) return (t.section==='today'||isActuallyDueToday(t)) && !t.done;
   if(f==='archive') return t.done;
   if(t.done) return false;
   if(f==='all') return true;
-  if(f==='today') return isActuallyDueToday(t);
+  if(f==='today') return t.section==='today' || isActuallyDueToday(t);
   if(f==='blocked') return t.status==='blocked'||t.status==='waiting';
   return t.category===f;
 }
@@ -3215,6 +3077,8 @@ function render(){
   formatDate();
   var searchQ = document.getElementById('searchInput').value.trim();
 
+
+
   // focus strip
   var ft=null;
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
@@ -3225,7 +3089,7 @@ function render(){
   } else {
     state.focus=null;
     document.getElementById('focusTitle').textContent='No task pinned';
-    document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
+    document.getElementById('focusSub').textContent='Tap a task to set as focus';
   }
   // themed focus eye label
   var isPip = document.body.classList.contains('theme-pipboy');
@@ -3239,48 +3103,6 @@ function render(){
   var sectionsToShow=state.focusMode?['today']:SECTIONS;
   var isArchive = state.filter==='archive';
   var delayBase=0;
-
-  // ── Today synthetic section ──
-  if(!isArchive){
-    var todayTasks=state.tasks.filter(function(t){
-      if(t.done||!searchMatch(t,searchQ)) return false;
-      if(state.focusMode) return isActuallyDueToday(t);
-      if(state.filter==='all'||state.filter==='today') return isActuallyDueToday(t);
-      return false;
-    });
-    if(todayTasks.length>0){
-      anyVisible=true;
-      var isTodayCollapsed=state.collapsed['today'];
-      var todaySec=document.createElement('div');
-      todaySec.className='section'+(isTodayCollapsed?' collapsed':'');
-      todaySec.dataset.sec='today';
-      var tLabel=document.body.classList.contains('theme-pipboy')?'[ ACTIVE QUESTS ]':'Today';
-      var todayHdr=document.createElement('div');
-      todayHdr.className='sec-header';
-      todayHdr.style.cursor='pointer';
-      todayHdr.innerHTML='<div style="display:-webkit-flex;display:flex;align-items:center;gap:7px;"><div class="sec-title">'+tLabel+'</div><div class="sec-count">'+todayTasks.length+'</div></div><div class="sec-toggle">&#x2304;</div>';
-      todayHdr.addEventListener('click',function(){
-        state.collapsed['today']=!state.collapsed['today'];
-        try{localStorage.setItem('kw_collapsed_v1',JSON.stringify(state.collapsed));}catch(e){}
-        todaySec.classList.toggle('collapsed',state.collapsed['today']);
-      });
-      todaySec.appendChild(todayHdr);
-      var todayWrap=document.createElement('div');
-      todayWrap.className='sec-tasks';
-      todayTasks.sort(function(a,b){
-        var po={hi:0,md:1,lo:2};
-        var pa=po[a.priority||'md']||1,pb=po[b.priority||'md']||1;
-        if(pa!==pb) return pa-pb;
-        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
-        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
-        return da-db;
-      });
-      todayTasks.forEach(function(t,i){ todayWrap.appendChild(makeTaskWrap(t,isTodayCollapsed?0:i*30)); });
-      todaySec.appendChild(todayWrap);
-      delayBase+=todayTasks.length*30+50;
-      list.appendChild(todaySec);
-    }
-  }
 
   if(isArchive){
     // archive view: single flat section of all done tasks, sorted by completedAt desc
@@ -3303,7 +3125,13 @@ function render(){
     sectionsToShow.forEach(function(sec){
       var tasks=state.tasks.filter(function(t){
         if(!filterTask(t)||!searchMatch(t,searchQ)) return false;
-        return t.section===sec && !isActuallyDueToday(t);
+        if(sec==='today'){
+          // Today section shows: tasks in today section + overdue/due-today from any section
+          return t.section==='today' || isActuallyDueToday(t);
+        } else {
+          // Other sections: exclude tasks that are surfaced in Today to avoid duplicates
+          return t.section===sec && !isActuallyDueToday(t);
+        }
       });
       if(tasks.length===0) return;
       anyVisible=true;
@@ -3330,15 +3158,6 @@ function render(){
 
       var tasksWrap=document.createElement('div');
       tasksWrap.className='sec-tasks';
-      tasks.sort(function(a,b){
-        var po={hi:0,md:1,lo:2};
-        var pa=po[a.priority||'md']||1, pb=po[b.priority||'md']||1;
-        if(pa!==pb) return pa-pb;
-        // then by due date (earlier first, no date = last)
-        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
-        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
-        return da-db;
-      });
       tasks.forEach(function(t,i){ tasksWrap.appendChild(makeTaskWrap(t, isCollapsed?0:delayBase + i*30)); });
       section.appendChild(tasksWrap);
       delayBase+=tasks.length*30+50;
@@ -3355,8 +3174,6 @@ function render(){
   // focus mode UI
   document.getElementById('focusBanner').style.display = state.focusMode ? 'flex' : 'none';
   document.getElementById('focusBtnLabel').textContent = state.focusMode ? 'Exit Focus' : 'Focus';
-  var focusDoneBtn = document.getElementById('focusDoneBtn');
-  if(focusDoneBtn) focusDoneBtn.style.display = (ft && !state.focusMode) ? 'block' : 'none';
 }
 
 // ══════════════════════════════════════════
@@ -3410,7 +3227,7 @@ function deleteTask(id){
   // if focus strip was showing this task, update it
   if(state.focus===null){
     document.getElementById('focusTitle').textContent='No task pinned';
-    document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
+    document.getElementById('focusSub').textContent='Tap a task to set as focus';
   }
   // don't ghPush yet — wait until undo window closes
 
@@ -3436,13 +3253,9 @@ function commitUndo(){
   if(!undoBuffer) return;
   clearTimeout(undoTimer);
   undoTimer = null;
+  // restore task
   state.tasks.push(undoBuffer.task);
   if(undoBuffer.focusWas) state.focus = undoBuffer.task.id;
-  // if the task was completed, decrement the perk counter so re-completing awards correctly
-  if(undoBuffer.task.done){
-    var n = Math.max(0, getPerkCount() - 1);
-    setPerkCount(n);
-  }
   undoBuffer = null;
   document.getElementById('toastUndo').classList.remove('show');
   saveLocal(); render(); ghPush();
@@ -3471,8 +3284,7 @@ function openEdit(id){
   setChip('catRow',t.category||null);
   setChip('statusRow',t.status||'active');
   setChip('priRow',t.priority||'md');
-  setChip('sectionRow',t.section||'upcoming');
-  var pinChip=document.getElementById('pinTodayChip'); if(pinChip) pinChip.classList.toggle('active',!!(t.pinnedToday));
+  setChip('sectionRow',t.section||'today');
   openSheet('addSheet');
 }
 
@@ -3482,8 +3294,14 @@ function saveTask(){
   var category=getChip('catRow');
   var status=getChip('statusRow')||'active';
   var priority=getChip('priRow')||'md';
-  var section=getChip('sectionRow')||'upcoming';
-  var pinnedToday=!!(document.getElementById('pinTodayChip')&&document.getElementById('pinTodayChip').classList.contains('active'));
+  var section=getChip('sectionRow')||'today';
+  // auto-promote to today if due date is today or overdue
+  var dueVal=document.getElementById('taskDueInput').value;
+  if(dueVal && section!=='today'){
+    var dTest=new Date(dueVal+'T00:00:00');
+    var todayTest=new Date(); todayTest.setHours(0,0,0,0);
+    if(!isNaN(dTest) && dTest<=todayTest) section='today';
+  }
   var note=document.getElementById('taskNoteInput').value.trim();
   var due=document.getElementById('taskDueInput').value; // YYYY-MM-DD
   var noteIsMono=document.getElementById('taskNoteInput').style.fontFamily.indexOf('Mono')!==-1;
@@ -3491,13 +3309,13 @@ function saveTask(){
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono});
+        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false});
+    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,note:note,due:due,noteIsMono:noteIsMono,done:false});
     showToast('Task added');
   }
   closeSheets(); saveLocal(); render(); ghPush();
@@ -3514,18 +3332,8 @@ document.getElementById('focusPinBtn').addEventListener('click', function(){
 });
 
 // clear focus by tapping strip
-document.getElementById('focusArr').addEventListener('click', function(){
-  if(state.focus){ openEdit(state.focus); } else { showToast('Long-press a task to pin it as focus'); }
-});
-document.getElementById('focusDoneBtn').addEventListener('click', function(e){
-  e.stopPropagation();
-  if(state.focus){
-    var id = state.focus;
-    state.focus = null;
-    animateCheck(id, document.querySelector('[data-id="'+id+'"] .task') || document.createElement('div'));
-    saveLocal(); render(); ghPush();
-    showToast('Focus completed ✓');
-  }
+document.getElementById('focusStrip').addEventListener('click', function(){
+  if(state.focus){ state.focus=null; saveLocal(); render(); showToast('Focus cleared'); }
 });
 
 // ── FOCUS MODE ──
@@ -3576,10 +3384,6 @@ function openAddSheet(){
 function getChip(rowId){ var a=document.querySelector('#'+rowId+' .s-chip.active'); return a?a.dataset.val:null; }
 function setChip(rowId,val){ document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.toggle('active',c.dataset.val===val);}); }
 
-document.getElementById('addSheet').addEventListener('click', function(e){
-  var pin = e.target.closest('#pinTodayChip');
-  if(pin) pin.classList.toggle('active');
-});
 ['catRow','statusRow','priRow','sectionRow'].forEach(function(rowId){
   document.getElementById(rowId).addEventListener('click',function(e){
     var chip=e.target.closest('.s-chip'); if(!chip) return;
@@ -3745,6 +3549,7 @@ document.querySelectorAll('.sheet').forEach(function(sheet) {
   }, { passive: true });
 });
 
+
 // ══════════════════════════════════════════
 // QUICK ADD
 // ══════════════════════════════════════════
@@ -3778,8 +3583,11 @@ document.getElementById('quickAddInput').addEventListener('keydown', function(e)
 });
 document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd);
 
+
 document.getElementById('fab').addEventListener('click', function(){
-  toggleQuickAdd();
+  // short tap = quick add, already open = close it
+  var wrap = document.getElementById('quickAddWrap');
+  if(wrap.classList.contains('open')){ toggleQuickAdd(); } else { toggleQuickAdd(); }
 });
 // Long-press FAB = open full sheet
 (function(){
@@ -3794,18 +3602,7 @@ document.getElementById('overlay').addEventListener('click',closeSheets);
 document.getElementById('saveTaskBtn').addEventListener('click',saveTask);
 document.getElementById('deleteTaskBtn').addEventListener('click',function(){ if(state.editingId) deleteTask(state.editingId); closeSheets(); });
 document.getElementById('settingsBtn').addEventListener('click',function(){ loadSettingsUI(); openSheet('settingsSheet'); });
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){ closeSheets(); return; }
-  var tag = (document.activeElement||{}).tagName||'';
-  var inInput = tag==='INPUT'||tag==='TEXTAREA'||document.activeElement.isContentEditable;
-  if(inInput) return;
-  if(e.key==='n'||e.key==='N'){ e.preventDefault(); openAddSheet(); }
-  if(e.key==='/'){ e.preventDefault();
-    var wrap=document.getElementById('searchWrap');
-    wrap.classList.add('open');
-    document.getElementById('searchInput').focus();
-  }
-});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheets(); });
 
 // ══════════════════════════════════════════
 // TOAST
@@ -3894,31 +3691,34 @@ function showToast(msg){
 function seedData(){
   if(state.tasks.length>0) return;
   state.tasks=[
-    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
-    {id:uid(),title:'Email Lindquist re: language & emotion revisions',category:'manuscript',status:'waiting',priority:'hi',section:'upcoming',pinnedToday:true,due:'',note:'Clarify authorship order before submitting',done:false},
-    {id:uid(),title:'Update lab meeting Slack canvas \u2014 March',category:'lab',status:'active',priority:'md',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
-    {id:uid(),title:'Look up ramen place for date night with Bel',category:'bel',status:'active',priority:'md',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
-    {id:uid(),title:'Submit AFSP education committee notes',category:'lab',status:'active',priority:'lo',section:'upcoming',pinnedToday:true,due:'',note:'',done:true},
-    {id:uid(),title:'Plan spring trip \u2014 check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false},
-    {id:uid(),title:'Anniversary gift',category:'bel',status:'active',priority:'lo',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()+10);return d.toISOString().split('T')[0];})(),note:'Something tied to that thing she mentioned',done:false},
-    {id:uid(),title:'Schedule dentist appointment',category:'personal',status:'active',priority:'lo',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()-3);return d.toISOString().split('T')[0];})(),note:'',done:false},
-    {id:uid(),title:'Call mom back',category:'personal',status:'active',priority:'lo',section:'personal',due:getTodayStr(),note:'',done:false},
+    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'today',due:'Today 5pm',note:'',done:false},
+    {id:uid(),title:'Email Lindquist re: language & emotion revisions',category:'manuscript',status:'waiting',priority:'hi',section:'today',due:'',note:'Clarify authorship order before submitting',done:false},
+    {id:uid(),title:'Update lab meeting Slack canvas \u2014 March',category:'lab',status:'active',priority:'md',section:'today',due:'Mar 1',note:'',done:false},
+    {id:uid(),title:'Look up ramen place for date night with Bel',category:'bel',status:'active',priority:'md',section:'today',due:'Tonight',note:'',done:false},
+    {id:uid(),title:'Submit AFSP education committee notes',category:'lab',status:'active',priority:'lo',section:'today',due:'',note:'',done:true},
+    {id:uid(),title:'Plan spring trip \u2014 check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:'Mar 5',note:'',done:false},
+    {id:uid(),title:'Anniversary gift',category:'bel',status:'active',priority:'lo',section:'personal',due:'Mar 12',note:'Something tied to that thing she mentioned',done:false},
+    {id:uid(),title:'Schedule dentist appointment',category:'personal',status:'active',priority:'lo',section:'personal',due:'Overdue',note:'',done:false},
+    {id:uid(),title:'Call mom back',category:'personal',status:'active',priority:'lo',section:'personal',due:'Today',note:'',done:false},
     {id:uid(),title:'Finish current chapter',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'',note:'',done:false},
-    {id:uid(),title:'Pick up new game this weekend',category:'hobby',status:'active',priority:'lo',section:'hobby',due:(function(){var d=new Date();var day=d.getDay();var diff=day===0?6:6-day;d.setDate(d.getDate()+diff);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'Pick up new game this weekend',category:'hobby',status:'active',priority:'lo',section:'hobby',due:'This weekend',note:'',done:false},
     {id:uid(),title:'Submit Applied Cognitive Psychology revisions',category:'manuscript',status:'blocked',priority:'hi',section:'blocked',due:'',note:'Waiting on co-author \u2014 discussion section',done:false},
     {id:uid(),title:'Interoception analysis \u2014 maltreatment paper',category:'manuscript',status:'blocked',priority:'md',section:'blocked',due:'',note:'Need R script from Peter re: LPA output',done:false},
     {id:uid(),title:'UNC Chapel Hill SOP \u2014 draft 2',category:'phd',status:'waiting',priority:'lo',section:'blocked',due:'',note:'',done:false},
-    {id:uid(),title:'SAS 2026 \u2014 early bird registration',category:'conf',status:'active',priority:'hi',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+1);return d.toISOString().split('T')[0];})(),note:'',done:false},
-    {id:uid(),title:'Handbook of Emotion Dev \u2014 chapter outline',category:'manuscript',status:'review',priority:'md',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+8);return d.toISOString().split('T')[0];})(),note:'',done:false},
-    {id:uid(),title:'988 cert renewal',category:'lab',status:'active',priority:'lo',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+13);return d.toISOString().split('T')[0];})(),note:'',done:false},
-    {id:uid(),title:'Add sleep perception project to website',category:'phd',status:'active',priority:'lo',section:'upcoming',due:(function(){var d=new Date();d.setDate(d.getDate()+18);return d.toISOString().split('T')[0];})(),note:'',done:false},
+    {id:uid(),title:'SAS 2026 \u2014 early bird registration',category:'conf',status:'active',priority:'hi',section:'upcoming',due:'Mar 3',note:'',done:false},
+    {id:uid(),title:'Handbook of Emotion Dev \u2014 chapter outline',category:'manuscript',status:'review',priority:'md',section:'upcoming',due:'Mar 10',note:'',done:false},
+    {id:uid(),title:'988 cert renewal',category:'lab',status:'active',priority:'lo',section:'upcoming',due:'Mar 15',note:'',done:false},
+    {id:uid(),title:'Add sleep perception project to website',category:'phd',status:'active',priority:'lo',section:'upcoming',due:'Mar 20',note:'',done:false},
   ];
   saveLocal();
 }
 
+
 // ══════════════════════════════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════════════════════════════
+
+var DASH_KEY = 'kw_dash_v1';
 
 var QUOTES = [
   { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
@@ -4171,10 +3971,10 @@ var PROMPTS = [
 ];
 
 var HABITS = [
-  { id: 'sleep',  label: 'Slept 7h+',  bad: false },
-  { id: 'read',   label: 'Read',        bad: false },
-  { id: 'lift',   label: 'Lifted',      bad: false },
-  { id: 'doom',   label: 'Doom scrolled', bad: true  },
+  { id: 'sleep', label: 'Slept 7h+',    bad: false },
+  { id: 'read',  label: 'Read',          bad: false },
+  { id: 'lift',  label: 'Lifted',        bad: false },
+  { id: 'doom',  label: 'Doom scrolled', bad: true  },
 ];
 
 // dash state — loaded from localStorage
@@ -4458,15 +4258,17 @@ function renderHabits() {
 
   // init week if needed
   if (!dState.habits[week]) { dState.habits[week] = {}; }
-  // migrate: ensure all current habit IDs exist in this week's data
-  var habitsDirty = false;
+  // migrate: ensure all current habit IDs exist
   HABITS.forEach(function(h) {
-    if (!dState.habits[week][h.id]) { dState.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; }
+    if (!dState.habits[week][h.id]) dState.habits[week][h.id] = [false,false,false,false,false,false,false];
   });
-  // prune old weeks (keep last 2)
-  var weeks = Object.keys(dState.habits).sort();
-  while (weeks.length > 2) { delete dState.habits[weeks.shift()]; habitsDirty = true; }
-  if (habitsDirty) saveDash(false);
+  if (false) { // placeholder for old block
+    var _unused = null;
+    // prune old weeks (keep last 2)
+    var weeks = Object.keys(dState.habits).sort();
+    while (weeks.length > 2) { delete dState.habits[weeks.shift()]; }
+    saveDash(true);
+  }
 
   // day labels row
   var labelRow = document.getElementById('dHabitDayLabels');
@@ -4500,13 +4302,13 @@ function renderHabits() {
       cb.addEventListener('click', function() {
         if (!dState.habits[week][h.id]) dState.habits[week][h.id] = [false,false,false,false,false,false,false];
         dState.habits[week][h.id][i] = !dState.habits[week][h.id][i];
-        var isNowChecked = dState.habits[week][h.id][i];
+        var nowOn = dState.habits[week][h.id][i];
         saveDash(true);
         if (h.bad) {
-          cb.classList.toggle('checked-bad', isNowChecked);
+          cb.classList.toggle('checked-bad', nowOn);
           cb.classList.remove('checked');
         } else {
-          cb.classList.toggle('checked', isNowChecked);
+          cb.classList.toggle('checked', nowOn);
           cb.classList.remove('checked-bad');
         }
       });
@@ -4516,6 +4318,7 @@ function renderHabits() {
     rowsEl.appendChild(row);
   });
 }
+
 
 // ── Currently Reading ──
 function renderBook() {
@@ -4640,7 +4443,7 @@ function updateVaultBoy() {
 }
 
 function loadTheme() {
-  var saved = 'ios26';
+  var saved = 'oled';
   try { saved = localStorage.getItem(THEME_KEY) || 'ios26'; } catch(e){}
   applyTheme(saved);
 }
@@ -4659,6 +4462,7 @@ document.getElementById('settingsSheet').addEventListener('click', function(e){
     setTimeout(runBootSequence, 120); // slight delay so CRT effect starts first
   }
 });
+
 
 // ── Pip-Boy boot sequence ──
 var BOOT_LINES = [
@@ -4714,6 +4518,7 @@ function runBootSequence(cb) {
   }
   nextLine();
 }
+
 
 // ── Perk system ──
 var PERKS = [
@@ -4849,6 +4654,7 @@ document.getElementById('shopClearDone').addEventListener('click', shopClearDone
 
 loadShop();
 
+
 // ── Visual viewport: keep sheets above keyboard on iOS ──
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', function() {
@@ -4867,116 +4673,6 @@ if (window.visualViewport) {
     }
   });
 }
-
-// ══════════════════════════════════════════
-// DRAG TO REORDER (pointer events — works on touch + mouse)
-// ══════════════════════════════════════════
-var dragState = null;
-
-function addDragHandles(wrap, taskId) {
-  var handle = wrap.querySelector('.task');
-  if(!handle) return;
-
-  function onPointerDown(e) {
-    // only start on long-press (350ms) or with a dedicated handle
-    if(e.button && e.button !== 0) return;
-    var moved = false;
-    var longPressTimer = setTimeout(function() {
-      startDrag(e, wrap, taskId);
-    }, 350);
-
-    function cancelLong(ev) {
-      var dx = Math.abs(ev.clientX - e.clientX);
-      var dy = Math.abs(ev.clientY - e.clientY);
-      if(dx > 8 || dy > 8) { clearTimeout(longPressTimer); }
-    }
-    function cleanup() { clearTimeout(longPressTimer); handle.removeEventListener('pointermove', cancelLong); handle.removeEventListener('pointerup', cleanup); handle.removeEventListener('pointercancel', cleanup); }
-    handle.addEventListener('pointermove', cancelLong);
-    handle.addEventListener('pointerup', cleanup);
-    handle.addEventListener('pointercancel', cleanup);
-  }
-  handle.addEventListener('pointerdown', onPointerDown, {passive: true});
-}
-
-function startDrag(e, wrap, taskId) {
-  if(dragState) return;
-
-  // haptic if available
-  if(navigator.vibrate) navigator.vibrate(30);
-
-  var list = wrap.parentNode;
-  var rect = wrap.getBoundingClientRect();
-  var offsetY = e.clientY - rect.top;
-
-  // ghost
-  var ghost = wrap.cloneNode(true);
-  ghost.style.cssText = 'position:fixed;left:'+rect.left+'px;top:'+rect.top+'px;width:'+rect.width+'px;opacity:0.85;pointer-events:none;z-index:9999;transition:none;box-shadow:0 8px 30px rgba(0,0,0,0.4);border-radius:14px;';
-  document.body.appendChild(ghost);
-
-  wrap.style.opacity = '0.3';
-
-  dragState = { taskId: taskId, wrap: wrap, ghost: ghost, list: list, offsetY: offsetY };
-
-  document.addEventListener('pointermove', onDragMove, {passive: false});
-  document.addEventListener('pointerup', onDragEnd);
-  document.addEventListener('pointercancel', onDragEnd);
-}
-
-function onDragMove(e) {
-  if(!dragState) return;
-  e.preventDefault();
-  var ghost = dragState.ghost;
-  ghost.style.top = (e.clientY - dragState.offsetY) + 'px';
-
-  // find what we're over
-  var overEl = null;
-  var siblings = dragState.list.querySelectorAll('.task-wrap');
-  siblings.forEach(function(sib) {
-    if(sib === dragState.wrap) return;
-    var r = sib.getBoundingClientRect();
-    if(e.clientY >= r.top && e.clientY <= r.bottom) overEl = sib;
-    sib.classList.remove('drag-over');
-  });
-  if(overEl) overEl.classList.add('drag-over');
-}
-
-function onDragEnd(e) {
-  if(!dragState) return;
-  document.removeEventListener('pointermove', onDragMove);
-  document.removeEventListener('pointerup', onDragEnd);
-  document.removeEventListener('pointercancel', onDragEnd);
-
-  // find drop target
-  var overEl = dragState.list.querySelector('.task-wrap.drag-over');
-  dragState.list.querySelectorAll('.task-wrap').forEach(function(s){ s.classList.remove('drag-over'); });
-
-  dragState.ghost.remove();
-  dragState.wrap.style.opacity = '';
-
-  if(overEl && overEl !== dragState.wrap) {
-    var srcId = dragState.taskId;
-    var dstId = overEl.dataset.id;
-    var tasks = state.tasks;
-    var srcIdx = tasks.findIndex ? tasks.findIndex(function(t){return t.id===srcId;}) : -1;
-    var dstIdx = tasks.findIndex ? tasks.findIndex(function(t){return t.id===dstId;}) : -1;
-    // polyfill findIndex for older Safari
-    if(srcIdx === -1){ for(var i=0;i<tasks.length;i++){if(tasks[i].id===srcId){srcIdx=i;break;}} }
-    if(dstIdx === -1){ for(var j=0;j<tasks.length;j++){if(tasks[j].id===dstId){dstIdx=j;break;}} }
-    if(srcIdx !== -1 && dstIdx !== -1) {
-      var moved = tasks.splice(srcIdx, 1)[0];
-      var newDst = 0;
-      for(var k=0;k<tasks.length;k++){if(tasks[k].id===dstId){newDst=k;break;}}
-      tasks.splice(newDst, 0, moved);
-      saveLocal(); render(); ghPush();
-    }
-  }
-
-  dragState = null;
-}
-
-// ══════════════════════════════════════════
-
-
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
