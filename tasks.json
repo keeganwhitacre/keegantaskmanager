@@ -129,7 +129,7 @@
       "title": "Light load of laundry",
       "category": "personal",
       "status": "active",
-      "priority": "md",
+      "priority": "lo",
       "section": "upcoming",
       "note": "just small load from weekend + work clothes",
       "due": "2026-03-03",
@@ -464,5 +464,5 @@
       }
     }
   },
-  "updated": "2026-03-03T16:01:48.952Z"
+  "updated": "2026-03-03T16:01:54.188Z"
 }
