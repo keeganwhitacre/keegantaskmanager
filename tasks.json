@@ -351,7 +351,7 @@
     }
   ],
   "dash": {
-    "intention": "Finalize SA",
+    "intention": "Finalize SAS",
     "intentionWeek": "2026-W10",
     "quoteIdx": 3,
     "countdown": {
@@ -463,5 +463,5 @@
       }
     }
   },
-  "updated": "2026-03-03T14:59:48.333Z"
+  "updated": "2026-03-03T14:59:58.887Z"
 }
