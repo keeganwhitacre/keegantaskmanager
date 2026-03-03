@@ -262,7 +262,7 @@
       "2026-W10": {
         "sleep": [
           true,
-          true,
+          false,
           false,
           false,
           false,
@@ -280,7 +280,7 @@
         ],
         "read": [
           true,
-          true,
+          false,
           false,
           false,
           false,
@@ -305,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T01:08:30.845Z"
+  "updated": "2026-03-03T01:08:31.592Z"
 }
