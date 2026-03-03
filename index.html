@@ -4828,6 +4828,16 @@ function shopClearDone() {
 document.getElementById('shopBtn').addEventListener('click', function() {
   renderShop();
   openSheet('shopSheet');
+
+  // The "Second Image" Fix:
+  // We wait 300ms for the slide-up animation to finish, then focus the input.
+  // This pops the keyboard and triggers your visualViewport resize logic automatically.
+  setTimeout(function() {
+    var inp = document.getElementById('shopInput');
+    if (inp) {
+      inp.focus();
+    }
+  }, 300); 
 });
 document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
 document.getElementById('shopAddBtn').addEventListener('click', function() {
