@@ -337,19 +337,6 @@
       "due": "2026-03-07",
       "noteIsMono": false,
       "done": false
-    },
-    {
-      "id": "1772560942830",
-      "title": "Delettttttttte meeeeeeeee",
-      "text": "Delettttttttte meeeeeeeee",
-      "category": "personal",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "2026-03-03",
-      "noteIsMono": false,
-      "done": false
     }
   ],
   "scratchpad": "",
@@ -473,5 +460,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T18:02:22.862Z"
+  "updated": "2026-03-03T18:02:31.642Z"
 }
