@@ -367,6 +367,19 @@
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false
+    },
+    {
+      "id": "1772565218118",
+      "title": "Reply to Ashley with slack plans",
+      "text": "Reply to Ashley with slack plans",
+      "category": "personal",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -490,5 +503,5 @@
       }
     }
   },
-  "updated": "2026-03-03T18:51:24.099Z"
+  "updated": "2026-03-03T19:13:38.125Z"
 }
