@@ -334,7 +334,7 @@
       "section": "upcoming",
       "pinnedToday": false,
       "note": "Red shirt?",
-      "due": "2026-03-08",
+      "due": "2026-03-07",
       "noteIsMono": false,
       "done": false
     }
@@ -480,5 +480,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T17:32:16.029Z"
+  "updated": "2026-03-03T17:32:22.908Z"
 }
