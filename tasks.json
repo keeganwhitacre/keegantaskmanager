@@ -246,6 +246,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mmal0elb1mio",
+      "title": "Test",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -374,5 +386,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T12:03:09.266Z"
+  "updated": "2026-03-03T12:26:14.116Z"
 }
