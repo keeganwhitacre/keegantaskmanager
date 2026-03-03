@@ -132,7 +132,7 @@
       "category": "personal",
       "status": "active",
       "priority": "lo",
-      "section": "upcoming",
+      "section": "hobby",
       "note": "just small load from weekend + work clothes",
       "due": "2026-03-03",
       "noteIsMono": false,
@@ -518,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:50:43.345Z"
+  "updated": "2026-03-03T19:50:51.218Z"
 }
