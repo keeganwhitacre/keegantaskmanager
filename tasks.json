@@ -82,9 +82,10 @@
       "section": "hobby",
       "due": "",
       "note": "Upload new pdf",
-      "done": false,
+      "done": true,
       "noteIsMono": false,
-      "pinnedToday": false
+      "pinnedToday": false,
+      "completedAt": "2026-03-03T20:32:12.850Z"
     },
     {
       "id": "mm9wrd0jj2hq",
@@ -531,5 +532,5 @@
       }
     }
   },
-  "updated": "2026-03-03T20:31:23.340Z"
+  "updated": "2026-03-03T20:32:12.854Z"
 }
