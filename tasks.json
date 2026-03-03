@@ -191,7 +191,7 @@
       "priority": "lo",
       "section": "upcoming",
       "pinnedToday": false,
-      "note": "Fix habit tracker",
+      "note": "Fix habit tracker\nFix shopping list",
       "due": "2026-03-06",
       "noteIsMono": false,
       "done": false
@@ -305,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T01:07:21.388Z"
+  "updated": "2026-03-03T01:08:13.476Z"
 }
