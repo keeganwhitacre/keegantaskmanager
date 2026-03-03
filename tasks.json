@@ -312,14 +312,15 @@
       "id": "1772546273614",
       "title": "Mess with film portfolio",
       "text": "Mess with film portfolio",
-      "category": "personal",
+      "category": "hobby",
       "status": "active",
-      "priority": "md",
-      "section": "today",
+      "priority": "lo",
+      "section": "upcoming",
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false
+      "done": false,
+      "pinnedToday": false
     }
   ],
   "scratchpad": "",
@@ -448,5 +449,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T13:57:53.618Z"
+  "updated": "2026-03-03T13:57:59.957Z"
 }
