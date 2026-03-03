@@ -294,6 +294,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mmalby3vxp5y",
+      "title": "Test",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -422,5 +434,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T12:27:59.474Z"
+  "updated": "2026-03-03T12:35:12.627Z"
 }
