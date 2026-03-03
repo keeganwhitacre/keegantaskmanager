@@ -4864,10 +4864,20 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', function() {
     var openSheet = document.querySelector('.sheet.open');
     if (!openSheet) return;
+
+    // 1. If it's Shopping or Settings, FORCE them to stay at the bottom.
+    // This stops the 403px jump immediately.
+    if (openSheet.id === 'shopSheet' || openSheet.classList.contains('full')) {
+      openSheet.style.bottom = '0';
+      openSheet.style.maxHeight = '100%';
+      return; 
+    }
+
+    // 2. Only run the 'lift' math for the New Task sheet
     var vvHeight = window.visualViewport.height;
     var fullHeight = window.innerHeight;
     var keyboardHeight = Math.max(0, fullHeight - vvHeight);
-    var isDesktop = window.innerWidth >= 768;
+    
     if (keyboardHeight > 50) {
       openSheet.style.bottom = keyboardHeight + 'px';
       openSheet.style.maxHeight = (vvHeight * 0.92) + 'px';
