@@ -395,6 +395,19 @@
       "noteIsMono": false,
       "done": false,
       "pinnedToday": true
+    },
+    {
+      "id": "mmb137busgo1",
+      "title": "make thighs tonight",
+      "category": "personal",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -518,5 +531,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:56:03.332Z"
+  "updated": "2026-03-03T19:56:18.524Z"
 }
