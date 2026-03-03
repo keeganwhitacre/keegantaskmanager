@@ -3745,16 +3745,36 @@ function submitQuickAdd(){
   var inp = document.getElementById('quickAddInput');
   var title = inp.value.trim();
   if(!title) return;
-  state.tasks.push({
-    id: uid(), title: title, category: null,
-    status: 'active', priority: 'md',
-    section: 'today', note: '', due: '',
-    noteIsMono: false, done: false
-  });
-  saveLocal(); render(); ghPush();
+
+  // We use Date.now().toString() because it's a guaranteed unique ID 
+  // without needing an external uid() function.
+  var newTask = {
+    id: Date.now().toString(), 
+    title: title, 
+    text: title, // Adding 'text' too just in case your render uses it
+    category: 'personal',
+    status: 'active', 
+    priority: 'md',
+    section: 'today', 
+    note: '', 
+    due: new Date().toISOString().split('T')[0], // Sets to today's date
+    noteIsMono: false, 
+    done: false
+  };
+
+  state.tasks.push(newTask);
+  
+  // Make sure these functions exist and are named correctly
+  if (typeof saveLocal === 'function') saveLocal(); 
+  if (typeof render === 'function') render(); 
+  if (typeof ghPush === 'function') ghPush();
+  
   showToast('Added to Today');
-  // close after send — reopen with FAB tap
-  toggleQuickAdd();
+  
+  // Clear and close
+  inp.value = '';
+  var wrap = document.getElementById('quickAddWrap');
+  if(wrap) wrap.classList.remove('open');
 }
 
 document.getElementById('quickAddInput').addEventListener('keydown', function(e){
@@ -4960,55 +4980,6 @@ function onDragEnd(e) {
 }
 
 // ══════════════════════════════════════════
-// Quick Add Logic
-document.getElementById('quickAddSend').addEventListener('click', function() {
-    executeQuickAdd();
-});
-
-document.getElementById('quickAddInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        executeQuickAdd();
-    }
-});
-
-function executeQuickAdd() {
-    var input = document.getElementById('quickAddInput');
-    var val = input.value.trim();
-    
-    if (val !== "") {
-        // This creates the actual data for the task
-        var newTask = {
-            id: Date.now().toString(),
-            title: val,
-            note: '',
-            due: new Date().toISOString().split('T')[0], // Today's date
-            category: 'personal', 
-            status: 'active',
-            priority: 'md',
-            section: 'upcoming', // Change to 'today' if your sections are named that
-            done: false,
-            created: Date.now()
-        };
-
-        // 1. Add it to the main task list
-        state.tasks.unshift(newTask);
-        
-        // 2. Clear the box
-        input.value = '';
-        
-        // 3. Save it to the phone/browser memory
-        saveLocal(); 
-        
-        // 4. Force the screen to redraw so you see the new task
-        render(); 
-        
-        // 5. Show your success message
-        showToast("Added task to today");
-        
-        // 6. Push to GitHub if you have sync set up
-        if (typeof ghPush === 'function') ghPush();
-    }
-}
 
 // ══════════════════════════════════════════
 // INIT
