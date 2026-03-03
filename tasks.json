@@ -395,8 +395,9 @@
       "note": "bring RPC, book",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false,
-      "pinnedToday": true
+      "done": true,
+      "pinnedToday": true,
+      "completedAt": "2026-03-03T22:36:53.419Z"
     },
     {
       "id": "mmb137busgo1",
@@ -527,5 +528,5 @@
       "total": 450
     }
   },
-  "updated": "2026-03-03T20:48:09.125Z"
+  "updated": "2026-03-03T22:36:53.423Z"
 }
