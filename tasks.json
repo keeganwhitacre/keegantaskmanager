@@ -353,6 +353,20 @@
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false
+    },
+    {
+      "id": "1772563867886",
+      "title": "schedule 1-1 meetings with kristen for future plans",
+      "text": "schedule 1-1 meetings with kristen for future plans",
+      "category": "phd",
+      "status": "active",
+      "priority": "md",
+      "section": "upcoming",
+      "note": "",
+      "due": "2026-03-28",
+      "noteIsMono": false,
+      "done": false,
+      "pinnedToday": false
     }
   ],
   "scratchpad": "",
@@ -476,5 +490,5 @@
       }
     }
   },
-  "updated": "2026-03-03T18:45:31.431Z"
+  "updated": "2026-03-03T18:51:24.099Z"
 }
