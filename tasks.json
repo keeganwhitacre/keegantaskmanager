@@ -375,7 +375,7 @@
       "category": "personal",
       "status": "active",
       "priority": "hi",
-      "section": "upcoming",
+      "section": "hobby",
       "note": "",
       "due": "2026-03-04",
       "noteIsMono": false,
@@ -518,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:50:51.218Z"
+  "updated": "2026-03-03T19:51:04.533Z"
 }
