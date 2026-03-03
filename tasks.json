@@ -321,6 +321,19 @@
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false
+    },
+    {
+      "id": "mmaoc3w0j226",
+      "title": "Buy new clothes for SAS",
+      "category": "conf",
+      "status": "active",
+      "priority": "md",
+      "section": "upcoming",
+      "pinnedToday": false,
+      "note": "Red shirt?",
+      "due": "2026-03-07",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -449,5 +462,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T13:57:59.957Z"
+  "updated": "2026-03-03T13:59:18.966Z"
 }
