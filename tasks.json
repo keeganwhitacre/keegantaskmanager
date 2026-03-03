@@ -270,6 +270,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mmal2fovwpie",
+      "title": "Why",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -398,5 +410,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T12:27:42.504Z"
+  "updated": "2026-03-03T12:27:48.852Z"
 }
