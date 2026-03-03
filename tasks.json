@@ -221,6 +221,19 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mmak3wuynn39",
+      "title": "Fix poster sizing + Kristen",
+      "category": "lab",
+      "status": "active",
+      "priority": "md",
+      "section": "upcoming",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -349,5 +362,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T11:57:18.699Z"
+  "updated": "2026-03-03T12:00:58.144Z"
 }
