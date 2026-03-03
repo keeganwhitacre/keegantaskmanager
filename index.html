@@ -626,7 +626,7 @@ body.theme-neon .chip        { background: #130a1a; border-color: #2d1f3d; color
 body.theme-neon .chip.active { background: #1e0a2a; border-color: #ff2d78; color: #ff2d78; }
 body.theme-neon .sec-title   { color: #2d1f3d; font-family: ‘Syne’, sans-serif; letter-spacing: 0.12em; }
 body.theme-neon .sec-count   { background: #130a1a; border-color: #2d1f3d; color: #3d2a50; }
-body.theme-neon .task        { background: #100818; border-color: #1e1028; }
+body.theme-neon .task        { background: #100818; border-color: #2d1545; box-shadow: 0 2px 12px rgba(168,85,255,0.08); }
 body.theme-neon .task:active { background: #160d20; }
 body.theme-neon .task.lo::before { background: #2d1f3d; }
 body.theme-neon .task.hi::before { background: #ff2d78; }
@@ -2304,7 +2304,7 @@ body.theme-pipboy .task.md::before   { background: #39ff5a; }
 body.theme-pipboy .task.lo::before   { background: #0f2009; }
 body.theme-neon .task.hi::before     { background: #ff2d78; }
 body.theme-neon .task.md::before     { background: #a855ff; }
-body.theme-neon .task.lo::before     { background: #1a0825; }
+body.theme-neon .task.lo::before     { background: #2d1545; }
 body.theme-arcade .task.hi::before   { background: #ff2222; }
 body.theme-arcade .task.md::before   { background: #ffdd00; }
 body.theme-arcade .task.lo::before   { background: #111100; }
@@ -3210,7 +3210,7 @@ function render(){
   } else {
     state.focus=null;
     document.getElementById('focusTitle').textContent='No task pinned';
-    document.getElementById('focusSub').textContent='Tap ✓ to complete · › to edit · no focus set';
+    document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
   }
   // themed focus eye label
   var isPip = document.body.classList.contains('theme-pipboy');
@@ -3395,7 +3395,7 @@ function deleteTask(id){
   // if focus strip was showing this task, update it
   if(state.focus===null){
     document.getElementById('focusTitle').textContent='No task pinned';
-    document.getElementById('focusSub').textContent='Tap ✓ to complete · › to edit · no focus set';
+    document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
   }
   // don't ghPush yet — wait until undo window closes
 
@@ -4442,14 +4442,16 @@ function renderHabits() {
   var dayLabels = ['M','T','W','T','F','S','S'];
 
   // init week if needed
-  if (!dState.habits[week]) {
-    dState.habits[week] = {};
-    HABITS.forEach(function(h) { dState.habits[week][h.id] = [false,false,false,false,false,false,false]; });
-    // prune old weeks (keep last 2)
-    var weeks = Object.keys(dState.habits).sort();
-    while (weeks.length > 2) { delete dState.habits[weeks.shift()]; }
-    saveDash(true);
-  }
+  if (!dState.habits[week]) { dState.habits[week] = {}; }
+  // migrate: ensure all current habit IDs exist in this week's data
+  var habitsDirty = false;
+  HABITS.forEach(function(h) {
+    if (!dState.habits[week][h.id]) { dState.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; }
+  });
+  // prune old weeks (keep last 2)
+  var weeks = Object.keys(dState.habits).sort();
+  while (weeks.length > 2) { delete dState.habits[weeks.shift()]; habitsDirty = true; }
+  if (habitsDirty) saveDash(false);
 
   // day labels row
   var labelRow = document.getElementById('dHabitDayLabels');
@@ -4481,9 +4483,17 @@ function renderHabits() {
       cb.dataset.habit = h.id;
       cb.dataset.day = i;
       cb.addEventListener('click', function() {
+        if (!dState.habits[week][h.id]) dState.habits[week][h.id] = [false,false,false,false,false,false,false];
         dState.habits[week][h.id][i] = !dState.habits[week][h.id][i];
+        var isNowChecked = dState.habits[week][h.id][i];
         saveDash(true);
-        cb.classList.toggle('checked', dState.habits[week][h.id][i]);
+        if (h.bad) {
+          cb.classList.toggle('checked-bad', isNowChecked);
+          cb.classList.remove('checked');
+        } else {
+          cb.classList.toggle('checked', isNowChecked);
+          cb.classList.remove('checked-bad');
+        }
       });
       checksEl.appendChild(cb);
     });
@@ -4950,61 +4960,7 @@ function onDragEnd(e) {
 }
 
 // ══════════════════════════════════════════
-var dragSrc = null;
 
-function addDragHandles(wrap, taskId) {
-  wrap.setAttribute('draggable', 'true');
-
-  wrap.addEventListener('dragstart', function(e) {
-    dragSrc = wrap;
-    wrap.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', taskId);
-  });
-
-  wrap.addEventListener('dragend', function() {
-    wrap.classList.remove('dragging');
-    document.querySelectorAll('.task-wrap.drag-over').forEach(function(el){
-      el.classList.remove('drag-over');
-    });
-    dragSrc = null;
-  });
-
-  wrap.addEventListener('dragover', function(e) {
-    if(!dragSrc || dragSrc===wrap) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    document.querySelectorAll('.task-wrap.drag-over').forEach(function(el){
-      el.classList.remove('drag-over');
-    });
-    wrap.classList.add('drag-over');
-  });
-
-  wrap.addEventListener('dragleave', function() {
-    wrap.classList.remove('drag-over');
-  });
-
-  wrap.addEventListener('drop', function(e) {
-    e.preventDefault();
-    wrap.classList.remove('drag-over');
-    if(!dragSrc || dragSrc===wrap) return;
-
-    var srcId  = e.dataTransfer.getData('text/plain');
-    var dstId  = taskId;
-    var tasks  = state.tasks;
-
-    var srcIdx = tasks.findIndex(function(t){ return t.id===srcId; });
-    var dstIdx = tasks.findIndex(function(t){ return t.id===dstId; });
-    if(srcIdx===-1||dstIdx===-1) return;
-
-    // move src to dst position
-    var moved = tasks.splice(srcIdx, 1)[0];
-    var newDst = tasks.findIndex(function(t){ return t.id===dstId; });
-    tasks.splice(newDst, 0, moved);
-
-    saveLocal(); render(); ghPush();
-  });
-}
 
 // ══════════════════════════════════════════
 // INIT
