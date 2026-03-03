@@ -182,6 +182,19 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mm9wrd0jj2hq",
+      "title": "Fix bugs when Claude resets",
+      "category": "hobby",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "pinnedToday": false,
+      "note": "Fix habit tracker",
+      "due": "2026-03-06",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -292,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T00:37:14.239Z"
+  "updated": "2026-03-03T01:07:21.388Z"
 }
