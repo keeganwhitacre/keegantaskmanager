@@ -72,6 +72,19 @@
       "noteIsMono": false
     },
     {
+      "id": "mm9wrd0jj2hq",
+      "title": "Fix bugs when Claude resets",
+      "category": "hobby",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "pinnedToday": false,
+      "note": "Fix habit tracker\nFix shopping list",
+      "due": "2026-03-06",
+      "noteIsMono": false,
+      "done": false
+    },
+    {
       "id": "mm97ikl1ctn3",
       "title": "Organize slack features",
       "category": "lab",
@@ -180,19 +193,6 @@
       "section": "today",
       "note": "",
       "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mm9wrd0jj2hq",
-      "title": "Fix bugs when Claude resets",
-      "category": "hobby",
-      "status": "active",
-      "priority": "lo",
-      "section": "upcoming",
-      "pinnedToday": false,
-      "note": "Fix habit tracker\nFix shopping list",
-      "due": "2026-03-06",
       "noteIsMono": false,
       "done": false
     }
@@ -305,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T01:08:40.246Z"
+  "updated": "2026-03-03T01:14:01.400Z"
 }
