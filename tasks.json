@@ -339,6 +339,19 @@
       "due": "2026-03-07",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "1772563516173",
+      "title": "Slack Features + Organization",
+      "text": "Slack Features + Organization",
+      "category": "personal",
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -462,5 +475,5 @@
       }
     }
   },
-  "updated": "2026-03-03T18:45:02.786Z"
+  "updated": "2026-03-03T18:45:16.175Z"
 }
