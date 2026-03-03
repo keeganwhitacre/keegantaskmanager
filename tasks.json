@@ -213,7 +213,7 @@
   "dash": {
     "intention": "",
     "intentionWeek": "2026-W10",
-    "quoteIdx": 0,
+    "quoteIdx": 1,
     "countdown": {
       "name": "SAS Pittsburgh",
       "date": "2026-03-11"
@@ -305,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T01:08:13.476Z"
+  "updated": "2026-03-03T01:08:19.179Z"
 }
