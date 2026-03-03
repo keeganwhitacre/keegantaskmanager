@@ -60,6 +60,18 @@
       "noteIsMono": false
     },
     {
+      "id": "mm9pi4r1vstj",
+      "title": "Add induced affect to yuritza poster",
+      "category": "conf",
+      "status": "active",
+      "priority": "lo",
+      "section": "upcoming",
+      "note": "",
+      "due": "2026-03-03",
+      "noteIsMono": false,
+      "done": false
+    },
+    {
       "id": "mm7swxj4rtxq",
       "title": "Update website description of sleep project",
       "category": "personal",
@@ -169,18 +181,6 @@
       "section": "today",
       "note": "",
       "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mm9pi4r1vstj",
-      "title": "Add induced affect to yuritza poster",
-      "category": "conf",
-      "status": "active",
-      "priority": "lo",
-      "section": "upcoming",
-      "note": "",
-      "due": "2026-03-03",
       "noteIsMono": false,
       "done": false
     },
@@ -305,5 +305,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T01:14:01.400Z"
+  "updated": "2026-03-03T01:14:04.779Z"
 }
