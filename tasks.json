@@ -351,7 +351,7 @@
     }
   ],
   "dash": {
-    "intention": "",
+    "intention": "F",
     "intentionWeek": "2026-W10",
     "quoteIdx": 3,
     "countdown": {
@@ -463,5 +463,5 @@
       }
     }
   },
-  "updated": "2026-03-03T14:59:30.098Z"
+  "updated": "2026-03-03T14:59:41.408Z"
 }
