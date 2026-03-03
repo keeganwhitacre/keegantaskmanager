@@ -388,7 +388,7 @@
       "text": "bel PT",
       "category": "bel",
       "status": "active",
-      "priority": "lo",
+      "priority": "md",
       "section": "personal",
       "note": "bring RPC, book",
       "due": "2026-03-03",
@@ -531,5 +531,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:56:18.524Z"
+  "updated": "2026-03-03T19:56:25.050Z"
 }
