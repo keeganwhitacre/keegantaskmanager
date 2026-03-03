@@ -374,12 +374,13 @@
       "text": "Reply to Ashley with slack plans",
       "category": "personal",
       "status": "active",
-      "priority": "md",
-      "section": "today",
+      "priority": "hi",
+      "section": "upcoming",
       "note": "",
-      "due": "2026-03-03",
+      "due": "2026-03-04",
       "noteIsMono": false,
-      "done": false
+      "done": false,
+      "pinnedToday": false
     }
   ],
   "scratchpad": "",
@@ -503,5 +504,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:13:38.125Z"
+  "updated": "2026-03-03T19:13:48.431Z"
 }
