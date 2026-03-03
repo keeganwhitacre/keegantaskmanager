@@ -299,7 +299,7 @@
         ],
         "lift": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -324,5 +324,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T10:52:04.109Z"
+  "updated": "2026-03-03T10:52:10.377Z"
 }
