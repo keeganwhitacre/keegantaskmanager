@@ -15,9 +15,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Tasks">
 <meta name="theme-color" content="#000000">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="manifest" href="manifest.json">
 <!-- Inline manifest as data URI for single-file deployment -->
 <title>Tasks</title>
+<!-- KW Tasks v2.4 - habit migration, touch drag, ios26 pills -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Syne:wght@400;500;700;800&family=Bebas+Neue&family=Share+Tech+Mono&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -194,7 +200,7 @@ body.focus-mode #focusBanner { display: flex; }
 .sec-title  { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #2e2e2e; }
 .sec-count  { font-family: ‘DM Mono’, monospace; font-size: 11px; color: #333; background: #0a0a0a; border: 1px solid #1a1a1a; padding: 1px 9px; border-radius: 99px; }
 
-.task-wrap { position: relative; margin-bottom: 8px; border-radius: 16px; overflow: hidden; }
+.task-wrap { position: relative; margin-bottom: 8px; border-radius: 20px; overflow: hidden; }
 .task-wrap.entering { animation: taskIn 0.22s ease both; }
 @keyframes taskIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 .task-wrap.removing { animation: taskOut 0.18s ease forwards; pointer-events: none; }
@@ -202,7 +208,7 @@ body.focus-mode #focusBanner { display: flex; }
 .swipe-bg { position: absolute; inset: 0; background: rgba(160,20,20,0.15); border-radius: 16px; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
 .swipe-bg svg { width: 18px; height: 18px; stroke: #ff6b6b; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.task { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 16px; padding: 12px 14px 12px 16px; display: flex; gap: 11px; align-items: flex-start; position: relative; overflow: hidden; cursor: pointer; transition: background 0.1s; will-change: transform; user-select: none; }
+.task { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 20px; padding: 12px 14px 12px 16px; display: flex; gap: 11px; align-items: flex-start; position: relative; overflow: hidden; cursor: pointer; transition: background 0.1s; will-change: transform; user-select: none; }
 .task:active { background: #0f0f0f; }
 .task::before { content: ‘’; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 2px 0 0 2px; }
 .task.hi::before { background: #ff6b6b; }
@@ -1792,14 +1798,15 @@ body.theme-ios26 .sec-toggle    { color: rgba(60,60,90,0.4); }
 
 /* task cards — main glass surface */
 body.theme-ios26 .task {
-background: rgba(255,255,255,0.48);
-border-color: rgba(255,255,255,0.68);
-border-left-color: rgba(0,122,255,0.35);
--webkit-backdrop-filter: blur(24px) saturate(170%);
-backdrop-filter: blur(24px) saturate(170%);
-box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 14px rgba(0,0,40,0.06);
-border-radius: 14px;
+background: rgba(255,255,255,0.62);
+border-color: rgba(255,255,255,0.75);
+border-left-color: rgba(0,122,255,0.4);
+-webkit-backdrop-filter: blur(24px) saturate(180%);
+backdrop-filter: blur(24px) saturate(180%);
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 16px rgba(0,0,40,0.08);
+border-radius: 22px;
 }
+body.theme-ios26 .task-wrap { border-radius: 22px; }
 body.theme-ios26 .task-title    { color: #1a1a2e; font-weight: 400; }
 body.theme-ios26 .task-note     { color: rgba(100,100,140,0.55); }
 body.theme-ios26 .task-cb       { border-color: rgba(180,180,210,0.7); background: rgba(255,255,255,0.4); }
@@ -2846,6 +2853,14 @@ function ghFetch(retries){
       if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
       if(dec.dash !== undefined){
         Object.assign(dState, dec.dash);
+        // migrate habit keys after sync (old data may have different habit IDs)
+        var today2 = new Date();
+        var syncWeek = getISOWeek(today2);
+        if(!dState.habits) dState.habits = {};
+        if(!dState.habits[syncWeek]) dState.habits[syncWeek] = {};
+        HABITS.forEach(function(h){
+          if(!dState.habits[syncWeek][h.id]) dState.habits[syncWeek][h.id]=[false,false,false,false,false,false,false];
+        });
         saveDash(false);
         if(document.body.classList.contains('dash-mode')) renderDashFull();
       }
