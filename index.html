@@ -993,8 +993,6 @@ box-sizing: border-box; transition: border-color 0.14s;
 .d-habit-cb { width: 22px; height: 22px; border-radius: 6px; border: 1px solid #1e1e1e; background: transparent; cursor: pointer; display: -webkit-flex; display: flex; align-items: center; justify-content: center; transition: all 0.12s; -webkit-user-select: none; user-select: none; }
 .d-habit-cb.checked { background: #52d9a0; border-color: #52d9a0; }
 .d-habit-cb.checked::after { content: ‘✓’; font-size: 12px; color: #000; font-weight: 700; }
-.d-habit-cb.checked-bad { background: rgba(255,60,60,0.2) !important; border-color: #ff4444 !important; display: flex; align-items: center; justify-content: center; }
-.d-habit-cb.checked-bad::after { content: ‘✗’; font-size: 12px; color: #ff4444; font-weight: 700; }
 .d-habit-cb.today { border-color: #333; }
 
 /* today dot on habit */
@@ -2747,8 +2745,6 @@ function ghFetch(){
         if(dec.dash !== undefined) {
           // merge fetched dash into dState, preserving any keys not in payload
           Object.assign(dState, dec.dash);
-          var sw=getISOWeek(new Date()); if(!dState.habits)dState.habits={}; if(!dState.habits[sw])dState.habits[sw]={};
-          HABITS.forEach(function(h){if(!dState.habits[sw][h.id])dState.habits[sw][h.id]=[false,false,false,false,false,false,false];});
           saveDash(true);
           if(document.body.classList.contains('dash-mode')) renderDash();
         }
@@ -3971,10 +3967,10 @@ var PROMPTS = [
 ];
 
 var HABITS = [
-  { id: 'sleep', label: 'Slept 7h+',    bad: false },
-  { id: 'read',  label: 'Read',          bad: false },
-  { id: 'lift',  label: 'Lifted',        bad: false },
-  { id: 'doom',  label: 'Doom scrolled', bad: true  },
+  { id: 'sleep', label: 'Sleep 7h+' },
+  { id: 'move',  label: 'Move' },
+  { id: 'read',  label: 'Read' },
+  { id: 'phone', label: 'No phone before 8am' },
 ];
 
 // dash state — loaded from localStorage
@@ -4257,13 +4253,9 @@ function renderHabits() {
   var dayLabels = ['M','T','W','T','F','S','S'];
 
   // init week if needed
-  if (!dState.habits[week]) { dState.habits[week] = {}; }
-  // migrate: ensure all current habit IDs exist
-  HABITS.forEach(function(h) {
-    if (!dState.habits[week][h.id]) dState.habits[week][h.id] = [false,false,false,false,false,false,false];
-  });
-  if (false) { // placeholder for old block
-    var _unused = null;
+  if (!dState.habits[week]) {
+    dState.habits[week] = {};
+    HABITS.forEach(function(h) { dState.habits[week][h.id] = [false,false,false,false,false,false,false]; });
     // prune old weeks (keep last 2)
     var weeks = Object.keys(dState.habits).sort();
     while (weeks.length > 2) { delete dState.habits[weeks.shift()]; }
@@ -4295,22 +4287,13 @@ function renderHabits() {
     checksEl.className = 'd-habit-checks';
     checks.forEach(function(checked, i) {
       var cb = document.createElement('div');
-      var isBad = h.bad;
-      cb.className = 'd-habit-cb' + (checked ? (isBad ? ' checked-bad' : ' checked') : '') + (i === todayDow ? ' today-col' : '') + (i > todayDow ? ' future' : '');
+      cb.className = 'd-habit-cb' + (checked ? ' checked' : '') + (i === todayDow ? ' today-col' : '') + (i > todayDow ? ' future' : '');
       cb.dataset.habit = h.id;
       cb.dataset.day = i;
       cb.addEventListener('click', function() {
-        if (!dState.habits[week][h.id]) dState.habits[week][h.id] = [false,false,false,false,false,false,false];
         dState.habits[week][h.id][i] = !dState.habits[week][h.id][i];
-        var nowOn = dState.habits[week][h.id][i];
         saveDash(true);
-        if (h.bad) {
-          cb.classList.toggle('checked-bad', nowOn);
-          cb.classList.remove('checked');
-        } else {
-          cb.classList.toggle('checked', nowOn);
-          cb.classList.remove('checked-bad');
-        }
+        cb.classList.toggle('checked', dState.habits[week][h.id][i]);
       });
       checksEl.appendChild(cb);
     });
