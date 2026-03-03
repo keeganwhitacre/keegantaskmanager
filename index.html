@@ -4826,24 +4826,8 @@ function shopClearDone() {
 
 // Events
 document.getElementById('shopBtn').addEventListener('click', function() {
-  // 1. Render and Open as usual
   renderShop();
   openSheet('shopSheet');
-
-  // 2. IMMEDIATE FOCUS (This "primes" the keyboard on iOS)
-  var inp = document.getElementById('shopInput');
-  if (inp) {
-    inp.focus();
-  }
-
-  // 3. DELAYED FOCUS (This ensures it stays focused after the sheet slides up)
-  setTimeout(function() {
-    if (inp) {
-      inp.focus();
-      // Force a scroll to the bottom so the "Add item" bar is visible
-      inp.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, 350); 
 });
 document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
 document.getElementById('shopAddBtn').addEventListener('click', function() {
@@ -4996,20 +4980,7 @@ function onDragEnd(e) {
 }
 
 // ══════════════════════════════════════════
-if (window.visualViewport) {
-  const resizeHandler = () => {
-    // This forces the app height to match the actual visible area
-    document.body.style.height = window.visualViewport.height + 'px';
-    // This stops the page from "drifting" or bouncing behind the keyboard
-    window.scrollTo(0, 0);
-  };
 
-  window.visualViewport.addEventListener('resize', resizeHandler);
-  window.visualViewport.addEventListener('scroll', resizeHandler);
-  
-  // Run it once on load to lock it in
-  resizeHandler();
-}
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
