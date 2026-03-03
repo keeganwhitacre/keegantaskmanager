@@ -258,6 +258,18 @@
       "due": "",
       "noteIsMono": false,
       "done": false
+    },
+    {
+      "id": "mmal2asic6wn",
+      "title": "Why",
+      "category": null,
+      "status": "active",
+      "priority": "md",
+      "section": "today",
+      "note": "",
+      "due": "",
+      "noteIsMono": false,
+      "done": false
     }
   ],
   "scratchpad": "",
@@ -386,5 +398,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T12:26:14.116Z"
+  "updated": "2026-03-03T12:27:42.504Z"
 }
