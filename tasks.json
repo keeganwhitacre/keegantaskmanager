@@ -350,7 +350,7 @@
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
-    "quoteIdx": 3,
+    "quoteIdx": 4,
     "countdown": {
       "name": "SAS Pittsburgh",
       "date": "2026-03-11"
@@ -460,5 +460,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T17:33:43.213Z"
+  "updated": "2026-03-03T17:33:52.611Z"
 }
