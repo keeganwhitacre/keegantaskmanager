@@ -306,19 +306,6 @@
       "due": "",
       "noteIsMono": false,
       "done": false
-    },
-    {
-      "id": "1772541451490",
-      "title": "Test",
-      "text": "Test",
-      "category": "personal",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "2026-03-03",
-      "noteIsMono": false,
-      "done": false
     }
   ],
   "scratchpad": "",
@@ -447,5 +434,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T12:37:31.503Z"
+  "updated": "2026-03-03T12:37:37.605Z"
 }
