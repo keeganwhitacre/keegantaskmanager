@@ -344,14 +344,15 @@
       "id": "1772563516173",
       "title": "Slack Features + Organization",
       "text": "Slack Features + Organization",
-      "category": "personal",
+      "category": "lab",
       "status": "active",
       "priority": "md",
-      "section": "today",
+      "section": "upcoming",
       "note": "",
-      "due": "2026-03-03",
+      "due": "2026-03-06",
       "noteIsMono": false,
-      "done": false
+      "done": false,
+      "pinnedToday": false
     }
   ],
   "scratchpad": "",
@@ -475,5 +476,5 @@
       }
     }
   },
-  "updated": "2026-03-03T18:45:16.175Z"
+  "updated": "2026-03-03T18:45:31.431Z"
 }
