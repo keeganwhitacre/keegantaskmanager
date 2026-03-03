@@ -106,7 +106,8 @@
       "note": "just small load from weekend + work clothes",
       "due": "2026-03-02",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-03T00:37:07.057Z"
     },
     {
       "id": "mm7v07lfa1vi",
@@ -292,5 +293,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T00:36:55.344Z"
+  "updated": "2026-03-03T00:37:07.060Z"
 }
