@@ -390,7 +390,7 @@
       "status": "active",
       "priority": "lo",
       "section": "personal",
-      "note": "",
+      "note": "bring RPC, book",
       "due": "2026-03-03",
       "noteIsMono": false,
       "done": false,
@@ -518,5 +518,5 @@
       }
     }
   },
-  "updated": "2026-03-03T19:51:52.156Z"
+  "updated": "2026-03-03T19:56:03.332Z"
 }
