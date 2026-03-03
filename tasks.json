@@ -412,13 +412,7 @@
     }
   ],
   "scratchpad": "",
-  "shop": [
-    {
-      "id": 1772488075153.201,
-      "text": "Toothpaste",
-      "done": true
-    }
-  ],
+  "shop": [],
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
@@ -532,5 +526,5 @@
       }
     }
   },
-  "updated": "2026-03-03T20:32:12.854Z"
+  "updated": "2026-03-03T20:32:36.162Z"
 }
