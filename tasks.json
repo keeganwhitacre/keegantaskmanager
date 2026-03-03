@@ -70,7 +70,8 @@
       "note": "",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-03T14:59:30.094Z"
     },
     {
       "id": "mm7swxj4rtxq",
@@ -462,5 +463,5 @@
       }
     }
   },
-  "updated": "2026-03-03T14:43:19.876Z"
+  "updated": "2026-03-03T14:59:30.098Z"
 }
