@@ -235,7 +235,8 @@
       "note": "",
       "due": "",
       "noteIsMono": false,
-      "done": false
+      "done": true,
+      "completedAt": "2026-03-03T16:01:48.947Z"
     },
     {
       "id": "mmak6q1a6xap",
@@ -351,7 +352,7 @@
     }
   ],
   "dash": {
-    "intention": "Finalize SAS this week, work on centralizin gthe s",
+    "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
     "quoteIdx": 3,
     "countdown": {
@@ -463,5 +464,5 @@
       }
     }
   },
-  "updated": "2026-03-03T15:00:06.763Z"
+  "updated": "2026-03-03T16:01:48.952Z"
 }
