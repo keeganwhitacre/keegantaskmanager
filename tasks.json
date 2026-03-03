@@ -127,11 +127,12 @@
       "category": "personal",
       "status": "active",
       "priority": "md",
-      "section": "today",
+      "section": "upcoming",
       "note": "just small load from weekend + work clothes",
-      "due": "2026-03-02",
+      "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false
+      "done": false,
+      "pinnedToday": false
     },
     {
       "id": "mm7v07lfa1vi",
@@ -323,5 +324,5 @@
       "total": 0
     }
   },
-  "updated": "2026-03-03T02:59:36.136Z"
+  "updated": "2026-03-03T03:22:36.370Z"
 }
