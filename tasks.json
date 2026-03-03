@@ -109,8 +109,9 @@
       "note": "Talk to kristen about centralizing lab operations around slack\nworking on research poster, lab team sas poster, centralizing slack, communication + future directions as RAs + lab managers",
       "due": "2026-03-03",
       "noteIsMono": false,
-      "done": false,
-      "pinnedToday": false
+      "done": true,
+      "pinnedToday": false,
+      "completedAt": "2026-03-03T18:45:02.784Z"
     },
     {
       "id": "mm7sxp5id19v",
@@ -461,5 +462,5 @@
       }
     }
   },
-  "updated": "2026-03-03T18:44:51.054Z"
+  "updated": "2026-03-03T18:45:02.786Z"
 }
