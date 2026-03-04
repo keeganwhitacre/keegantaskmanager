@@ -96,7 +96,7 @@
       "priority": "lo",
       "section": "upcoming",
       "pinnedToday": false,
-      "note": "Fix shopping list swipe\nSimplify code and remove most themes\ndoesn't make sense to have upcoming as a section when the others are specific\nshould be able to set multiple tags for tasks\ncan't filter by something if its in today",
+      "note": "Fix shopping list swipe\ndoesn't make sense to have upcoming as a section when the others are specific\nshould be able to set multiple tags for tasks\ncan't filter by something if its in today",
       "due": "2026-03-06",
       "noteIsMono": false,
       "done": false
@@ -530,5 +530,5 @@
       "total": 450
     }
   },
-  "updated": "2026-03-04T14:59:51.010Z"
+  "updated": "2026-03-04T15:16:52.794Z"
 }
