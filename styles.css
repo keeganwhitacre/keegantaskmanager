@@ -1331,7 +1331,7 @@ body.theme-ios26 .mood-cell { background: rgba(0,0,30,0.06); }
 body.theme-ios26 .mood-btn.active { border-color: #fff; }
 
 /* ══════════════════════════════════════════════════════════════════
-   BATCH 2: BEL TAB & PROJECTS PAGE
+   BATCH 2: BEL TAB & PROJECTS PAGE (FIXED)
 ══════════════════════════════════════════════════════════════════ */
 
 /* ── VIEW ROUTING ── */
@@ -1344,36 +1344,77 @@ body.projects-mode .quick-add-wrap, body.bel-mode .quick-add-wrap { display: non
 body.projects-mode #projectsView { display: block !important; }
 body.bel-mode #belView { display: block !important; }
 
-/* ── PROJECTS UI ── */
+/* ── PROJECTS UI (BASE/DARK) ── */
 .project-card {
-  background: var(--card-bg, #0a0a0a); border: 1px solid var(--card-border, #1a1a1a);
+  background: #0a0a0a; border: 1px solid #1a1a1a;
   border-radius: 16px; padding: 16px; margin-bottom: 12px;
   cursor: pointer; position: relative;
-  box-shadow: var(--shadow-sm); backdrop-filter: var(--backdrop-filter);
 }
 .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.project-title { font-size: 16px; font-weight: 600; color: var(--text-main, #fff); }
-.project-stage { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(100,100,100,0.1); color: var(--text-muted); }
-.project-stage.Active { background: rgba(48,209,88,0.1); color: var(--success, #30d158); }
-.project-stage.Planning { background: rgba(0,122,255,0.1); color: var(--accent, #007aff); }
-.project-stage.Waiting { background: rgba(255,149,0,0.1); color: var(--warning, #ff9500); }
-.project-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
-.project-tasks { border-top: 1px solid var(--card-border, #1a1a1a); padding-top: 8px; margin-top: 8px; }
-.project-task-item { font-size: 12px; color: var(--text-main); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.project-task-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); }
+.project-title { font-size: 16px; font-weight: 500; color: #e8e8ed; }
+.project-stage { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 6px; background: #1a1a1a; color: #888; }
+.project-stage.Active { background: rgba(82,217,160,0.1); color: #52d9a0; }
+.project-stage.Planning { background: rgba(168,180,255,0.1); color: #a8b4ff; }
+.project-stage.Waiting { background: rgba(255,190,92,0.1); color: #ffbe5c; }
+.project-meta { font-size: 11px; color: #555; margin-bottom: 12px; }
+.project-tasks { border-top: 1px solid #1a1a1a; padding-top: 8px; margin-top: 8px; }
+.project-task-item { font-size: 12px; color: #ccc; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.project-task-dot { width: 4px; height: 4px; border-radius: 50%; background: #444; }
 
-/* Theme overrides for projects */
-body.theme-neon .project-card { background: #100818; border-color: #1e1028; }
-body.theme-neon .project-title { font-family: 'Syne', sans-serif; }
+/* ── THEME: NEON ── */
+body.theme-neon .project-card { background: #100818; border-color: #1e1028; box-shadow: 0 2px 12px rgba(168,85,255,0.08); }
+body.theme-neon .project-title { font-family: 'Syne', sans-serif; color: #f0e8ff; font-weight: 600; }
+body.theme-neon .project-stage { background: #1e1028; color: #8b7ba1; }
+body.theme-neon .project-stage.Active { background: rgba(57,255,20,0.1); color: #39ff14; }
+body.theme-neon .project-stage.Planning { background: rgba(0,229,255,0.1); color: #00e5ff; }
+body.theme-neon .project-stage.Waiting { background: rgba(255,184,0,0.1); color: #ffb800; }
+body.theme-neon .project-meta { color: #5c4b73; }
+body.theme-neon .project-tasks { border-top-color: #1e1028; }
+body.theme-neon .project-task-item { color: #8b7ba1; }
+body.theme-neon .project-task-dot { background: #4a3a5e; }
+
+/* ── THEME: NEWSPRINT ── */
 body.theme-newsprint .project-card { background: #f0ede6; border-color: #ddd; border-radius: 4px; }
-body.theme-newsprint .project-title { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
-body.theme-ios26 .project-card { background: rgba(255,255,255,0.48); border-color: rgba(255,255,255,0.68); }
+body.theme-newsprint .project-title { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #1a1a1a; }
+body.theme-newsprint .project-stage { background: #ddd; color: #555; border-radius: 4px; }
+body.theme-newsprint .project-stage.Active { background: rgba(6,95,70,0.1); color: #065f46; }
+body.theme-newsprint .project-stage.Planning { background: rgba(30,64,175,0.1); color: #1e40af; }
+body.theme-newsprint .project-stage.Waiting { background: rgba(146,64,14,0.1); color: #92400e; }
+body.theme-newsprint .project-meta { color: #888; }
+body.theme-newsprint .project-tasks { border-top-color: #ddd; }
+body.theme-newsprint .project-task-item { color: #1a1a1a; font-family: 'IBM Plex Mono', monospace;}
+body.theme-newsprint .project-task-dot { background: #888; border-radius: 0; }
+
+/* ── THEME: iOS 26 ── */
+body.theme-ios26 .project-card { 
+  background: rgba(255,255,255,0.48); border-color: rgba(255,255,255,0.68); 
+  border-radius: 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 14px rgba(0,0,40,0.06);
+  -webkit-backdrop-filter: blur(24px) saturate(170%); backdrop-filter: blur(24px) saturate(170%);
+}
+body.theme-ios26 .project-title { color: #1a1a2e; font-weight: 600; }
+body.theme-ios26 .project-stage { background: rgba(0,0,30,0.06); color: rgba(60,60,90,0.6); }
+body.theme-ios26 .project-stage.Active { background: rgba(48,209,88,0.15); color: #1a8a3a; }
+body.theme-ios26 .project-stage.Planning { background: rgba(0,122,255,0.15); color: #0062cc; }
+body.theme-ios26 .project-stage.Waiting { background: rgba(255,149,0,0.15); color: #b86800; }
+body.theme-ios26 .project-meta { color: rgba(60,60,90,0.5); }
+body.theme-ios26 .project-tasks { border-top-color: rgba(0,0,30,0.06); }
+body.theme-ios26 .project-task-item { color: #1a1a2e; }
+body.theme-ios26 .project-task-dot { background: rgba(60,60,90,0.4); }
+
+/* ── PROJECT LINK ON TASKS ── */
+.proj-link-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 9px; border-radius: 99px;
+  border: 1px dashed #333; color: #888; background: transparent;
+}
+body.theme-neon .proj-link-label { border-color: #4a3a5e; color: #8b7ba1; }
+body.theme-newsprint .proj-link-label { border-color: #aaa; color: #888; border-radius: 4px; }
+body.theme-ios26 .proj-link-label { border-color: rgba(60,60,90,0.3); color: rgba(60,60,90,0.6); }
 
 /* Select Dropdown override */
 select.input {
-  color: var(--text-main);
+  color: #e8e8ed;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
 }
+body.theme-ios26 select.input, body.theme-newsprint select.input { color: #1a1a2e; }
+body.theme-neon select.input { color: #f0e8ff; }
