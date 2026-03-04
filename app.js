@@ -399,6 +399,29 @@ function searchMatch(t,q){
   return (t.title||'').toLowerCase().indexOf(ql)!==-1||(t.note||'').toLowerCase().indexOf(ql)!==-1;
 }
 
+function sortTasks(tasks) {
+  var po = { hi: 0, md: 1, lo: 2 };
+  var mapped = tasks.map(function(t) {
+    return {
+      t: t,
+      p: po[t.priority || 'md'] || 1,
+      d: t.due || '9999-99-99'
+    };
+  });
+
+  mapped.sort(function(a, b) {
+    if (a.p !== b.p) return a.p - b.p;
+    if (a.d < b.d) return -1;
+    if (a.d > b.d) return 1;
+    return 0;
+  });
+
+  for (var i = 0; i < tasks.length; i++) {
+    tasks[i] = mapped[i].t;
+  }
+  return tasks;
+}
+
 function render(){
   formatDate();
   var searchQ = document.getElementById('searchInput').value.trim();
@@ -452,14 +475,7 @@ function render(){
       
       var todayWrap=document.createElement('div');
       todayWrap.className='sec-tasks';
-      todayTasks.sort(function(a,b){
-        var po={hi:0,md:1,lo:2};
-        var pa=po[a.priority||'md']||1,pb=po[b.priority||'md']||1;
-        if(pa!==pb) return pa-pb;
-        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
-        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
-        return da-db;
-      });
+      sortTasks(todayTasks);
       todayTasks.forEach(function(t,i){ todayWrap.appendChild(makeTaskWrap(t,isTodayCollapsed?0:i*30)); });
       todaySec.appendChild(todayWrap);
       delayBase+=todayTasks.length*30+50;
@@ -514,14 +530,7 @@ function render(){
 
       var tasksWrap=document.createElement('div');
       tasksWrap.className='sec-tasks';
-      tasks.sort(function(a,b){
-        var po={hi:0,md:1,lo:2};
-        var pa=po[a.priority||'md']||1, pb=po[b.priority||'md']||1;
-        if(pa!==pb) return pa-pb;
-        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
-        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
-        return da-db;
-      });
+      sortTasks(tasks);
       tasks.forEach(function(t,i){ tasksWrap.appendChild(makeTaskWrap(t, isCollapsed?0:delayBase + i*30)); });
       section.appendChild(tasksWrap);
       delayBase+=tasks.length*30+50;
