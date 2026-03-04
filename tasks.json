@@ -267,10 +267,11 @@
       "due": "2026-03-06",
       "noteIsMono": false,
       "done": false,
-      "pinnedToday": false,
+      "pinnedToday": true,
       "categories": [
         "lab"
-      ]
+      ],
+      "pomodoros": 0
     },
     {
       "id": "1772563867886",
@@ -470,5 +471,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T16:15:18.802Z"
+  "updated": "2026-03-04T16:16:58.677Z"
 }
