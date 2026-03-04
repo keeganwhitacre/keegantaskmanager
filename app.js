@@ -272,7 +272,7 @@ function makeTaskWrap(t, delay) {
   var projHtml = '';
   if(t.projectId) {
     var p = state.projects.find(function(x){ return x.id === t.projectId; });
-    if(p) projHtml = '<span class="status" style="border-style:dashed; color:var(--text-muted); border-color:var(--card-border);">⛌ '+esc(p.title)+'</span>';
+    if(p) projHtml = '<span class="proj-link-label">⛌ '+esc(p.title)+'</span>';
   }
 
   el.innerHTML=
