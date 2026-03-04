@@ -83,14 +83,9 @@ body.notes-mode #notesView { display: block !important; }
 /* View Routing Overrides */
 body.dash-mode .hide-in-dash { display: none !important; }
 body.dash-mode #dashView     { display: block !important; }
-body.dash-mode .bottom-fade  { display: none !important; }
-body.dash-mode #fab          { display: none !important; }
-body.dash-mode #focusModeBtn { display: none !important; }
-body.dash-mode .quick-add-wrap { display: none !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
 body.projects-mode #projectsView { display: block !important; }
-body.projects-mode .bottom-fade, body.projects-mode #fab, body.projects-mode #focusModeBtn { display: none !important; }
 
 body.projects-detail-mode .hide-in-project-detail { display: none !important; }
 body.projects-detail-mode #projectDetailView { display: block !important; }
@@ -98,8 +93,6 @@ body.projects-detail-mode #projectsView { display: none !important; }
 
 body.bel-mode .hide-in-bel { display: none !important; }
 body.bel-mode #belView { display: block !important; }
-body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn { display: none !important; }
-
 
 .sync-bar {
 position: fixed; top: 0; left: 0; right: 0; z-index: 300;
@@ -1015,6 +1008,7 @@ body.theme-newsprint .mood-cell { background: #ddd; border-radius: 0; }
 body.theme-newsprint .mood-btn { border-radius: 0; }
 body.theme-ios26 .mood-cell { background: rgba(0,0,30,0.06); }
 body.theme-ios26 .mood-btn.active { border-color: #fff; }
+
 
 /* ══════════════════════════════════════════════════════════════════
    BATCH 2: BEL TAB & PROJECTS PAGE (FULLSCREEN)
