@@ -353,6 +353,14 @@
       "done": false
     }
   ],
+  "projects": [],
+  "bel": {
+    "annivDate": "2025-11-23",
+    "gifts": "",
+    "dates": "",
+    "favs": "",
+    "love": ""
+  },
   "scratchpad": "New ideas for app\n- active projects\n——status, date countdown, progress, notes\n- reading queue\n——- book notes and thoughts\n——- quotes from books?\n- gaming intentionally tracker?\n- bel tab \n—— belstuff moves here\n—— date ideas, tracker coming up etc",
   "shop": [],
   "dash": {
@@ -471,5 +479,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T16:20:07.934Z"
+  "updated": "2026-03-04T16:37:24.060Z"
 }
