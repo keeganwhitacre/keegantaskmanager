@@ -237,7 +237,9 @@
       "done": false,
       "categories": [
         "conf"
-      ]
+      ],
+      "projectId": "mmchwskbfpig",
+      "pomodoros": 0
     },
     {
       "id": "1772563516173",
@@ -522,5 +524,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T20:34:59.101Z"
+  "updated": "2026-03-04T20:49:47.733Z"
 }
