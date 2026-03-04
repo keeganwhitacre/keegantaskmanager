@@ -273,6 +273,23 @@
       ]
     },
     {
+      "id": "mm7swxj4molq",
+      "title": "Submit Applied Cognitive Psychology revisions",
+      "status": "active",
+      "priority": "hi",
+      "section": "upcoming",
+      "due": "2026-03-04",
+      "note": "Check latest revisions comments",
+      "done": false,
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "categories": [
+        "manuscript",
+        "phd"
+      ],
+      "pomodoros": 1
+    },
+    {
       "id": "1772565218118",
       "title": "Reply to Ashley with slack plans",
       "text": "Reply to Ashley with slack plans",
@@ -320,23 +337,6 @@
       "categories": [
         "personal"
       ]
-    },
-    {
-      "id": "mm7swxj4molq",
-      "title": "Submit Applied Cognitive Psychology revisions",
-      "status": "active",
-      "priority": "hi",
-      "section": "upcoming",
-      "due": "2026-03-04",
-      "note": "Check latest revisions comments",
-      "done": false,
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "categories": [
-        "manuscript",
-        "phd"
-      ],
-      "pomodoros": 1
     },
     {
       "id": "1772639337414",
@@ -471,5 +471,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T16:18:27.238Z"
+  "updated": "2026-03-04T16:18:29.565Z"
 }
