@@ -208,53 +208,6 @@
       ]
     },
     {
-      "id": "mm9ndmyjrxng",
-      "title": "Fallout / the finals",
-      "status": "active",
-      "priority": "lo",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false,
-      "categories": [
-        "hobby"
-      ]
-    },
-    {
-      "id": "mm9pmpbavoia",
-      "title": "Groceries?",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmajyz8v30hh",
-      "title": "Fix poster sizing w/ kristen",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmajz7jbeshx",
-      "title": "Lll",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
       "id": "mmak3wuynn39",
       "title": "Fix poster sizing + Kristen",
       "status": "active",
@@ -269,72 +222,6 @@
       "categories": [
         "conf"
       ]
-    },
-    {
-      "id": "mmak6q1a6xap",
-      "title": "Test",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmal0elb1mio",
-      "title": "Test",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmal2asic6wn",
-      "title": "Why",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmal2fovwpie",
-      "title": "Why",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmal2nvxhnrc",
-      "title": "Testing",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
-    },
-    {
-      "id": "mmalby3vxp5y",
-      "title": "Test",
-      "status": "active",
-      "priority": "md",
-      "section": "today",
-      "note": "",
-      "due": "",
-      "noteIsMono": false,
-      "done": false
     },
     {
       "id": "1772546273614",
@@ -462,12 +349,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-04",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -563,7 +444,13 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     }
   },
-  "updated": "2026-03-04T15:47:16.313Z"
+  "updated": "2026-03-04T15:48:26.517Z"
 }
