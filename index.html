@@ -59,8 +59,19 @@
   <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
 </div>
 
-<div class="focus-banner" id="focusBanner" style="display:none">
-  FOCUS MODE &mdash; Today only
+<div class="focus-banner" id="focusBanner">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+     <span style="font-weight:700; letter-spacing:0.1em; font-size:11px; text-transform:uppercase;">Focus Mode</span>
+     <span id="pomoTaskLabel" style="font-size:11px; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%;">No task pinned</span>
+  </div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+     <div id="pomoDisplay" style="font-family:'DM Mono',monospace; font-size:36px; font-weight:500; line-height:1;">25:00</div>
+     <div style="display:flex; gap:8px;">
+       <button id="pomoSkipBtn" class="pomo-btn alt">Skip</button>
+       <button id="pomoStartBtn" class="pomo-btn">Start</button>
+     </div>
+  </div>
+  <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
 </div>
 
 <div class="quick-add-wrap hide-in-dash" id="quickAddWrap">
@@ -169,6 +180,21 @@
     <div class="d-card-label">Daily Reflection</div>
     <div class="d-prompt" id="dPrompt"></div>
     <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+  
+  <div class="d-card">
+    <div class="d-card-label" style="display:flex; justify-content:space-between;">
+      <span>Daily Mood</span>
+      <span id="dMoodAvg" style="text-transform:none; opacity:0.8;"></span>
+    </div>
+    <div class="mood-row" id="dMoodSelect">
+      <button class="mood-btn" data-val="1" style="--mood-col:#ff3b30;"></button>
+      <button class="mood-btn" data-val="2" style="--mood-col:#ff9500;"></button>
+      <button class="mood-btn" data-val="3" style="--mood-col:#ffcc00;"></button>
+      <button class="mood-btn" data-val="4" style="--mood-col:#a2d952;"></button>
+      <button class="mood-btn" data-val="5" style="--mood-col:#30d158;"></button>
+    </div>
+    <div class="mood-heatmap" id="dMoodHeatmap"></div>
   </div>
 
   <div class="d-card">
