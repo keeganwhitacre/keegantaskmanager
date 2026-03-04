@@ -9,11 +9,6 @@ var NOTES_KEY    = 'kw_notes_v3';
 var NOTES_MONO_KEY = 'kw_notes_mono_v3';
 var DASH_KEY     = 'kw_dash_v1';
 
-var SECTIONS = ['personal','hobby','blocked','upcoming'];
-var SECTION_LABELS = { personal:'Bel & Personal', hobby:'Hobbies & Games', blocked:'Blocked / Waiting', upcoming:'Upcoming' };
-function getSectionLabel(sec) {
-  return SECTION_LABELS[sec] || sec;
-}
 var CAT_LABEL = { manuscript:'manuscript', lab:'lab ops', phd:'phd apps', conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby' };
 
 var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false, notesOpen:false, scratchpad:'', collapsed:{}, _shaLoaded:true };
@@ -28,7 +23,14 @@ function loadLocal() {
   
   if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
   
-  state.tasks.forEach(function(t){ if(t.section==='today'){ t.pinnedToday=true; t.section='upcoming'; } });
+  // Data Migration: Clean up old 'section' keys and convert single 'category' to array
+  state.tasks.forEach(function(t){ 
+    if(t.section === 'today') t.pinnedToday = true; 
+    if(t.category && !t.categories) t.categories = [t.category];
+    delete t.section; 
+    delete t.category;
+  });
+  
   loadDash();
 }
 
@@ -72,6 +74,12 @@ function ghFetch(retries){
         saveDash(false);
         if(document.body.classList.contains('dash-mode')) renderDashFull();
       }
+      
+      state.tasks.forEach(function(t){ 
+        if(t.category && !t.categories) t.categories = [t.category];
+        delete t.category;
+      });
+      
       saveLocal();
       var sp=document.getElementById('scratchpad');
       if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
@@ -137,18 +145,40 @@ function showSync(type,msg){
 }
 
 // 
-// RENDER
+// RENDER & TIME LOGIC
 // 
+function isActuallyDueToday(t){
+  if(t.done) return false;
+  if(t.pinnedToday) return true;
+  if(!t.due) return false;
+  var today=new Date(); today.setHours(0,0,0,0);
+  var d=new Date(t.due+'T00:00:00');
+  if(isNaN(d)) return false;
+  return Math.round((d-today)/86400000) === 0; // STRICTLY today
+}
+
+function dueClass(due){
+  if(!due) return '';
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = new Date(due + 'T00:00:00');
+  if(isNaN(d)) return '';
+  var diff = Math.round((d - today) / 86400000);
+  if(diff < 0)  return 'overdue';
+  if(diff === 0) return 'today';
+  if(diff <= 3)  return 'soon';
+  return '';
+}
+
 function formatDate(){
   var d=new Date();
   var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('dateDisplay').textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate();
 
-  var overdueCount = state.tasks.filter(function(t){ return !t.done&&t.due&&dueClass(t.due)==='overdue'; }).length;
-  var todayCount   = state.tasks.filter(function(t){ return !t.done&&(t.section==='today'||isActuallyDueToday(t)); }).length;
-  var doneToday    = state.tasks.filter(function(t){ return t.done&&t.completedAt&&(new Date(t.completedAt).toDateString()===new Date().toDateString()); }).length;
-  var blockedCount = state.tasks.filter(function(t){ return !t.done&&(t.status==='blocked'||t.status==='waiting'); }).length;
+  var overdueCount = state.tasks.filter(function(t){ return !t.done && t.due && dueClass(t.due)==='overdue' && !t.pinnedToday; }).length;
+  var todayCount   = state.tasks.filter(function(t){ return !t.done && isActuallyDueToday(t); }).length;
+  var doneToday    = state.tasks.filter(function(t){ return t.done && t.completedAt && (new Date(t.completedAt).toDateString()===new Date().toDateString()); }).length;
+  var blockedCount = state.tasks.filter(function(t){ return !t.done && (t.status==='blocked'||t.status==='waiting'); }).length;
 
   var parts=[];
   if(overdueCount>0) parts.push('<span class="sub-overdue">'+overdueCount+' overdue</span>');
@@ -161,17 +191,6 @@ function formatDate(){
 }
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function dueClass(due){
-  if(!due) return '';
-  var today = new Date(); today.setHours(0,0,0,0);
-  var d = new Date(due + 'T00:00:00');
-  if(isNaN(d)) return '';
-  var diff = Math.round((d - today) / 86400000);
-  if(diff < 0)  return 'overdue';
-  if(diff === 0) return 'today';
-  if(diff <= 3)  return 'soon';
-  return '';
-}
 
 function fmtDue(due){
   if(!due) return '';
@@ -213,14 +232,19 @@ function makeTaskWrap(t, delay) {
   el.className = 'task '+(t.priority||'md')+(t.done?' done':'')+(((t.status==='blocked'||t.status==='waiting')&&!t.done)?' dimmed':'');
   el.dataset.id = t.id;
 
-  var catHtml=t.category?'<span class="cat '+catCls(t.category)+'">'+esc(CAT_LABEL[t.category]||t.category)+'</span>':'';
+  var catArray = t.categories || [];
+  var catHtml = catArray.map(function(c) {
+      return '<span class="cat '+catCls(c)+'">'+esc(CAT_LABEL[c]||c)+'</span>';
+  }).join('');
+  
   var statusMap={waiting:'waiting on',blocked:'blocked',review:'in review'};
   var statusHtml=(t.status&&t.status!=='active')?'<span class="status '+t.status+'">'+esc(statusMap[t.status]||t.status)+'</span>':'';
   var dc=dueClass(t.due);
   var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
+  
   el.innerHTML=
-    '<div class="cb">'+(t.done?'✓':'')+'</div>'+
+    '<div class="cb">'+(t.done?'':'')+'</div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
       '<div class="task-row">'+catHtml+statusHtml+dueHtml+'</div>'+
@@ -247,7 +271,10 @@ function makeArchiveWrap(t, delay) {
 
   var el = document.createElement('div');
   el.className = 'task '+(t.priority||'md')+' done archived';
-  var catHtml=t.category?'<span class="cat '+catCls(t.category)+'">'+esc(CAT_LABEL[t.category]||t.category)+'</span>':'';
+  
+  var catArray = t.categories || [];
+  var catHtml = catArray.map(function(c) { return '<span class="cat '+catCls(c)+'">'+esc(CAT_LABEL[c]||c)+'</span>'; }).join('');
+  
   var completedStr='';
   if(t.completedAt){
     var cd=new Date(t.completedAt);
@@ -256,7 +283,7 @@ function makeArchiveWrap(t, delay) {
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
 
   el.innerHTML=
-    '<div class="cb">✓</div>'+
+    '<div class="cb"></div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
       '<div class="task-row">'+catHtml+'</div>'+
@@ -306,7 +333,6 @@ function deferTask(id){
       } else {
         t.due=tStr;
       }
-      t.section='upcoming';
       t.pinnedToday=false;
       break;
     }
@@ -372,16 +398,6 @@ function animateCheck(id, el) {
   toggleDone(id);
 }
 
-function isActuallyDueToday(t){
-  if(t.done) return false;
-  if(t.pinnedToday) return true;
-  if(!t.due) return false;
-  var today=new Date(); today.setHours(0,0,0,0);
-  var d=new Date(t.due+'T00:00:00');
-  if(isNaN(d)) return false;
-  return Math.round((d-today)/86400000) <= 0;
-}
-
 function filterTask(t){
   var f=state.filter;
   if(state.focusMode) return isActuallyDueToday(t) && !t.done;
@@ -390,36 +406,15 @@ function filterTask(t){
   if(f==='all') return true;
   if(f==='today') return isActuallyDueToday(t);
   if(f==='blocked') return t.status==='blocked'||t.status==='waiting';
-  return t.category===f;
+  
+  var catArray = t.categories || [];
+  return catArray.indexOf(f) !== -1;
 }
 
 function searchMatch(t,q){
   if(!q) return true;
   var ql=q.toLowerCase();
   return (t.title||'').toLowerCase().indexOf(ql)!==-1||(t.note||'').toLowerCase().indexOf(ql)!==-1;
-}
-
-function sortTasks(tasks) {
-  var po = { hi: 0, md: 1, lo: 2 };
-  var mapped = tasks.map(function(t) {
-    return {
-      t: t,
-      p: po[t.priority || 'md'] || 1,
-      d: t.due || '9999-99-99'
-    };
-  });
-
-  mapped.sort(function(a, b) {
-    if (a.p !== b.p) return a.p - b.p;
-    if (a.d < b.d) return -1;
-    if (a.d > b.d) return 1;
-    return 0;
-  });
-
-  for (var i = 0; i < tasks.length; i++) {
-    tasks[i] = mapped[i].t;
-  }
-  return tasks;
 }
 
 function render(){
@@ -430,7 +425,9 @@ function render(){
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
   if(ft){
     document.getElementById('focusTitle').textContent=ft.title;
-    var parts=[]; if(ft.category) parts.push(CAT_LABEL[ft.category]||ft.category); if(ft.due) parts.push(ft.due);
+    var parts=[]; 
+    if(ft.categories && ft.categories.length) parts.push(CAT_LABEL[ft.categories[0]]||ft.categories[0]); 
+    if(ft.due) parts.push(ft.due);
     document.getElementById('focusSub').textContent=parts.join(' · ')||'Pinned';
   } else {
     state.focus=null;
@@ -443,45 +440,8 @@ function render(){
 
   var list=document.getElementById('taskList');
   list.innerHTML='';
-  var anyVisible=false;
-  var sectionsToShow=state.focusMode?['today']:SECTIONS;
   var isArchive = state.filter==='archive';
   var delayBase=0;
-
-  if(!isArchive){
-    var todayTasks=state.tasks.filter(function(t){
-      if(t.done||!searchMatch(t,searchQ)) return false;
-      if(state.focusMode) return isActuallyDueToday(t);
-      if(state.filter==='all'||state.filter==='today') return isActuallyDueToday(t);
-      return false;
-    });
-    if(todayTasks.length>0){
-      anyVisible=true;
-      var isTodayCollapsed=state.collapsed['today'];
-      var todaySec=document.createElement('div');
-      todaySec.className='section'+(isTodayCollapsed?' collapsed':'');
-      todaySec.dataset.sec='today';
-      
-      var todayHdr=document.createElement('div');
-      todayHdr.className='sec-header';
-      todayHdr.style.cursor='pointer';
-      todayHdr.innerHTML='<div style="display:-webkit-flex;display:flex;align-items:center;gap:7px;"><div class="sec-title">Today</div><div class="sec-count">'+todayTasks.length+'</div></div><div class="sec-toggle">⌄</div>';
-      todayHdr.addEventListener('click',function(){
-        state.collapsed['today']=!state.collapsed['today'];
-        try{localStorage.setItem('kw_collapsed_v1',JSON.stringify(state.collapsed));}catch(e){}
-        todaySec.classList.toggle('collapsed',state.collapsed['today']);
-      });
-      todaySec.appendChild(todayHdr);
-      
-      var todayWrap=document.createElement('div');
-      todayWrap.className='sec-tasks';
-      sortTasks(todayTasks);
-      todayTasks.forEach(function(t,i){ todayWrap.appendChild(makeTaskWrap(t,isTodayCollapsed?0:i*30)); });
-      todaySec.appendChild(todayWrap);
-      delayBase+=todayTasks.length*30+50;
-      list.appendChild(todaySec);
-    }
-  }
 
   if(isArchive){
     var archived = state.tasks.filter(function(t){ return t.done && searchMatch(t,searchQ); });
@@ -489,7 +449,6 @@ function render(){
     if(archived.length===0){
       list.innerHTML='<div class="empty-state"><div class="empty-icon">📁</div><div>Nothing archived yet</div></div>';
     } else {
-      anyVisible=true;
       var section=document.createElement('div');
       section.className='section';
       var header=document.createElement('div');
@@ -500,44 +459,92 @@ function render(){
       list.appendChild(section);
     }
   } else {
-    sectionsToShow.forEach(function(sec){
-      var tasks=state.tasks.filter(function(t){
-        if(!filterTask(t)||!searchMatch(t,searchQ)) return false;
-        return t.section===sec && !isActuallyDueToday(t);
-      });
-      if(tasks.length===0) return;
-      anyVisible=true;
-      var isCollapsed = state.collapsed[sec];
-      var section=document.createElement('div');
-      section.className='section'+(isCollapsed?' collapsed':'');
-      section.dataset.sec=sec;
+    // Grouping Engine by Time
+    var timeGroups = { overdue: [], today: [], tomorrow: [], week: [], later: [] };
+    
+    state.tasks.forEach(function(t){
+      if(t.done || !searchMatch(t,searchQ)) return;
+      if(!filterTask(t)) return;
+      
+      if(isActuallyDueToday(t)) { 
+        timeGroups.today.push(t); 
+      }
+      else if(!t.due) { 
+        timeGroups.later.push(t); 
+      }
+      else {
+        var today = new Date(); today.setHours(0,0,0,0);
+        var d = new Date(t.due+'T00:00:00');
+        var diff = Math.round((d - today) / 86400000);
+        
+        if(diff < 0) timeGroups.overdue.push(t);
+        else if(diff === 1) timeGroups.tomorrow.push(t);
+        else if(diff <= 7) timeGroups.week.push(t);
+        else timeGroups.later.push(t);
+      }
+    });
 
-      var header=document.createElement('div');
-      header.className='sec-header';
-      header.style.cursor='pointer';
-      header.innerHTML=
+    var groupOrder = [
+      { id: 'overdue', label: 'Overdue', color: '#ff3a30' },
+      { id: 'today', label: 'Today', color: '' },
+      { id: 'tomorrow', label: 'Tomorrow', color: '' },
+      { id: 'week', label: 'This Week', color: '' },
+      { id: 'later', label: 'Later', color: '' }
+    ];
+
+    if(state.focusMode) groupOrder = [{ id: 'today', label: 'Today', color: '' }];
+
+    var anyVisible = false;
+
+    groupOrder.forEach(function(g) {
+      var tasks = timeGroups[g.id];
+      if(tasks.length === 0) return;
+      anyVisible = true;
+      
+      tasks.sort(function(a,b){
+        var po={hi:0,md:1,lo:2};
+        var pa=po[a.priority||'md']||1, pb=po[b.priority||'md']||1;
+        if(pa!==pb) return pa-pb;
+        var da=a.due?new Date(a.due+'T00:00:00').getTime():Infinity;
+        var db=b.due?new Date(b.due+'T00:00:00').getTime():Infinity;
+        return da-db;
+      });
+
+      var isCollapsed = state.collapsed['grp_'+g.id];
+      var section = document.createElement('div');
+      section.className = 'section' + (isCollapsed ? ' collapsed' : '');
+      section.dataset.sec = g.id;
+
+      var header = document.createElement('div');
+      header.className = 'sec-header';
+      header.style.cursor = 'pointer';
+      var titleColor = g.color ? 'color:'+g.color+';' : '';
+      header.innerHTML = 
         '<div style="display:-webkit-flex;display:flex;align-items:center;gap:7px;">'+
-          '<div class="sec-title">'+getSectionLabel(sec)+'</div>'+
+          '<div class="sec-title" style="'+titleColor+'">'+g.label+'</div>'+
           '<div class="sec-count">'+tasks.length+'</div>'+
         '</div>'+
         '<div class="sec-toggle">⌄</div>';
+      
       header.addEventListener('click', function(){
-        state.collapsed[sec] = !state.collapsed[sec];
+        state.collapsed['grp_'+g.id] = !state.collapsed['grp_'+g.id];
         try { localStorage.setItem('kw_collapsed_v1', JSON.stringify(state.collapsed)); } catch(e){}
-        section.classList.toggle('collapsed', state.collapsed[sec]);
+        section.classList.toggle('collapsed', state.collapsed['grp_'+g.id]);
       });
       section.appendChild(header);
 
-      var tasksWrap=document.createElement('div');
-      tasksWrap.className='sec-tasks';
-      sortTasks(tasks);
-      tasks.forEach(function(t,i){ tasksWrap.appendChild(makeTaskWrap(t, isCollapsed?0:delayBase + i*30)); });
+      var tasksWrap = document.createElement('div');
+      tasksWrap.className = 'sec-tasks';
+      tasks.forEach(function(t,i){ 
+        tasksWrap.appendChild(makeTaskWrap(t, isCollapsed ? 0 : delayBase + i*30)); 
+      });
       section.appendChild(tasksWrap);
-      delayBase+=tasks.length*30+50;
+      delayBase += tasks.length * 30 + 50;
       list.appendChild(section);
     });
+    
     if(!anyVisible){
-      list.innerHTML='<div class="empty-state"><div class="empty-icon">✓</div><div>'+(state.focusMode?'Nothing due today':'No tasks here')+'</div></div>';
+      list.innerHTML='<div class="empty-state"><div class="empty-icon">✓</div><div>'+(state.focusMode?'Nothing due today':'No tasks match this filter')+'</div></div>';
     }
   }
 
@@ -638,12 +645,15 @@ function openEdit(id){
   noteEl.value=t.note||'';
   noteEl.style.fontFamily=t.noteIsMono?"'DM Mono',monospace":"'DM Sans',sans-serif";
   document.getElementById('monoToggle').textContent=t.noteIsMono?'mono on':'mono off';
-  document.getElementById('monoToggle').style.color=t.noteIsMono?'#8b9eff':'#62636f';
   document.getElementById('taskDueInput').value=t.due||'';
-  setChip('catRow',t.category||null);
+  
+  var catArray = t.categories || [];
+  document.querySelectorAll('#catRow .s-chip').forEach(function(c){
+    c.classList.toggle('active', catArray.indexOf(c.dataset.val) !== -1);
+  });
+  
   setChip('statusRow',t.status||'active');
   setChip('priRow',t.priority||'md');
-  setChip('sectionRow',t.section||'upcoming');
   var pinChip=document.getElementById('pinTodayChip'); if(pinChip) pinChip.classList.toggle('active',!!(t.pinnedToday));
   openSheet('addSheet');
 }
@@ -651,10 +661,12 @@ function openEdit(id){
 function saveTask(){
   var title=document.getElementById('taskTitleInput').value.trim();
   if(!title){ showToast('Enter a task title'); return; }
-  var category=getChip('catRow');
+  
+  var categories = [];
+  document.querySelectorAll('#catRow .s-chip.active').forEach(function(c){ categories.push(c.dataset.val); });
+  
   var status=getChip('statusRow')||'active';
   var priority=getChip('priRow')||'md';
-  var section=getChip('sectionRow')||'upcoming';
   var pinnedToday=!!(document.getElementById('pinTodayChip')&&document.getElementById('pinTodayChip').classList.contains('active'));
   var note=document.getElementById('taskNoteInput').value.trim();
   var due=document.getElementById('taskDueInput').value; 
@@ -663,13 +675,13 @@ function saveTask(){
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        Object.assign(state.tasks[i],{title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono});
+        Object.assign(state.tasks[i],{title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,category:category,status:status,priority:priority,section:section,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false});
+    state.tasks.push({id:uid(),title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false});
     showToast('Task added');
   }
   closeSheets(); saveLocal(); render(); ghPush();
@@ -732,9 +744,11 @@ function closeSheets(){
   document.getElementById('taskNoteInput').value='';
   document.getElementById('taskNoteInput').style.fontFamily="'DM Sans',sans-serif";
   document.getElementById('monoToggle').textContent='mono off';
-  document.getElementById('monoToggle').style.color='#62636f';
   document.getElementById('taskDueInput').value='';
-  setChip('catRow',null); setChip('statusRow','active'); setChip('priRow','md'); setChip('sectionRow','today');
+  
+  document.querySelectorAll('#catRow .s-chip').forEach(function(c){c.classList.remove('active');});
+  setChip('statusRow','active'); 
+  setChip('priRow','md');
 }
 
 function openAddSheet(){
@@ -753,7 +767,13 @@ document.getElementById('addSheet').addEventListener('click', function(e){
   if(pin) pin.classList.toggle('active');
 });
 
-['catRow','statusRow','priRow','sectionRow'].forEach(function(rowId){
+// Multi-select for categories
+document.getElementById('catRow').addEventListener('click', function(e){
+  var chip=e.target.closest('.s-chip'); if(!chip) return;
+  chip.classList.toggle('active');
+});
+
+['statusRow','priRow'].forEach(function(rowId){
   document.getElementById(rowId).addEventListener('click',function(e){
     var chip=e.target.closest('.s-chip'); if(!chip) return;
     document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.remove('active');});
@@ -875,7 +895,6 @@ document.getElementById('monoToggle').addEventListener('click', function(){
   isMono = !isMono;
   noteEl.style.fontFamily = isMono ? "'DM Mono',monospace" : "'DM Sans',sans-serif";
   this.textContent = isMono ? 'mono on' : 'mono off';
-  this.style.color = isMono ? '#8b9eff' : '#62636f';
 });
 
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
@@ -932,14 +951,13 @@ function submitQuickAdd(){
   var newTask = {
     id: Date.now().toString(), 
     title: title, 
-    text: title,
-    category: 'personal',
+    categories: ['personal'],
     status: 'active', 
     priority: 'md',
-    section: 'today', 
     note: '', 
     due: new Date().toISOString().split('T')[0],
     noteIsMono: false, 
+    pinnedToday: true,
     done: false
   };
   
@@ -948,7 +966,7 @@ function submitQuickAdd(){
   render(); 
   ghPush();
   
-  showToast('Added to Today');
+  showToast('Pinned to Today');
   inp.value = '';
   document.getElementById('quickAddWrap').classList.remove('open');
 }
@@ -1224,7 +1242,7 @@ document.getElementById('dIntention').addEventListener('input', function() {
 
 function renderDashTasks() {
   var todayTasks = state.tasks.filter(function(t) {
-    return !t.done && (t.section === 'today' || isActuallyDueToday(t));
+    return !t.done && isActuallyDueToday(t);
   }).slice(0, 5);
   var list = document.getElementById('dTaskList');
   list.innerHTML = '';
@@ -1243,10 +1261,10 @@ function renderDashTasks() {
       list.appendChild(row);
     });
   }
-  var open = document.getElementById('dOpenTasks');
-  var remaining = state.tasks.filter(function(t){ return !t.done; }).length;
-  open.textContent = remaining + ' open task' + (remaining !== 1 ? 's' : '') + '  switch to Tasks';
-  open.onclick = function() { switchTab('tasks'); };
+  var open = state.tasks.filter(function(t){ return !t.done; }).length;
+  var openText = document.getElementById('dOpenTasks');
+  openText.textContent = open + ' open task' + (open !== 1 ? 's' : '') + '  switch to Tasks';
+  openText.onclick = function() { switchTab('tasks'); };
 }
 
 function renderCountdown() {
@@ -1394,10 +1412,16 @@ function renderHabits() {
 function renderBook() {
   var b = dState.book;
   var content = document.getElementById('dBookContent');
+  var btn = document.getElementById('dBookSetBtn');
+  
   if (!b || !b.title) {
     content.innerHTML = '<div class="d-book-empty">No book set — tap to add one</div>';
+    btn.textContent = '+ set book';
     return;
   }
+  
+  btn.textContent = 'Update progress';
+  
   var pct = (b.total && b.current) ? Math.round((b.current / b.total) * 100) : 0;
   var pctClamped = Math.min(100, Math.max(0, pct));
   var pagesLeft = (b.total && b.current) ? (b.total - b.current) : null;
@@ -1417,6 +1441,7 @@ document.getElementById('dBookSetBtn').addEventListener('click', function() {
     document.getElementById('dBookAuthor').value  = dState.book.author || '';
     document.getElementById('dBookCurrent').value = dState.book.current || '';
     document.getElementById('dBookTotal').value   = dState.book.total || '';
+    setTimeout(function() { document.getElementById('dBookCurrent').focus(); }, 50);
   }
 });
 
@@ -1702,8 +1727,8 @@ function onDragEnd(e) {
 function seedData(){
   if(state.tasks.length>0) return;
   state.tasks=[
-    {id:uid(),title:'Finalize SAS poster methods section',category:'conf',status:'active',priority:'hi',section:'upcoming',pinnedToday:true,due:getTodayStr(),note:'',done:false},
-    {id:uid(),title:'Plan spring trip — check Bel\'s schedule',category:'bel',status:'active',priority:'md',section:'personal',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false}
+    {id:uid(),title:'Finalize SAS poster methods section',categories:['conf'],status:'active',priority:'hi',pinnedToday:true,due:getTodayStr(),note:'',done:false},
+    {id:uid(),title:'Plan spring trip',categories:['bel', 'personal'],status:'active',priority:'md',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false}
   ];
   saveLocal();
 }
