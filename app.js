@@ -251,14 +251,11 @@ function makeTaskWrap(t, delay) {
   var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
   
-  // Inject Pomodoro tracker dots
-  var pomoHtml = t.pomodoros ? '<span class="cat" style="background:transparent; border:none; padding:0; margin-left:4px; font-size:12px;" title="'+t.pomodoros+' pomodoros completed">'+ '🍅'.repeat(t.pomodoros) +'</span>' : '';
-  
   el.innerHTML=
     '<div class="cb">'+(t.done?'':'')+'</div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
-      '<div class="task-row">'+catHtml+statusHtml+dueHtml+pomoHtml+'</div>'+
+      '<div class="task-row">'+catHtml+statusHtml+dueHtml+'</div>'+
       noteHtml+
     '</div>';
     
@@ -292,13 +289,12 @@ function makeArchiveWrap(t, delay) {
     completedStr='Completed '+fmtShort(cd);
   }
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
-  var pomoHtml = t.pomodoros ? '<span class="cat" style="background:transparent; border:none; padding:0; margin-left:4px; font-size:12px;">'+ '🍅'.repeat(t.pomodoros) +'</span>' : '';
 
   el.innerHTML=
     '<div class="cb"></div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
-      '<div class="task-row">'+catHtml+pomoHtml+'</div>'+
+      '<div class="task-row">'+catHtml+'</div>'+
       (completedStr?'<div class="archive-meta">'+completedStr+'</div>':'')+
       noteHtml+
       '<div style="margin-top:6px;display:-webkit-flex;display:flex;gap:12px;">'+
@@ -631,8 +627,18 @@ document.getElementById('pomoStartBtn').addEventListener('click', function(){
 });
 
 document.getElementById('pomoSkipBtn').addEventListener('click', function(){
-   pomo.timeLeft = 0;
-   tickPomo();
+   clearInterval(pomo.timer);
+   pomo.running = false;
+   if (pomo.mode === 'work') {
+     pomo.mode = 'shortBreak';
+     pomo.timeLeft = 5 * 60;
+     showToast('Session skipped.');
+   } else {
+     pomo.mode = 'work';
+     pomo.timeLeft = 25 * 60;
+     showToast('Break skipped.');
+   }
+   updatePomoUI();
 });
 
 // 
@@ -722,6 +728,18 @@ function openEdit(id){
   document.getElementById('focusPinBtn').style.display='block';
   document.getElementById('focusPinBtn').textContent=state.focus===id?'Unpin Focus':'Set as Focus';
   document.getElementById('taskTitleInput').value=t.title||'';
+  
+  // Inject Pomodoro Count into edit view
+  var pomoEl = document.getElementById('pomoCountDisplay');
+  if (pomoEl) {
+    if (t.pomodoros && t.pomodoros > 0) {
+      pomoEl.style.display = 'block';
+      pomoEl.textContent = '🍅 ' + t.pomodoros + ' focus session' + (t.pomodoros > 1 ? 's' : '') + ' completed';
+    } else {
+      pomoEl.style.display = 'none';
+    }
+  }
+
   var noteEl=document.getElementById('taskNoteInput');
   noteEl.value=t.note||'';
   noteEl.style.fontFamily=t.noteIsMono?"'DM Mono',monospace":"'DM Sans',sans-serif";
@@ -828,6 +846,9 @@ function closeSheets(){
   document.getElementById('taskNoteInput').style.fontFamily="'DM Sans',sans-serif";
   document.getElementById('monoToggle').textContent='mono off';
   document.getElementById('taskDueInput').value='';
+  
+  var pomoEl = document.getElementById('pomoCountDisplay');
+  if (pomoEl) pomoEl.style.display = 'none';
   
   document.querySelectorAll('#catRow .s-chip').forEach(function(c){c.classList.remove('active');});
   setChip('statusRow','active'); 
