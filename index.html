@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#000">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tasks">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.json">
+  <title>Tasks</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Syne:wght@400;500;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+  
+  <script>
+  (function(){
+    var bg={neon:'#0d0810',newsprint:'#f8f6f0',ios26:'#e8eaf0'};
+    try{var t=localStorage.getItem('kw_theme_v2')||'ios26'; document.documentElement.style.background=bg[t];}catch(e){}
+  })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+<div class="sync-bar" id="syncBar"><div class="sync-dot"></div><span id="syncMsg"></span></div>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="greeting">Hey Keegan</div>
+      <div class="date-line" id="dateDisplay"></div>
+      <div class="date-sub" id="dateSub"></div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn" id="shopBtn" title="Shopping List">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+      </div>
+      <div class="icon-btn" id="notesBtn" title="Scratchpad">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div class="icon-btn" id="settingsBtn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
+  <button class="tab-btn" id="tabDash" data-tab="dash">Dashboard</button>
+</div>
+<div class="search-trigger hide-in-dash" id="searchTrigger" title="Search">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <span>Search</span>
+</div>
+
+<div class="search-wrap hide-in-dash" id="searchWrap">
+  <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
+</div>
+
+<div class="focus-banner" id="focusBanner" style="display:none">
+  FOCUS MODE &mdash; Today only
+</div>
+
+<div class="quick-add-wrap hide-in-dash" id="quickAddWrap">
+  <div class="quick-add-row">
+    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today… (return to save)" autocomplete="off" autocorrect="off" autocapitalize="sentences">
+    <button class="quick-add-send" id="quickAddSend">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="focus-strip hide-in-focus hide-in-dash" id="focusStrip">
+  <div class="focus-dot"></div>
+  <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
+    <div class="focus-eye">Pinned Focus</div>
+    <div class="focus-title" id="focusTitle">No task pinned</div>
+    <div class="focus-sub" id="focusSub">Long-press any task to pin</div>
+  </div>
+  <div id="focusDoneBtn" style="display:none;font-size:18px;padding:6px 10px;cursor:pointer;color:#52d9a0;-webkit-user-select:none;user-select:none;" title="Complete focus task">✓</div>
+  <div class="focus-arr" id="focusArr">›</div>
+</div>
+
+<div class="filter-scroll hide-in-focus hide-in-dash" id="filterRow">
+  <div class="chip active" data-filter="all">All</div>
+  <div class="chip" data-filter="today">Today</div>
+  <div class="chip" data-filter="manuscript">Manuscript</div>
+  <div class="chip" data-filter="lab">Lab Ops</div>
+  <div class="chip" data-filter="phd">PhD Apps</div>
+  <div class="chip" data-filter="conf">Conference</div>
+  <div class="chip" data-filter="bel">Bel ♡</div>
+  <div class="chip" data-filter="personal">Personal</div>
+  <div class="chip" data-filter="hobby">Hobbies</div>
+  <div class="chip" data-filter="blocked">Blocked</div>
+  <div class="chip" data-filter="archive">Archive</div>
+</div>
+
+<div id="taskList" class="hide-in-dash" style="min-height:calc(100vh - 320px);"></div>
+<div class="spacer hide-in-dash" id="spacerEl"></div>
+
+<div id="notesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div class="notes-header">
+    <div class="notes-label">Scratchpad</div>
+    <div class="notes-header-right">
+      <span id="notesSyncStatus" class="notes-sync-status"></span>
+      <span id="notesMonoToggle" class="notes-mono-toggle">mono off</span>
+    </div>
+  </div>
+  <textarea id="scratchpad" class="notes-textarea" placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses."></textarea>
+</div>
+
+<div id="dashView">
+  <div class="d-card">
+    <div class="d-week-meta" id="dWeekMeta"></div>
+    <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="d-grid-2">
+    <div class="d-card">
+      <div class="d-card-label">Now</div>
+      <div class="d-clock" id="dClock">--<span class="d-clock-ampm" id="dAmpm"></span></div>
+      <div class="d-date-small" id="dDateSmall"></div>
+    </div>
+    <div class="d-card">
+      <div class="d-card-label" id="dWeatherLabel">Weather</div>
+      <div class="d-weather-temp" id="dWeatherTemp">--</div>
+      <div class="d-weather-desc" id="dWeatherDesc">Loading…</div>
+      <div class="d-weather-row">
+        <span class="d-weather-stat" id="dWeatherHigh"></span>
+        <span class="d-weather-stat" id="dWeatherLow"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Today's Tasks</div>
+    <div id="dTaskList"></div>
+    <div class="d-open-tasks" id="dOpenTasks"></div>
+  </div>
+
+  <div class="d-grid-2">
+    <div class="d-card">
+      <div class="d-card-label">Countdown</div>
+      <div class="d-countdown-big" id="dCountdownNum">—</div>
+      <div class="d-countdown-unit" id="dCountdownUnit"></div>
+      <div class="d-countdown-event" id="dCountdownEvent">No event set</div>
+      <span class="d-countdown-set" id="dCountdownSetBtn">+ set event</span>
+      <div class="d-countdown-edit" id="dCountdownEdit">
+        <input type="text" id="dCountdownName" placeholder="Event name" autocorrect="off" autocapitalize="words">
+        <input type="date" id="dCountdownDate">
+        <button class="d-countdown-save" id="dCountdownSave">Save</button>
+      </div>
+    </div>
+    <div class="d-card">
+      <div class="d-card-label">Quote</div>
+      <div class="d-quote-text" id="dQuoteText"></div>
+      <div class="d-quote-attr" id="dQuoteAttr"></div>
+      <div class="d-quote-nav">
+        <span class="d-quote-idx" id="dQuoteIdx"></span>
+        <button class="d-quote-btn" id="dQuotePrev">‹</button>
+        <button class="d-quote-btn" id="dQuoteNext">›</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Daily Reflection</div>
+    <div class="d-prompt" id="dPrompt"></div>
+    <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Currently Reading</div>
+    <div id="dBookContent">
+      <div class="d-book-empty">No book set — tap to add one</div>
+    </div>
+    <span class="d-book-set" id="dBookSetBtn">+ set book</span>
+    <div class="d-book-edit" id="dBookEdit">
+      <input type="text" id="dBookTitle" placeholder="Title" autocorrect="off" autocapitalize="words">
+      <input type="text" id="dBookAuthor" placeholder="Author" autocorrect="off" autocapitalize="words">
+      <div class="d-book-page-row">
+        <input type="text" id="dBookCurrent" placeholder="Page" inputmode="numeric" style="max-width:90px">
+        <span class="d-book-page-sep">of</span>
+        <input type="text" id="dBookTotal" placeholder="Total pages" inputmode="numeric" style="max-width:110px">
+      </div>
+      <button class="d-book-save" id="dBookSave">Save</button>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Habits — This Week</div>
+    <div class="d-habit-header">
+      <div class="d-habit-name-col">Habit</div>
+      <div class="d-habit-days-col" id="dHabitDayLabels"></div>
+    </div>
+    <div id="dHabitRows"></div>
+  </div>
+</div>
+
+<div id="focusModeBtn">
+  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  <span id="focusBtnLabel">Focus</span>
+</div>
+<div class="fab" id="fab">+</div>
+
+<div class="sheet" id="shopSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" style="margin-bottom:0">Shopping List</div>
+    <div id="closeShopSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div id="shopList" class="shop-list"></div>
+  <div style="margin-top:14px;display:-webkit-flex;display:flex;justify-content:flex-end;">
+    <div id="shopClearDone" class="sheet-btn" style="width:auto;padding:8px 16px;font-size:12px;opacity:0.6;">Clear checked</div>
+  </div>
+  <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
+    <button class="shop-add-btn" id="shopAddBtn">Add</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sheet" id="addSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" id="addSheetTitle" style="margin-bottom:0">New Task</div>
+    <div id="closeAddSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Task</div>
+  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing...">
+  <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
+    Note
+    <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
+  </div>
+  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, R output, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+  <div class="sheet-label">Due Date</div>
+  <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
+  <div class="sheet-label">Category</div>
+  <div class="chip-row" id="catRow">
+    <div class="s-chip" data-val="manuscript">Manuscript</div>
+    <div class="s-chip" data-val="lab">Lab Ops</div>
+    <div class="s-chip" data-val="phd">PhD Apps</div>
+    <div class="s-chip" data-val="conf">Conference</div>
+    <div class="s-chip" data-val="bel">Bel ♡</div>
+    <div class="s-chip" data-val="personal">Personal</div>
+    <div class="s-chip" data-val="hobby">Hobby</div>
+  </div>
+  <div class="sheet-label">Status</div>
+  <div class="chip-row" id="statusRow">
+    <div class="s-chip active" data-val="active">Active</div>
+    <div class="s-chip" data-val="waiting">Waiting on</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip" data-val="review">In Review</div>
+  </div>
+  <div class="sheet-label">Priority</div>
+  <div class="chip-row" id="priRow">
+    <div class="s-chip" data-val="hi">High</div>
+    <div class="s-chip active" data-val="md">Med</div>
+    <div class="s-chip" data-val="lo">Low</div>
+  </div>
+    <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
+    Section
+    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
+  </div>
+  <div class="chip-row" id="sectionRow">
+    <div class="s-chip" data-val="personal">Bel &amp; Personal</div>
+    <div class="s-chip" data-val="hobby">Hobbies &amp; Games</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip active" data-val="upcoming">Upcoming</div>
+  </div>
+  <button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
+  <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
+  <button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
+</div>
+
+<div class="sheet" id="settingsSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" style="margin-bottom:0">Settings</div>
+    <div id="closeSettingsSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Appearance</div>
+  <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
+    
+    <div class="theme-swatch" data-theme="ios26" title="iOS 26" style="background:linear-gradient(135deg,#e8eaf0,#dde2f0);border:2px solid rgba(255,255,255,0.8);">
+      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#007aff;margin-top:auto;">iOS</div>
+    </div>
+    <div class="theme-swatch" data-theme="neon" title="Neon Noir" style="background:#0d0810;border:2px solid #ff2d7840;">
+      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#ff2d78;margin-top:auto;">NEON</div>
+    </div>
+    <div class="theme-swatch" data-theme="newsprint" title="Newsprint" style="background:#f8f6f0;border:2px solid #ddd;">
+      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#888;margin-top:auto;">NEWS</div>
+    </div>
+
+  </div>
+  <div class="divider"></div>
+  <div class="sheet-label">GitHub Sync</div>
+  <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
+  <div class="settings-field">
+    <label>GitHub Username</label>
+    <input class="input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Repository Name</label>
+    <input class="input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Personal Access Token</label>
+    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:14px; line-height:1.7;">
+    Token needs <strong style="color:#9a9aaa">repo</strong> scope. Stored only in localStorage — never sent anywhere except GitHub's API.
+  </div>
+  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
+  <div class="divider"></div>
+  <div class="sheet-label">Danger Zone</div>
+  <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="toast-undo" id="toastUndo"><span id="toastUndoMsg">Task deleted</span><button class="toast-undo-btn" id="toastUndoBtn">UNDO</button></div>
+
+<div class="bottom-fade"></div>
+</body>
+</html>
