@@ -674,3 +674,13 @@ body.theme-ios26 #belView .d-card { border-color: rgba(52,199,89,0.4) !important
 body.theme-ios26 #belView .shop-add-btn, 
 body.theme-ios26 #belView .sheet-btn.primary { background: #34c759 !important; border-color: #34c759 !important; box-shadow: 0 2px 8px rgba(52,199,89,0.3) !important; color: #fff !important; }
 body.theme-ios26 .bel-cb.checked { background: #34c759 !important; border-color: #34c759 !important; }
+
+/* Fix input stretching causing horizontal scroll */
+input[type="date"].input { width: 100% !important; max-width: 100% !important; display: block !important; box-sizing: border-box !important; }
+
+/* Habit names fixed */
+body.theme-ios26 .d-habit-name-col { color: #1a1a2e !important; font-weight: 600 !important; }
+
+/* iOS Background Removal & White Bar Fix */
+body.theme-ios26 { background: #e8eaf0 !important; }
+body.theme-ios26::before { display: none !important; }
