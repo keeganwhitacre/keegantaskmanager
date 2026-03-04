@@ -49,6 +49,8 @@
 <div class="tab-bar">
   <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
   <button class="tab-btn" id="tabDash" data-tab="dash">Dashboard</button>
+  <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
+  <button class="tab-btn" id="tabBel" data-tab="bel" style="color:var(--cat-bel); border-color:var(--cat-bel);">Bel ♡</button>
 </div>
 <div class="search-trigger hide-in-dash" id="searchTrigger" title="Search">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -110,6 +112,50 @@
 
 <div id="taskList" class="hide-in-dash" style="min-height:calc(100vh - 320px);"></div>
 <div class="spacer hide-in-dash" id="spacerEl"></div>
+
+<div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+    <div class="sheet-title" style="margin-bottom:0;">Active Projects</div>
+    <button class="sheet-btn primary" id="newProjectBtn" style="width:auto; padding:6px 16px; margin:0; font-size:12px;">+ New</button>
+  </div>
+  <div id="projectsList"></div>
+</div>
+
+<div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  
+  <div class="d-card" style="border-color:var(--cat-bel); position:relative; overflow:hidden;">
+    <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
+    <div class="d-card-label" style="color:var(--cat-bel);">Time Together</div>
+    <div id="belTimeCount" style="font-family:var(--font-display); font-size:32px; color:var(--text-main); line-height:1; margin-bottom:6px;">--</div>
+    <div id="belNextAnniv" style="font-size:11px; color:var(--text-muted); font-family:var(--font-mono);">Set anniversary date below</div>
+    <div id="editBelDateBtn" style="font-size:10px; color:var(--cat-bel); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
+    
+    <div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
+      <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
+      <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px; background:var(--cat-bel); border-color:var(--cat-bel); color:#fff;">Save</button>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label" style="color:var(--cat-bel);">Gift Ideas</div>
+    <textarea class="d-reflect-input" id="belGifts" rows="3" placeholder="Jot down things she mentions..." autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label" style="color:var(--cat-bel);">Date Ideas</div>
+    <textarea class="d-reflect-input" id="belDates" rows="3" placeholder="Places to go, things to do..." autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label" style="color:var(--cat-bel);">Her Favorites</div>
+    <textarea class="d-reflect-input" id="belFavs" rows="3" placeholder="Coffee orders, flowers, snacks..." autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label" style="color:var(--cat-bel);">Things I Love About Her</div>
+    <textarea class="d-reflect-input" id="belLove" rows="3" placeholder="The little things..." autocorrect="off" autocapitalize="sentences"></textarea>
+  </div>
+</div>
 
 <div id="notesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
   <div class="notes-header">
@@ -249,6 +295,34 @@
 
 <div class="overlay" id="overlay"></div>
 
+<div class="sheet" id="projectSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" id="projectSheetTitle" style="margin-bottom:0">New Project</div>
+    <div id="closeProjectSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Project Name</div>
+  <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:14px;">
+  
+  <div class="sheet-label">Stage</div>
+  <div class="chip-row" id="projStageRow">
+    <div class="s-chip active" data-val="Planning">Planning</div>
+    <div class="s-chip" data-val="Active">Active</div>
+    <div class="s-chip" data-val="Waiting">Waiting</div>
+    <div class="s-chip" data-val="Review">Review</div>
+    <div class="s-chip" data-val="Done">Done</div>
+  </div>
+
+  <div class="sheet-label">Deadline (Optional)</div>
+  <input class="input" id="projDueInput" type="date" style="color-scheme:dark; margin-bottom:14px;">
+
+  <div class="sheet-label">Project Notes</div>
+  <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+  
+  <button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
+  <button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
+</div>
+
 <div class="sheet" id="addSheet">
   <div class="handle"></div>
   <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
@@ -271,6 +345,11 @@
     <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
   </div>
   <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
+
+  <div class="sheet-label">Link to Project</div>
+  <select class="input" id="taskProjectInput" style="appearance:auto; margin-bottom:14px;">
+    <option value="">None</option>
+  </select>
   
   <div class="sheet-label">Categories (Multi-Select)</div>
   <div class="chip-row" id="catRow">
