@@ -8,22 +8,29 @@ var PENDING_KEY  = 'kw_pending_v3';
 var NOTES_KEY    = 'kw_notes_v3';
 var NOTES_MONO_KEY = 'kw_notes_mono_v3';
 var DASH_KEY     = 'kw_dash_v1';
+var PROJ_KEY     = 'kw_proj_v1';
+var BEL_KEY      = 'kw_bel_v1';
 
 var CAT_LABEL = { manuscript:'manuscript', lab:'lab ops', phd:'phd apps', conf:'conference', bel:'bel ♡', personal:'personal', hobby:'hobby' };
 
-var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false, notesOpen:false, scratchpad:'', collapsed:{}, _shaLoaded:true };
+var state = { 
+  tasks:[], 
+  projects:[], 
+  settings:{ghUser:'',ghRepo:'',ghToken:''}, 
+  focus:null, filter:'all', editingId:null, editingProjId:null, 
+  pendingSync:false, sha:null, focusMode:false, notesOpen:false, 
+  scratchpad:'', collapsed:{}, _shaLoaded:true 
+};
+
+var belState = { annivDate: '', gifts: '', dates: '', favs: '', love: '' };
 
 // POMODORO STATE
-var pomo = {
-  timer: null,
-  timeLeft: 25 * 60,
-  mode: 'work', // 'work', 'shortBreak', 'longBreak'
-  running: false,
-  cycles: 0
-};
+var pomo = { timer: null, timeLeft: 25 * 60, mode: 'work', running: false, cycles: 0 };
 
 function loadLocal() {
   try { var r=localStorage.getItem(STORE_KEY); if(r) state.tasks=JSON.parse(r); } catch(e){}
+  try { var pr=localStorage.getItem(PROJ_KEY); if(pr) state.projects=JSON.parse(pr); } catch(e){}
+  try { var b=localStorage.getItem(BEL_KEY); if(b) belState=JSON.parse(b); } catch(e){}
   try { var s=localStorage.getItem(SETTINGS_KEY); if(s) state.settings=JSON.parse(s); } catch(e){}
   try { var f=localStorage.getItem(FOCUS_KEY); if(f) state.focus=f; } catch(e){}
   try { var p=localStorage.getItem(PENDING_KEY); if(p) state.pendingSync=JSON.parse(p); } catch(e){}
@@ -44,8 +51,14 @@ function loadLocal() {
 
 function saveLocal() {
   localStorage.setItem(STORE_KEY, JSON.stringify(state.tasks));
+  localStorage.setItem(PROJ_KEY, JSON.stringify(state.projects));
   localStorage.setItem(FOCUS_KEY, state.focus||'');
   localStorage.setItem(NOTES_KEY, state.scratchpad||'');
+}
+
+function saveBel(sync) {
+  try { localStorage.setItem(BEL_KEY, JSON.stringify(belState)); } catch(e){}
+  if(sync) ghPush();
 }
 
 function savePending(v) { state.pendingSync=v; localStorage.setItem(PENDING_KEY,JSON.stringify(v)); }
@@ -73,25 +86,29 @@ function ghFetch(retries){
       state.sha=d.sha;
       state._shaLoaded=true;
       var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-      state.tasks=dec.tasks||dec;
+      
+      state.tasks = dec.tasks || dec;
+      if(dec.projects) state.projects = dec.projects;
+      if(dec.bel) belState = dec.bel;
       if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
-    
       if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
-      if(dec.dash !== undefined){
-        Object.assign(dState, dec.dash);
-        saveDash(false);
-        if(document.body.classList.contains('dash-mode')) renderDashFull();
-      }
+      if(dec.dash !== undefined){ Object.assign(dState, dec.dash); saveDash(false); }
       
       state.tasks.forEach(function(t){ 
         if(t.category && !t.categories) t.categories = [t.category];
         delete t.category;
       });
       
-      saveLocal();
+      saveLocal(); saveBel(false);
       var sp=document.getElementById('scratchpad');
       if(sp && document.activeElement !== sp) sp.value=state.scratchpad;
-      render();
+      
+      var bClass = document.body.classList;
+      if(bClass.contains('dash-mode')) renderDashFull();
+      else if(bClass.contains('projects-mode')) renderProjects();
+      else if(bClass.contains('bel-mode')) renderBel();
+      else render();
+      
       if(ghPushQueued){ ghPush(); } else { savePending(false); }
     })
     .catch(function(){
@@ -108,7 +125,7 @@ function ghPush(){
   if(!state._shaLoaded){ ghPushQueued = true; return; }
   ghPushQueued = false;
   showSync('syncing','Saving to GitHub…');
-  var payload={tasks:state.tasks,scratchpad:state.scratchpad,shop:shopItems,dash:dState,updated:new Date().toISOString()};
+  var payload={tasks:state.tasks, projects:state.projects, bel:belState, scratchpad:state.scratchpad, shop:shopItems, dash:dState, updated:new Date().toISOString()};
   var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
   var body={message:'Update tasks '+new Date().toLocaleTimeString(),content:content};
   if(state.sha) body.sha=state.sha;
@@ -251,11 +268,18 @@ function makeTaskWrap(t, delay) {
   var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
   
+  // Project Link Label
+  var projHtml = '';
+  if(t.projectId) {
+    var p = state.projects.find(function(x){ return x.id === t.projectId; });
+    if(p) projHtml = '<span class="status" style="border-style:dashed; color:var(--text-muted); border-color:var(--card-border);">⛌ '+esc(p.title)+'</span>';
+  }
+
   el.innerHTML=
     '<div class="cb">'+(t.done?'':'')+'</div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
-      '<div class="task-row">'+catHtml+statusHtml+dueHtml+'</div>'+
+      '<div class="task-row">'+catHtml+statusHtml+projHtml+dueHtml+'</div>'+
       noteHtml+
     '</div>';
     
@@ -289,7 +313,7 @@ function makeArchiveWrap(t, delay) {
     completedStr='Completed '+fmtShort(cd);
   }
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
-
+  
   el.innerHTML=
     '<div class="cb"></div>'+
     '<div class="task-body">'+
@@ -432,7 +456,6 @@ function render(){
   var ft=null;
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
   
-  // Set up Focus & Pomodoro Headers
   if(ft){
     document.getElementById('focusTitle').textContent=ft.title;
     document.getElementById('pomoTaskLabel').textContent=ft.title;
@@ -477,12 +500,8 @@ function render(){
       if(t.done || !searchMatch(t,searchQ)) return;
       if(!filterTask(t)) return;
       
-      if(isActuallyDueToday(t)) { 
-        timeGroups.today.push(t); 
-      }
-      else if(!t.due) { 
-        timeGroups.later.push(t); 
-      }
+      if(isActuallyDueToday(t)) { timeGroups.today.push(t); }
+      else if(!t.due) { timeGroups.later.push(t); }
       else {
         var today = new Date(); today.setHours(0,0,0,0);
         var d = new Date(t.due+'T00:00:00');
@@ -559,8 +578,6 @@ function render(){
     }
   }
 
-  if (document.body.classList.contains('dash-mode')) renderDashTasks();
-  
   document.getElementById('focusBanner').style.display = state.focusMode ? 'flex' : 'none';
   document.getElementById('focusBtnLabel').textContent = state.focusMode ? 'Exit Focus' : 'Focus';
   var focusDoneBtn = document.getElementById('focusDoneBtn');
@@ -593,16 +610,10 @@ function tickPomo() {
     
     if (pomo.mode === 'work') {
       pomo.cycles++;
-      
-      // Auto-log a tomato to the focused task
       if(state.focus) {
         var t = state.tasks.find(function(x) { return x.id === state.focus; });
-        if(t) {
-          t.pomodoros = (t.pomodoros || 0) + 1;
-          saveLocal(); ghPush(); render();
-        }
+        if(t) { t.pomodoros = (t.pomodoros || 0) + 1; saveLocal(); ghPush(); }
       }
-      
       pomo.mode = (pomo.cycles % 4 === 0) ? 'longBreak' : 'shortBreak';
       pomo.timeLeft = (pomo.mode === 'longBreak') ? 15 * 60 : 5 * 60;
       showToast('Session complete! Take a break.');
@@ -616,28 +627,16 @@ function tickPomo() {
 }
 
 document.getElementById('pomoStartBtn').addEventListener('click', function(){
-  if(pomo.running) {
-    clearInterval(pomo.timer);
-    pomo.running = false;
-  } else {
-    pomo.running = true;
-    pomo.timer = setInterval(tickPomo, 1000);
-  }
+  if(pomo.running) { clearInterval(pomo.timer); pomo.running = false; } 
+  else { pomo.running = true; pomo.timer = setInterval(tickPomo, 1000); }
   updatePomoUI();
 });
 
 document.getElementById('pomoSkipBtn').addEventListener('click', function(){
    clearInterval(pomo.timer);
    pomo.running = false;
-   if (pomo.mode === 'work') {
-     pomo.mode = 'shortBreak';
-     pomo.timeLeft = 5 * 60;
-     showToast('Session skipped.');
-   } else {
-     pomo.mode = 'work';
-     pomo.timeLeft = 25 * 60;
-     showToast('Break skipped.');
-   }
+   if (pomo.mode === 'work') { pomo.mode = 'shortBreak'; pomo.timeLeft = 5 * 60; showToast('Session skipped.'); } 
+   else { pomo.mode = 'work'; pomo.timeLeft = 25 * 60; showToast('Break skipped.'); }
    updatePomoUI();
 });
 
@@ -648,16 +647,15 @@ function toggleDone(id){
   for(var i=0;i<state.tasks.length;i++){
     if(state.tasks[i].id===id){
       state.tasks[i].done=!state.tasks[i].done;
-      if(state.tasks[i].done){
-        state.tasks[i].completedAt=new Date().toISOString();
-      } else {
-        delete state.tasks[i].completedAt;
-      }
+      if(state.tasks[i].done){ state.tasks[i].completedAt=new Date().toISOString(); } 
+      else { delete state.tasks[i].completedAt; }
       break;
     }
   }
   saveLocal();
-  render(); ghPush();
+  if(document.body.classList.contains('projects-mode')) renderProjects();
+  else render(); 
+  ghPush();
 }
 
 var undoBuffer = null;
@@ -684,7 +682,8 @@ function deleteTask(id){
   }
 
   showUndoToast(t.title);
-  render();
+  if(document.body.classList.contains('projects-mode')) renderProjects();
+  else render();
 }
 
 function showUndoToast(title){
@@ -693,43 +692,51 @@ function showUndoToast(title){
   var display = title.length > 28 ? title.slice(0,26)+'…' : title;
   msg.textContent = '“'+display+'” deleted';
   el.classList.add('show');
-  
   if(undoTimer) clearTimeout(undoTimer);
-  undoTimer = setTimeout(function(){
-    el.classList.remove('show');
-    undoBuffer = null;
-    ghPush();
-  }, UNDO_MS);
+  undoTimer = setTimeout(function(){ el.classList.remove('show'); undoBuffer = null; ghPush(); }, UNDO_MS);
 }
 
 function commitUndo(){
   if(!undoBuffer) return;
-  clearTimeout(undoTimer);
-  undoTimer = null;
+  clearTimeout(undoTimer); undoTimer = null;
   state.tasks.push(undoBuffer.task);
   if(undoBuffer.focusWas) state.focus = undoBuffer.task.id;
-
   undoBuffer = null;
   document.getElementById('toastUndo').classList.remove('show');
-  saveLocal(); render(); ghPush();
-  showToast('Restored');
+  saveLocal(); 
+  if(document.body.classList.contains('projects-mode')) renderProjects();
+  else render(); 
+  ghPush(); showToast('Restored');
 }
-
 document.getElementById('toastUndoBtn').addEventListener('click', commitUndo);
+
+// Populate dynamic Project Dropdown in Add/Edit Task Sheet
+function populateTaskProjectSelect() {
+  var sel = document.getElementById('taskProjectInput');
+  sel.innerHTML = '<option value="">None</option>';
+  state.projects.forEach(function(p){
+    var opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.title;
+    sel.appendChild(opt);
+  });
+}
 
 function openEdit(id){
   var t=null;
   for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===id){t=state.tasks[i];break;} }
   if(!t) return;
   state.editingId=id;
+  populateTaskProjectSelect();
+  
   document.getElementById('addSheetTitle').textContent='Edit Task';
   document.getElementById('saveTaskBtn').textContent='Save Changes';
   document.getElementById('deleteTaskBtn').style.display='block';
   document.getElementById('focusPinBtn').style.display='block';
   document.getElementById('focusPinBtn').textContent=state.focus===id?'Unpin Focus':'Set as Focus';
   document.getElementById('taskTitleInput').value=t.title||'';
+  document.getElementById('taskProjectInput').value = t.projectId || '';
   
-  // Inject Pomodoro Count into edit view
   var pomoEl = document.getElementById('pomoCountDisplay');
   if (pomoEl) {
     if (t.pomodoros && t.pomodoros > 0) {
@@ -769,23 +776,26 @@ function saveTask(){
   var pinnedToday=!!(document.getElementById('pinTodayChip')&&document.getElementById('pinTodayChip').classList.contains('active'));
   var note=document.getElementById('taskNoteInput').value.trim();
   var due=document.getElementById('taskDueInput').value; 
+  var projectId=document.getElementById('taskProjectInput').value;
   var noteIsMono=document.getElementById('taskNoteInput').style.fontFamily.indexOf('Mono')!==-1;
   
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        // Preserve pomodoros count on edit
         var currentPomo = state.tasks[i].pomodoros || 0;
-        Object.assign(state.tasks[i],{title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono, pomodoros: currentPomo});
+        Object.assign(state.tasks[i],{title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,projectId:projectId,noteIsMono:noteIsMono, pomodoros: currentPomo});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false, pomodoros:0});
+    state.tasks.push({id:uid(),title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,projectId:projectId,noteIsMono:noteIsMono,done:false, pomodoros:0});
     showToast('Task added');
   }
-  closeSheets(); saveLocal(); render(); ghPush();
+  closeSheets(); saveLocal(); 
+  if(document.body.classList.contains('projects-mode')) renderProjects();
+  else render(); 
+  ghPush();
 }
 
 document.getElementById('focusPinBtn').addEventListener('click', function(){
@@ -826,38 +836,42 @@ function openSheet(id){ document.getElementById(id).classList.add('open'); docum
 
 function closeSheets(){
   document.querySelectorAll('.sheet').forEach(function(s){
-    s.style.bottom = ''; 
-    s.style.maxHeight = ''; 
-    s.style.height = ''; 
-    s.classList.remove('open');
-    s.style.webkitTransform = '';
-    s.style.transform = '';
-    s.style.webkitTransition = '';
-    s.style.transition = '';
+    s.style.bottom = ''; s.style.maxHeight = ''; s.style.height = ''; s.classList.remove('open');
+    s.style.webkitTransform = ''; s.style.transform = ''; s.style.webkitTransition = ''; s.style.transition = '';
   });
   document.getElementById('overlay').classList.remove('open');
   state.editingId=null;
-  document.getElementById('addSheetTitle').textContent='New Task';
-  document.getElementById('saveTaskBtn').textContent='Add Task';
-  document.getElementById('deleteTaskBtn').style.display='none';
-  document.getElementById('focusPinBtn').style.display='none';
-  document.getElementById('taskTitleInput').value='';
-  document.getElementById('taskNoteInput').value='';
-  document.getElementById('taskNoteInput').style.fontFamily="'DM Sans',sans-serif";
-  document.getElementById('monoToggle').textContent='mono off';
-  document.getElementById('taskDueInput').value='';
+  state.editingProjId=null;
   
-  var pomoEl = document.getElementById('pomoCountDisplay');
-  if (pomoEl) pomoEl.style.display = 'none';
-  
+  // Reset Task Sheet
+  var tTitle = document.getElementById('addSheetTitle'); if(tTitle) tTitle.textContent='New Task';
+  var saveTBtn = document.getElementById('saveTaskBtn'); if(saveTBtn) saveTBtn.textContent='Add Task';
+  var delTBtn = document.getElementById('deleteTaskBtn'); if(delTBtn) delTBtn.style.display='none';
+  var focPBtn = document.getElementById('focusPinBtn'); if(focPBtn) focPBtn.style.display='none';
+  var tInput = document.getElementById('taskTitleInput'); if(tInput) tInput.value='';
+  var tnInput = document.getElementById('taskNoteInput'); if(tnInput) { tnInput.value=''; tnInput.style.fontFamily="'DM Sans',sans-serif"; }
+  var mtog = document.getElementById('monoToggle'); if(mtog) mtog.textContent='mono off';
+  var tdInput = document.getElementById('taskDueInput'); if(tdInput) tdInput.value='';
+  var tpInput = document.getElementById('taskProjectInput'); if(tpInput) tpInput.value='';
+  var pomoEl = document.getElementById('pomoCountDisplay'); if (pomoEl) pomoEl.style.display = 'none';
   document.querySelectorAll('#catRow .s-chip').forEach(function(c){c.classList.remove('active');});
-  setChip('statusRow','active'); 
-  setChip('priRow','md');
+  setChip('statusRow','active'); setChip('priRow','md');
+  var pinChip = document.getElementById('pinTodayChip'); if(pinChip) pinChip.classList.remove('active');
+  
+  // Reset Project Sheet
+  var pTitle = document.getElementById('projectSheetTitle'); if(pTitle) pTitle.textContent='New Project';
+  var savePBtn = document.getElementById('saveProjBtn'); if(savePBtn) savePBtn.textContent='Save Project';
+  var delPBtn = document.getElementById('deleteProjBtn'); if(delPBtn) delPBtn.style.display='none';
+  var ptInput = document.getElementById('projTitleInput'); if(ptInput) ptInput.value='';
+  var pdInput = document.getElementById('projDueInput'); if(pdInput) pdInput.value='';
+  var pnInput = document.getElementById('projNoteInput'); if(pnInput) pnInput.value='';
+  setChip('projStageRow', 'Planning');
 }
 
 function openAddSheet(){
   state.editingId=null;
   closeSheets();
+  populateTaskProjectSelect();
   var qw=document.getElementById('quickAddWrap');
   if(qw) { qw.classList.remove('open'); document.getElementById('quickAddInput').value=''; }
   setTimeout(function(){ openSheet('addSheet'); },10);
@@ -877,13 +891,216 @@ document.getElementById('catRow').addEventListener('click', function(e){
   chip.classList.toggle('active');
 });
 
-['statusRow','priRow'].forEach(function(rowId){
-  document.getElementById(rowId).addEventListener('click',function(e){
-    var chip=e.target.closest('.s-chip'); if(!chip) return;
-    document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.remove('active');});
-    chip.classList.add('active');
+['statusRow','priRow','projStageRow'].forEach(function(rowId){
+  var el = document.getElementById(rowId);
+  if(el) {
+    el.addEventListener('click',function(e){
+      var chip=e.target.closest('.s-chip'); if(!chip) return;
+      document.querySelectorAll('#'+rowId+' .s-chip').forEach(function(c){c.classList.remove('active');});
+      chip.classList.add('active');
+    });
+  }
+});
+
+// 
+// PROJECTS LOGIC
+// 
+function renderProjects() {
+  var list = document.getElementById('projectsList');
+  if(!list) return;
+  list.innerHTML = '';
+  
+  if(!state.projects || state.projects.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div>No active projects yet</div></div>';
+    return;
+  }
+  
+  // Sort projects logically
+  var sorted = state.projects.slice().sort(function(a,b) {
+    var stageOrder = { 'Active':1, 'Planning':2, 'Review':3, 'Waiting':4, 'Done':5 };
+    var sa = stageOrder[a.stage] || 9;
+    var sb = stageOrder[b.stage] || 9;
+    if(sa !== sb) return sa - sb;
+    var da = a.due ? new Date(a.due).getTime() : Infinity;
+    var db = b.due ? new Date(b.due).getTime() : Infinity;
+    return da - db;
+  });
+  
+  sorted.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'project-card';
+    card.dataset.id = p.id;
+    
+    var dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
+    
+    var tHTML = '';
+    var pTasks = state.tasks.filter(function(t){ return t.projectId === p.id && !t.done; });
+    if(pTasks.length > 0) {
+      tHTML += '<div class="project-tasks">';
+      pTasks.forEach(function(pt) {
+        tHTML += '<div class="project-task-item"><div class="project-task-dot"></div>' + esc(pt.title) + '</div>';
+      });
+      tHTML += '</div>';
+    }
+    
+    var noteStr = p.note ? '<div class="project-meta" style="margin-top:6px; font-style:italic;">'+esc(p.note)+'</div>' : '';
+
+    card.innerHTML = 
+      '<div class="project-header">' +
+        '<div class="project-title">' + esc(p.title) + '</div>' +
+        '<div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div>' +
+      '</div>' +
+      '<div class="project-meta" style="margin-bottom:0;">' + pTasks.length + ' active task' + (pTasks.length!==1?'s':'') + dStr + '</div>' +
+      noteStr +
+      tHTML;
+      
+    card.addEventListener('click', function(){ openProjEdit(p.id); });
+    list.appendChild(card);
+  });
+}
+
+function openProjEdit(id) {
+  var p = state.projects.find(function(x){ return x.id === id; });
+  if(!p) return;
+  state.editingProjId = id;
+  document.getElementById('projectSheetTitle').textContent = 'Edit Project';
+  document.getElementById('saveProjBtn').textContent = 'Save Changes';
+  document.getElementById('deleteProjBtn').style.display = 'block';
+  
+  document.getElementById('projTitleInput').value = p.title || '';
+  document.getElementById('projDueInput').value = p.due || '';
+  document.getElementById('projNoteInput').value = p.note || '';
+  setChip('projStageRow', p.stage || 'Planning');
+  
+  openSheet('projectSheet');
+}
+
+document.getElementById('newProjectBtn').addEventListener('click', function() {
+  state.editingProjId = null;
+  closeSheets();
+  setTimeout(function(){ openSheet('projectSheet'); }, 10);
+});
+
+document.getElementById('saveProjBtn').addEventListener('click', function() {
+  var title = document.getElementById('projTitleInput').value.trim();
+  if(!title) { showToast('Enter project title'); return; }
+  var stage = getChip('projStageRow') || 'Planning';
+  var due   = document.getElementById('projDueInput').value;
+  var note  = document.getElementById('projNoteInput').value.trim();
+  
+  if(state.editingProjId) {
+    for(var i=0; i<state.projects.length; i++) {
+      if(state.projects[i].id === state.editingProjId) {
+        Object.assign(state.projects[i], { title:title, stage:stage, due:due, note:note });
+        break;
+      }
+    }
+    showToast('Project updated');
+  } else {
+    state.projects.push({ id:uid(), title:title, stage:stage, due:due, note:note });
+    showToast('Project created');
+  }
+  closeSheets(); saveLocal(); renderProjects(); ghPush();
+});
+
+document.getElementById('deleteProjBtn').addEventListener('click', function() {
+  if(!state.editingProjId) return;
+  if(confirm('Delete project? (Tasks inside will NOT be deleted, just unlinked)')) {
+    state.projects = state.projects.filter(function(p){ return p.id !== state.editingProjId; });
+    state.tasks.forEach(function(t) { if(t.projectId === state.editingProjId) delete t.projectId; });
+    closeSheets(); saveLocal(); renderProjects(); ghPush();
+    showToast('Project deleted');
+  }
+});
+
+// 
+// BEL TAB LOGIC
+// 
+function renderBel() {
+  if(!belState) belState = { annivDate:'', gifts:'', dates:'', favs:'', love:'' };
+  
+  document.getElementById('belGifts').value = belState.gifts || '';
+  document.getElementById('belDates').value = belState.dates || '';
+  document.getElementById('belFavs').value = belState.favs || '';
+  document.getElementById('belLove').value = belState.love || '';
+  
+  updateBelTime();
+}
+
+function updateBelTime() {
+  var countEl = document.getElementById('belTimeCount');
+  var annivEl = document.getElementById('belNextAnniv');
+  
+  if(!belState.annivDate) {
+    countEl.textContent = '--';
+    annivEl.textContent = 'Tap Edit Date below to start';
+    return;
+  }
+  
+  var start = new Date(belState.annivDate + 'T00:00:00');
+  var now = new Date(); now.setHours(0,0,0,0);
+  
+  if(start > now) {
+    countEl.textContent = '--';
+    annivEl.textContent = 'Date is in the future!';
+    return;
+  }
+  
+  // Calc exact time
+  var yrs = now.getFullYear() - start.getFullYear();
+  var mos = now.getMonth() - start.getMonth();
+  var days = now.getDate() - start.getDate();
+  
+  if(days < 0) {
+    mos--;
+    var prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if(mos < 0) { yrs--; mos += 12; }
+  
+  var str = [];
+  if(yrs > 0) str.push(yrs + ' yr' + (yrs>1?'s':''));
+  if(mos > 0) str.push(mos + ' mo' + (mos>1?'s':''));
+  str.push(days + ' day' + (days!==1?'s':''));
+  countEl.textContent = str.join(', ');
+  
+  // Calc next anniv
+  var nextAnniv = new Date(start);
+  nextAnniv.setFullYear(now.getFullYear());
+  if(nextAnniv < now) nextAnniv.setFullYear(now.getFullYear() + 1);
+  var diff = Math.round((nextAnniv - now) / 86400000);
+  if(diff === 0) annivEl.textContent = "It's today! Happy Anniversary! ❤️";
+  else annivEl.textContent = diff + " days until next anniversary";
+}
+
+var belTimer = null;
+['belGifts', 'belDates', 'belFavs', 'belLove'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', function() {
+    if(!belState) belState = {};
+    belState[id.replace('bel','').toLowerCase()] = this.value;
+    if(belTimer) clearTimeout(belTimer);
+    belTimer = setTimeout(function(){ saveBel(true); }, 1000);
   });
 });
+
+document.getElementById('editBelDateBtn').addEventListener('click', function() {
+  var wrap = document.getElementById('belDateEditWrap');
+  wrap.style.display = wrap.style.display === 'flex' ? 'none' : 'flex';
+  if(wrap.style.display === 'flex') {
+    document.getElementById('belAnnivInput').value = belState.annivDate || '';
+  }
+});
+
+document.getElementById('saveBelDateBtn').addEventListener('click', function() {
+  var d = document.getElementById('belAnnivInput').value;
+  if(!belState) belState = {};
+  belState.annivDate = d;
+  document.getElementById('belDateEditWrap').style.display = 'none';
+  saveBel(true); updateBelTime();
+});
+
 
 // 
 // SETTINGS
@@ -917,7 +1134,7 @@ document.getElementById('saveSettingsBtn').addEventListener('click',function(){
 
 document.getElementById('clearDataBtn').addEventListener('click',function(){
   if(!confirm('Clear all local data? Cannot be undone.')) return;
-  localStorage.clear(); state.tasks=[]; state.focus=null;
+  localStorage.clear(); state.tasks=[]; state.focus=null; state.projects=[]; belState={};
   render(); closeSheets(); showToast('Local data cleared');
 });
 
@@ -1002,6 +1219,7 @@ document.getElementById('monoToggle').addEventListener('click', function(){
 });
 
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
+document.getElementById('closeProjectSheet').addEventListener('click', closeSheets);
 document.getElementById('closeSettingsSheet').addEventListener('click', closeSheets);
 
 document.querySelectorAll('.sheet').forEach(function(sheet) {
@@ -1068,7 +1286,7 @@ function submitQuickAdd(){
   
   state.tasks.push(newTask);
   saveLocal();
-  render(); 
+  if(document.body.classList.contains('projects-mode')) renderProjects(); else render(); 
   ghPush();
   
   showToast('Pinned to Today');
@@ -1123,7 +1341,36 @@ function showToast(msg){
 }
 
 // 
-// PWA MANIFEST (injected inline)
+// TAB NAVIGATION
+// 
+function switchTab(tab) {
+  document.body.classList.remove('dash-mode', 'projects-mode', 'bel-mode');
+  if (tab !== 'tasks') document.body.classList.add(tab + '-mode');
+
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var tBtn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if(tBtn) tBtn.classList.add('active');
+
+  if (tab === 'dash') {
+    renderDashFull();
+    if (!weatherLoaded) loadWeather();
+    if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
+  } else {
+    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+  }
+  
+  if (tab === 'tasks') render();
+  if (tab === 'projects') renderProjects();
+  if (tab === 'bel') renderBel();
+}
+
+document.getElementById('tabTasks').addEventListener('click', function() { switchTab('tasks'); });
+document.getElementById('tabDash').addEventListener('click',  function() { switchTab('dash'); });
+document.getElementById('tabProjects').addEventListener('click', function() { switchTab('projects'); });
+document.getElementById('tabBel').addEventListener('click', function() { switchTab('bel'); });
+
+// 
+// PWA MANIFEST
 // 
 (function(){
   var manifest = {
@@ -1154,7 +1401,7 @@ function showToast(msg){
 })();
 
 // 
-// DASHBOARD
+// DASHBOARD LOGIC
 // 
 var QUOTES = [
   { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
@@ -1461,13 +1708,11 @@ function renderMood() {
   var today = getTodayStr();
   var todayMood = dState.moods[today];
 
-  // Update buttons
   document.querySelectorAll('.mood-btn').forEach(function(btn) {
     var val = parseInt(btn.dataset.val);
     btn.classList.toggle('active', val === todayMood);
   });
 
-  // Render heatmap (last 14 days)
   var heatmap = document.getElementById('dMoodHeatmap');
   heatmap.innerHTML = '';
   var colors = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
@@ -1481,21 +1726,13 @@ function renderMood() {
     
     var cell = document.createElement('div');
     cell.className = 'mood-cell';
-    if(val) {
-      cell.style.background = colors[val];
-      sum += val;
-      count++;
-    }
+    if(val) { cell.style.background = colors[val]; sum += val; count++; }
     heatmap.appendChild(cell);
   }
   
   var avgEl = document.getElementById('dMoodAvg');
-  if(count > 0) {
-    var avg = (sum/count).toFixed(1);
-    avgEl.textContent = '14-day avg: ' + avg;
-  } else {
-    avgEl.textContent = '';
-  }
+  if(count > 0) { avgEl.textContent = '14-day avg: ' + (sum/count).toFixed(1); } 
+  else { avgEl.textContent = ''; }
 }
 
 document.getElementById('dMoodSelect').addEventListener('click', function(e) {
@@ -1505,14 +1742,9 @@ document.getElementById('dMoodSelect').addEventListener('click', function(e) {
   var today = getTodayStr();
   if(!dState.moods) dState.moods = {};
   
-  // Toggle off if clicking same
-  if(dState.moods[today] === val) {
-    delete dState.moods[today];
-  } else {
-    dState.moods[today] = val;
-  }
-  saveDash(true);
-  renderMood();
+  if(dState.moods[today] === val) { delete dState.moods[today]; } 
+  else { dState.moods[today] = val; }
+  saveDash(true); renderMood();
 });
 
 function renderHabits() {
@@ -1626,24 +1858,6 @@ document.getElementById('dBookSave').addEventListener('click', function() {
   document.getElementById('dBookEdit').classList.remove('open');
 });
 
-function switchTab(tab) {
-  var isDash = tab === 'dash';
-  document.body.classList.toggle('dash-mode', isDash);
-  document.getElementById('tabTasks').classList.toggle('active', !isDash);
-  document.getElementById('tabDash').classList.toggle('active', isDash);
-  if (isDash) {
-    renderDashFull();
-    if (!weatherLoaded) loadWeather();
-    if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
-  } else {
-    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
-    render();
-  }
-}
-
-document.getElementById('tabTasks').addEventListener('click', function() { switchTab('tasks'); });
-document.getElementById('tabDash').addEventListener('click',  function() { switchTab('dash'); });
-
 function renderDashFull() {
   updateClock();
   renderIntention();
@@ -1744,10 +1958,7 @@ function shopClearDone() {
   renderShop();
 }
 
-document.getElementById('shopBtn').addEventListener('click', function() {
-  renderShop();
-  openSheet('shopSheet');
-});
+document.getElementById('shopBtn').addEventListener('click', function() { renderShop(); openSheet('shopSheet'); });
 document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
 document.getElementById('shopAddBtn').addEventListener('click', function() {
   var inp = document.getElementById('shopInput');
@@ -1756,10 +1967,7 @@ document.getElementById('shopAddBtn').addEventListener('click', function() {
   inp.focus();
 });
 document.getElementById('shopInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    shopAddItem(this.value);
-    this.value = '';
-  }
+  if (e.key === 'Enter') { shopAddItem(this.value); this.value = ''; }
 });
 document.getElementById('shopList').addEventListener('click', function(e) {
   var action = e.target.dataset.action;
@@ -1884,22 +2092,13 @@ function onDragEnd(e) {
       var newDst = 0;
       for(var k=0;k<tasks.length;k++){if(tasks[k].id===dstId){newDst=k;break;}}
       tasks.splice(newDst, 0, moved);
-      saveLocal(); render(); ghPush();
+      saveLocal(); 
+      if(document.body.classList.contains('projects-mode')) renderProjects();
+      else render(); 
+      ghPush();
     }
   }
   dragState = null;
-}
-
-// 
-// SEED DATA
-// 
-function seedData(){
-  if(state.tasks.length>0) return;
-  state.tasks=[
-    {id:uid(),title:'Finalize SAS poster methods section',categories:['conf'],status:'active',priority:'hi',pinnedToday:true,due:getTodayStr(),note:'',done:false, pomodoros: 0},
-    {id:uid(),title:'Plan spring trip',categories:['bel', 'personal'],status:'active',priority:'md',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false, pomodoros: 0}
-  ];
-  saveLocal();
 }
 
 // 
@@ -1907,7 +2106,6 @@ function seedData(){
 // 
 loadTheme();
 loadLocal();
-seedData();
 render();
 loadSettingsUI();
 setTimeout(function(){ if(state.settings.ghToken) ghFetch(); }, 400);
