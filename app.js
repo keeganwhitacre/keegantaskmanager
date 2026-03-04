@@ -17,12 +17,12 @@ var state = {
   tasks:[], 
   projects:[], 
   settings:{ghUser:'',ghRepo:'',ghToken:''}, 
-  focus:null, filter:'all', editingId:null, editingProjId:null, 
+  focus:null, filter:'all', editingId:null, activeProjectId:null, 
   pendingSync:false, sha:null, focusMode:false, notesOpen:false, 
   scratchpad:'', collapsed:{}, _shaLoaded:true 
 };
 
-var belState = { annivDate: '', gifts: '', dates: '', favs: '', love: '' };
+var belState = { annivDate: '', giftsList: [], datesList: [], favs: '', love: '' };
 
 // POMODORO STATE
 var pomo = { timer: null, timeLeft: 25 * 60, mode: 'work', running: false, cycles: 0 };
@@ -39,12 +39,18 @@ function loadLocal() {
   
   if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
   
+  // Data Migrations
   state.tasks.forEach(function(t){ 
     if(t.section === 'today') t.pinnedToday = true; 
     if(t.category && !t.categories) t.categories = [t.category];
-    delete t.section; 
-    delete t.category;
+    delete t.section; delete t.category;
   });
+
+  // Migrate old text Bel lists to arrays if they existed
+  if(!belState.giftsList) belState.giftsList = [];
+  if(typeof belState.gifts === 'string' && belState.gifts) { belState.giftsList.push({id:uid(), text:belState.gifts, done:false}); delete belState.gifts; }
+  if(!belState.datesList) belState.datesList = [];
+  if(typeof belState.dates === 'string' && belState.dates) { belState.datesList.push({id:uid(), text:belState.dates, done:false}); delete belState.dates; }
   
   loadDash();
 }
@@ -77,7 +83,7 @@ function ghFetch(retries){
   fetch(ghPath(),{headers:ghHeaders()})
     .then(function(r){
       if(r.status===404){ state._shaLoaded=true; ghPush(); return null; }
-      if(r.status===401||r.status===403){ state._shaLoaded=true; showSync('error','Auth failed — check GitHub token'); return null; }
+      if(r.status===401||r.status===403){ state._shaLoaded=true; showSync('error','Auth failed — check token'); return null; }
       if(!r.ok) throw new Error(r.status);
       return r.json();
     })
@@ -106,6 +112,7 @@ function ghFetch(retries){
       var bClass = document.body.classList;
       if(bClass.contains('dash-mode')) renderDashFull();
       else if(bClass.contains('projects-mode')) renderProjects();
+      else if(bClass.contains('projects-detail-mode')) renderProjectTasks();
       else if(bClass.contains('bel-mode')) renderBel();
       else render();
       
@@ -156,10 +163,6 @@ function testGhConnection(){
 
 window.addEventListener('online', function(){ if(state.pendingSync) ghPush(); });
 
-// 
-// SYNC BAR
-// 
-var syncTimer=null;
 function showSync(type,msg){
   if(type==='syncing'||type==='success') return;
   var bar=document.getElementById('syncBar');
@@ -168,6 +171,7 @@ function showSync(type,msg){
   if(syncTimer) clearTimeout(syncTimer);
   syncTimer=setTimeout(function(){ bar.classList.remove('show'); },4000);
 }
+var syncTimer=null;
 
 // 
 // RENDER & TIME LOGIC
@@ -268,7 +272,6 @@ function makeTaskWrap(t, delay) {
   var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
   
-  // Project Link Label
   var projHtml = '';
   if(t.projectId) {
     var p = state.projects.find(function(x){ return x.id === t.projectId; });
@@ -313,7 +316,7 @@ function makeArchiveWrap(t, delay) {
     completedStr='Completed '+fmtShort(cd);
   }
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
-  
+
   el.innerHTML=
     '<div class="cb"></div>'+
     '<div class="task-body">'+
@@ -362,9 +365,7 @@ function deferTask(id){
         var d=new Date(t.due+'T00:00:00');
         d.setDate(d.getDate()+1);
         t.due=d.toISOString().split('T')[0];
-      } else {
-        t.due=tStr;
-      }
+      } else { t.due=tStr; }
       t.pinnedToday=false;
       break;
     }
@@ -379,11 +380,8 @@ function attachSwipe(wrap, el, bg, id) {
   var THRESHOLD = 80;
 
   el.addEventListener('touchstart', function(e){
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    dragging = false;
-    maybeSwipe = true;
-    currentX = 0;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    dragging = false; maybeSwipe = true; currentX = 0;
   }, {passive:true});
   
   el.addEventListener('touchmove', function(e){
@@ -392,8 +390,7 @@ function attachSwipe(wrap, el, bg, id) {
     var dy = e.touches[0].clientY - startY;
     if(!dragging && Math.abs(dy) > Math.abs(dx) + 5){ maybeSwipe=false; return; }
 
-    dragging = true;
-    currentX = dx;
+    dragging = true; currentX = dx;
     var clamped = Math.max(-120, Math.min(120, dx));
     el.style.transform = 'translateX('+clamped+'px)';
     var pct = Math.min(Math.abs(dx)/THRESHOLD, 1);
@@ -653,7 +650,7 @@ function toggleDone(id){
     }
   }
   saveLocal();
-  if(document.body.classList.contains('projects-mode')) renderProjects();
+  if(document.body.classList.contains('projects-detail-mode')) renderProjectTasks();
   else render(); 
   ghPush();
 }
@@ -682,7 +679,7 @@ function deleteTask(id){
   }
 
   showUndoToast(t.title);
-  if(document.body.classList.contains('projects-mode')) renderProjects();
+  if(document.body.classList.contains('projects-detail-mode')) renderProjectTasks();
   else render();
 }
 
@@ -704,7 +701,7 @@ function commitUndo(){
   undoBuffer = null;
   document.getElementById('toastUndo').classList.remove('show');
   saveLocal(); 
-  if(document.body.classList.contains('projects-mode')) renderProjects();
+  if(document.body.classList.contains('projects-detail-mode')) renderProjectTasks();
   else render(); 
   ghPush(); showToast('Restored');
 }
@@ -793,7 +790,7 @@ function saveTask(){
     showToast('Task added');
   }
   closeSheets(); saveLocal(); 
-  if(document.body.classList.contains('projects-mode')) renderProjects();
+  if(document.body.classList.contains('projects-detail-mode')) renderProjectTasks();
   else render(); 
   ghPush();
 }
@@ -841,9 +838,7 @@ function closeSheets(){
   });
   document.getElementById('overlay').classList.remove('open');
   state.editingId=null;
-  state.editingProjId=null;
   
-  // Reset Task Sheet
   var tTitle = document.getElementById('addSheetTitle'); if(tTitle) tTitle.textContent='New Task';
   var saveTBtn = document.getElementById('saveTaskBtn'); if(saveTBtn) saveTBtn.textContent='Add Task';
   var delTBtn = document.getElementById('deleteTaskBtn'); if(delTBtn) delTBtn.style.display='none';
@@ -858,7 +853,6 @@ function closeSheets(){
   setChip('statusRow','active'); setChip('priRow','md');
   var pinChip = document.getElementById('pinTodayChip'); if(pinChip) pinChip.classList.remove('active');
   
-  // Reset Project Sheet
   var pTitle = document.getElementById('projectSheetTitle'); if(pTitle) pTitle.textContent='New Project';
   var savePBtn = document.getElementById('saveProjBtn'); if(savePBtn) savePBtn.textContent='Save Project';
   var delPBtn = document.getElementById('deleteProjBtn'); if(delPBtn) delPBtn.style.display='none';
@@ -885,7 +879,6 @@ document.getElementById('addSheet').addEventListener('click', function(e){
   if(pin) pin.classList.toggle('active');
 });
 
-// Multi-select for categories
 document.getElementById('catRow').addEventListener('click', function(e){
   var chip=e.target.closest('.s-chip'); if(!chip) return;
   chip.classList.toggle('active');
@@ -903,7 +896,7 @@ document.getElementById('catRow').addEventListener('click', function(e){
 });
 
 // 
-// PROJECTS LOGIC
+// PROJECTS LOGIC (FULLSCREEN DRILL DOWN)
 // 
 function renderProjects() {
   var list = document.getElementById('projectsList');
@@ -915,7 +908,6 @@ function renderProjects() {
     return;
   }
   
-  // Sort projects logically
   var sorted = state.projects.slice().sort(function(a,b) {
     var stageOrder = { 'Active':1, 'Planning':2, 'Review':3, 'Waiting':4, 'Done':5 };
     var sa = stageOrder[a.stage] || 9;
@@ -937,13 +929,12 @@ function renderProjects() {
     var pTasks = state.tasks.filter(function(t){ return t.projectId === p.id && !t.done; });
     if(pTasks.length > 0) {
       tHTML += '<div class="project-tasks">';
-      pTasks.forEach(function(pt) {
+      pTasks.slice(0,3).forEach(function(pt) {
         tHTML += '<div class="project-task-item"><div class="project-task-dot"></div>' + esc(pt.title) + '</div>';
       });
+      if(pTasks.length > 3) tHTML += '<div class="project-task-item" style="opacity:0.5; font-style:italic;">+ '+(pTasks.length-3)+' more</div>';
       tHTML += '</div>';
     }
-    
-    var noteStr = p.note ? '<div class="project-meta" style="margin-top:6px; font-style:italic;">'+esc(p.note)+'</div>' : '';
 
     card.innerHTML = 
       '<div class="project-header">' +
@@ -951,28 +942,11 @@ function renderProjects() {
         '<div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div>' +
       '</div>' +
       '<div class="project-meta" style="margin-bottom:0;">' + pTasks.length + ' active task' + (pTasks.length!==1?'s':'') + dStr + '</div>' +
-      noteStr +
       tHTML;
       
-    card.addEventListener('click', function(){ openProjEdit(p.id); });
+    card.addEventListener('click', function(){ openProjectDetail(p.id); });
     list.appendChild(card);
   });
-}
-
-function openProjEdit(id) {
-  var p = state.projects.find(function(x){ return x.id === id; });
-  if(!p) return;
-  state.editingProjId = id;
-  document.getElementById('projectSheetTitle').textContent = 'Edit Project';
-  document.getElementById('saveProjBtn').textContent = 'Save Changes';
-  document.getElementById('deleteProjBtn').style.display = 'block';
-  
-  document.getElementById('projTitleInput').value = p.title || '';
-  document.getElementById('projDueInput').value = p.due || '';
-  document.getElementById('projNoteInput').value = p.note || '';
-  setChip('projStageRow', p.stage || 'Planning');
-  
-  openSheet('projectSheet');
 }
 
 document.getElementById('newProjectBtn').addEventListener('click', function() {
@@ -988,27 +962,100 @@ document.getElementById('saveProjBtn').addEventListener('click', function() {
   var due   = document.getElementById('projDueInput').value;
   var note  = document.getElementById('projNoteInput').value.trim();
   
-  if(state.editingProjId) {
-    for(var i=0; i<state.projects.length; i++) {
-      if(state.projects[i].id === state.editingProjId) {
-        Object.assign(state.projects[i], { title:title, stage:stage, due:due, note:note });
-        break;
-      }
-    }
-    showToast('Project updated');
-  } else {
-    state.projects.push({ id:uid(), title:title, stage:stage, due:due, note:note });
-    showToast('Project created');
-  }
+  state.projects.push({ id:uid(), title:title, stage:stage, due:due, note:note });
+  showToast('Project created');
+  
   closeSheets(); saveLocal(); renderProjects(); ghPush();
 });
 
-document.getElementById('deleteProjBtn').addEventListener('click', function() {
-  if(!state.editingProjId) return;
-  if(confirm('Delete project? (Tasks inside will NOT be deleted, just unlinked)')) {
-    state.projects = state.projects.filter(function(p){ return p.id !== state.editingProjId; });
-    state.tasks.forEach(function(t) { if(t.projectId === state.editingProjId) delete t.projectId; });
-    closeSheets(); saveLocal(); renderProjects(); ghPush();
+// Drill-Down View Logic
+function openProjectDetail(id) {
+  var p = state.projects.find(function(x){ return x.id === id; });
+  if(!p) return;
+  state.activeProjectId = id;
+  document.getElementById('pdTitleInput').value = p.title || '';
+  document.getElementById('pdDueInput').value = p.due || '';
+  document.getElementById('pdNotesInput').innerHTML = p.note || '';
+  setChip('pdStageRow', p.stage || 'Planning');
+  
+  renderProjectTasks();
+  switchTab('projects-detail');
+}
+
+function saveProjectDetail() {
+  if(!state.activeProjectId) return;
+  var p = state.projects.find(function(x){ return x.id === state.activeProjectId; });
+  if(p) {
+     p.title = document.getElementById('pdTitleInput').value.trim() || 'Untitled Project';
+     p.stage = getChip('pdStageRow') || 'Planning';
+     p.due = document.getElementById('pdDueInput').value;
+     p.note = document.getElementById('pdNotesInput').innerHTML;
+     saveLocal(); ghPush();
+  }
+}
+
+var pdTimer = null;
+function queuePdSave() {
+  if(pdTimer) clearTimeout(pdTimer);
+  pdTimer = setTimeout(saveProjectDetail, 800);
+}
+document.getElementById('pdTitleInput').addEventListener('input', queuePdSave);
+document.getElementById('pdDueInput').addEventListener('change', saveProjectDetail);
+document.getElementById('pdNotesInput').addEventListener('input', queuePdSave);
+document.getElementById('pdStageRow').addEventListener('click', function(e) {
+  var chip = e.target.closest('.s-chip');
+  if(!chip) return;
+  document.querySelectorAll('#pdStageRow .s-chip').forEach(function(c){ c.classList.remove('active'); });
+  chip.classList.add('active');
+  saveProjectDetail();
+});
+
+function renderProjectTasks() {
+  var list = document.getElementById('pdTasksList');
+  if(!list) return;
+  list.innerHTML = '';
+  var pTasks = state.tasks.filter(function(t){ return t.projectId === state.activeProjectId && !t.done; });
+  
+  if(pTasks.length === 0) {
+    list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); font-style:italic; padding: 12px 0;">No active tasks linked to this project.</div>';
+    return;
+  }
+  
+  pTasks.forEach(function(t) {
+    var el = document.createElement('div');
+    el.className = 'task ' + (t.priority||'md');
+    var catHtml = (t.categories||[]).map(function(c) { return '<span class="cat '+catCls(c)+'">'+esc(CAT_LABEL[c]||c)+'</span>'; }).join('');
+    var dc = dueClass(t.due);
+    var dueHtml = t.due ? '<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>' : '';
+    
+    el.innerHTML = 
+      '<div class="cb"></div>'+
+      '<div class="task-body">'+
+        '<div class="task-title">'+esc(t.title)+'</div>'+
+        '<div class="task-row">'+catHtml+dueHtml+'</div>'+
+      '</div>';
+      
+    el.querySelector('.cb').addEventListener('click', function(e){
+      e.stopPropagation();
+      toggleDone(t.id);
+    });
+    el.addEventListener('click', function() { openEdit(t.id); });
+    list.appendChild(el);
+  });
+}
+
+document.getElementById('pdAddTaskBtn').addEventListener('click', function(){
+  openAddSheet();
+  document.getElementById('taskProjectInput').value = state.activeProjectId;
+});
+
+document.getElementById('delProjectDetailBtn').addEventListener('click', function() {
+  if(!state.activeProjectId) return;
+  if(confirm('Delete this project? Tasks inside will NOT be deleted, just unlinked.')) {
+    state.projects = state.projects.filter(function(p){ return p.id !== state.activeProjectId; });
+    state.tasks.forEach(function(t) { if(t.projectId === state.activeProjectId) delete t.projectId; });
+    saveLocal(); ghPush();
+    switchTab('projects');
     showToast('Project deleted');
   }
 });
@@ -1017,15 +1064,76 @@ document.getElementById('deleteProjBtn').addEventListener('click', function() {
 // BEL TAB LOGIC
 // 
 function renderBel() {
-  if(!belState) belState = { annivDate:'', gifts:'', dates:'', favs:'', love:'' };
+  if(!belState) belState = { annivDate:'', giftsList:[], datesList:[], favs:'', love:'' };
   
-  document.getElementById('belGifts').value = belState.gifts || '';
-  document.getElementById('belDates').value = belState.dates || '';
-  document.getElementById('belFavs').value = belState.favs || '';
-  document.getElementById('belLove').value = belState.love || '';
+  document.getElementById('belFavs').innerHTML = belState.favs || '';
+  document.getElementById('belLove').innerHTML = belState.love || '';
+  
+  renderBelList('belGiftsList', 'giftsList');
+  renderBelList('belDatesList', 'datesList');
   
   updateBelTime();
 }
+
+function renderBelList(listId, dataKey) {
+  var list = document.getElementById(listId);
+  var items = belState[dataKey] || [];
+  list.innerHTML = '';
+  
+  if(items.length === 0) {
+    list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); font-style:italic; padding-bottom:8px;">List is empty.</div>';
+    return;
+  }
+  
+  items.forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'bel-item';
+      row.dataset.id = item.id;
+      row.dataset.key = dataKey;
+      row.innerHTML = 
+        '<div class="bel-cb '+(item.done?'checked':'')+'" data-action="check"></div>'+
+        '<div class="bel-text '+(item.done?'checked':'')+'" data-action="check">'+esc(item.text)+'</div>'+
+        '<div class="bel-del" data-action="del">&#x2715;</div>';
+      list.appendChild(row);
+  });
+}
+
+function addBelItem(listKey, inputId, listId) {
+  var inp = document.getElementById(inputId);
+  var text = inp.value.trim();
+  if(!text) return;
+  if(!belState[listKey]) belState[listKey] = [];
+  belState[listKey].push({ id: uid(), text: text, done: false });
+  inp.value = '';
+  saveBel(true); 
+  renderBelList(listId, listKey);
+}
+
+document.getElementById('belGiftAddBtn').addEventListener('click', function(){ addBelItem('giftsList', 'belGiftInput', 'belGiftsList'); });
+document.getElementById('belDateAddBtn').addEventListener('click', function(){ addBelItem('datesList', 'belDateInput', 'belDatesList'); });
+
+document.getElementById('belGiftInput').addEventListener('keydown', function(e){ if(e.key==='Enter') addBelItem('giftsList', 'belGiftInput', 'belGiftsList'); });
+document.getElementById('belDateInput').addEventListener('keydown', function(e){ if(e.key==='Enter') addBelItem('datesList', 'belDateInput', 'belDatesList'); });
+
+['belGiftsList', 'belDatesList'].forEach(function(listId) {
+  document.getElementById(listId).addEventListener('click', function(e) {
+      var action = e.target.dataset.action;
+      var row = e.target.closest('.bel-item');
+      if(!row || !action) return;
+      var id = row.dataset.id;
+      var key = row.dataset.key;
+      
+      if(action === 'check') {
+         var items = belState[key];
+         for(var i=0; i<items.length; i++) { if(items[i].id===id) items[i].done = !items[i].done; }
+      }
+      if(action === 'del') {
+         belState[key] = belState[key].filter(function(i){ return i.id !== id; });
+      }
+      saveBel(true);
+      renderBelList(listId, key);
+  });
+});
 
 function updateBelTime() {
   var countEl = document.getElementById('belTimeCount');
@@ -1046,7 +1154,7 @@ function updateBelTime() {
     return;
   }
   
-  // Calc exact time
+  // Exact time diff
   var yrs = now.getFullYear() - start.getFullYear();
   var mos = now.getMonth() - start.getMonth();
   var days = now.getDate() - start.getDate();
@@ -1061,10 +1169,10 @@ function updateBelTime() {
   var str = [];
   if(yrs > 0) str.push(yrs + ' yr' + (yrs>1?'s':''));
   if(mos > 0) str.push(mos + ' mo' + (mos>1?'s':''));
-  str.push(days + ' day' + (days!==1?'s':''));
+  str.push(days + ' d');
   countEl.textContent = str.join(', ');
   
-  // Calc next anniv
+  // Next anniv diff
   var nextAnniv = new Date(start);
   nextAnniv.setFullYear(now.getFullYear());
   if(nextAnniv < now) nextAnniv.setFullYear(now.getFullYear() + 1);
@@ -1074,12 +1182,12 @@ function updateBelTime() {
 }
 
 var belTimer = null;
-['belGifts', 'belDates', 'belFavs', 'belLove'].forEach(function(id) {
+['belFavs', 'belLove'].forEach(function(id) {
   var el = document.getElementById(id);
   if(!el) return;
   el.addEventListener('input', function() {
     if(!belState) belState = {};
-    belState[id.replace('bel','').toLowerCase()] = this.value;
+    belState[id.replace('bel','').toLowerCase()] = this.innerHTML;
     if(belTimer) clearTimeout(belTimer);
     belTimer = setTimeout(function(){ saveBel(true); }, 1000);
   });
@@ -1088,9 +1196,7 @@ var belTimer = null;
 document.getElementById('editBelDateBtn').addEventListener('click', function() {
   var wrap = document.getElementById('belDateEditWrap');
   wrap.style.display = wrap.style.display === 'flex' ? 'none' : 'flex';
-  if(wrap.style.display === 'flex') {
-    document.getElementById('belAnnivInput').value = belState.annivDate || '';
-  }
+  if(wrap.style.display === 'flex') { document.getElementById('belAnnivInput').value = belState.annivDate || ''; }
 });
 
 document.getElementById('saveBelDateBtn').addEventListener('click', function() {
@@ -1245,12 +1351,8 @@ document.querySelectorAll('.sheet').forEach(function(sheet) {
     var dy = e.changedTouches[0].clientY - startY;
     sheet.style.webkitTransition = '';
     sheet.style.transition = '';
-    if (dy > 80) {
-      closeSheets();
-    } else {
-      sheet.style.webkitTransform = '';
-      sheet.style.transform = '';
-    }
+    if (dy > 80) { closeSheets(); } 
+    else { sheet.style.webkitTransform = ''; sheet.style.transform = ''; }
   }, { passive: true });
 });
 
@@ -1344,8 +1446,13 @@ function showToast(msg){
 // TAB NAVIGATION
 // 
 function switchTab(tab) {
-  document.body.classList.remove('dash-mode', 'projects-mode', 'bel-mode');
-  if (tab !== 'tasks') document.body.classList.add(tab + '-mode');
+  document.body.classList.remove('dash-mode', 'projects-mode', 'projects-detail-mode', 'bel-mode');
+  
+  if (tab === 'projects-detail') {
+    document.body.classList.add('projects-mode', 'projects-detail-mode');
+  } else if (tab !== 'tasks') {
+    document.body.classList.add(tab + '-mode');
+  }
 
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   var tBtn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
@@ -1367,7 +1474,11 @@ function switchTab(tab) {
 document.getElementById('tabTasks').addEventListener('click', function() { switchTab('tasks'); });
 document.getElementById('tabDash').addEventListener('click',  function() { switchTab('dash'); });
 document.getElementById('tabProjects').addEventListener('click', function() { switchTab('projects'); });
-document.getElementById('tabBel').addEventListener('click', function() { switchTab('bel'); });
+
+// Secret Routing Buttons
+document.getElementById('secretBelTrigger').addEventListener('click', function() { switchTab('bel'); });
+document.getElementById('closeBelBtn').addEventListener('click', function() { switchTab('tasks'); });
+document.getElementById('closeProjectDetailBtn').addEventListener('click', function() { switchTab('projects'); });
 
 // 
 // PWA MANIFEST
@@ -1858,154 +1969,6 @@ document.getElementById('dBookSave').addEventListener('click', function() {
   document.getElementById('dBookEdit').classList.remove('open');
 });
 
-function renderDashFull() {
-  updateClock();
-  renderIntention();
-  renderDashTasks();
-  renderCountdown();
-  renderQuote();
-  renderReflection();
-  renderMood();
-  renderHabits();
-  renderBook();
-}
-
-// 
-// THEME SYSTEM
-// 
-var THEME_KEY = 'kw_theme_v2';
-var THEMES = ['neon','newsprint','ios26'];
-
-function applyTheme(name) {
-  THEMES.forEach(function(t){ document.body.classList.remove('theme-' + t); });
-  if (name) document.body.classList.add('theme-' + name);
-  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0' };
-  document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
-  document.querySelectorAll('.theme-swatch').forEach(function(sw){
-    sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26'));
-  });
-  try { localStorage.setItem(THEME_KEY, name || 'ios26'); } catch(e){}
-}
-
-function loadTheme() {
-  var saved = 'ios26';
-  try { saved = localStorage.getItem(THEME_KEY) || 'ios26'; } catch(e){}
-  applyTheme(saved);
-}
-
-document.getElementById('settingsSheet').addEventListener('click', function(e){
-  var sw = e.target.closest('.theme-swatch');
-  if (!sw) return;
-  applyTheme(sw.dataset.theme);
-  render();
-});
-
-// 
-// SHOPPING LIST
-// 
-var SHOP_KEY = 'kw_shop_v1';
-var shopItems = [];
-
-function loadShop() {
-  try { shopItems = JSON.parse(localStorage.getItem(SHOP_KEY) || '[]'); } catch(e) { shopItems = []; }
-}
-function saveShop() {
-  try { localStorage.setItem(SHOP_KEY, JSON.stringify(shopItems)); } catch(e) {}
-  ghPush();
-}
-function renderShop() {
-  var list = document.getElementById('shopList');
-  if (!list) return;
-  var active = shopItems.filter(function(i){ return !i.done; });
-  var done   = shopItems.filter(function(i){ return i.done; });
-  var ordered = active.concat(done);
-  if (ordered.length === 0) {
-    list.innerHTML = '<div class="shop-empty">List is empty. Add something above.</div>';
-    return;
-  }
-  list.innerHTML = '';
-  ordered.forEach(function(item) {
-    var row = document.createElement('div');
-    row.className = 'shop-item';
-    row.dataset.id = item.id;
-    row.innerHTML =
-      '<div class="shop-cb' + (item.done ? ' checked' : '') + '" data-action="check"></div>' +
-      '<div class="shop-item-text' + (item.done ? ' checked' : '') + '" data-action="check">' + esc(item.text) + '</div>' +
-      '<div class="shop-del" data-action="del">&#x2715;</div>';
-    list.appendChild(row);
-  });
-}
-function shopAddItem(text) {
-  text = text.trim();
-  if (!text) return;
-  shopItems.push({ id: Date.now() + Math.random(), text: text, done: false });
-  saveShop();
-  renderShop();
-}
-function shopToggle(id) {
-  shopItems = shopItems.map(function(i){ return i.id == id ? Object.assign({}, i, {done: !i.done}) : i; });
-  saveShop();
-  renderShop();
-}
-function shopDelete(id) {
-  shopItems = shopItems.filter(function(i){ return i.id != id; });
-  saveShop();
-  renderShop();
-}
-function shopClearDone() {
-  shopItems = shopItems.filter(function(i){ return !i.done; });
-  saveShop();
-  renderShop();
-}
-
-document.getElementById('shopBtn').addEventListener('click', function() { renderShop(); openSheet('shopSheet'); });
-document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
-document.getElementById('shopAddBtn').addEventListener('click', function() {
-  var inp = document.getElementById('shopInput');
-  shopAddItem(inp.value);
-  inp.value = '';
-  inp.focus();
-});
-document.getElementById('shopInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { shopAddItem(this.value); this.value = ''; }
-});
-document.getElementById('shopList').addEventListener('click', function(e) {
-  var action = e.target.dataset.action;
-  var row = e.target.closest('.shop-item');
-  if (!row || !action) return;
-  var id = row.dataset.id;
-  if (action === 'check') shopToggle(id);
-  if (action === 'del') shopDelete(id);
-});
-document.getElementById('shopClearDone').addEventListener('click', shopClearDone);
-
-loadShop();
-
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', function() {
-    var openSheet = document.querySelector('.sheet.open');
-    if (!openSheet) return;
-
-    if (openSheet.id === 'shopSheet' || openSheet.classList.contains('full')) {
-      openSheet.style.bottom = '0';
-      openSheet.style.maxHeight = '100%';
-      return; 
-    }
-
-    var vvHeight = window.visualViewport.height;
-    var fullHeight = window.innerHeight;
-    var keyboardHeight = Math.max(0, fullHeight - vvHeight);
-    
-    if (keyboardHeight > 50) {
-      openSheet.style.bottom = keyboardHeight + 'px';
-      openSheet.style.maxHeight = (vvHeight * 0.92) + 'px';
-    } else {
-      openSheet.style.bottom = '';
-      openSheet.style.maxHeight = '';
-    }
-  });
-}
-
 // 
 // DRAG TO REORDER
 // 
@@ -2093,7 +2056,7 @@ function onDragEnd(e) {
       for(var k=0;k<tasks.length;k++){if(tasks[k].id===dstId){newDst=k;break;}}
       tasks.splice(newDst, 0, moved);
       saveLocal(); 
-      if(document.body.classList.contains('projects-mode')) renderProjects();
+      if(document.body.classList.contains('projects-detail-mode')) renderProjectTasks();
       else render(); 
       ghPush();
     }
