@@ -287,7 +287,8 @@
         "manuscript",
         "phd"
       ],
-      "pomodoros": 1
+      "pomodoros": 1,
+      "projectId": "mmc9gxu8tdgk"
     },
     {
       "id": "1772565218118",
@@ -487,5 +488,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T16:38:42.514Z"
+  "updated": "2026-03-04T16:39:27.331Z"
 }
