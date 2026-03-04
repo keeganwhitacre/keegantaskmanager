@@ -65,7 +65,7 @@
 
 <div class="quick-add-wrap hide-in-dash" id="quickAddWrap">
   <div class="quick-add-row">
-    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today… (return to save)" autocomplete="off" autocorrect="off" autocapitalize="sentences">
+    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
     <button class="quick-add-send" id="quickAddSend">
       <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
     </button>
@@ -235,10 +235,15 @@
     Note
     <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
   </div>
-  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, R output, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-  <div class="sheet-label">Due Date</div>
+  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+  
+  <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
+    Due Date
+    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
+  </div>
   <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
-  <div class="sheet-label">Category</div>
+  
+  <div class="sheet-label">Categories (Multi-Select)</div>
   <div class="chip-row" id="catRow">
     <div class="s-chip" data-val="manuscript">Manuscript</div>
     <div class="s-chip" data-val="lab">Lab Ops</div>
@@ -248,6 +253,7 @@
     <div class="s-chip" data-val="personal">Personal</div>
     <div class="s-chip" data-val="hobby">Hobby</div>
   </div>
+  
   <div class="sheet-label">Status</div>
   <div class="chip-row" id="statusRow">
     <div class="s-chip active" data-val="active">Active</div>
@@ -255,22 +261,14 @@
     <div class="s-chip" data-val="blocked">Blocked</div>
     <div class="s-chip" data-val="review">In Review</div>
   </div>
+  
   <div class="sheet-label">Priority</div>
   <div class="chip-row" id="priRow">
     <div class="s-chip" data-val="hi">High</div>
     <div class="s-chip active" data-val="md">Med</div>
     <div class="s-chip" data-val="lo">Low</div>
   </div>
-    <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
-    Section
-    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
-  </div>
-  <div class="chip-row" id="sectionRow">
-    <div class="s-chip" data-val="personal">Bel &amp; Personal</div>
-    <div class="s-chip" data-val="hobby">Hobbies &amp; Games</div>
-    <div class="s-chip" data-val="blocked">Blocked</div>
-    <div class="s-chip active" data-val="upcoming">Upcoming</div>
-  </div>
+
   <button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
   <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
   <button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
