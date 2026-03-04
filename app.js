@@ -37,6 +37,8 @@ function loadLocal() {
   try { var n=localStorage.getItem(NOTES_KEY); if(n!==null) state.scratchpad=n; } catch(e){}
   try { var col=localStorage.getItem('kw_collapsed_v1'); if(col) state.collapsed=JSON.parse(col); } catch(e){}
   
+  if(!state.tasks) state.tasks = [];
+  if(!state.projects) state.projects = [];
   if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
   
   // Data Migrations
@@ -94,7 +96,10 @@ function ghFetch(retries){
       var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
       
       state.tasks = dec.tasks || dec;
+      if(!state.tasks) state.tasks = [];
       if(dec.projects) state.projects = dec.projects;
+      if(!state.projects) state.projects = [];
+      
       if(dec.bel) belState = dec.bel;
       if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
       if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
@@ -274,7 +279,7 @@ function makeTaskWrap(t, delay) {
   
   var projHtml = '';
   if(t.projectId) {
-    var p = state.projects.find(function(x){ return x.id === t.projectId; });
+    var p = (state.projects||[]).find(function(x){ return x.id === t.projectId; });
     if(p) projHtml = '<span class="proj-link-label">⛌ '+esc(p.title)+'</span>';
   }
 
@@ -707,11 +712,10 @@ function commitUndo(){
 }
 document.getElementById('toastUndoBtn').addEventListener('click', commitUndo);
 
-// Populate dynamic Project Dropdown in Add/Edit Task Sheet
 function populateTaskProjectSelect() {
   var sel = document.getElementById('taskProjectInput');
   sel.innerHTML = '<option value="">None</option>';
-  state.projects.forEach(function(p){
+  (state.projects||[]).forEach(function(p){
     var opt = document.createElement('option');
     opt.value = p.id;
     opt.textContent = p.title;
@@ -868,6 +872,11 @@ function openAddSheet(){
   populateTaskProjectSelect();
   var qw=document.getElementById('quickAddWrap');
   if(qw) { qw.classList.remove('open'); document.getElementById('quickAddInput').value=''; }
+  
+  if(document.body.classList.contains('projects-detail-mode') && state.activeProjectId) {
+    document.getElementById('taskProjectInput').value = state.activeProjectId;
+  }
+  
   setTimeout(function(){ openSheet('addSheet'); },10);
 }
 
@@ -968,7 +977,6 @@ document.getElementById('saveProjBtn').addEventListener('click', function() {
   closeSheets(); saveLocal(); renderProjects(); ghPush();
 });
 
-// Drill-Down View Logic
 function openProjectDetail(id) {
   var p = state.projects.find(function(x){ return x.id === id; });
   if(!p) return;
@@ -1046,7 +1054,6 @@ function renderProjectTasks() {
 
 document.getElementById('pdAddTaskBtn').addEventListener('click', function(){
   openAddSheet();
-  document.getElementById('taskProjectInput').value = state.activeProjectId;
 });
 
 document.getElementById('delProjectDetailBtn').addEventListener('click', function() {
@@ -1154,7 +1161,6 @@ function updateBelTime() {
     return;
   }
   
-  // Exact time diff
   var yrs = now.getFullYear() - start.getFullYear();
   var mos = now.getMonth() - start.getMonth();
   var days = now.getDate() - start.getDate();
@@ -1172,7 +1178,6 @@ function updateBelTime() {
   str.push(days + ' d');
   countEl.textContent = str.join(', ');
   
-  // Next anniv diff
   var nextAnniv = new Date(start);
   nextAnniv.setFullYear(now.getFullYear());
   if(nextAnniv < now) nextAnniv.setFullYear(now.getFullYear() + 1);
@@ -1968,6 +1973,142 @@ document.getElementById('dBookSave').addEventListener('click', function() {
   renderBook();
   document.getElementById('dBookEdit').classList.remove('open');
 });
+
+// 
+// THEME SYSTEM
+// 
+var THEME_KEY = 'kw_theme_v2';
+var THEMES = ['neon','newsprint','ios26'];
+
+function applyTheme(name) {
+  THEMES.forEach(function(t){ document.body.classList.remove('theme-' + t); });
+  if (name) document.body.classList.add('theme-' + name);
+  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0' };
+  document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
+  document.querySelectorAll('.theme-swatch').forEach(function(sw){
+    sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26'));
+  });
+  try { localStorage.setItem(THEME_KEY, name || 'ios26'); } catch(e){}
+}
+
+function loadTheme() {
+  var saved = 'ios26';
+  try { saved = localStorage.getItem(THEME_KEY) || 'ios26'; } catch(e){}
+  applyTheme(saved);
+}
+
+document.getElementById('settingsSheet').addEventListener('click', function(e){
+  var sw = e.target.closest('.theme-swatch');
+  if (!sw) return;
+  applyTheme(sw.dataset.theme);
+  render();
+});
+
+// 
+// SHOPPING LIST
+// 
+var SHOP_KEY = 'kw_shop_v1';
+var shopItems = [];
+
+function loadShop() {
+  try { shopItems = JSON.parse(localStorage.getItem(SHOP_KEY) || '[]'); } catch(e) { shopItems = []; }
+}
+function saveShop() {
+  try { localStorage.setItem(SHOP_KEY, JSON.stringify(shopItems)); } catch(e) {}
+  ghPush();
+}
+function renderShop() {
+  var list = document.getElementById('shopList');
+  if (!list) return;
+  var active = shopItems.filter(function(i){ return !i.done; });
+  var done   = shopItems.filter(function(i){ return i.done; });
+  var ordered = active.concat(done);
+  if (ordered.length === 0) {
+    list.innerHTML = '<div class="shop-empty">List is empty. Add something above.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  ordered.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'shop-item';
+    row.dataset.id = item.id;
+    row.innerHTML =
+      '<div class="shop-cb' + (item.done ? ' checked' : '') + '" data-action="check"></div>' +
+      '<div class="shop-item-text' + (item.done ? ' checked' : '') + '" data-action="check">' + esc(item.text) + '</div>' +
+      '<div class="shop-del" data-action="del">&#x2715;</div>';
+    list.appendChild(row);
+  });
+}
+function shopAddItem(text) {
+  text = text.trim();
+  if (!text) return;
+  shopItems.push({ id: Date.now() + Math.random(), text: text, done: false });
+  saveShop();
+  renderShop();
+}
+function shopToggle(id) {
+  shopItems = shopItems.map(function(i){ return i.id == id ? Object.assign({}, i, {done: !i.done}) : i; });
+  saveShop();
+  renderShop();
+}
+function shopDelete(id) {
+  shopItems = shopItems.filter(function(i){ return i.id != id; });
+  saveShop();
+  renderShop();
+}
+function shopClearDone() {
+  shopItems = shopItems.filter(function(i){ return !i.done; });
+  saveShop();
+  renderShop();
+}
+
+document.getElementById('shopBtn').addEventListener('click', function() { renderShop(); openSheet('shopSheet'); });
+document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
+document.getElementById('shopAddBtn').addEventListener('click', function() {
+  var inp = document.getElementById('shopInput');
+  shopAddItem(inp.value);
+  inp.value = '';
+  inp.focus();
+});
+document.getElementById('shopInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { shopAddItem(this.value); this.value = ''; }
+});
+document.getElementById('shopList').addEventListener('click', function(e) {
+  var action = e.target.dataset.action;
+  var row = e.target.closest('.shop-item');
+  if (!row || !action) return;
+  var id = row.dataset.id;
+  if (action === 'check') shopToggle(id);
+  if (action === 'del') shopDelete(id);
+});
+document.getElementById('shopClearDone').addEventListener('click', shopClearDone);
+
+loadShop();
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', function() {
+    var openSheet = document.querySelector('.sheet.open');
+    if (!openSheet) return;
+
+    if (openSheet.id === 'shopSheet' || openSheet.classList.contains('full')) {
+      openSheet.style.bottom = '0';
+      openSheet.style.maxHeight = '100%';
+      return; 
+    }
+
+    var vvHeight = window.visualViewport.height;
+    var fullHeight = window.innerHeight;
+    var keyboardHeight = Math.max(0, fullHeight - vvHeight);
+    
+    if (keyboardHeight > 50) {
+      openSheet.style.bottom = keyboardHeight + 'px';
+      openSheet.style.maxHeight = (vvHeight * 0.92) + 'px';
+    } else {
+      openSheet.style.bottom = '';
+      openSheet.style.maxHeight = '';
+    }
+  });
+}
 
 // 
 // DRAG TO REORDER
