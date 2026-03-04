@@ -411,13 +411,7 @@
     "dates": "",
     "favs": "",
     "love": "<br>",
-    "giftsList": [
-      {
-        "id": "mmcp7ftvu2km",
-        "text": "Cya",
-        "done": false
-      }
-    ]
+    "giftsList": []
   },
   "scratchpad": "New ideas for app\n- active projects\n——status, date countdown, progress, notes\n- reading queue\n——- book notes and thoughts\n——- quotes from books?\n- gaming intentionally tracker?\n- bel tab \n—— belstuff moves here\n—— date ideas, tracker coming up etc",
   "shop": [
@@ -548,5 +542,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T23:59:13.125Z"
+  "updated": "2026-03-04T23:59:15.053Z"
 }
