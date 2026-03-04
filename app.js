@@ -834,7 +834,7 @@ document.getElementById('focusModeBtn').addEventListener('click', function(){
 // 
 // SHEETS
 // 
-function openSheet(id){ document.getElementById(id).classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+function openSheet(id){ document.getElementById(id).classList.add('open'); document.getElementById('overlay').classList.add('open'); document.body.style.overflow = 'hidden'; // Add this line}
 
 function closeSheets(){
   document.querySelectorAll('.sheet').forEach(function(s){
@@ -842,6 +842,7 @@ function closeSheets(){
     s.style.webkitTransform = ''; s.style.transform = ''; s.style.webkitTransition = ''; s.style.transition = '';
   });
   document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = ''; // Add this line
   state.editingId=null;
   
   var tTitle = document.getElementById('addSheetTitle'); if(tTitle) tTitle.textContent='New Task';
