@@ -377,6 +377,13 @@
       "stage": "Review",
       "due": "",
       "note": "<p style=\"font-size: 16px; cursor: text; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; caret-color: rgb(227, 227, 227); color: rgb(227, 227, 227); font-family: &quot;Google Sans Flex&quot;, &quot;Google Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif;\"><br></p>"
+    },
+    {
+      "id": "mmchwskbfpig",
+      "title": "Society For Affective Science",
+      "stage": "Waiting",
+      "due": "2026-03-11",
+      "note": ""
     }
   ],
   "bel": {
@@ -515,5 +522,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T20:34:37.836Z"
+  "updated": "2026-03-04T20:34:59.101Z"
 }
