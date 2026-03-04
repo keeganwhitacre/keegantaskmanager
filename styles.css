@@ -640,3 +640,37 @@ input[type="date"].input { max-width: 100%; box-sizing: border-box; }
 
 /* 5. Fix the weird white bar at the bottom of the PWA on iOS */
 body.theme-ios26, html { background-color: #e8eaf0 !important; }
+
+/* ── THE ULTIMATE POLISH PATCH ── */
+
+/* Search bar left align */
+.search-trigger { position: relative !important; top: 0 !important; left: 0 !important; right: auto !important; justify-content: flex-start !important; margin: 0 auto 14px 20px !important; }
+
+/* Restore iOS Settings Dividers & Missing Greys */
+body.theme-ios26 .divider { background: rgba(0,0,40,0.08) !important; }
+body.theme-ios26 .d-book-title, 
+body.theme-ios26 #belTimeCount { color: #1a1a2e !important; font-weight: 600 !important; }
+body.theme-ios26 .d-habit-name-col { color: rgba(60,60,90,0.7) !important; }
+
+/* Stop Due Date Input and Sheets from stretching/cutting off */
+input[type="date"].input { width: 100% !important; max-width: 100% !important; display: block !important; box-sizing: border-box !important; }
+.sheet { padding-top: 24px !important; }
+
+/* Make the FAB (+ button) fit the iOS Glass Theme */
+body.theme-ios26 .fab { 
+  background: rgba(255,255,255,0.4) !important; 
+  border: 1px solid rgba(255,255,255,0.6) !important; 
+  color: #007aff !important; 
+  -webkit-backdrop-filter: blur(16px) !important; 
+  backdrop-filter: blur(16px) !important; 
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 16px rgba(0,0,30,0.1) !important; 
+}
+
+/* Turn Bel Tab from Pink to Cool iOS Green */
+body.theme-ios26 #belView .sheet-title, 
+body.theme-ios26 #belView .d-card-label, 
+body.theme-ios26 #belView #editBelDateBtn { color: #34c759 !important; }
+body.theme-ios26 #belView .d-card { border-color: rgba(52,199,89,0.4) !important; }
+body.theme-ios26 #belView .shop-add-btn, 
+body.theme-ios26 #belView .sheet-btn.primary { background: #34c759 !important; border-color: #34c759 !important; box-shadow: 0 2px 8px rgba(52,199,89,0.3) !important; color: #fff !important; }
+body.theme-ios26 .bel-cb.checked { background: #34c759 !important; border-color: #34c759 !important; }
