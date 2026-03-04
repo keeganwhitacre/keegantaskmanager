@@ -1329,3 +1329,51 @@ body.theme-newsprint .mood-cell { background: #ddd; border-radius: 0; }
 body.theme-newsprint .mood-btn { border-radius: 0; }
 body.theme-ios26 .mood-cell { background: rgba(0,0,30,0.06); }
 body.theme-ios26 .mood-btn.active { border-color: #fff; }
+
+/* ══════════════════════════════════════════════════════════════════
+   BATCH 2: BEL TAB & PROJECTS PAGE
+══════════════════════════════════════════════════════════════════ */
+
+/* ── VIEW ROUTING ── */
+body.projects-mode .hide-in-dash, body.bel-mode .hide-in-dash { display: none !important; }
+body.projects-mode .bottom-fade, body.bel-mode .bottom-fade { display: none !important; }
+body.projects-mode #fab, body.bel-mode #fab { display: none !important; }
+body.projects-mode #focusModeBtn, body.bel-mode #focusModeBtn { display: none !important; }
+body.projects-mode .quick-add-wrap, body.bel-mode .quick-add-wrap { display: none !important; }
+
+body.projects-mode #projectsView { display: block !important; }
+body.bel-mode #belView { display: block !important; }
+
+/* ── PROJECTS UI ── */
+.project-card {
+  background: var(--card-bg, #0a0a0a); border: 1px solid var(--card-border, #1a1a1a);
+  border-radius: 16px; padding: 16px; margin-bottom: 12px;
+  cursor: pointer; position: relative;
+  box-shadow: var(--shadow-sm); backdrop-filter: var(--backdrop-filter);
+}
+.project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.project-title { font-size: 16px; font-weight: 600; color: var(--text-main, #fff); }
+.project-stage { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(100,100,100,0.1); color: var(--text-muted); }
+.project-stage.Active { background: rgba(48,209,88,0.1); color: var(--success, #30d158); }
+.project-stage.Planning { background: rgba(0,122,255,0.1); color: var(--accent, #007aff); }
+.project-stage.Waiting { background: rgba(255,149,0,0.1); color: var(--warning, #ff9500); }
+.project-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+.project-tasks { border-top: 1px solid var(--card-border, #1a1a1a); padding-top: 8px; margin-top: 8px; }
+.project-task-item { font-size: 12px; color: var(--text-main); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.project-task-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); }
+
+/* Theme overrides for projects */
+body.theme-neon .project-card { background: #100818; border-color: #1e1028; }
+body.theme-neon .project-title { font-family: 'Syne', sans-serif; }
+body.theme-newsprint .project-card { background: #f0ede6; border-color: #ddd; border-radius: 4px; }
+body.theme-newsprint .project-title { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+body.theme-ios26 .project-card { background: rgba(255,255,255,0.48); border-color: rgba(255,255,255,0.68); }
+
+/* Select Dropdown override */
+select.input {
+  color: var(--text-main);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
