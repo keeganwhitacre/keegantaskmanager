@@ -267,7 +267,7 @@
       "due": "2026-03-06",
       "noteIsMono": false,
       "done": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "categories": [
         "lab"
       ],
@@ -471,5 +471,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T16:16:58.677Z"
+  "updated": "2026-03-04T16:17:02.340Z"
 }
