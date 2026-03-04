@@ -363,13 +363,14 @@
         "personal"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "note": "",
-      "due": "2026-03-04",
+      "due": "2026-03-10",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": ""
     },
     {
       "id": "mmcikk8xkr7t",
@@ -540,5 +541,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T22:13:26.137Z"
+  "updated": "2026-03-04T22:13:33.493Z"
 }
