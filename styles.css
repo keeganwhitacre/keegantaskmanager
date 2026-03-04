@@ -606,3 +606,37 @@ body.theme-neon .overlay { background: rgba(5,2,8,0.88); }
 body.theme-ios26 .d-quote-btn { background: rgba(255,255,255,0.4); border-color: rgba(255,255,255,0.6); color: rgba(60,60,100,0.5); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
 body.theme-newsprint .d-quote-btn { background: #f0ede6; border-color: #ddd; color: #888; border-radius: 4px; }
 body.theme-neon .d-quote-btn { background: #130a1a; border-color: #2d1f3d; color: #4a3a5e; }
+
+/* ── FINAL POLISH PATCH ── */
+
+/* 1. Fix Search Button Overlap & Color */
+.search-trigger { position: relative; top: 0; right: 0; margin: 0 20px 14px auto; display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #555; cursor: pointer; }
+body.theme-ios26 .search-trigger { color: rgba(60,60,90,0.6); }
+body.theme-newsprint .search-trigger { color: #888; }
+body.theme-neon .search-trigger { color: #8b7ba1; }
+
+/* 2. Restore the missing iOS Greys (Lines, Text, Borders) */
+body.theme-ios26 .d-week-meta, 
+body.theme-ios26 .d-weather-stat, 
+body.theme-ios26 .d-weather-desc, 
+body.theme-ios26 .d-date-small { color: rgba(60,60,90,0.55) !important; }
+
+body.theme-ios26 .d-task-row, 
+body.theme-ios26 .d-habit-row, 
+body.theme-ios26 .project-tasks, 
+body.theme-ios26 .bel-item { border-color: rgba(0,0,40,0.08) !important; }
+
+body.theme-ios26 .d-habit-cb { border-color: rgba(60,60,90,0.25) !important; }
+body.theme-ios26 .d-book-prog-wrap { background: rgba(0,0,40,0.08) !important; }
+
+/* 3. Fix Invisible Shopping List Text & Bel Date Text */
+body.theme-ios26 .shop-item-text { color: #1a1a2e !important; }
+#belNextAnniv { color: #888; font-family: 'DM Mono', monospace; }
+body.theme-ios26 #belNextAnniv { color: rgba(60,60,90,0.6); }
+body.theme-neon #belNextAnniv { color: #8b7ba1; }
+
+/* 4. Stop Due Date Input from Stretching out of bounds */
+input[type="date"].input { max-width: 100%; box-sizing: border-box; }
+
+/* 5. Fix the weird white bar at the bottom of the PWA on iOS */
+body.theme-ios26, html { background-color: #e8eaf0 !important; }
