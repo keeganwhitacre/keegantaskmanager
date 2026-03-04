@@ -287,3 +287,67 @@ textarea.input { resize: vertical; min-height: 80px; }
 .shop-item-text { flex: 1; font-size: 14px; color: var(--text-main); }
 .shop-item-text.checked { text-decoration: line-through; color: var(--text-muted); }
 .shop-del { font-size: 18px; color: var(--text-muted); cursor: pointer; padding: 0 4px; }
+
+/* ══ THE MISSING PATCH ══ */
+
+/* 1. Hide Dashboard Properly & Fix Padding */
+#dashView, #notesView { display: none; }
+#dashView { padding: 0 20px; } /* Stops it from hitting the very edges */
+body.dash-mode #taskList, body.dash-mode .section, body.dash-mode .filter-scroll, body.dash-mode .focus-strip { display: none !important; }
+
+/* 2. Fix Glassy iOS Background */
+body:not(.theme-neon):not(.theme-newsprint)::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 20% 15%, rgba(100,160,255,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 82% 55%, rgba(180,120,255,0.1) 0%, transparent 45%);
+}
+
+/* 3. Fix Category Colors */
+.cat-manuscript { color: var(--cat-manuscript); border-color: var(--cat-manuscript); }
+.cat-lab { color: var(--cat-lab); border-color: var(--cat-lab); }
+.cat-phd { color: var(--cat-phd); border-color: var(--cat-phd); }
+.cat-conf { color: var(--cat-conf); border-color: var(--cat-conf); }
+.cat-bel { color: var(--cat-bel); border-color: var(--cat-bel); }
+.cat-personal { color: var(--cat-personal); border-color: var(--cat-personal); }
+.cat-hobby { color: var(--cat-hobby); border-color: var(--cat-hobby); }
+
+/* 4. Fix Search Button Positioning */
+.search-trigger {
+  position: absolute; top: 110px; right: 20px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-muted); cursor: pointer;
+}
+@media (min-width: 768px) { .search-trigger { right: calc(50% - 360px + 32px); } }
+
+/* 5. Fix Habit Tracker Layout (Horizontal) */
+.d-habit-header { display: flex; align-items: center; margin-bottom: 8px; }
+.d-habit-days-col { display: flex; gap: 6px; justify-content: flex-end; }
+.d-habit-row { display: flex; align-items: center; margin-bottom: 8px; }
+.d-habit-checks { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* 6. Fix Dashboard Task Colors */
+.d-task-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.d-task-dot.hi { background: var(--danger); }
+.d-task-dot.md { background: var(--warning); }
+.d-task-dot.lo { background: var(--text-muted); }
+
+/* 7. Bring Back Neon Task Colors (Purple/Red/Yellow) */
+body.theme-neon .task.hi::before, body.theme-neon .d-task-dot.hi { background: #ff2d78; }
+body.theme-neon .task.md::before, body.theme-neon .d-task-dot.md { background: #a855ff; }
+body.theme-neon .task.lo::before, body.theme-neon .d-task-dot.lo { background: #2d1545; }
+
+/* 8. Make Newsprint Theme Blocky/Square */
+body.theme-newsprint .d-card,
+body.theme-newsprint .task,
+body.theme-newsprint .task-wrap,
+body.theme-newsprint .sheet,
+body.theme-newsprint .input,
+body.theme-newsprint .icon-btn,
+body.theme-newsprint .tab-btn,
+body.theme-newsprint .chip,
+body.theme-newsprint .s-chip,
+body.theme-newsprint .d-habit-cb,
+body.theme-newsprint .focus-strip {
+  border-radius: 0 !important;
+}
