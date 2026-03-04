@@ -300,7 +300,7 @@
       "priority": "hi",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-04",
+      "due": "2026-03-05",
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false,
@@ -540,5 +540,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-04T21:01:22.185Z"
+  "updated": "2026-03-04T22:13:26.137Z"
 }
