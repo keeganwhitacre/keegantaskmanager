@@ -1277,3 +1277,55 @@ body.theme-ios26 .task.lo::before    { background: rgba(100,100,160,0.18); }
 body.theme-neon     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #ff2d78; }
 body.theme-newsprint .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #1a1a1a; }
 body.theme-ios26     .task-wrap.drag-over { box-shadow: 0 -2px 0 0 #007aff; }
+
+/* ══════════════════════════════════════════════════════════════════
+   BATCH 1: POMODORO TIMER & MOOD TRACKER STYLES
+══════════════════════════════════════════════════════════════════ */
+
+/* ── POMODORO TIMER ── */
+#focusBanner {
+  display: none; margin: 0 20px 14px;
+  background: #0a0a0a; border: 1px solid #1a1a1a;
+  border-radius: 16px; padding: 16px;
+  color: #e8e8ed; flex-direction: column;
+  align-items: stretch; gap: 8px;
+  font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
+}
+body.focus-mode #focusBanner { display: flex; }
+.pomo-btn {
+  background: #a8b4ff; color: #000; border: none;
+  border-radius: 99px; padding: 8px 18px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Mono', monospace; font-size: 13px;
+  transition: opacity 0.15s;
+}
+.pomo-btn.alt { background: transparent; color: #a8b4ff; border: 1px solid #a8b4ff; }
+.pomo-btn:active { opacity: 0.7; }
+
+body.theme-neon #focusBanner { background: #130a1a; border-color: #2d1f3d; color: #f0e8ff; }
+body.theme-neon .pomo-btn { background: #ff2d78; color: #fff; }
+body.theme-neon .pomo-btn.alt { background: transparent; color: #ff2d78; border-color: #ff2d78; }
+
+body.theme-newsprint #focusBanner { background: #f0ede6; border-color: #ddd; color: #1a1a1a; border-radius: 4px; font-family: 'IBM Plex Mono', monospace;}
+body.theme-newsprint .pomo-btn { background: #1a1a1a; color: #f8f6f0; border-radius: 4px; font-family: 'IBM Plex Mono', monospace;}
+body.theme-newsprint .pomo-btn.alt { background: transparent; color: #1a1a1a; border-color: #1a1a1a; border-radius: 4px; }
+
+body.theme-ios26 #focusBanner { background: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.65); color: #1a1a2e; -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border-radius: 16px; }
+body.theme-ios26 .pomo-btn { background: #007aff; color: #fff; }
+body.theme-ios26 .pomo-btn.alt { background: rgba(0,122,255,0.15); color: #007aff; border: none; }
+
+/* ── MOOD TRACKER ── */
+.mood-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.mood-btn {
+  flex: 1; height: 36px; border-radius: 8px; border: 2px solid transparent;
+  background: var(--mood-col); opacity: 0.25; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.mood-btn.active { opacity: 1; transform: scale(1.05); border-color: rgba(255,255,255,0.8); box-shadow: 0 4px 12px var(--mood-col); }
+.mood-heatmap { display: flex; gap: 4px; justify-content: flex-end; }
+.mood-cell { width: 12px; height: 12px; border-radius: 3px; background: #1a1a1a; transition: background 0.3s; }
+
+body.theme-neon .mood-cell { background: #1e1028; }
+body.theme-newsprint .mood-cell { background: #ddd; border-radius: 0; }
+body.theme-newsprint .mood-btn { border-radius: 0; }
+body.theme-ios26 .mood-cell { background: rgba(0,0,30,0.06); }
+body.theme-ios26 .mood-btn.active { border-color: #fff; }
