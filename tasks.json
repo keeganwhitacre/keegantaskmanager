@@ -486,7 +486,7 @@
         ],
         "read": [
           false,
-          false,
+          true,
           false,
           false,
           false,
@@ -529,5 +529,5 @@
       "total": 450
     }
   },
-  "updated": "2026-03-04T00:34:45.665Z"
+  "updated": "2026-03-04T02:50:15.328Z"
 }
