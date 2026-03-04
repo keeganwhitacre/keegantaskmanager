@@ -28,7 +28,7 @@
 <div class="header">
   <div class="header-top">
     <div>
-      <div class="greeting">Hey Keegan</div>
+      <div class="greeting" id="secretBelTrigger" style="cursor:pointer; display:inline-block;">Hey Keegan</div>
       <div class="date-line" id="dateDisplay"></div>
       <div class="date-sub" id="dateSub"></div>
     </div>
@@ -46,22 +46,21 @@
   </div>
 </div>
 
-<div class="tab-bar">
+<div class="tab-bar hide-in-bel hide-in-project">
   <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
   <button class="tab-btn" id="tabDash" data-tab="dash">Dashboard</button>
   <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
-  <button class="tab-btn" id="tabBel" data-tab="bel">Bel ♡</button>
 </div>
-<div class="search-trigger hide-in-dash" id="searchTrigger" title="Search">
+<div class="search-trigger hide-in-dash hide-in-bel hide-in-project" id="searchTrigger" title="Search">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   <span>Search</span>
 </div>
 
-<div class="search-wrap hide-in-dash" id="searchWrap">
+<div class="search-wrap hide-in-dash hide-in-bel hide-in-project" id="searchWrap">
   <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
 </div>
 
-<div class="focus-banner" id="focusBanner">
+<div class="focus-banner hide-in-bel hide-in-project" id="focusBanner">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
      <span style="font-weight:700; letter-spacing:0.1em; font-size:11px; text-transform:uppercase;">Focus Mode</span>
      <span id="pomoTaskLabel" style="font-size:11px; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%;">No task pinned</span>
@@ -76,7 +75,7 @@
   <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
 </div>
 
-<div class="quick-add-wrap hide-in-dash" id="quickAddWrap">
+<div class="quick-add-wrap hide-in-dash hide-in-bel hide-in-project" id="quickAddWrap">
   <div class="quick-add-row">
     <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
     <button class="quick-add-send" id="quickAddSend">
@@ -85,7 +84,7 @@
   </div>
 </div>
 
-<div class="focus-strip hide-in-focus hide-in-dash" id="focusStrip">
+<div class="focus-strip hide-in-focus hide-in-dash hide-in-bel hide-in-project" id="focusStrip">
   <div class="focus-dot"></div>
   <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
     <div class="focus-eye">Pinned Focus</div>
@@ -96,7 +95,7 @@
   <div class="focus-arr" id="focusArr">›</div>
 </div>
 
-<div class="filter-scroll hide-in-focus hide-in-dash" id="filterRow">
+<div class="filter-scroll hide-in-focus hide-in-dash hide-in-bel hide-in-project" id="filterRow">
   <div class="chip active" data-filter="all">All</div>
   <div class="chip" data-filter="today">Today</div>
   <div class="chip" data-filter="manuscript">Manuscript</div>
@@ -110,8 +109,8 @@
   <div class="chip" data-filter="archive">Archive</div>
 </div>
 
-<div id="taskList" class="hide-in-dash" style="min-height:calc(100vh - 320px);"></div>
-<div class="spacer hide-in-dash" id="spacerEl"></div>
+<div id="taskList" class="hide-in-dash hide-in-bel hide-in-project" style="min-height:calc(100vh - 320px);"></div>
+<div class="spacer hide-in-dash hide-in-bel hide-in-project" id="spacerEl"></div>
 
 <div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
@@ -121,7 +120,51 @@
   <div id="projectsList"></div>
 </div>
 
+<div id="projectDetailView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; align-items:center; margin-bottom:16px;">
+    <button id="closeProjectDetailBtn" class="icon-btn" style="margin-right:12px;">‹</button>
+    <div class="sheet-title" style="margin-bottom:0; flex:1;">Project details</div>
+    <div class="icon-btn" id="delProjectDetailBtn" style="border-color:transparent; background:transparent;">
+      <svg viewBox="0 0 24 24" style="stroke:var(--danger);"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    </div>
+  </div>
+  
+  <input class="input" id="pdTitleInput" type="text" placeholder="Project Name" style="font-size:22px; font-weight:600; background:transparent; border-color:transparent; padding:0; box-shadow:none; margin-bottom:16px;">
+  
+  <div style="display:flex; gap:10px; margin-bottom:16px;">
+    <div style="flex:1;">
+      <div class="sheet-label">Stage</div>
+      <div class="chip-row" id="pdStageRow" style="margin-bottom:0;">
+        <div class="s-chip" data-val="Planning">Plan</div>
+        <div class="s-chip" data-val="Active">Active</div>
+        <div class="s-chip" data-val="Waiting">Wait</div>
+        <div class="s-chip" data-val="Review">Review</div>
+        <div class="s-chip" data-val="Done">Done</div>
+      </div>
+    </div>
+    <div>
+      <div class="sheet-label">Deadline</div>
+      <input class="input" id="pdDueInput" type="date" style="color-scheme:dark; margin-bottom:0; padding:6px 10px; font-size:13px; border-radius:8px;">
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Project Notes</div>
+    <div id="pdNotesInput" class="bel-notes" contenteditable="true" placeholder="Dump all ideas, links, and status updates here..."></div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:12px;">
+    <div class="sheet-label" style="margin-bottom:0;">Linked Tasks</div>
+    <button id="pdAddTaskBtn" style="background:transparent; border:none; color:var(--accent); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add Task</button>
+  </div>
+  <div id="pdTasksList"></div>
+</div>
+
 <div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; align-items:center; margin-bottom:16px;">
+    <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">‹</button>
+    <div class="sheet-title" style="margin-bottom:0; color:var(--cat-bel, #ff8bc8);">Us</div>
+  </div>
   
   <div class="d-card" style="border-color:var(--cat-bel); position:relative; overflow:hidden;">
     <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
@@ -138,22 +181,30 @@
 
   <div class="d-card">
     <div class="d-card-label" style="color:var(--cat-bel);">Gift Ideas</div>
-    <textarea class="d-reflect-input" id="belGifts" rows="3" placeholder="Jot down things she mentions..." autocorrect="off" autocapitalize="sentences"></textarea>
+    <div id="belGiftsList" class="bel-list"></div>
+    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+      <input class="input" id="belGiftInput" type="text" placeholder="Jot down an idea..." style="margin-bottom:0;flex:1;">
+      <button class="shop-add-btn" id="belGiftAddBtn" style="background:var(--cat-bel); color:#fff;">Add</button>
+    </div>
   </div>
 
   <div class="d-card">
     <div class="d-card-label" style="color:var(--cat-bel);">Date Ideas</div>
-    <textarea class="d-reflect-input" id="belDates" rows="3" placeholder="Places to go, things to do..." autocorrect="off" autocapitalize="sentences"></textarea>
+    <div id="belDatesList" class="bel-list"></div>
+    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+      <input class="input" id="belDateInput" type="text" placeholder="Places to go..." style="margin-bottom:0;flex:1;">
+      <button class="shop-add-btn" id="belDateAddBtn" style="background:var(--cat-bel); color:#fff;">Add</button>
+    </div>
   </div>
 
   <div class="d-card">
     <div class="d-card-label" style="color:var(--cat-bel);">Her Favorites</div>
-    <textarea class="d-reflect-input" id="belFavs" rows="3" placeholder="Coffee orders, flowers, snacks..." autocorrect="off" autocapitalize="sentences"></textarea>
+    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks..."></div>
   </div>
 
   <div class="d-card">
     <div class="d-card-label" style="color:var(--cat-bel);">Things I Love About Her</div>
-    <textarea class="d-reflect-input" id="belLove" rows="3" placeholder="The little things..." autocorrect="off" autocapitalize="sentences"></textarea>
+    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things..."></div>
   </div>
 </div>
 
@@ -168,7 +219,7 @@
   <textarea id="scratchpad" class="notes-textarea" placeholder="Dump thoughts here... ideas, R output, things to remember, half-formed hypotheses."></textarea>
 </div>
 
-<div id="dashView">
+<div id="dashView" class="hide-in-bel hide-in-project">
   <div class="d-card">
     <div class="d-week-meta" id="dWeekMeta"></div>
     <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
@@ -271,11 +322,11 @@
   </div>
 </div>
 
-<div id="focusModeBtn">
+<div id="focusModeBtn" class="hide-in-bel hide-in-project">
   <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
   <span id="focusBtnLabel">Focus</span>
 </div>
-<div class="fab" id="fab">+</div>
+<div class="fab hide-in-bel hide-in-project" id="fab">+</div>
 
 <div class="sheet" id="shopSheet">
   <div class="handle"></div>
@@ -294,34 +345,6 @@
 </div>
 
 <div class="overlay" id="overlay"></div>
-
-<div class="sheet" id="projectSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" id="projectSheetTitle" style="margin-bottom:0">New Project</div>
-    <div id="closeProjectSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Project Name</div>
-  <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:14px;">
-  
-  <div class="sheet-label">Stage</div>
-  <div class="chip-row" id="projStageRow">
-    <div class="s-chip active" data-val="Planning">Planning</div>
-    <div class="s-chip" data-val="Active">Active</div>
-    <div class="s-chip" data-val="Waiting">Waiting</div>
-    <div class="s-chip" data-val="Review">Review</div>
-    <div class="s-chip" data-val="Done">Done</div>
-  </div>
-
-  <div class="sheet-label">Deadline (Optional)</div>
-  <input class="input" id="projDueInput" type="date" style="color-scheme:dark; margin-bottom:14px;">
-
-  <div class="sheet-label">Project Notes</div>
-  <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-  
-  <button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
-  <button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
-</div>
 
 <div class="sheet" id="addSheet">
   <div class="handle"></div>
