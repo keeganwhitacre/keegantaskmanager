@@ -13,6 +13,15 @@ var CAT_LABEL = { manuscript:'manuscript', lab:'lab ops', phd:'phd apps', conf:'
 
 var state = { tasks:[], settings:{ghUser:'',ghRepo:'',ghToken:''}, focus:null, filter:'all', editingId:null, pendingSync:false, sha:null, focusMode:false, notesOpen:false, scratchpad:'', collapsed:{}, _shaLoaded:true };
 
+// POMODORO STATE
+var pomo = {
+  timer: null,
+  timeLeft: 25 * 60,
+  mode: 'work', // 'work', 'shortBreak', 'longBreak'
+  running: false,
+  cycles: 0
+};
+
 function loadLocal() {
   try { var r=localStorage.getItem(STORE_KEY); if(r) state.tasks=JSON.parse(r); } catch(e){}
   try { var s=localStorage.getItem(SETTINGS_KEY); if(s) state.settings=JSON.parse(s); } catch(e){}
@@ -23,7 +32,6 @@ function loadLocal() {
   
   if(state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) state._shaLoaded=false;
   
-  // Data Migration: Clean up old 'section' keys and convert single 'category' to array
   state.tasks.forEach(function(t){ 
     if(t.section === 'today') t.pinnedToday = true; 
     if(t.category && !t.categories) t.categories = [t.category];
@@ -154,7 +162,7 @@ function isActuallyDueToday(t){
   var today=new Date(); today.setHours(0,0,0,0);
   var d=new Date(t.due+'T00:00:00');
   if(isNaN(d)) return false;
-  return Math.round((d-today)/86400000) === 0; // STRICTLY today
+  return Math.round((d-today)/86400000) === 0;
 }
 
 function dueClass(due){
@@ -243,11 +251,14 @@ function makeTaskWrap(t, delay) {
   var dueHtml=t.due?'<span class="due '+dc+'">'+esc(fmtDue(t.due))+'</span>':'';
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
   
+  // Inject Pomodoro tracker dots
+  var pomoHtml = t.pomodoros ? '<span class="cat" style="background:transparent; border:none; padding:0; margin-left:4px; font-size:12px;" title="'+t.pomodoros+' pomodoros completed">'+ '🍅'.repeat(t.pomodoros) +'</span>' : '';
+  
   el.innerHTML=
     '<div class="cb">'+(t.done?'':'')+'</div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
-      '<div class="task-row">'+catHtml+statusHtml+dueHtml+'</div>'+
+      '<div class="task-row">'+catHtml+statusHtml+dueHtml+pomoHtml+'</div>'+
       noteHtml+
     '</div>';
     
@@ -281,12 +292,13 @@ function makeArchiveWrap(t, delay) {
     completedStr='Completed '+fmtShort(cd);
   }
   var noteHtml=t.note?'<div class="note'+(t.noteIsMono?' note-mono':'')+'">'+esc(t.note)+'</div>':'';
+  var pomoHtml = t.pomodoros ? '<span class="cat" style="background:transparent; border:none; padding:0; margin-left:4px; font-size:12px;">'+ '🍅'.repeat(t.pomodoros) +'</span>' : '';
 
   el.innerHTML=
     '<div class="cb"></div>'+
     '<div class="task-body">'+
       '<div class="task-title">'+esc(t.title)+'</div>'+
-      '<div class="task-row">'+catHtml+'</div>'+
+      '<div class="task-row">'+catHtml+pomoHtml+'</div>'+
       (completedStr?'<div class="archive-meta">'+completedStr+'</div>':'')+
       noteHtml+
       '<div style="margin-top:6px;display:-webkit-flex;display:flex;gap:12px;">'+
@@ -423,8 +435,11 @@ function render(){
 
   var ft=null;
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
+  
+  // Set up Focus & Pomodoro Headers
   if(ft){
     document.getElementById('focusTitle').textContent=ft.title;
+    document.getElementById('pomoTaskLabel').textContent=ft.title;
     var parts=[]; 
     if(ft.categories && ft.categories.length) parts.push(CAT_LABEL[ft.categories[0]]||ft.categories[0]); 
     if(ft.due) parts.push(ft.due);
@@ -432,6 +447,7 @@ function render(){
   } else {
     state.focus=null;
     document.getElementById('focusTitle').textContent='No task pinned';
+    document.getElementById('pomoTaskLabel').textContent='No task pinned';
     document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
   }
   
@@ -459,7 +475,6 @@ function render(){
       list.appendChild(section);
     }
   } else {
-    // Grouping Engine by Time
     var timeGroups = { overdue: [], today: [], tomorrow: [], week: [], later: [] };
     
     state.tasks.forEach(function(t){
@@ -557,6 +572,70 @@ function render(){
 }
 
 // 
+// POMODORO TIMER LOGIC
+// 
+function formatTime(sec) {
+  var m = Math.floor(sec / 60);
+  var s = sec % 60;
+  return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+}
+
+function updatePomoUI() {
+  document.getElementById('pomoDisplay').textContent = formatTime(pomo.timeLeft);
+  var statusTxt = 'Work Session';
+  if(pomo.mode === 'shortBreak') statusTxt = 'Short Break (5m)';
+  if(pomo.mode === 'longBreak') statusTxt = 'Long Break (15m)';
+  document.getElementById('pomoStatus').textContent = statusTxt + ' • ' + pomo.cycles + ' completed';
+  document.getElementById('pomoStartBtn').textContent = pomo.running ? 'Pause' : 'Start';
+}
+
+function tickPomo() {
+  pomo.timeLeft--;
+  if (pomo.timeLeft <= 0) {
+    clearInterval(pomo.timer);
+    pomo.running = false;
+    
+    if (pomo.mode === 'work') {
+      pomo.cycles++;
+      
+      // Auto-log a tomato to the focused task
+      if(state.focus) {
+        var t = state.tasks.find(function(x) { return x.id === state.focus; });
+        if(t) {
+          t.pomodoros = (t.pomodoros || 0) + 1;
+          saveLocal(); ghPush(); render();
+        }
+      }
+      
+      pomo.mode = (pomo.cycles % 4 === 0) ? 'longBreak' : 'shortBreak';
+      pomo.timeLeft = (pomo.mode === 'longBreak') ? 15 * 60 : 5 * 60;
+      showToast('Session complete! Take a break.');
+    } else {
+      pomo.mode = 'work';
+      pomo.timeLeft = 25 * 60;
+      showToast('Break over! Ready to focus?');
+    }
+  }
+  updatePomoUI();
+}
+
+document.getElementById('pomoStartBtn').addEventListener('click', function(){
+  if(pomo.running) {
+    clearInterval(pomo.timer);
+    pomo.running = false;
+  } else {
+    pomo.running = true;
+    pomo.timer = setInterval(tickPomo, 1000);
+  }
+  updatePomoUI();
+});
+
+document.getElementById('pomoSkipBtn').addEventListener('click', function(){
+   pomo.timeLeft = 0;
+   tickPomo();
+});
+
+// 
 // TASK ACTIONS
 // 
 function toggleDone(id){
@@ -594,10 +673,12 @@ function deleteTask(id){
   formatDate();
   if(state.focus===null){
     document.getElementById('focusTitle').textContent='No task pinned';
+    document.getElementById('pomoTaskLabel').textContent='No task pinned';
     document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
   }
 
   showUndoToast(t.title);
+  render();
 }
 
 function showUndoToast(title){
@@ -675,13 +756,15 @@ function saveTask(){
   if(state.editingId){
     for(var i=0;i<state.tasks.length;i++){
       if(state.tasks[i].id===state.editingId){
-        Object.assign(state.tasks[i],{title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono});
+        // Preserve pomodoros count on edit
+        var currentPomo = state.tasks[i].pomodoros || 0;
+        Object.assign(state.tasks[i],{title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono, pomodoros: currentPomo});
         break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({id:uid(),title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false});
+    state.tasks.push({id:uid(),title:title,categories:categories,status:status,priority:priority,pinnedToday:pinnedToday,note:note,due:due,noteIsMono:noteIsMono,done:false, pomodoros:0});
     showToast('Task added');
   }
   closeSheets(); saveLocal(); render(); ghPush();
@@ -715,7 +798,7 @@ document.getElementById('focusModeBtn').addEventListener('click', function(){
   state.focusMode = !state.focusMode;
   document.body.classList.toggle('focus-mode', state.focusMode);
   render();
-  showToast(state.focusMode ? 'Focus mode on — Today only' : 'Showing all tasks');
+  showToast(state.focusMode ? 'Focus mode on — Timer ready' : 'Showing all tasks');
 });
 
 // 
@@ -958,7 +1041,8 @@ function submitQuickAdd(){
     due: new Date().toISOString().split('T')[0],
     noteIsMono: false, 
     pinnedToday: true,
-    done: false
+    done: false,
+    pomodoros: 0
   };
   
   state.tasks.push(newTask);
@@ -1097,6 +1181,7 @@ var dState = {
   reflectionDate: '',
   book: null,
   habits: {},
+  moods: {}
 };
 
 function getISOWeek(d) {
@@ -1347,6 +1432,68 @@ document.getElementById('dReflect').addEventListener('input', function() {
   reflectTimer = setTimeout(saveDash, 800);
 });
 
+//
+// MOOD TRACKER
+//
+function renderMood() {
+  if (!dState.moods) dState.moods = {};
+  var today = getTodayStr();
+  var todayMood = dState.moods[today];
+
+  // Update buttons
+  document.querySelectorAll('.mood-btn').forEach(function(btn) {
+    var val = parseInt(btn.dataset.val);
+    btn.classList.toggle('active', val === todayMood);
+  });
+
+  // Render heatmap (last 14 days)
+  var heatmap = document.getElementById('dMoodHeatmap');
+  heatmap.innerHTML = '';
+  var colors = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
+  
+  var sum = 0, count = 0;
+  for(var i=13; i>=0; i--) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    var val = dState.moods[dStr];
+    
+    var cell = document.createElement('div');
+    cell.className = 'mood-cell';
+    if(val) {
+      cell.style.background = colors[val];
+      sum += val;
+      count++;
+    }
+    heatmap.appendChild(cell);
+  }
+  
+  var avgEl = document.getElementById('dMoodAvg');
+  if(count > 0) {
+    var avg = (sum/count).toFixed(1);
+    avgEl.textContent = '14-day avg: ' + avg;
+  } else {
+    avgEl.textContent = '';
+  }
+}
+
+document.getElementById('dMoodSelect').addEventListener('click', function(e) {
+  var btn = e.target.closest('.mood-btn');
+  if(!btn) return;
+  var val = parseInt(btn.dataset.val);
+  var today = getTodayStr();
+  if(!dState.moods) dState.moods = {};
+  
+  // Toggle off if clicking same
+  if(dState.moods[today] === val) {
+    delete dState.moods[today];
+  } else {
+    dState.moods[today] = val;
+  }
+  saveDash(true);
+  renderMood();
+});
+
 function renderHabits() {
   var now = new Date();
   var week = getISOWeek(now);
@@ -1483,6 +1630,7 @@ function renderDashFull() {
   renderCountdown();
   renderQuote();
   renderReflection();
+  renderMood();
   renderHabits();
   renderBook();
 }
@@ -1727,8 +1875,8 @@ function onDragEnd(e) {
 function seedData(){
   if(state.tasks.length>0) return;
   state.tasks=[
-    {id:uid(),title:'Finalize SAS poster methods section',categories:['conf'],status:'active',priority:'hi',pinnedToday:true,due:getTodayStr(),note:'',done:false},
-    {id:uid(),title:'Plan spring trip',categories:['bel', 'personal'],status:'active',priority:'md',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false}
+    {id:uid(),title:'Finalize SAS poster methods section',categories:['conf'],status:'active',priority:'hi',pinnedToday:true,due:getTodayStr(),note:'',done:false, pomodoros: 0},
+    {id:uid(),title:'Plan spring trip',categories:['bel', 'personal'],status:'active',priority:'md',due:(function(){var d=new Date();d.setDate(d.getDate()+5);return d.toISOString().split('T')[0];})(),note:'',done:false, pomodoros: 0}
   ];
   saveLocal();
 }
