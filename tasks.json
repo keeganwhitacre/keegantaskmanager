@@ -370,8 +370,9 @@
       "due": "",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-05T16:21:18.039Z"
     },
     {
       "id": "mmdj4g1852f8",
@@ -624,5 +625,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T15:43:53.336Z"
+  "updated": "2026-03-05T16:21:18.044Z"
 }
