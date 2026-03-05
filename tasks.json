@@ -404,10 +404,11 @@
       "note": "",
       "due": "2026-03-05",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
       "pinnedToday": true,
-      "projectId": "mmchwskbfpig"
+      "projectId": "mmchwskbfpig",
+      "completedAt": "2026-03-05T16:25:49.662Z"
     },
     {
       "id": "mmdi4tityz3q",
@@ -625,5 +626,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T16:21:18.044Z"
+  "updated": "2026-03-05T16:25:49.665Z"
 }
