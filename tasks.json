@@ -433,7 +433,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "reading queue\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing\n- sorting for projects?",
+      "note": "reading queue\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing\n- sorting for projects?\n- prompts return for daily reflection",
       "due": "2026-03-05",
       "noteIsMono": false,
       "pinnedToday": true,
@@ -491,6 +491,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-05",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -587,16 +593,10 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:38:29.479Z"
+  "updated": "2026-03-05T14:52:24.814Z"
 }
