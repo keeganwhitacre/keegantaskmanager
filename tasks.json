@@ -444,6 +444,22 @@
       "done": false,
       "pomodoros": 0,
       "projectId": ""
+    },
+    {
+      "id": "mmdrdpgk1v1j",
+      "title": "Finalize poster",
+      "categories": [
+        "conf"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "- change age-> objective fragmentation comments bc interoception gets worse",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -627,5 +643,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T17:23:49.303Z"
+  "updated": "2026-03-05T17:47:50.951Z"
 }
