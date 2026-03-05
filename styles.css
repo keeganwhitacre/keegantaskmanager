@@ -195,12 +195,19 @@ html, body {
   color: var(--text-main);
   font-family: var(--font-main);
   font-size: 14px;
-  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* Scroll Chaining Lock */
+body:has(.overlay.open), 
+body:has(.sheet.open) { 
+  overflow: hidden; 
 }
 
 /* iOS 26 Liquid Glass Background Gradient */
@@ -237,7 +244,21 @@ body.theme-ios26::before {
 
 /* ── VIEW ROUTING OVERRIDES ── */
 body.focus-mode .hide-in-focus { display: none !important; }
-body.notes-mode .hide-in-focus, body.notes-mode .filter-scroll, body.notes-mode #taskList, body.notes-mode #spacerEl, body.notes-mode #focusModeBtn, body.notes-mode #fab, body.notes-mode .search-wrap, body.notes-mode .focus-banner, body.notes-mode .tab-bar { display: none !important; }
+
+/* Notes Mode Routing Fix */
+body.notes-mode .hide-in-focus, 
+body.notes-mode .filter-scroll, 
+body.notes-mode #taskList, 
+body.notes-mode #spacerEl, 
+body.notes-mode #focusModeBtn, 
+body.notes-mode #fab, 
+body.notes-mode .search-wrap, 
+body.notes-mode .focus-banner, 
+body.notes-mode .tab-bar,
+body.notes-mode #dashView,
+body.notes-mode #projectsView,
+body.notes-mode #projectDetailView,
+body.notes-mode #belView { display: none !important; }
 body.notes-mode #notesView { display: block !important; }
 
 body.dash-mode .hide-in-dash { display: none !important; }
@@ -406,7 +427,6 @@ body.focus-mode #focusBanner { display: flex; }
   max-height: 92vh; overflow-y: auto; 
   backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter);
   
-  /* BUG FIXES */
   visibility: hidden; 
   overscroll-behavior-y: contain; 
   transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), visibility 0s 0.28s; 
@@ -428,7 +448,7 @@ body.focus-mode #focusBanner { display: flex; }
 .input::placeholder { color: var(--text-muted); opacity: 0.7; }
 textarea.input { resize: vertical; min-height: 80px; }
 select.input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; color: var(--text-main); }
-input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; display: block; -webkit-appearance: none; margin: 0; }
+input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; display: block; -webkit-appearance: none; margin: 0 0 14px 0; }
 
 .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .s-chip { padding: 5px 13px; border-radius: var(--radius-pill); border: 1px solid var(--border-main); background: var(--bg-surface); color: var(--text-muted); font-family: var(--font-mono); font-size: 11px; cursor: pointer; transition: all 0.12s; }
