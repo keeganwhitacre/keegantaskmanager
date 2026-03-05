@@ -358,6 +358,20 @@
       "pomodoros": 0
     },
     {
+      "id": "mmdkck5crkek",
+      "title": "Yuritza rollercoaster figure",
+      "categories": [],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "1772565218118",
       "title": "Reply to Ashley with slack plans",
       "text": "Reply to Ashley with slack plans",
@@ -417,20 +431,6 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
-    },
-    {
-      "id": "mmdkck5crkek",
-      "title": "Yuritza rollercoaster figure",
-      "categories": [],
-      "status": "active",
-      "priority": "lo",
-      "pinnedToday": true,
-      "note": "",
-      "due": "",
-      "projectId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     }
   ],
   "projects": [
@@ -475,12 +475,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-05",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -577,10 +571,16 @@
         ]
       }
     },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:31:25.614Z"
+  "updated": "2026-03-05T14:33:38.741Z"
 }
