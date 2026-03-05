@@ -226,21 +226,33 @@ body.theme-ios26::before {
   .header-top { padding-bottom: 4px; }
   .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #notesView, #projectsView, #projectDetailView, #belView { padding: 0 32px 14px; }
   .spacer { height: 80px; }
-  .fab, #focusModeBtn { left: calc(50% - 360px + 24px); right: auto; }
-  .sheet { max-width: 720px; left: 50%; transform: translateX(-50%) translateY(100%); right: auto; width: 720px; }
-  .sheet.open { transform: translateX(-50%) translateY(0); }
-  .sync-bar, .bottom-fade, .toast, .toast-undo { max-width: 720px; left: 50%; transform: translateX(-50%); }
+  
+  #focusModeBtn { left: calc(50% - 360px + 24px); right: auto; }
+  .fab { right: calc(50% - 360px + 24px); left: auto; }
+  
+  /* FIXED: Center sheets and overlays robustly so JS dragging doesn't break them */
+  .sheet { max-width: 720px; width: 720px; left: 0; right: 0; margin: 0 auto; transform: translateY(100%); }
+  .sheet.open { transform: translateY(0); }
+  .sync-bar, .bottom-fade { max-width: 720px; left: 0; right: 0; margin: 0 auto; transform: none; }
+  .toast, .toast-undo { max-width: 720px; }
+  
   .d-grid-2 .d-card { min-height: 120px; }
-  .search-trigger { right: calc(50% - 360px + 32px); }
+  .search-trigger { right: auto; margin-left: 12px; }
 }
 
 @media (min-width: 1100px) {
   body { max-width: 860px; }
   .header { padding: 24px 40px 0; }
   .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #notesView, #projectsView, #projectDetailView, #belView { padding: 0 40px 14px; }
-  .fab, #focusModeBtn { left: calc(50% - 430px + 24px); }
-  .sheet { max-width: 860px; width: 860px; }
-  .sync-bar, .bottom-fade { max-width: 860px; }
+  
+  #focusModeBtn { left: calc(50% - 430px + 24px); right: auto; }
+  .fab { right: calc(50% - 430px + 24px); left: auto; }
+  
+  /* FIXED for larger screens too */
+  .sheet { max-width: 860px; width: 860px; left: 0; right: 0; margin: 0 auto; }
+  .sync-bar, .bottom-fade { max-width: 860px; left: 0; right: 0; margin: 0 auto; transform: none; }
+  
+  .search-trigger { right: auto; margin-left: 20px; }
 }
 
 /* ── VIEW ROUTING OVERRIDES ── */
