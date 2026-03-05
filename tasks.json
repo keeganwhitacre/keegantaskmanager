@@ -438,7 +438,7 @@
       "status": "active",
       "priority": "lo",
       "note": "- random selector in bel dates\n- prompts return for daily reflection",
-      "due": "2026-03-05",
+      "due": "2026-03-06",
       "noteIsMono": false,
       "pinnedToday": false,
       "done": false,
@@ -643,5 +643,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T20:46:09.080Z"
+  "updated": "2026-03-05T20:46:11.007Z"
 }
