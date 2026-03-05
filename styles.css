@@ -680,17 +680,26 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   DEEP FOCUS MODE
+   DEEP FOCUS MODE (UPDATED)
 ══════════════════════════════════════════════════════════════════ */
+/* Target html too so the desktop background goes black */
+html.deep-focus-mode, 
 body.deep-focus-mode {
   background: #000 !important;
 }
 
-body.deep-focus-mode::before {
-  display: none !important; /* Hides the iOS glass background gradient */
+body.deep-focus-mode {
+  /* Force text colors to be light so iOS/Newsprint themes remain readable */
+  --text-main: #ffffff !important;
+  --text-muted: rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
 }
 
-/* Hide everything except the focus banner */
+body.deep-focus-mode::before {
+  display: none !important; 
+}
+
+/* Hide everything except the focus banner, NOW INCLUDING .bottom-fade */
 body.deep-focus-mode .header,
 body.deep-focus-mode .tab-bar,
 body.deep-focus-mode #searchTrigger,
@@ -703,7 +712,8 @@ body.deep-focus-mode #projectsView,
 body.deep-focus-mode #projectDetailView,
 body.deep-focus-mode #notesView,
 body.deep-focus-mode #belView,
-body.deep-focus-mode .sync-bar {
+body.deep-focus-mode .sync-bar,
+body.deep-focus-mode .bottom-fade {
   display: none !important;
 }
 
@@ -717,9 +727,9 @@ body.deep-focus-mode #focusBanner {
   max-width: 450px;
   margin: 0;
   z-index: 9999;
-  background: rgba(15, 15, 15, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  background: #000 !important; /* Make banner completely black to blend in */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9) !important;
   align-items: center;
   text-align: center;
   padding: 32px 24px;
