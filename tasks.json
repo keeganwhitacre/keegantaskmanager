@@ -460,6 +460,22 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmdxs2ikz670",
+      "title": "Edit table for paper",
+      "categories": [
+        "manuscript"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "Address comments etc.",
+      "due": "2026-03-08",
+      "projectId": "mmc9gxu8tdgk",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -643,5 +659,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T20:46:32.410Z"
+  "updated": "2026-03-05T20:46:58.753Z"
 }
