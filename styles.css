@@ -339,7 +339,7 @@ body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, bod
 .focus-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 .focus-arr { color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
 
-#focusBanner { display: none; margin: 0 20px 14px; background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 16px; color: var(--text-main); flex-direction: column; align-items: stretch; gap: 8px; font-family: var(--font-mono); letter-spacing: 0.04em; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
+#focusBanner { display: none; margin: 0 20px 14px; background: var(--bg-surface); border: 1px solid var(--border-main); border-left: 3px solid var(--accent); border-radius: var(--radius-card); padding: 16px; color: var(--text-main); flex-direction: column; align-items: stretch; gap: 8px; font-family: var(--font-mono); letter-spacing: 0.04em; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 body.focus-mode #focusBanner { display: flex; }
 .pomo-btn { background: var(--accent); color: var(--accent-text); border: none; border-radius: var(--radius-pill); padding: 8px 18px; font-weight: 600; cursor: pointer; font-family: var(--font-mono); font-size: 13px; }
 .pomo-btn.alt { background: var(--accent-faded); color: var(--accent); }
@@ -480,7 +480,7 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
    DASHBOARD
 ══════════════════════════════════════════════════════════════════ */
 #dashView { padding: 0 20px; padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
-.d-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
+.d-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-left: 3px solid var(--accent); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 .d-card-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
 .d-grid-2 { display: flex; gap: 10px; margin-bottom: 12px; }
 .d-grid-2 .d-card { flex: 1; margin-bottom: 0; }
@@ -566,7 +566,7 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 /* ══════════════════════════════════════════════════════════════════
    PROJECTS
 ══════════════════════════════════════════════════════════════════ */
-.project-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; cursor: pointer; position: relative; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
+.project-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-left: 3px solid var(--accent); border-radius: var(--radius-card); padding: 16px; margin-bottom: 12px; cursor: pointer; position: relative; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .project-title { font-size: 16px; font-weight: 600; color: var(--text-main); font-family: var(--font-main); }
 .project-stage { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--border-divider); color: var(--text-muted); }
@@ -637,5 +637,5 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 .shop-cb.checked::after { content: '✓'; font-size: 12px; color: var(--accent-text); font-weight: 700; }
 .shop-item-text { flex: 1; font-size: 14px; color: var(--text-main); }
 .shop-item-text.checked { text-decoration: line-through; color: var(--text-muted); }
-.shop-del { font-size: 18px; color: var(--text-muted); cursor: pointer; padding: 0 4px; }
+.shop-del { font-size: 18px; color: var(--text-muted); cursor: pointer; padding: 10px; margin: -10px -4px -10px 0; }
 .shop-empty { font-size: 13px; color: var(--text-muted); text-align: center; padding: 24px 0; }
