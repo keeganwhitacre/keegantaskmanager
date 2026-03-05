@@ -398,7 +398,7 @@
     "love": "<br>",
     "giftsList": []
   },
-  "scratchpad": "\n- reading queue\n——- book notes and thoughts\n——- quotes from books?\n- gaming intentionally tracker?\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing",
+  "scratchpad": "\n- reading queue\n- gaming intentionally tracker?\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing",
   "shop": [],
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
@@ -516,5 +516,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-05T13:25:47.815Z"
+  "updated": "2026-03-05T13:25:57.534Z"
 }
