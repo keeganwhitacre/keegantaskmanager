@@ -216,7 +216,7 @@ body.theme-bel-bel {
   --fab-bg: linear-gradient(to bottom left, #FB5A27 25%, #8115E6 75%);
   --fab-border: none;
   --fab-color: #ffffff;
-  --fab-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --fab-shadow: var(--shadow-base);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -271,11 +271,11 @@ body.theme-bel-bel .sheet-btn.primary,
 body.theme-bel-bel .pomo-btn,
 body.theme-bel-bel .quick-add-send,
 body.theme-bel-bel .shop-add-btn {
-  background: linear-gradient(to bottom left, #FB5A27, #8115E6);
+  background: linear-gradient(to bottom left, #FB5A27 20%, #8115E6 80%);
   border: none;
   color: #ffffff;
   /* Added the icy inset glow and softened the drop shadow */
-  box-shadow: inset 0 0 12px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 0 20px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 
