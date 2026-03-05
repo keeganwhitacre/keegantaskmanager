@@ -204,15 +204,14 @@ body.theme-bel-bel {
   --accent: #FB5A27; 
   --accent-text: #ffffff;
   
-  /* Updated Task Priority Colors */
-  --task-hi: #FB5A27; 
-  --task-md: #8115E6; 
-  --task-lo: rgba(255, 255, 255, 0.3); /* Softer, glassy white */
-  
-  /* The "Wide Glass Border / Interior Glow" */
- /* Using the 195, 195, 255 RGB for the inner glass reflection */
-  --shadow-base: inset 0 0 40px rgba(195, 195, 255, 0.1), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
-  
+    /* Solid colors picked from along the gradient spectrum */
+  --task-hi: #FB5A27; /* Orange */
+  --task-md: #BE3786; /* Magenta midpoint */
+  --task-lo: rgba(129, 21, 230, 0.6); /* Faded Purple */
+
+  /* Reduced the external drop shadow from 0.3/0.4 down to 0.1 for a flatter look */
+  --shadow-base: inset 0 0 60px rgba(195, 195, 255, 0.20), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+
   /* FAB uses the solid gradient */
   --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
   --fab-border: none;
@@ -264,7 +263,7 @@ body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
 /* ─────────────────────────────────────────────────────────
    ACTIVE GRADIENTS & GLASS FIXES
 ───────────────────────────────────────────────────────── */
-/* Apply the sweeping gradient ONLY to selected elements */
+/* Apply the sweeping gradient + icy glass inset to selected elements */
 body.theme-bel-bel .tab-btn.active,
 body.theme-bel-bel .chip.active,
 body.theme-bel-bel .s-chip.active,
@@ -275,8 +274,10 @@ body.theme-bel-bel .shop-add-btn {
   background: linear-gradient(to bottom left, #FB5A27, #8115E6);
   border: none;
   color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  /* Added the icy inset glow and softened the drop shadow */
+  box-shadow: inset 0 0 12px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
 
 /* Force all cards, sheets, and inputs to use the shadow glow instead of borders */
 body.theme-bel-bel .task,
@@ -308,42 +309,13 @@ body.theme-bel-bel .shop-cb.checked {
 }
 
 /* ─────────────────────────────────────────────────────────
-   GRADIENT PRIORITY STRIPES (The Pseudo-Element Hack)
+   RESTORE NATIVE PRIORITY STRIPES
 ───────────────────────────────────────────────────────── */
-/* 1. Remove the solid borders from all tasks in this theme */
-body.theme-bel-bel .task {
-  border-left: none !important;
-}
+body.theme-bel-bel .task.hi { border-left: 3px solid var(--task-hi) !important; }
+body.theme-bel-bel .task.md { border-left: 3px solid var(--task-md) !important; }
+body.theme-bel-bel .task.lo { border-left: 3px solid var(--task-lo) !important; }
+body.theme-bel-bel .task { border-left: 3px solid transparent; }
 
-/* 2. Create the invisible 3px stripe container on the left edge */
-body.theme-bel-bel .task::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  /* This ensures the stripe follows the curve of your card's corners */
-  border-radius: inherit; 
-}
-
-/* 3. High Priority: Full vibrant gradient */
-body.theme-bel-bel .task.hi::before {
-  background: linear-gradient(to bottom, #FB5A27, #8115E6);
-  opacity: 1;
-}
-
-/* 4. Medium Priority: Flipped upside down, slightly softened */
-body.theme-bel-bel .task.md::before {
-  background: linear-gradient(to top, #FB5A27, #8115E6);
-  opacity: 0.8;
-}
-
-/* 5. Low Priority: Faded heavily into the glass */
-body.theme-bel-bel .task.lo::before {
-  background: linear-gradient(to bottom, #FB5A27, #8115E6);
-  opacity: 0.3;
-}
 
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
