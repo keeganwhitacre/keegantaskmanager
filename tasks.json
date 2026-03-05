@@ -397,13 +397,7 @@
     "giftsList": []
   },
   "scratchpad": "New ideas for app\n- active projects\n——status, date countdown, progress, notes\n- reading queue\n——- book notes and thoughts\n——- quotes from books?\n- gaming intentionally tracker?\n- bel tab \n—— belstuff moves here\n—— date ideas, tracker coming up etc",
-  "shop": [
-    {
-      "id": 1772652164987.9915,
-      "text": "Hhh",
-      "done": false
-    }
-  ],
+  "shop": [],
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
@@ -520,5 +514,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-05T11:50:10.204Z"
+  "updated": "2026-03-05T11:50:10.818Z"
 }
