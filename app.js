@@ -914,6 +914,7 @@ document.getElementById('monoToggle').addEventListener('click', function(){ var 
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
 var cps = document.getElementById('closeProjectSheet'); if(cps) cps.addEventListener('click', closeSheets);
 document.getElementById('closeSettingsSheet').addEventListener('click', closeSheets);
+document.getElementById('closeShopSheet').addEventListener('click', closeSheets);
 
 document.querySelectorAll('.sheet').forEach(function(sheet) {
   var startY = 0, dragging = false;
