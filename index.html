@@ -164,47 +164,47 @@
 <div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
   <div style="display:flex; align-items:center; margin-bottom:16px;">
     <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">‹</button>
-    <div class="sheet-title" style="margin-bottom:0; color:#ff2d78;">Us</div>
+    <div class="sheet-title" style="margin-bottom:0;">Us</div>
   </div>
   
-  <div class="d-card" style="border-color:#ff2d78; position:relative; overflow:hidden;">
+  <div class="d-card" style="position:relative; overflow:hidden;">
     <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
-    <div class="d-card-label" style="color:#ff2d78;">Time Together</div>
+    <div class="d-card-label">Time Together</div>
     <div id="belTimeCount" style="font-family:'DM Sans', sans-serif; font-size:32px; font-weight:600; line-height:1; margin-bottom:6px;">--</div>
     <div id="belNextAnniv" style="font-size:11px; opacity:0.6; font-family:'DM Mono', monospace;">Set anniversary date below</div>
-    <div id="editBelDateBtn" style="font-size:10px; color:#ff2d78; margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
+    <div id="editBelDateBtn" style="font-size:10px; color:var(--accent); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
     
     <div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
       <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
-      <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px; background:#ff2d78; border-color:#ff2d78; color:#fff;">Save</button>
+      <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
     </div>
   </div>
 
   <div class="d-card">
-    <div class="d-card-label" style="color:#ff2d78;">Gift Ideas</div>
+    <div class="d-card-label">Gift Ideas</div>
     <div id="belGiftsList" class="bel-list"></div>
     <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
       <input class="input" id="belGiftInput" type="text" placeholder="Jot down an idea..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belGiftAddBtn" style="background:#ff2d78; color:#fff;">Add</button>
+      <button class="shop-add-btn" id="belGiftAddBtn">Add</button>
     </div>
   </div>
 
   <div class="d-card">
-    <div class="d-card-label" style="color:#ff2d78;">Date Ideas</div>
+    <div class="d-card-label">Date Ideas</div>
     <div id="belDatesList" class="bel-list"></div>
     <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
       <input class="input" id="belDateInput" type="text" placeholder="Places to go..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belDateAddBtn" style="background:#ff2d78; color:#fff;">Add</button>
+      <button class="shop-add-btn" id="belDateAddBtn">Add</button>
     </div>
   </div>
 
   <div class="d-card">
-    <div class="d-card-label" style="color:#ff2d78;">Her Favorites</div>
+    <div class="d-card-label">Her Favorites</div>
     <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks..."></div>
   </div>
 
   <div class="d-card">
-    <div class="d-card-label" style="color:#ff2d78;">Things I Love About Her</div>
+    <div class="d-card-label">Things I Love About Her</div>
     <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things..."></div>
   </div>
 </div>
