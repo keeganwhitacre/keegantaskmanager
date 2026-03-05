@@ -372,6 +372,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmdi4tityz3q",
+      "title": "Reply to Ashley with research response + earlier opportunity for conference in june",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-05",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
