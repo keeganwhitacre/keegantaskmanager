@@ -368,10 +368,9 @@ body.focus-mode #focusBanner { display: flex; }
 .swipe-bg-defer span { font-size: 11px; color: var(--success); font-family: var(--font-mono); letter-spacing: 0.06em; }
 
 .task { background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 12px 14px 12px 16px; display: flex; gap: 11px; align-items: flex-start; position: relative; overflow: hidden; cursor: pointer; transition: background 0.1s; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
-.task::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 2px 0 0 2px; }
-.task.hi::before { background: var(--task-hi); }
-.task.md::before { background: var(--task-md); }
-.task.lo::before { background: var(--task-lo); }
+.task.hi { border-left: 3px solid var(--task-hi); }
+.task.md { border-left: 3px solid var(--task-md); }
+.task.lo { border-left: 3px solid var(--task-lo); }
 .task.done { opacity: 0.3; }
 .task.dimmed { opacity: 0.45; border-style: dashed; }
 
