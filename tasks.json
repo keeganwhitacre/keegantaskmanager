@@ -416,7 +416,8 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true
+      "pinnedToday": true,
+      "projectId": ""
     },
     {
       "id": "1772721364069",
@@ -585,5 +586,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:36:49.330Z"
+  "updated": "2026-03-05T14:36:56.667Z"
 }
