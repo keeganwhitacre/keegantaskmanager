@@ -56,9 +56,10 @@
   --fab-color: #007aff;
   --fab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 16px rgba(0, 0, 30, 0.1);
 
-  --task-hi: #ff3b30;
-  --task-md: #ff9500;
-  --task-lo: rgba(100, 100, 160, 0.18);
+   /* Updated Liquid Glass Task Colors */
+  --task-hi: #ff5c62; /* A softer, vibrant coral-red instead of alarm-bell red */
+  --task-md: #ffac33; /* A smoother, golden amber instead of harsh orange */
+  --task-lo: rgba(150, 160, 190, 0.4); /* A clean, cool frosted-blue-grey */
   --task-cb-bg: rgba(255, 255, 255, 0.4);
   --task-cb-border: rgba(180, 180, 210, 0.7);
 }
