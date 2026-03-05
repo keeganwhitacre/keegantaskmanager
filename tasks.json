@@ -474,7 +474,13 @@
     "giftsList": []
   },
   "scratchpad": "\n- reading queue\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing\n\nSuicide app?\nOffline!!!!",
-  "shop": [],
+  "shop": [
+    {
+      "id": 1772723159518.5393,
+      "text": "Tofu",
+      "done": false
+    }
+  ],
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
@@ -592,5 +598,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T15:05:56.804Z"
+  "updated": "2026-03-05T15:05:59.518Z"
 }
