@@ -1,0 +1,55 @@
+name: Add Task via Siri
+on:
+  repository_dispatch:
+    types: [siri_add_task]
+
+permissions:
+  contents: write
+
+jobs:
+  add-task:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Inject Task into tasks.json
+        run: |
+          node -e "
+            const fs = require('fs');
+            const text = process.env.TASK_TITLE;
+            if(!text) process.exit(0);
+            
+            const file = 'tasks.json';
+            let data = { tasks: [] };
+            if (fs.existsSync(file)) {
+              data = JSON.parse(fs.readFileSync(file, 'utf8'));
+            }
+            
+            const uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+            const newTask = {
+              id: uid, 
+              title: text, 
+              categories: ['personal'],
+              status: 'active', 
+              priority: 'md', 
+              note: '',
+              due: new Date().toISOString().split('T')[0],
+              noteIsMono: false, 
+              done: false, 
+              pomodoros: 0,
+              pinnedToday: true
+            };
+            
+            if(Array.isArray(data)) { data.push(newTask); } else { data.tasks.push(newTask); }
+            fs.writeFileSync(file, JSON.stringify(data, null, 2));
+          "
+        env:
+          TASK_TITLE: ${{ github.event.client_payload.text }}
+          
+      - name: Commit and Push
+        run: |
+          git config user.name "Siri Bot"
+          git config user.email "siri@taskmanager.local"
+          git add tasks.json
+          git commit -m "Siri Added Task: ${{ github.event.client_payload.text }}"
+          git push
