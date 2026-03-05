@@ -348,7 +348,7 @@
         "manuscript"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "pinnedToday": true,
       "note": "Also “early life” vs childhood\nTimes when dependent vs adult",
       "due": "2026-03-08",
@@ -643,5 +643,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T20:46:11.007Z"
+  "updated": "2026-03-05T20:46:20.830Z"
 }
