@@ -417,6 +417,20 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "mmdkck5crkek",
+      "title": "Yuritza rollercoaster figure",
+      "categories": [],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -461,6 +475,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-05",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -557,16 +577,10 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:19:26.865Z"
+  "updated": "2026-03-05T14:31:00.097Z"
 }
