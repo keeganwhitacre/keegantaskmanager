@@ -393,8 +393,7 @@
       "title": "Send poster to Kristen!",
       "categories": [
         "lab",
-        "conf",
-        "personal"
+        "conf"
       ],
       "status": "active",
       "priority": "md",
@@ -590,5 +589,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:37:04.779Z"
+  "updated": "2026-03-05T14:37:07.252Z"
 }
