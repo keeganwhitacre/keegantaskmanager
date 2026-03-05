@@ -23,12 +23,12 @@
   --border-input: rgba(255, 255, 255, 0.7);
   --border-divider: rgba(0, 0, 40, 0.08);
 
-  --accent: #007aff;
+--accent: #007aff;
   --accent-faded: rgba(0, 122, 255, 0.15);
   --accent-text: #ffffff;
-  --danger: #ff3a30;
-  --warning: #ff9500;
-  --success: #34c759;
+  --danger: #ff5c62;   /* Softened coral-red, matching your high-priority tasks */
+  --warning: #ffac33;  /* Smooth golden-amber, perfect for 'today' without screaming at you */
+  --success: #52d9a0;  /* Optional: a slightly softer, minty green to match the glass vibe */
   --bel-accent: #34c759;
 
   --font-main: 'DM Sans', sans-serif;
