@@ -278,22 +278,6 @@
       "pomodoros": 0
     },
     {
-      "id": "1772565218118",
-      "title": "Reply to Ashley with slack plans",
-      "text": "Reply to Ashley with slack plans",
-      "status": "active",
-      "priority": "hi",
-      "section": "upcoming",
-      "note": "",
-      "due": "2026-03-05",
-      "noteIsMono": false,
-      "done": false,
-      "pinnedToday": false,
-      "categories": [
-        "personal"
-      ]
-    },
-    {
       "id": "1772567258866",
       "title": "bel PT",
       "text": "bel PT",
@@ -372,6 +356,22 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1772565218118",
+      "title": "Reply to Ashley with slack plans",
+      "text": "Reply to Ashley with slack plans",
+      "status": "active",
+      "priority": "hi",
+      "section": "upcoming",
+      "note": "",
+      "due": "2026-03-05",
+      "noteIsMono": false,
+      "done": false,
+      "pinnedToday": false,
+      "categories": [
+        "personal"
+      ]
     },
     {
       "id": "mmdi4tityz3q",
@@ -582,5 +582,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:31:19.730Z"
+  "updated": "2026-03-05T14:31:25.614Z"
 }
