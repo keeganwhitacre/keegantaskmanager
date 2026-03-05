@@ -678,3 +678,69 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
   flex-direction: column;
   gap: 8px;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   DEEP FOCUS MODE
+══════════════════════════════════════════════════════════════════ */
+body.deep-focus-mode {
+  background: #000 !important;
+}
+
+body.deep-focus-mode::before {
+  display: none !important; /* Hides the iOS glass background gradient */
+}
+
+/* Hide everything except the focus banner */
+body.deep-focus-mode .header,
+body.deep-focus-mode .tab-bar,
+body.deep-focus-mode #searchTrigger,
+body.deep-focus-mode .filter-scroll,
+body.deep-focus-mode #taskList,
+body.deep-focus-mode #focusModeBtn,
+body.deep-focus-mode .fab,
+body.deep-focus-mode #dashView,
+body.deep-focus-mode #projectsView,
+body.deep-focus-mode #projectDetailView,
+body.deep-focus-mode #notesView,
+body.deep-focus-mode #belView,
+body.deep-focus-mode .sync-bar {
+  display: none !important;
+}
+
+/* Center and embiggen the Focus Banner */
+body.deep-focus-mode #focusBanner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 450px;
+  margin: 0;
+  z-index: 9999;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+}
+
+/* Override inline flex rows to stack neatly in deep focus */
+body.deep-focus-mode #focusBanner > div {
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 16px;
+  width: 100%;
+}
+
+body.deep-focus-mode #pomoTaskLabel {
+  max-width: 100% !important;
+  font-size: 16px !important;
+  white-space: normal !important;
+  margin-top: 8px;
+}
+
+body.deep-focus-mode #pomoDisplay {
+  font-size: 72px !important;
+  margin: 16px 0;
+}
