@@ -443,6 +443,20 @@
       "done": false,
       "pomodoros": 0,
       "projectId": ""
+    },
+    {
+      "id": "mmdqi0ajqwyr",
+      "title": "Stuff",
+      "categories": [],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -519,12 +533,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-05",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -621,10 +629,16 @@
         ]
       }
     },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T16:41:06.536Z"
+  "updated": "2026-03-05T17:23:11.999Z"
 }
