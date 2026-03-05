@@ -763,19 +763,7 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 /* ══════════════════════════════════════════════════════════════════
    BEL TAB
 ══════════════════════════════════════════════════════════════════ */
-#belView .sheet-title, 
-#belView .d-card-label, 
-#belView #editBelDateBtn { color: var(--bel-accent) !important; }
 
-#belView .d-card { border-color: var(--bel-accent) !important; }
-
-#belView .shop-add-btn, 
-#belView .sheet-btn.primary { 
-  background: var(--bel-accent) !important; 
-  border-color: var(--bel-accent) !important; 
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-  color: var(--accent-text); 
-}
 
 .bel-notes { width: 100%; min-height: 80px; outline: none; font-family: var(--font-main); font-size: 14px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; }
 .bel-notes:empty:before { content: attr(placeholder); opacity: 0.5; pointer-events: none; display: block; color: var(--text-muted); }
