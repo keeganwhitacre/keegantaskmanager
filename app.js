@@ -1138,7 +1138,7 @@ function applyTheme(name) {
   if (name) document.body.classList.add('theme-' + name);
   
   // Added a dark purple fallback for the Bel Bel theme
-  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0', 'bel-bel':'#1a0a2a' }; 
+  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0', 'bel-bel':'#111113' }; 
   document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
   
   document.querySelectorAll('.theme-swatch').forEach(function(sw){ sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26')); });
