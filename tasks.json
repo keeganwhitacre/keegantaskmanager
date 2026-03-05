@@ -399,7 +399,7 @@
         "conf"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "note": "",
       "due": "2026-03-05",
       "noteIsMono": false,
@@ -624,5 +624,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T15:33:04.761Z"
+  "updated": "2026-03-05T15:43:53.336Z"
 }
