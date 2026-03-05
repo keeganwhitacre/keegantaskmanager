@@ -436,16 +436,18 @@
       "id": "1772721364069",
       "title": "Add features + debug?",
       "categories": [
-        "personal"
+        "personal",
+        "hobby"
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "reading queue\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- bel colors?\n- random selector in bel dates\n- fix focus mode appearing",
       "due": "2026-03-05",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": ""
     }
   ],
   "projects": [
@@ -597,5 +599,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:36:04.080Z"
+  "updated": "2026-03-05T14:36:26.536Z"
 }
