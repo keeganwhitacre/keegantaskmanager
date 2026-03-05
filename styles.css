@@ -182,61 +182,54 @@ body.theme-newsprint {
 }
 
 body.theme-bel-bel {
-  /* Dark, deep background instead of a bright gradient */
-  --bg-body: #0d0d0f; 
-  --bg-solid: #0d0d0f; 
+  /* Pure, deep off-black background. No purple tint. */
+  --bg-body: #111113; 
+  --bg-solid: #111113; 
   
-  /* The "Offline" glassy feel: very translucent dark layers with subtle light borders */
-  --bg-surface: rgba(255, 255, 255, 0.06); 
-  --bg-input: rgba(255, 255, 255, 0.04);
-  --bg-overlay: rgba(0, 0, 0, 0.7);
+  /* Neutral, colorless glass */
+  --bg-surface: rgba(255, 255, 255, 0.05); 
+  --bg-input: rgba(255, 255, 255, 0.03);
+  --bg-overlay: rgba(0, 0, 0, 0.75);
   
   --text-main: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.5);
   --text-date: #ffffff;
   --text-inverse: #ffffff;
 
-  /* Crisp, subtle borders for that unselected glass look */
-  --border-main: rgba(255, 255, 255, 0.12);
+  /* Neutral grey borders */
+  --border-main: rgba(255, 255, 255, 0.1);
   --border-input: rgba(255, 255, 255, 0.15);
-  --border-divider: rgba(255, 255, 255, 0.08);
+  --border-divider: rgba(255, 255, 255, 0.06);
 
   --accent: #FB5A27; 
-  --accent-faded: rgba(129, 21, 230, 0.2); /* Purple tint for faded accents */
+  --accent-faded: rgba(255, 255, 255, 0.08); /* Neutral glassy hover state */
   --accent-text: #ffffff;
   
-  /* Adjusted Task Priority Colors */
-  --task-hi: #FB5A27; /* Orange */
-  --task-md: #8115E6; /* Purple */
-  --task-lo: rgba(255, 255, 255, 0.8); /* Crisp White */
+  /* Task Priorities (Orange, Purple, White as requested) */
+  --task-hi: #FB5A27; 
+  --task-md: #8115E6; 
+  --task-lo: rgba(255, 255, 255, 0.8); 
   
-  /* Fixing the ugly grey checkboxes */
-  --task-cb-bg: rgba(255, 255, 255, 0.05); /* Glassy inside */
-  --task-cb-border: rgba(255, 255, 255, 0.3); /* Brighter border so it pops on dark */
+  /* Neutral glassy checkboxes */
+  --task-cb-bg: rgba(255, 255, 255, 0.03); 
+  --task-cb-border: rgba(255, 255, 255, 0.25); 
 
   --danger: #ff4d4d;
   --warning: #ffb800;
   --success: #34c759;
   --bel-accent: #FB5A27;
 
-  /* Blur for the glassmorphism */
   --glass-filter: blur(16px) saturate(180%);
-  --shadow-base: inset 0 1px 1px rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-base: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 16px rgba(0, 0, 0, 0.5);
   
   /* FAB uses the solid gradient */
   --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
   --fab-border: none;
   --fab-color: #ffffff;
-  --fab-shadow: 0 4px 16px rgba(129, 21, 230, 0.3);
+  --fab-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
-/* A very subtle purple ambient glow at the top, matching the screenshot's vibe */
-body.theme-bel-bel::before {
-  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(circle at 50% -20%, rgba(129, 21, 230, 0.15) 0%, transparent 60%);
-}
-
-/* The Offline Gradient for active/selected elements */
+/* The Offline Gradient strictly for active/selected elements */
 body.theme-bel-bel .tab-btn.active,
 body.theme-bel-bel .chip.active,
 body.theme-bel-bel .sheet-btn.primary,
@@ -245,9 +238,9 @@ body.theme-bel-bel .quick-add-send,
 body.theme-bel-bel .shop-add-btn,
 body.theme-bel-bel .s-chip.active {
   background: linear-gradient(to bottom left, #FB5A27, #8115E6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(129, 21, 230, 0.25);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Ensure checked checkboxes get the theme gradient too */
@@ -257,7 +250,6 @@ body.theme-bel-bel .shop-cb.checked {
   background: linear-gradient(to bottom left, #FB5A27, #8115E6);
   border-color: transparent;
 }
-
 
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
