@@ -437,7 +437,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "reading queue\n- focus mode darkens until Pomodoro is done\n- read it later vault\n- random selector in bel dates\n- prompts return for daily reflection",
+      "note": "reading queue\n- read it later vault\n- random selector in bel dates\n- prompts return for daily reflection",
       "due": "2026-03-05",
       "noteIsMono": false,
       "pinnedToday": true,
@@ -643,5 +643,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T20:04:44.080Z"
+  "updated": "2026-03-05T20:04:52.380Z"
 }
