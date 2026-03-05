@@ -97,10 +97,11 @@
       "note": "Fix shopping list swipe\ndoesn't make sense to have upcoming as a section when the others are specific\nshould be able to set multiple tags for tasks\ncan't filter by something if its in today",
       "due": "2026-03-06",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "categories": [
         "hobby"
-      ]
+      ],
+      "completedAt": "2026-03-05T00:43:41.638Z"
     },
     {
       "id": "mm97ikl1ctn3",
@@ -414,7 +415,18 @@
     "giftsList": []
   },
   "scratchpad": "New ideas for app\n- active projects\n——status, date countdown, progress, notes\n- reading queue\n——- book notes and thoughts\n——- quotes from books?\n- gaming intentionally tracker?\n- bel tab \n—— belstuff moves here\n—— date ideas, tracker coming up etc",
-  "shop": [],
+  "shop": [
+    {
+      "id": 1772649657025.9243,
+      "text": "test",
+      "done": false
+    },
+    {
+      "id": 1772652164987.9915,
+      "text": "Hhh",
+      "done": false
+    }
+  ],
   "dash": {
     "intention": "Finalize SAS this week, work on centralizing the slack channel, take some time to relax outside of work. ",
     "intentionWeek": "2026-W10",
@@ -425,6 +437,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-04",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -521,15 +539,9 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-05T00:42:46.316Z"
+  "updated": "2026-03-05T00:43:41.644Z"
 }
