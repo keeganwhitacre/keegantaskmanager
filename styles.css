@@ -223,21 +223,27 @@ body.theme-bel-bel {
 /* ─────────────────────────────────────────────────────────
    INLINE SEGMENTED CONTROLS (Screenshot Match)
 ───────────────────────────────────────────────────────── */
-/* Turn the Tab Bar and Filter Row into the wrapper pill */
-body.theme-bel-bel .tab-bar,
-body.theme-bel-bel .filter-scroll {
+/* 1. Main Tab Bar: Fills top-to-bottom (No padding) */
+body.theme-bel-bel .tab-bar {
   background: var(--bg-surface);
   border-radius: 99px;
-  padding: 4px;
+  padding: 0; /* Removed the padding so the active tab sits flush */
   margin: 0 20px 14px;
   gap: 0;
   box-shadow: var(--shadow-base);
+  display: flex;
   width: calc(100% - 40px);
   box-sizing: border-box;
 }
 
-/* Let the filter row scroll naturally inside its pill */
+/* 2. Filter Row: Keeps the padding for the "inner pill" look */
 body.theme-bel-bel .filter-scroll {
+  background: var(--bg-surface);
+  border-radius: 99px;
+  padding: 4px; 
+  margin: 0 20px 14px;
+  gap: 0;
+  box-shadow: var(--shadow-base);
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -245,21 +251,23 @@ body.theme-bel-bel .filter-scroll {
   max-width: calc(100% - 40px);
 }
 
-/* Stripping styling from unselected items so they blend into the wrapper */
+/* 3. Strip styling from unselected items to blend into the wrapper */
 body.theme-bel-bel .tab-btn,
 body.theme-bel-bel .chip,
 body.theme-bel-bel .s-chip {
   background: transparent;
-  border: none;
+  /* Add a transparent border so the layout doesn't jump when the active border appears */
+  border: 1px solid transparent; 
   box-shadow: none;
   color: var(--text-muted);
   text-align: center;
   margin: 0;
 }
 
-/* Spacing fixes for the tabs vs the scrolling chips */
-body.theme-bel-bel .tab-btn { flex: 1; padding: 8px 12px; }
-body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
+/* 4. Spacing and Border Radius */
+/* Bumped up tab-btn padding slightly to compensate for the removed container padding */
+body.theme-bel-bel .tab-btn { flex: 1; padding: 11px 12px; border-radius: 99px; }
+body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; border-radius: 99px; }
 
 /* ─────────────────────────────────────────────────────────
    ACTIVE GRADIENTS & GLASS FIXES
