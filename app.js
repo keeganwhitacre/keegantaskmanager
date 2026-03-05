@@ -429,6 +429,7 @@ function render(){
   }
   
   var focusEyeEl = document.querySelector('.focus-eye'); if (focusEyeEl) focusEyeEl.textContent = 'Current Focus';
+      if (focusStrip) focusStrip.style.display = 'none';
 
   var list=document.getElementById('taskList'); list.innerHTML='';
   var isArchive = state.filter==='archive';
