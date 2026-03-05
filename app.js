@@ -1130,15 +1130,21 @@ document.getElementById('dBookSave').addEventListener('click', function() { var 
 function renderDashFull() { updateClock(); renderIntention(); renderDashTasks(); renderCountdown(); renderQuote(); renderReflection(); renderMood(); renderHabits(); renderBook(); }
 
 // THEME SYSTEM
-var THEME_KEY = 'kw_theme_v2'; var THEMES = ['neon','newsprint','ios26'];
+var THEME_KEY = 'kw_theme_v2'; 
+var THEMES = ['neon', 'newsprint', 'ios26', 'bel-bel'];
+
 function applyTheme(name) {
   THEMES.forEach(function(t){ document.body.classList.remove('theme-' + t); });
   if (name) document.body.classList.add('theme-' + name);
-  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0' };
+  
+  // Added a dark purple fallback for the Bel Bel theme
+  var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0', 'bel-bel':'#1a0a2a' }; 
   document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
+  
   document.querySelectorAll('.theme-swatch').forEach(function(sw){ sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26')); });
   try { localStorage.setItem(THEME_KEY, name || 'ios26'); } catch(e){}
 }
+
 function loadTheme() { var saved = 'ios26'; try { saved = localStorage.getItem(THEME_KEY) || 'ios26'; } catch(e){} applyTheme(saved); }
 document.getElementById('settingsSheet').addEventListener('click', function(e){ var sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); render(); });
 
