@@ -766,3 +766,8 @@ body.deep-focus-mode #pomoDisplay {
   font-size: 72px !important;
   margin: 16px 0;
 }
+
+/* Fix the huge gap under the project title in Project Details */
+#pdTitleInput {
+  min-height: 0 !important;
+}
