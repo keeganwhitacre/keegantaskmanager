@@ -308,15 +308,42 @@ body.theme-bel-bel .shop-cb.checked {
 }
 
 /* ─────────────────────────────────────────────────────────
-   RESTORE PRIORITY STRIPES
+   GRADIENT PRIORITY STRIPES (The Pseudo-Element Hack)
 ───────────────────────────────────────────────────────── */
-/* Force the left border back onto the tasks */
-body.theme-bel-bel .task.hi { border-left: 3px solid var(--task-hi) !important; }
-body.theme-bel-bel .task.md { border-left: 3px solid var(--task-md) !important; }
-body.theme-bel-bel .task.lo { border-left: 3px solid var(--task-lo) !important; }
+/* 1. Remove the solid borders from all tasks in this theme */
+body.theme-bel-bel .task {
+  border-left: none !important;
+}
 
-/* For tasks with no priority set, keep the spacing consistent */
-body.theme-bel-bel .task { border-left: 3px solid transparent; }
+/* 2. Create the invisible 3px stripe container on the left edge */
+body.theme-bel-bel .task::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  /* This ensures the stripe follows the curve of your card's corners */
+  border-radius: inherit; 
+}
+
+/* 3. High Priority: Full vibrant gradient */
+body.theme-bel-bel .task.hi::before {
+  background: linear-gradient(to bottom, #FB5A27, #8115E6);
+  opacity: 1;
+}
+
+/* 4. Medium Priority: Flipped upside down, slightly softened */
+body.theme-bel-bel .task.md::before {
+  background: linear-gradient(to top, #FB5A27, #8115E6);
+  opacity: 0.8;
+}
+
+/* 5. Low Priority: Faded heavily into the glass */
+body.theme-bel-bel .task.lo::before {
+  background: linear-gradient(to bottom, #FB5A27, #8115E6);
+  opacity: 0.3;
+}
 
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
