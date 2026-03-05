@@ -267,13 +267,15 @@
       "priority": "md",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-28",
+      "due": "2026-03-23",
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false,
       "categories": [
         "phd"
-      ]
+      ],
+      "projectId": "",
+      "pomodoros": 0
     },
     {
       "id": "1772565218118",
@@ -514,5 +516,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-05T12:50:21.310Z"
+  "updated": "2026-03-05T12:50:29.734Z"
 }
