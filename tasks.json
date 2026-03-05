@@ -372,22 +372,6 @@
       "pomodoros": 0
     },
     {
-      "id": "1772565218118",
-      "title": "Reply to Ashley with slack plans",
-      "text": "Reply to Ashley with slack plans",
-      "status": "active",
-      "priority": "hi",
-      "section": "upcoming",
-      "note": "",
-      "due": "2026-03-05",
-      "noteIsMono": false,
-      "done": false,
-      "pinnedToday": false,
-      "categories": [
-        "personal"
-      ]
-    },
-    {
       "id": "mmdj4g1852f8",
       "title": "Message ruofan ",
       "categories": [
@@ -599,5 +583,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:36:36.197Z"
+  "updated": "2026-03-05T14:36:45.687Z"
 }
