@@ -370,36 +370,6 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
-    },
-    {
-      "id": "mmdfydim7sw3",
-      "title": "Organize Slack channel",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-05",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": true
-    },
-    {
-      "id": "mmdg0g2jwmu3",
-      "title": "Slack",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-05",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": true
     }
   ],
   "projects": [
@@ -544,5 +514,5 @@
       "2026-03-04": 4
     }
   },
-  "updated": "2026-03-05T11:50:18.859Z"
+  "updated": "2026-03-05T12:31:10.812Z"
 }
