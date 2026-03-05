@@ -181,6 +181,63 @@ body.theme-newsprint {
   --task-cb-border: #ccc;
 }
 
+body.theme-bel-bel {
+  --bg-body: rgba(20, 10, 30, 0.01);
+  --bg-solid: #1a0a2a; 
+  --bg-surface: rgba(255, 255, 255, 0.12); /* Frosted glass */
+  --bg-input: rgba(255, 255, 255, 0.15);
+  --bg-overlay: rgba(10, 5, 20, 0.6);
+  
+  /* Keeping text light to pop against the colorful background */
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-date: #ffffff;
+  --text-inverse: #ffffff;
+
+  --border-main: rgba(255, 255, 255, 0.2);
+  --border-input: rgba(255, 255, 255, 0.25);
+  --border-divider: rgba(255, 255, 255, 0.1);
+
+  --accent: #FB5A27; 
+  --accent-faded: rgba(251, 90, 39, 0.2); 
+  --accent-text: #ffffff;
+  
+  --danger: #ff4d4d;
+  --warning: #ffb800;
+  --success: #34c759;
+  --bel-accent: #FB5A27;
+
+  --glass-filter: blur(24px) saturate(170%);
+  --shadow-base: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15);
+  
+  /* FAB uses the solid gradient */
+  --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
+  --fab-border: 1px solid rgba(255, 255, 255, 0.4);
+  --fab-color: #ffffff;
+  --fab-shadow: 0 4px 16px rgba(129, 21, 230, 0.4);
+}
+
+/* The sweeping top-right to bottom-left background gradient */
+body.theme-bel-bel::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom left, #FB5A27, #8115E6);
+  opacity: 0.18; /* Dial this up or down depending on how punchy you want the background */
+}
+
+/* Glassy, gradient-filled active buttons */
+body.theme-bel-bel .tab-btn.active,
+body.theme-bel-bel .chip.active,
+body.theme-bel-bel .sheet-btn.primary,
+body.theme-bel-bel .pomo-btn,
+body.theme-bel-bel .quick-add-send,
+body.theme-bel-bel .shop-add-btn,
+body.theme-bel-bel .s-chip.active {
+  background: linear-gradient(to bottom left, rgba(251, 90, 39, 0.85), rgba(129, 21, 230, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 4px 12px rgba(129, 21, 230, 0.2);
+}
+
 
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
