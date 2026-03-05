@@ -210,7 +210,7 @@ body.theme-bel-bel {
   --task-lo: rgba(129, 21, 230, 0.6); /* Faded Purple */
 
   /* Reduced the external drop shadow from 0.3/0.4 down to 0.1 for a flatter look */
-  --shadow-base: inset 0 0 60px rgba(195, 195, 255, 0.20), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-base: inset 0 0 15px rgba(195, 195, 255, 0.20), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
 
   /* FAB uses the solid gradient */
   --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
