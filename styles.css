@@ -211,7 +211,7 @@ body.theme-bel-bel {
   
   /* The "Wide Glass Border / Interior Glow" */
  /* Using the 195, 195, 255 RGB for the inner glass reflection */
-  --shadow-base: inset 0 0 12px rgba(195, 195, 255, 0.06), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-base: inset 0 0 30px rgba(195, 195, 255, 0.06), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
   
   /* FAB uses the solid gradient */
   --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
