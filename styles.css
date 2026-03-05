@@ -211,7 +211,7 @@ body.theme-bel-bel {
   
   /* The "Wide Glass Border / Interior Glow" */
  /* Using the 195, 195, 255 RGB for the inner glass reflection */
-  --shadow-base: inset 0 0 30px rgba(195, 195, 255, 0.06), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-base: inset 0 0 40px rgba(195, 195, 255, 0.1), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
   
   /* FAB uses the solid gradient */
   --fab-bg: linear-gradient(to bottom left, #FB5A27, #8115E6);
@@ -223,27 +223,21 @@ body.theme-bel-bel {
 /* ─────────────────────────────────────────────────────────
    INLINE SEGMENTED CONTROLS (Screenshot Match)
 ───────────────────────────────────────────────────────── */
-/* 1. Main Tab Bar: Fills top-to-bottom (No padding) */
-body.theme-bel-bel .tab-bar {
+/* Turn the Tab Bar and Filter Row into the wrapper pill */
+body.theme-bel-bel .tab-bar,
+body.theme-bel-bel .filter-scroll {
   background: var(--bg-surface);
   border-radius: 99px;
-  padding: 0; /* Removed the padding so the active tab sits flush */
+  padding: 4px;
   margin: 0 20px 14px;
   gap: 0;
   box-shadow: var(--shadow-base);
-  display: flex;
   width: calc(100% - 40px);
   box-sizing: border-box;
 }
 
-/* 2. Filter Row: Keeps the padding for the "inner pill" look */
+/* Let the filter row scroll naturally inside its pill */
 body.theme-bel-bel .filter-scroll {
-  background: var(--bg-surface);
-  border-radius: 99px;
-  padding: 4px; 
-  margin: 0 20px 14px;
-  gap: 0;
-  box-shadow: var(--shadow-base);
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -251,23 +245,21 @@ body.theme-bel-bel .filter-scroll {
   max-width: calc(100% - 40px);
 }
 
-/* 3. Strip styling from unselected items to blend into the wrapper */
+/* Stripping styling from unselected items so they blend into the wrapper */
 body.theme-bel-bel .tab-btn,
 body.theme-bel-bel .chip,
 body.theme-bel-bel .s-chip {
   background: transparent;
-  /* Add a transparent border so the layout doesn't jump when the active border appears */
-  border: 1px solid transparent; 
+  border: none;
   box-shadow: none;
   color: var(--text-muted);
   text-align: center;
   margin: 0;
 }
 
-/* 4. Spacing and Border Radius */
-/* Bumped up tab-btn padding slightly to compensate for the removed container padding */
-body.theme-bel-bel .tab-btn { flex: 1; padding: 11px 12px; border-radius: 99px; }
-body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; border-radius: 99px; }
+/* Spacing fixes for the tabs vs the scrolling chips */
+body.theme-bel-bel .tab-btn { flex: 1; padding: 8px 12px; }
+body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
 
 /* ─────────────────────────────────────────────────────────
    ACTIVE GRADIENTS & GLASS FIXES
