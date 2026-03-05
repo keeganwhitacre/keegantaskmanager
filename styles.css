@@ -58,7 +58,7 @@
 
    /* Updated Liquid Glass Task Colors */
   --task-hi: #ff5c62; /* A softer, vibrant coral-red instead of alarm-bell red */
-  --task-md: #ffac33; /* A smoother, golden amber instead of harsh orange */
+  --task-md: #4da6ff; /* A light bluish */
   --task-lo: rgba(150, 160, 190, 0.4); /* A clean, cool frosted-blue-grey */
   --task-cb-bg: rgba(255, 255, 255, 0.4);
   --task-cb-border: rgba(180, 180, 210, 0.7);
@@ -398,9 +398,15 @@ body.focus-mode #focusBanner { display: flex; }
 .cat-hobby { background: rgba(80,200,255,0.08); color: #50c8ff; border: 1px solid rgba(80,200,255,0.18); }
 
 .status { border: 1px solid var(--border-divider); color: var(--text-main); }
-.status.waiting { color: var(--warning); border-color: rgba(255,190,92,0.22); background: rgba(255,190,92,0.05); }
-.status.blocked { color: var(--danger); border-color: rgba(255,107,107,0.22); background: rgba(255,107,107,0.05); }
-.status.review { color: #50c8ff; border-color: rgba(80,200,255,0.22); background: rgba(80,200,255,0.05); }
+
+/* Soft Amber for yield/pause */
+.status.waiting { color: #e69d35; border-color: rgba(230, 157, 53, 0.25); background: rgba(230, 157, 53, 0.08); } 
+
+/* Soft Coral for blocked/stopped (matches your new --task-hi) */
+.status.blocked { color: #ff5c62; border-color: rgba(255, 92, 98, 0.25); background: rgba(255, 92, 98, 0.08); }
+
+/* Luminous Blue for review (matches your new --task-md) */
+.status.review { color: #4da6ff; border-color: rgba(77, 166, 255, 0.25); background: rgba(77, 166, 255, 0.08); }
 
 .due { font-size: 11px; color: var(--text-muted); margin-left: auto; flex-shrink: 0; }
 .due.overdue { color: var(--danger); font-weight: 500; }
