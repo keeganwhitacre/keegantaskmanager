@@ -99,7 +99,7 @@ body.theme-neon {
   --display-weight: 800;
   --display-tracking: normal;
   --clock-size: 38px;
-  --date-size: 28px;
+  --date-size: 24px; /* Scaled down for Syne font width */
 
   --glass-filter: none;
   --overlay-filter: none;
@@ -294,14 +294,15 @@ body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, bod
 
 /* Header */
 .header { padding: 52px 20px 14px; padding-top: calc(52px + env(safe-area-inset-top)); }
-.header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.header-top > div:first-child { flex: 1; min-width: 0; }
 .greeting { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-bottom: 2px; }
-.date-line { font-family: var(--font-display); font-size: var(--date-size); font-weight: var(--display-weight); letter-spacing: var(--display-tracking); color: var(--text-date); line-height: 1.1; }
+.date-line { font-family: var(--font-display); font-size: var(--date-size); font-weight: var(--display-weight); letter-spacing: var(--display-tracking); color: var(--text-date); line-height: 1.1; word-wrap: break-word; }
 .date-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
 .date-sub .sub-overdue { color: var(--danger); }
 .date-sub .sub-blocked { color: var(--warning); }
 .date-sub .sub-done { color: var(--success); }
-.header-right { display: flex; gap: 6px; padding-top: 12px; align-items: flex-start; }
+.header-right { display: flex; gap: 6px; padding-top: 12px; align-items: flex-start; flex-shrink: 0; }
 
 .icon-btn { width: 32px; height: 32px; background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-circle); display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; transition: background 0.1s; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 .icon-btn svg { width: 15px; height: 15px; stroke: var(--text-muted); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
