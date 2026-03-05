@@ -207,7 +207,7 @@ body.theme-bel-bel {
   /* Updated Task Priority Colors */
   --task-hi: #FB5A27; 
   --task-md: #8115E6; 
-  --task-lo: rgba(255, 255, 255, 0.8); 
+  --task-lo: rgba(255, 255, 255, 0.3); /* Softer, glassy white */
   
   /* The "Wide Glass Border / Interior Glow" */
   /* This uses a soft 12px white inner shadow + a crisp 1px inner edge */
@@ -307,6 +307,17 @@ body.theme-bel-bel .shop-cb.checked {
   background: linear-gradient(to bottom left, #FB5A27, #8115E6);
   box-shadow: none;
 }
+
+/* ─────────────────────────────────────────────────────────
+   RESTORE PRIORITY STRIPES
+───────────────────────────────────────────────────────── */
+/* Force the left border back onto the tasks */
+body.theme-bel-bel .task.hi { border-left: 3px solid var(--task-hi) !important; }
+body.theme-bel-bel .task.md { border-left: 3px solid var(--task-md) !important; }
+body.theme-bel-bel .task.lo { border-left: 3px solid var(--task-lo) !important; }
+
+/* For tasks with no priority set, keep the spacing consistent */
+body.theme-bel-bel .task { border-left: 3px solid transparent; }
 
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
