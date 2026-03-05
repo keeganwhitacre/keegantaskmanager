@@ -415,23 +415,24 @@ function render(){
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
     var focusStrip = document.getElementById('focusStrip');
   
-  if(ft){
+ if(ft){
     document.getElementById('focusTitle').textContent=ft.title;
     document.getElementById('pomoTaskLabel').textContent=ft.title;
     var parts=[]; 
     if(ft.categories && ft.categories.length) parts.push(CAT_LABEL[ft.categories[0]]||ft.categories[0]); 
     if(ft.due) parts.push(ft.due);
     document.getElementById('focusSub').textContent=parts.join(' · ')||'Pinned';
-        if (focusStrip) focusStrip.style.display = 'flex';
+    if (focusStrip) focusStrip.style.display = 'flex';
   } else {
     state.focus=null;
     document.getElementById('focusTitle').textContent='No task pinned';
     document.getElementById('pomoTaskLabel').textContent='No task pinned';
     document.getElementById('focusSub').textContent='Open a task and tap Set as Focus';
+    if (focusStrip) focusStrip.style.display = 'none'; // Moved inside the else block
   }
   
   var focusEyeEl = document.querySelector('.focus-eye'); if (focusEyeEl) focusEyeEl.textContent = 'Current Focus';
-      if (focusStrip) focusStrip.style.display = 'none';
+  // REMOVED the redundant focusStrip.style.display = 'none'; that was hiding it!
 
   var list=document.getElementById('taskList'); list.innerHTML='';
   var isArchive = state.filter==='archive';
