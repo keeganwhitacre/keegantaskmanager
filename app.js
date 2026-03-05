@@ -533,6 +533,11 @@ function updatePomoUI() {
   if(pomo.mode === 'longBreak') statusTxt = 'Long Break (15m)';
   document.getElementById('pomoStatus').textContent = statusTxt + ' • ' + pomo.cycles + ' completed';
   document.getElementById('pomoStartBtn').textContent = pomo.running ? 'Pause' : 'Start';
+
+  // --- NEW: DEEP FOCUS TOGGLE ---
+  // Only darkens the screen if the timer is running AND it's a 25-min work block
+  var isDeepFocus = pomo.running && pomo.mode === 'work';
+  document.body.classList.toggle('deep-focus-mode', isDeepFocus);
 }
 function tickPomo() {
   pomo.timeLeft--;
