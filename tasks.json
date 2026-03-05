@@ -388,8 +388,8 @@
       ]
     },
     {
-      "id": "mmdi4tityz3q",
-      "title": "Reply to Ashley with research response + earlier opportunity for conference in june",
+      "id": "mmdj4g1852f8",
+      "title": "Message ruofan ",
       "categories": [
         "personal"
       ],
@@ -403,8 +403,8 @@
       "pinnedToday": true
     },
     {
-      "id": "mmdj4g1852f8",
-      "title": "Message ruofan ",
+      "id": "mmdi4tityz3q",
+      "title": "Reply to Ashley with research response + earlier opportunity for conference in june",
       "categories": [
         "personal"
       ],
@@ -431,6 +431,21 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "1772721364069",
+      "title": "Add features + debug?",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-05",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -582,5 +597,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-05T14:33:38.741Z"
+  "updated": "2026-03-05T14:36:04.080Z"
 }
