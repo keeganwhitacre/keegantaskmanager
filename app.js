@@ -413,6 +413,7 @@ function render(){
 
   var ft=null;
   if(state.focus){ for(var i=0;i<state.tasks.length;i++){ if(state.tasks[i].id===state.focus&&!state.tasks[i].done){ft=state.tasks[i];break;} } }
+    var focusStrip = document.getElementById('focusStrip');
   
   if(ft){
     document.getElementById('focusTitle').textContent=ft.title;
@@ -421,6 +422,7 @@ function render(){
     if(ft.categories && ft.categories.length) parts.push(CAT_LABEL[ft.categories[0]]||ft.categories[0]); 
     if(ft.due) parts.push(ft.due);
     document.getElementById('focusSub').textContent=parts.join(' · ')||'Pinned';
+        if (focusStrip) focusStrip.style.display = 'flex';
   } else {
     state.focus=null;
     document.getElementById('focusTitle').textContent='No task pinned';
