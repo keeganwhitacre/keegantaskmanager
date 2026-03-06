@@ -507,6 +507,21 @@
       "pinnedToday": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mme5b487uegw",
+      "title": "Fix the Bel hidden spot",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-06",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
