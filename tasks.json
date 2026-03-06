@@ -495,38 +495,8 @@
       "completedAt": "2026-03-05T22:40:50.044Z"
     },
     {
-      "id": "1772756079615",
-      "title": "Poopoo",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-07",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mme5b487uegw",
       "title": "Fix the Bel hidden spot",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-06",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": true
-    },
-    {
-      "id": "mmewfvef5ijl",
-      "title": "Testing refresh ",
       "categories": [
         "personal"
       ],
@@ -753,5 +723,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-06T12:45:30.478Z"
+  "updated": "2026-03-06T12:58:05.862Z"
 }
