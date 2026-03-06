@@ -509,6 +509,22 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "mmf239h572us",
+      "title": "Lab Bluesky account?",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-11",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -725,5 +741,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T15:29:55.133Z"
+  "updated": "2026-03-06T15:35:28.130Z"
 }
