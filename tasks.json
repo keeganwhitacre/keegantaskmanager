@@ -527,6 +527,22 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmf4yre869qg",
+      "title": "Show Ruofan physiology equipment",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -743,5 +759,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T16:15:35.759Z"
+  "updated": "2026-03-06T16:55:56.926Z"
 }
