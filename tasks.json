@@ -525,6 +525,22 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmf2bkrf0wwb",
+      "title": "EMA or similar app for understanding and/or pilot testing",
+      "categories": [
+        "phd"
+      ],
+      "status": "review",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -741,5 +757,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T15:41:15.876Z"
+  "updated": "2026-03-06T15:41:56.008Z"
 }
