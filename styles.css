@@ -250,17 +250,16 @@ body.theme-bel-bel .filter-scroll {
   max-width: calc(100% - 40px);
 }
 
-/* 0.01 opacity background to prevent shadow clipping, and pure white unselected text */
 body.theme-bel-bel .tab-btn,
 body.theme-bel-bel .chip,
 body.theme-bel-bel .s-chip {
-  background: rgba(255, 255, 255, 0.01); 
+  background: transparent; /* was rgba(255,255,255,0.01) — change this */
   border: none;
   box-shadow: none;
-  color: #ffffff; 
+  color: #ffffff;
   text-align: center;
   margin: 0;
-  border-radius: 99px; /* Ensures the inner edges of active tabs stay fully rounded */
+  border-radius: 99px;
 }
 
 /* Adjusting button padding to compensate for the removed wrapper padding */
