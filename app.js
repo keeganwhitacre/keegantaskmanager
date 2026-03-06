@@ -569,7 +569,7 @@ document.body.classList.toggle('deep-focus-mode', isDeepFocus);
 document.documentElement.classList.toggle('deep-focus-mode', isDeepFocus); // Adds it to the <html> tag for desktop!
 }
 function tickPomo() {
-pomo.timeLeft–;
+pomo.timeLeft--;
 if (pomo.timeLeft <= 0) {
 clearInterval(pomo.timer); pomo.running = false;
 if (pomo.mode === 'work') {
@@ -898,12 +898,12 @@ saveBel(true); renderBelList(listId, key);
 
 function updateBelTime() {
 var countEl = document.getElementById('belTimeCount'); var annivEl = document.getElementById('belNextAnniv'); if(!countEl || !annivEl) return;
-if(!belState.annivDate) { countEl.textContent = '–'; annivEl.textContent = 'Tap Edit Date below to start'; return; }
+if(!belState.annivDate) { countEl.textContent = '--'; annivEl.textContent = 'Tap Edit Date below to start'; return; }
 var start = new Date(belState.annivDate + 'T00:00:00'); var now = new Date(); now.setHours(0,0,0,0);
-if(start > now) { countEl.textContent = '–'; annivEl.textContent = 'Date is in the future!'; return; }
+if(start > now) { countEl.textContent = '--'; annivEl.textContent = 'Date is in the future!'; return; }
 var yrs = now.getFullYear() - start.getFullYear(); var mos = now.getMonth() - start.getMonth(); var days = now.getDate() - start.getDate();
-if(days < 0) { mos–; var prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
-if(mos < 0) { yrs–; mos += 12; }
+if(days < 0) { mos--; var prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
+if(mos < 0) { yrs--; mos += 12; }
 var str = []; if(yrs > 0) str.push(yrs + ' yr' + (yrs>1?'s':'')); if(mos > 0) str.push(mos + ' mo' + (mos>1?'s':'')); str.push(days + ' d');
 countEl.textContent = str.join(', ');
 var nextAnniv = new Date(start); nextAnniv.setFullYear(now.getFullYear());
@@ -1217,7 +1217,7 @@ document.querySelectorAll('.mood-btn').forEach(function(btn) { var val = parseIn
 var heatmap = document.getElementById('dMoodHeatmap'); heatmap.innerHTML = '';
 var colors = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
 var sum = 0, count = 0;
-for(var i=13; i>=0; i–) { var d = new Date(); d.setDate(d.getDate() - i); var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); var val = dState.moods[dStr]; var cell = document.createElement('div'); cell.className = 'mood-cell'; if(val) { cell.style.background = colors[val]; sum += val; count++; } heatmap.appendChild(cell); }
+for(var i=13; i>=0; i--) { var d = new Date(); d.setDate(d.getDate() - i); var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); var val = dState.moods[dStr]; var cell = document.createElement('div'); cell.className = 'mood-cell'; if(val) { cell.style.background = colors[val]; sum += val; count++; } heatmap.appendChild(cell); }
 var avgEl = document.getElementById('dMoodAvg'); if(count > 0) { avgEl.textContent = '14-day avg: ' + (sum/count).toFixed(1); } else { avgEl.textContent = ''; }
 }
 document.getElementById('dMoodSelect').addEventListener('click', function(e) { var btn = e.target.closest('.mood-btn'); if(!btn) return; var val = parseInt(btn.dataset.val); var today = getTodayStr(); if(!dState.moods) dState.moods = {}; if(dState.moods[today] === val) { delete dState.moods[today]; } else { dState.moods[today] = val; } saveDash(true); renderMood(); });
