@@ -227,7 +227,6 @@ body.theme-bel-bel .tab-bar,
 body.theme-bel-bel .filter-scroll {
   background: var(--bg-surface);
   border-radius: 99px;
-  padding: 4px;
   margin: 0 20px 14px;
   gap: 0;
   box-shadow: var(--shadow-base);
@@ -235,8 +234,15 @@ body.theme-bel-bel .filter-scroll {
   box-sizing: border-box;
 }
 
-/* Let the filter row scroll naturally inside its pill */
+/* Zero padding for the main tab bar so active tabs fill top to bottom */
+body.theme-bel-bel .tab-bar {
+  padding: 0;
+  overflow: hidden; /* This clips the active tab so it matches the outer curve perfectly on the left/right edges */
+}
+
+/* Let the filter row keep a tiny bit of padding and scroll naturally */
 body.theme-bel-bel .filter-scroll {
+  padding: 4px;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -244,20 +250,21 @@ body.theme-bel-bel .filter-scroll {
   max-width: calc(100% - 40px);
 }
 
-/* Stripping styling from unselected items so they blend into the wrapper */
+/* 0.01 opacity background to prevent shadow clipping, and pure white unselected text */
 body.theme-bel-bel .tab-btn,
 body.theme-bel-bel .chip,
 body.theme-bel-bel .s-chip {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.01); 
   border: none;
   box-shadow: none;
-  color: var(--text-muted);
+  color: #ffffff; 
   text-align: center;
   margin: 0;
+  border-radius: 99px; /* Ensures the inner edges of active tabs stay fully rounded */
 }
 
-/* Spacing fixes for the tabs vs the scrolling chips */
-body.theme-bel-bel .tab-btn { flex: 1; padding: 8px 12px; }
+/* Adjusting button padding to compensate for the removed wrapper padding */
+body.theme-bel-bel .tab-btn { flex: 1; padding: 12px; }
 body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
 
 /* ─────────────────────────────────────────────────────────
