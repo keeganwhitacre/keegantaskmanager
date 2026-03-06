@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en" style="background:#000">
 <head>
   <meta charset="UTF-8">
@@ -10,7 +11,7 @@
   <link rel="manifest" href="manifest.json">
   <title>Tasks</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Syne:wght@400;500;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
-  
+
   <script>
   (function(){
     var bg={neon:'#0d0810',newsprint:'#f8f6f0',ios26:'#e8eaf0','bel-bel':'#111113'};
@@ -19,6 +20,10 @@
   </script>
 
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .cat-settings-row { display:flex; align-items:center; gap:8px; }
+    .cat-settings-row .input { margin-bottom:0; }
+  </style>
   <script src="app.js" defer></script>
   <script>
   if ('serviceWorker' in navigator) {
@@ -136,9 +141,9 @@
   <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
 </div>
   </div>
-  
+
   <textarea class="input" id="pdTitleInput" placeholder="Project Name" rows="2" style="font-size:22px; font-weight:600; background:transparent; border-color:transparent; padding:0; box-shadow:none; margin-bottom:4px; resize:none; line-height:1.2;"></textarea>
-  
+
   <div style="display:block; margin-bottom:8px;">
   <div style="margin-bottom: 16px;">
     <div class="sheet-label">Stage</div>
@@ -173,18 +178,21 @@
     <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">‹</button>
     <div class="sheet-title" style="margin-bottom:0;">Us</div>
   </div>
-  
+
   <div class="d-card" style="position:relative; overflow:hidden;">
     <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
     <div class="d-card-label">Time Together</div>
     <div id="belTimeCount" style="font-family:'DM Sans', sans-serif; font-size:32px; font-weight:600; line-height:1; margin-bottom:6px;">--</div>
     <div id="belNextAnniv" style="font-size:11px; opacity:0.6; font-family:'DM Mono', monospace;">Set anniversary date below</div>
     <div id="editBelDateBtn" style="font-size:10px; color:var(--accent); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
-    
-    <div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
-      <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
-      <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
-    </div>
+
+```
+<div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
+  <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
+  <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
+</div>
+```
+
   </div>
 
   <div class="d-card">
@@ -286,7 +294,7 @@
     <div class="d-prompt" id="dPrompt"></div>
     <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
   </div>
-  
+
   <div class="d-card">
     <div class="d-card-label" style="display:flex; justify-content:space-between;">
       <span>Daily Mood</span>
@@ -362,7 +370,7 @@
   </div>
   <div class="sheet-label">Project Name</div>
   <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:14px;">
-  
+
   <div class="sheet-label">Stage</div>
   <div class="chip-row" id="projStageRow">
     <div class="s-chip active" data-val="Planning">Planning</div>
@@ -377,9 +385,10 @@
 
   <div class="sheet-label">Project Notes</div>
   <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-  
-  <button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
-  <button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
+
+<button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
+<button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
+
 </div>
 
 <div class="sheet" id="addSheet">
@@ -390,7 +399,7 @@
   </div>
   <div class="sheet-label">Task</div>
   <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing..." style="margin-bottom:8px;">
-  
+
   <div id="pomoCountDisplay" style="display:none; font-size:11px; margin-bottom:14px; color:#888; font-family:'DM Mono',monospace; letter-spacing:0.04em;"></div>
 
   <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
@@ -398,7 +407,7 @@
     <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
   </div>
   <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-  
+
   <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
     Due Date
     <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
@@ -409,7 +418,7 @@
   <select class="input" id="taskProjectInput" style="appearance:auto; margin-bottom:14px;">
     <option value="">None</option>
   </select>
-  
+
   <div class="sheet-label">Categories (Multi-Select)</div>
   <div class="chip-row" id="catRow">
     <div class="s-chip" data-val="manuscript">Manuscript</div>
@@ -420,7 +429,7 @@
     <div class="s-chip" data-val="personal">Personal</div>
     <div class="s-chip" data-val="hobby">Hobby</div>
   </div>
-  
+
   <div class="sheet-label">Status</div>
   <div class="chip-row" id="statusRow">
     <div class="s-chip active" data-val="active">Active</div>
@@ -428,7 +437,7 @@
     <div class="s-chip" data-val="blocked">Blocked</div>
     <div class="s-chip" data-val="review">In Review</div>
   </div>
-  
+
   <div class="sheet-label">Priority</div>
   <div class="chip-row" id="priRow">
     <div class="s-chip" data-val="hi">High</div>
@@ -436,9 +445,10 @@
     <div class="s-chip" data-val="lo">Low</div>
   </div>
 
-  <button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
-  <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
-  <button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
+<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
+<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
+<button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
+
 </div>
 
 <div class="sheet" id="settingsSheet">
@@ -449,19 +459,21 @@
   </div>
   <div class="sheet-label">Appearance</div>
   <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
-    
-    <div class="theme-swatch" data-theme="ios26" title="iOS 26" style="background:linear-gradient(135deg,#e8eaf0,#dde2f0);border:2px solid rgba(255,255,255,0.8);">
-      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#007aff;margin-top:auto;">iOS</div>
-    </div>
-    <div class="theme-swatch" data-theme="neon" title="Neon Noir" style="background:#0d0810;border:2px solid #ff2d7840;">
-      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#ff2d78;margin-top:auto;">NEON</div>
-    </div>
-    <div class="theme-swatch" data-theme="bel-bel" title="Bel Bel" style="background:linear-gradient(to bottom left, #FB5A27, #8115E6);border:2px solid rgba(255,255,255,0.4);">
-      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#fff;margin-top:auto;text-shadow:0 1px 2px rgba(0,0,0,0.5);">BEL</div>
-    </div>
-    <div class="theme-swatch" data-theme="newsprint" title="Newsprint" style="background:#f8f6f0;border:2px solid #ddd;">
-      <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#888;margin-top:auto;">NEWS</div>
-    </div>
+
+```
+<div class="theme-swatch" data-theme="ios26" title="iOS 26" style="background:linear-gradient(135deg,#e8eaf0,#dde2f0);border:2px solid rgba(255,255,255,0.8);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#007aff;margin-top:auto;">iOS</div>
+</div>
+<div class="theme-swatch" data-theme="neon" title="Neon Noir" style="background:#0d0810;border:2px solid #ff2d7840;">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#ff2d78;margin-top:auto;">NEON</div>
+</div>
+<div class="theme-swatch" data-theme="bel-bel" title="Bel Bel" style="background:linear-gradient(to bottom left, #FB5A27, #8115E6);border:2px solid rgba(255,255,255,0.4);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#fff;margin-top:auto;text-shadow:0 1px 2px rgba(0,0,0,0.5);">BEL</div>
+</div>
+<div class="theme-swatch" data-theme="newsprint" title="Newsprint" style="background:#f8f6f0;border:2px solid #ddd;">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#888;margin-top:auto;">NEWS</div>
+</div>
+```
 
   </div>
   <div class="divider"></div>
@@ -486,6 +498,16 @@
   <div class="divider"></div>
   <div class="sheet-label">Danger Zone</div>
   <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
+  <div class="divider"></div>
+  <div class="sheet-label">Categories</div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
+    Edit keys and display labels. Key is used internally (lowercase, no spaces) — changing it will unlink existing tasks using that key.
+  </div>
+  <div id="catSettingsRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+  <div style="display:flex;gap:8px;">
+    <button class="sheet-btn" id="addCatBtn" style="flex:1;margin-top:0;">+ Add Category</button>
+    <button class="sheet-btn primary" id="saveCatsBtn" style="flex:1;margin-top:0;">Save Categories</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
