@@ -496,21 +496,6 @@
       "completedAt": "2026-03-05T22:40:50.044Z"
     },
     {
-      "id": "mme5b487uegw",
-      "title": "Fix the Bel hidden spot",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-06",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": true
-    },
-    {
       "id": "mmf239h572us",
       "title": "Lab Bluesky account?",
       "categories": [
@@ -649,6 +634,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-06",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -745,17 +736,11 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T15:41:56.008Z"
+  "updated": "2026-03-06T15:47:02.647Z"
 }
