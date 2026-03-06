@@ -1231,3 +1231,8 @@ function onDragEnd(e) {
 // INIT
 loadTheme(); loadLocal(); render(); loadSettingsUI();
 setTimeout(function(){ if(state.settings.ghToken) ghFetch(); }, 400);
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && state.settings.ghToken) {
+    ghFetch();
+  }
+});
