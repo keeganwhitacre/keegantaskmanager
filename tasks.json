@@ -544,6 +544,23 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-03-06T17:39:58.254Z"
+    },
+    {
+      "id": "mmfh8can114u",
+      "title": "Bradie fucking died",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "hi",
+      "pinnedToday": true,
+      "note": "",
+      "due": "2026-03-27",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -760,5 +777,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T22:17:56.312Z"
+  "updated": "2026-03-06T22:39:19.309Z"
 }
