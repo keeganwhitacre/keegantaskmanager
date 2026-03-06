@@ -1,19 +1,31 @@
-// sw.js
-// Cache-first service worker for Keegan’s Tasks PWA
-// Bump CACHE_VERSION any time you deploy updated app.js or styles.css
-// to force clients to fetch fresh files.
 
-var CACHE_VERSION = ‘kw-v1’;
+var CACHE_VERSION = 'kw-v2';
 var STATIC_ASSETS = [
-‘/’,
-‘/index.html’,
-‘/app.js’,
-‘/styles.css’,
-‘/manifest.json’
+  '/',
+  '/index.html',
+  '/app.js',
+  '/styles.css',
+  '/manifest.json',
+  '/fonts/dm-sans-v17-latin-300.woff2',
+  '/fonts/dm-sans-v17-latin-regular.woff2',
+  '/fonts/dm-sans-v17-latin-500.woff2',
+  '/fonts/dm-sans-v17-latin-600.woff2',
+  '/fonts/dm-sans-v17-latin-700.woff2',
+  '/fonts/dm-mono-v16-latin-regular.woff2',
+  '/fonts/dm-mono-v16-latin-500.woff2',
+  '/fonts/syne-v24-latin-regular.woff2',
+  '/fonts/syne-v24-latin-500.woff2',
+  '/fonts/syne-v24-latin-700.woff2',
+  '/fonts/syne-v24-latin-800.woff2',
+  '/fonts/ibm-plex-mono-v20-latin-300.woff2',
+  '/fonts/ibm-plex-mono-v20-latin-regular.woff2',
+  '/fonts/ibm-plex-mono-v20-latin-500.woff2',
+  '/fonts/ibm-plex-mono-v20-latin-700.woff2',
+  '/fonts/bebas-neue-v16-latin-regular.woff2'
 ];
 
 // ── Install: pre-cache all static assets ────────────────────────────────────
-self.addEventListener(‘install’, function(e) {
+self.addEventListener('install', function(e) {
 e.waitUntil(
 caches.open(CACHE_VERSION).then(function(cache) {
 return cache.addAll(STATIC_ASSETS);
@@ -24,7 +36,7 @@ self.skipWaiting();
 });
 
 // ── Activate: delete stale caches from old versions ─────────────────────────
-self.addEventListener(‘activate’, function(e) {
+self.addEventListener('activate', function(e) {
 e.waitUntil(
 caches.keys().then(function(keys) {
 return Promise.all(
@@ -39,12 +51,12 @@ return self.clients.claim();
 });
 
 // ── Fetch: cache-first for static assets, network-first for everything else ──
-self.addEventListener(‘fetch’, function(e) {
+self.addEventListener('fetch', function(e) {
 var url = new URL(e.request.url);
 
 // Only intercept same-origin GET requests.
 // Let GitHub API calls, font fetches, etc. go straight to network.
-if (e.request.method !== ‘GET’ || url.origin !== self.location.origin) {
+if (e.request.method !== 'GET' || url.origin !== self.location.origin) {
 return;
 }
 
