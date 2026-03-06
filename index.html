@@ -20,6 +20,13 @@
 
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
 </head>
 <body>
 
