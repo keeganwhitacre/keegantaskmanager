@@ -502,9 +502,9 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-03-06",
+      "due": "2026-03-07",
       "noteIsMono": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0
     }
@@ -722,5 +722,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-06T00:14:39.618Z"
+  "updated": "2026-03-06T00:14:41.678Z"
 }
