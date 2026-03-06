@@ -332,9 +332,9 @@
       ],
       "status": "active",
       "priority": "hi",
-      "pinnedToday": true,
+      "pinnedToday": false,
       "note": "Also “early life” vs childhood\nTimes when dependent vs adult",
-      "due": "2026-03-05",
+      "due": "2026-03-06",
       "projectId": "mmc9gxu8tdgk",
       "noteIsMono": false,
       "done": false,
@@ -737,5 +737,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-06T00:14:41.678Z"
+  "updated": "2026-03-06T02:36:48.460Z"
 }
