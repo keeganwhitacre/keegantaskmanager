@@ -573,7 +573,7 @@
       }
     ]
   },
-  "scratchpad": "\n- reading queue\n- read it later vault\n- random selector in bel dates \n\nSuicide app?\nOffline!!!!",
+  "scratchpad": "Suicide app?\nOffline!!!!",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -616,6 +616,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-06",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -712,17 +718,11 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T13:21:15.349Z"
+  "updated": "2026-03-06T15:06:03.287Z"
 }
