@@ -544,22 +544,6 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-03-06T17:39:58.254Z"
-    },
-    {
-      "id": "mmfceb7eqnyw",
-      "title": "Pick up hush-puppies",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "lo",
-      "pinnedToday": true,
-      "note": "",
-      "due": "",
-      "projectId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     }
   ],
   "projects": [
@@ -668,12 +652,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-06",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -770,11 +748,17 @@
         ]
       }
     },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T21:02:26.604Z"
+  "updated": "2026-03-06T22:17:56.312Z"
 }
