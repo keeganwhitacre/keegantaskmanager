@@ -100,7 +100,6 @@ state.sha=d.sha;
 state._shaLoaded=true;
 var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
 
-```
   state.tasks = dec.tasks || dec;
   if(!state.tasks) state.tasks = [];
   if(dec.projects) state.projects = dec.projects;
@@ -134,7 +133,6 @@ var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))))
   if(retries < 1 && navigator.onLine){ setTimeout(function(){ ghFetch(1); }, 3000); }
   else { showSync(navigator.onLine?'error':'offline', navigator.onLine?'Sync failed':'Offline — saved locally'); }
 });
-```
 
 }
 
@@ -480,7 +478,6 @@ list.appendChild(section);
 } else {
 var timeGroups = { overdue: [], today: [], tomorrow: [], week: [], later: [] };
 
-```
 state.tasks.forEach(function(t){
   if(t.done || !searchMatch(t,searchQ)) return;
   if(!filterTask(t)) return;
@@ -542,7 +539,6 @@ groupOrder.forEach(function(g) {
 });
 
 if(!anyVisible){ list.innerHTML='<div class="empty-state"><div class="empty-icon">✓</div><div>'+(state.focusMode?'Nothing due today':'No tasks match this filter')+'</div></div>'; }
-```
 
 }
 
