@@ -229,15 +229,16 @@ body.theme-bel-bel .filter-scroll {
   border-radius: 99px;
   margin: 0 20px 14px;
   gap: 0;
-  box-shadow: var(--shadow-base);
+  box-shadow: none; /* ← remove shadow from container, move to ::after */
   width: calc(100% - 40px);
   box-sizing: border-box;
+  position: relative; /* ← add this */
 }
 
 /* Zero padding for the main tab bar so active tabs fill top to bottom */
 body.theme-bel-bel .tab-bar {
   padding: 0;
-  overflow: hidden; /* This clips the active tab so it matches the outer curve perfectly on the left/right edges */
+  overflow: visible; /* This clips the active tab so it matches the outer curve perfectly on the left/right edges */
 }
 
 /* Let the filter row keep a tiny bit of padding and scroll naturally */
@@ -265,6 +266,17 @@ body.theme-bel-bel .s-chip {
 /* Adjusting button padding to compensate for the removed wrapper padding */
 body.theme-bel-bel .tab-btn { flex: 1; padding: 12px; }
 body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
+
+body.theme-bel-bel .tab-bar::after,
+body.theme-bel-bel .filter-scroll::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  box-shadow: var(--shadow-base);
+  pointer-events: none;
+  z-index: 10;
+}
 
 /* ─────────────────────────────────────────────────────────
    ACTIVE GRADIENTS & GLASS FIXES
