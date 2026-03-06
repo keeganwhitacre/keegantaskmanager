@@ -246,7 +246,7 @@
       "title": "Slack Features + Organization",
       "text": "Slack Features + Organization",
       "status": "active",
-      "priority": "md",
+      "priority": "lo",
       "section": "upcoming",
       "note": "",
       "due": "2026-03-06",
@@ -256,7 +256,8 @@
       "categories": [
         "lab"
       ],
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": ""
     },
     {
       "id": "1772563867886",
@@ -737,5 +738,5 @@
       "2026-03-05": 5
     }
   },
-  "updated": "2026-03-06T02:36:55.616Z"
+  "updated": "2026-03-06T02:37:02.404Z"
 }
