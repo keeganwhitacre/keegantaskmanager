@@ -73,8 +73,6 @@ cache.put(e.request, fresh.clone());
 }
 return fresh;
 }).catch(function() { /* offline — silently ignore */ });
-
-```
     // Return the cached copy now; background fetch updates it for next time
     return cached;
   }
@@ -89,7 +87,5 @@ return fresh;
     return response;
   });
 })
-```
-
 );
 });
