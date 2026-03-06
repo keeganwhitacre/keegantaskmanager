@@ -590,7 +590,7 @@
       }
     ]
   },
-  "scratchpad": "Suicide app?\nOffline!!!!\n\nBugs\n- scrolling through categories loses the ",
+  "scratchpad": "Suicide app?\nOffline!!!!\n\nBugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n- ",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -741,5 +741,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-06T15:40:57.382Z"
+  "updated": "2026-03-06T15:41:15.876Z"
 }
