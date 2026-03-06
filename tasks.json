@@ -523,6 +523,21 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "mmewfvef5ijl",
+      "title": "Testing refresh ",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-06",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
