@@ -454,7 +454,7 @@
         "manuscript"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "pinnedToday": false,
       "note": "Address comments etc.",
       "due": "2026-03-08",
@@ -815,5 +815,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-07T17:16:12.977Z"
+  "updated": "2026-03-07T17:17:14.442Z"
 }
