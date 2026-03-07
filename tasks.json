@@ -576,6 +576,21 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "mmgjl6rr87eu",
+      "title": "Fix EMA and manifest on task manager and EMA",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-07",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
