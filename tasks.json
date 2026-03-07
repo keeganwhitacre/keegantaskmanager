@@ -601,6 +601,13 @@
       "stage": "Planning",
       "due": "",
       "note": ""
+    },
+    {
+      "id": "mmgcg8sqamq9",
+      "title": "Personal Research Project",
+      "stage": "Planning",
+      "due": "",
+      "note": "EMA app? In house? Pilot study?"
     }
   ],
   "bel": {
@@ -794,5 +801,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-07T13:12:35.755Z"
+  "updated": "2026-03-07T13:13:16.114Z"
 }
