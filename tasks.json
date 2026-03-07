@@ -546,23 +546,6 @@
       "completedAt": "2026-03-06T17:39:58.254Z"
     },
     {
-      "id": "mmfh8can114u",
-      "title": "Bradie fucking died",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
-      "status": "active",
-      "priority": "hi",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-03-28",
-      "projectId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mmfpiapga62c",
       "title": "Bank app",
       "categories": [
@@ -801,5 +784,5 @@
       "2026-03-06": 3
     }
   },
-  "updated": "2026-03-07T14:10:02.274Z"
+  "updated": "2026-03-07T14:18:21.313Z"
 }
