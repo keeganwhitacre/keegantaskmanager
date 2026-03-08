@@ -471,7 +471,7 @@
       "section": "upcoming",
       "pinnedToday": false,
       "note": "Red shirt? Slacks?",
-      "due": "2026-03-07",
+      "due": "2026-03-08",
       "noteIsMono": false,
       "done": false,
       "categories": [
@@ -816,5 +816,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T03:06:09.878Z"
+  "updated": "2026-03-08T16:51:03.297Z"
 }
