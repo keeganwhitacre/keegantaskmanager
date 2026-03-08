@@ -665,7 +665,7 @@
       }
     ]
   },
-  "scratchpad": "Today\n- food w Johnny Laila Alex Abby\n- going out tn? Ugh\n\n\nBugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n- ",
+  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n- ",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -818,5 +818,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-08T20:02:52.069Z"
+  "updated": "2026-03-08T20:03:12.511Z"
 }
