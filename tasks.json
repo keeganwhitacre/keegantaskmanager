@@ -470,7 +470,7 @@
       "priority": "md",
       "section": "upcoming",
       "pinnedToday": false,
-      "note": "Red shirt? Slacks?",
+      "note": "Red shirt? Slacks?\n\nCheck out store this week for nice fit",
       "due": "2026-03-08",
       "noteIsMono": false,
       "done": false,
@@ -816,5 +816,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T18:49:34.546Z"
+  "updated": "2026-03-08T18:50:15.767Z"
 }
