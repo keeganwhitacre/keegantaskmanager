@@ -587,11 +587,11 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-03-07",
+      "due": "2026-03-08",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true
+      "pinnedToday": false
     }
   ],
   "projects": [
@@ -816,5 +816,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T16:51:06.539Z"
+  "updated": "2026-03-08T16:51:10.715Z"
 }
