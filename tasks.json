@@ -523,7 +523,7 @@
       "pinnedToday": false,
       "note": "- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
       "due": "",
-      "projectId": "",
+      "projectId": "mmgcg8sqamq9",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
@@ -818,5 +818,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-08T20:02:33.611Z"
+  "updated": "2026-03-08T20:02:43.059Z"
 }
