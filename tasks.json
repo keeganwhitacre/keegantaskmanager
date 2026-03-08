@@ -586,12 +586,13 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "Back burner, but modify to fit theory",
       "due": "2026-03-08",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": false
+      "pinnedToday": false,
+      "projectId": ""
     }
   ],
   "projects": [
@@ -816,5 +817,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T18:50:15.767Z"
+  "updated": "2026-03-08T18:50:27.031Z"
 }
