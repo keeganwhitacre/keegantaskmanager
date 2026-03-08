@@ -593,6 +593,22 @@
       "pomodoros": 0,
       "pinnedToday": false,
       "projectId": "mmgcg8sqamq9"
+    },
+    {
+      "id": "mmicdzubswrv",
+      "title": "Fix camera seal",
+      "categories": [
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "https://m.youtube.com/watch?v=cFBsYCXsCls",
+      "due": "2026-03-09",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -818,5 +834,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-08T20:03:15.574Z"
+  "updated": "2026-03-08T22:47:03.553Z"
 }
