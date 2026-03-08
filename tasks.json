@@ -234,7 +234,7 @@
       "status": "active",
       "priority": "hi",
       "note": "",
-      "due": "2026-03-10",
+      "due": "2026-03-09",
       "noteIsMono": false,
       "pinnedToday": false,
       "done": false,
@@ -817,5 +817,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T19:59:07.112Z"
+  "updated": "2026-03-08T20:00:08.586Z"
 }
