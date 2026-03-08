@@ -506,7 +506,7 @@
       "priority": "lo",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-11",
+      "due": "2026-03-23",
       "projectId": "",
       "noteIsMono": false,
       "done": false,
@@ -817,5 +817,5 @@
       "2026-03-07": 2
     }
   },
-  "updated": "2026-03-08T20:00:08.586Z"
+  "updated": "2026-03-08T20:00:15.943Z"
 }
