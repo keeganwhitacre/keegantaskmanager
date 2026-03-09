@@ -456,8 +456,8 @@
       "status": "active",
       "priority": "hi",
       "pinnedToday": false,
-      "note": "Address comments etc.",
-      "due": "2026-03-08",
+      "note": "Add more context\nAPA formatting\nBold more\nGet Kiana to help find which codes they each are",
+      "due": "2026-03-09",
       "projectId": "mmc9gxu8tdgk",
       "noteIsMono": false,
       "done": false,
@@ -724,6 +724,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-08",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -820,12 +826,6 @@
         ]
       }
     },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
@@ -834,5 +834,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-08T22:47:03.553Z"
+  "updated": "2026-03-09T00:23:09.825Z"
 }
