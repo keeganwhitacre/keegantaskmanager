@@ -466,7 +466,7 @@ body.theme-bel-bel .task { border-left: 3px solid transparent; }
 /* new body theme for dark mode ios 26 ish whatever */
 body.theme-ios-dark {
   /* --- iOS 26 DARK GLASS --- */
-  --bg-body: #000000;
+  --bg-body: rgba(0, 0, 0, 0.001);
   --bg-solid: #000000;
   --bg-surface: rgba(28, 28, 30, 0.65);
   --bg-input: rgba(44, 44, 46, 0.65);
