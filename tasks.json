@@ -595,6 +595,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmjb031tuszl",
+      "title": "Practice Poster Talk",
+      "categories": [
+        "lab",
+        "conf"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -821,5 +838,5 @@
       "2026-03-09": 3
     }
   },
-  "updated": "2026-03-09T14:46:13.901Z"
+  "updated": "2026-03-09T14:56:01.081Z"
 }
