@@ -582,7 +582,8 @@
       "id": "mmgjl6rr87eu",
       "title": "Fix EMA and manifest on task manager and EMA",
       "categories": [
-        "personal"
+        "personal",
+        "apps"
       ],
       "status": "active",
       "priority": "md",
@@ -851,5 +852,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T00:36:21.525Z"
+  "updated": "2026-03-09T00:44:58.523Z"
 }
