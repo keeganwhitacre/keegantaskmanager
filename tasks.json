@@ -516,7 +516,8 @@
       "id": "mmf2bkrf0wwb",
       "title": "EMA or similar app for understanding and/or pilot testing",
       "categories": [
-        "phd"
+        "phd",
+        "apps"
       ],
       "status": "review",
       "priority": "lo",
@@ -852,5 +853,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T00:44:58.523Z"
+  "updated": "2026-03-09T00:45:08.070Z"
 }
