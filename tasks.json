@@ -583,12 +583,11 @@
       "id": "mmgjl6rr87eu",
       "title": "Fix EMA and manifest on task manager and EMA",
       "categories": [
-        "personal",
-        "apps"
+        "personal"
       ],
       "status": "active",
       "priority": "md",
-      "note": "Back burner, but modify to fit theory",
+      "note": "Back burner, but modify to fit theory\n- add manifest\n- fix spacing\n- add tasks\n- fix design beyond template\n- user friendly\n- work towards testing notifications",
       "due": "2026-03-08",
       "noteIsMono": false,
       "done": false,
@@ -743,12 +742,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-08",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W09": {
         "sleep": [
@@ -845,6 +838,12 @@
         ]
       }
     },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
@@ -853,5 +852,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T00:50:30.074Z"
+  "updated": "2026-03-09T01:47:17.967Z"
 }
