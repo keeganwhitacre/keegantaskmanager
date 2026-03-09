@@ -463,6 +463,78 @@ body.theme-bel-bel .task.lo { border-left: 3px solid var(--task-lo) !important; 
 body.theme-bel-bel .task { border-left: 3px solid transparent; }
 
 
+/* new body theme for dark mode ios 26 ish whatever */
+body.theme-ios-dark {
+  /* --- iOS 26 DARK GLASS --- */
+  --bg-body: #000000;
+  --bg-solid: #000000;
+  --bg-surface: rgba(28, 28, 30, 0.65);
+  --bg-input: rgba(44, 44, 46, 0.65);
+  --bg-overlay: rgba(0, 0, 0, 0.65);
+  --bg-tab-active: rgba(255, 255, 255, 0.15);
+  --bg-toast: rgba(28, 28, 30, 0.85);
+
+  --text-main: #ffffff;
+  --text-muted: rgba(235, 235, 245, 0.6);
+  --text-date: #ffffff;
+  --text-inverse: #000000;
+
+  --tab-active-text: #ffffff;
+  --tab-active-border: rgba(255, 255, 255, 0.2);
+
+  --border-main: rgba(255, 255, 255, 0.15);
+  --border-input: rgba(255, 255, 255, 0.15);
+  --border-divider: rgba(255, 255, 255, 0.1);
+
+  --accent: #0a84ff;
+  --accent-faded: rgba(10, 132, 255, 0.15);
+  --accent-text: #ffffff;
+  --danger: #ff453a;
+  --warning: #ff9f0a;
+  --success: #32d74b;
+  --bel-accent: #32d74b;
+
+  --font-main: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-display: 'DM Sans', sans-serif;
+  
+  --display-weight: 700;
+  --display-tracking: -0.03em;
+  --clock-size: 38px;
+  --date-size: 28px;
+
+  --radius-pill: 99px;
+  --radius-circle: 50%;
+  --radius-card: 16px;
+  --radius-input: 12px;
+
+  --glass-filter: blur(24px) saturate(170%);
+  --overlay-filter: blur(4px);
+
+  --shadow-base: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 14px rgba(0, 0, 0, 0.4);
+  --shadow-toast: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.5);
+  
+  --fab-bg: rgba(44, 44, 46, 0.65);
+  --fab-border: 1px solid rgba(255, 255, 255, 0.15);
+  --fab-color: #0a84ff;
+  --fab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  --task-hi: #ff453a;
+  --task-md: #64d2ff;
+  --task-lo: rgba(235, 235, 245, 0.3);
+  --task-cb-bg: rgba(255, 255, 255, 0.05);
+  --task-cb-border: rgba(235, 235, 245, 0.3);
+}
+
+/* iOS Dark Background Gradient */
+body.theme-ios-dark::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 20% 15%, rgba(10,132,255,0.15) 0%, transparent 50%), 
+              radial-gradient(ellipse at 82% 55%, rgba(191,90,242,0.12) 0%, transparent 45%), 
+              radial-gradient(ellipse at 48% 92%, rgba(50,215,75,0.1) 0%, transparent 40%);
+}
+
+
 /* ══════════════════════════════════════════════════════════════════
    RESETS & GLOBAL
 ══════════════════════════════════════════════════════════════════ */
