@@ -42,21 +42,6 @@
       ]
     },
     {
-      "id": "mm7swxj4gte4",
-      "title": "Interoception analysis — maltreatment paper",
-      "status": "blocked",
-      "priority": "md",
-      "section": "blocked",
-      "due": "",
-      "note": "Talk to Kristen about possibility",
-      "done": false,
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "categories": [
-        "manuscript"
-      ]
-    },
-    {
       "id": "mm9pi4r1vstj",
       "title": "Add induced affect to yuritza poster",
       "status": "active",
@@ -835,5 +820,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T01:59:41.531Z"
+  "updated": "2026-03-09T02:09:52.919Z"
 }
