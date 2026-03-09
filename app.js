@@ -1252,14 +1252,13 @@ function renderDashFull() { updateClock(); renderIntention(); renderDashTasks();
 
 // THEME SYSTEM
 var THEME_KEY = 'kw_theme_v2';
-var THEMES = ['neon', 'newsprint', 'ios26', 'bel-bel'];
+var THEMES = ['neon', 'newsprint', 'ios26', 'bel-bel', 'ios-dark'];
 
 function applyTheme(name) {
 THEMES.forEach(function(t){ document.body.classList.remove('theme-' + t); });
 if (name) document.body.classList.add('theme-' + name);
 
-// Added a dark purple fallback for the Bel Bel theme
-var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0', 'bel-bel':'#1E1E1E' };
+var htmlBg = { neon:'#0d0810', newsprint:'#f8f6f0', ios26:'#e8eaf0', 'bel-bel':'#1E1E1E', 'ios-dark':'#000000' };
 document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
 
 document.querySelectorAll('.theme-swatch').forEach(function(sw){ sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26')); });
