@@ -581,7 +581,7 @@
     },
     {
       "id": "mmigak09xf4y",
-      "title": "Bank app native iOS swift rewrite",
+      "title": "Bank app new features",
       "categories": [
         "personal",
         "hobby"
@@ -589,7 +589,7 @@
       "status": "active",
       "priority": "lo",
       "pinnedToday": true,
-      "note": "Fix padding, sizing, animations, shadows, fonts, scrolling\nTheme picker separate settings menu that activates for whole app\nTrack how much someone lost through the whole game\nUnique animations for 1v1 and only one left rolling\ngamemodes\n- doubles changes, challenge mode, gamble mode, etc\n- use in game die",
+      "note": "Unique animations for 1v1 and only one left rolling\nNative swift eventually?\nchallenge mode",
       "due": "",
       "projectId": "",
       "noteIsMono": false,
@@ -821,5 +821,5 @@
       "2026-03-09": 3
     }
   },
-  "updated": "2026-03-09T14:21:51.786Z"
+  "updated": "2026-03-09T14:46:13.901Z"
 }
