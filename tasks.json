@@ -556,11 +556,11 @@
       "status": "active",
       "priority": "md",
       "note": "Back burner, but modify to fit theory\n- add manifest\n- fix spacing\n- add tasks\n- fix design beyond template\n- user friendly\n- work towards testing notifications\n- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
-      "due": "",
+      "due": "2026-03-10",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "projectId": "mmgcg8sqamq9"
     },
     {
@@ -760,12 +760,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-09",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W10": {
         "sleep": [
@@ -862,6 +856,12 @@
         ]
       }
     },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "moods": {
       "2026-03-04": 4,
       "2026-03-05": 5,
@@ -871,5 +871,5 @@
       "2026-03-09": 3
     }
   },
-  "updated": "2026-03-09T18:53:23.157Z"
+  "updated": "2026-03-09T19:59:15.626Z"
 }
