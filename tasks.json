@@ -560,7 +560,7 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": false,
+      "pinnedToday": true,
       "projectId": "mmgcg8sqamq9"
     },
     {
@@ -588,7 +588,7 @@
       ],
       "status": "active",
       "priority": "lo",
-      "pinnedToday": false,
+      "pinnedToday": true,
       "note": "Fix padding, sizing, animations, shadows, fonts, scrolling\nTheme picker separate settings menu that activates for whole app\nTrack how much someone lost through the whole game\nUnique animations for 1v1 and only one left rolling\ngamemodes\n- doubles changes, challenge mode, gamble mode, etc\n- use in game die",
       "due": "",
       "projectId": "",
@@ -820,5 +820,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T10:08:11.922Z"
+  "updated": "2026-03-09T12:15:50.397Z"
 }
