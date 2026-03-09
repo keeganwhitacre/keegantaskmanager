@@ -699,7 +699,7 @@
       }
     ]
   },
-  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n- ",
+  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n\nFeatures\n- iOS dark mode\n- ",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -852,5 +852,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T01:47:32.359Z"
+  "updated": "2026-03-09T01:52:13.106Z"
 }
