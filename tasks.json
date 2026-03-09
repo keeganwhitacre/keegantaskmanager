@@ -589,7 +589,7 @@
       "status": "active",
       "priority": "lo",
       "pinnedToday": true,
-      "note": "Unique animations for 1v1 and only one left rolling\nNative swift eventually?\nchallenge mode",
+      "note": "Native swift eventually?",
       "due": "",
       "projectId": "",
       "noteIsMono": false,
@@ -854,5 +854,5 @@
       "2026-03-09": 3
     }
   },
-  "updated": "2026-03-09T15:27:10.648Z"
+  "updated": "2026-03-09T15:50:21.509Z"
 }
