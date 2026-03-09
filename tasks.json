@@ -627,8 +627,9 @@
       "due": "",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-09T18:24:51.002Z"
     }
   ],
   "projects": [
@@ -855,5 +856,5 @@
       "2026-03-09": 3
     }
   },
-  "updated": "2026-03-09T18:24:47.355Z"
+  "updated": "2026-03-09T18:24:53.505Z"
 }
