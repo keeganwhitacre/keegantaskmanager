@@ -423,7 +423,7 @@
       "status": "active",
       "priority": "lo",
       "note": "- prompts return for daily reflection\n- possible new theme to replace news?",
-      "due": "2026-03-08",
+      "due": "",
       "noteIsMono": false,
       "pinnedToday": false,
       "done": false,
@@ -852,5 +852,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T01:47:22.475Z"
+  "updated": "2026-03-09T01:47:27.217Z"
 }
