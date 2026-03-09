@@ -513,23 +513,6 @@
       "pomodoros": 0
     },
     {
-      "id": "mmf2bkrf0wwb",
-      "title": "EMA or similar app for understanding and/or pilot testing",
-      "categories": [
-        "phd",
-        "apps"
-      ],
-      "status": "review",
-      "priority": "lo",
-      "pinnedToday": false,
-      "note": "- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
-      "due": "",
-      "projectId": "mmgcg8sqamq9",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mmf4yre869qg",
       "title": "Show Ruofan physiology equipment",
       "categories": [
@@ -852,5 +835,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T01:52:13.106Z"
+  "updated": "2026-03-09T01:59:36.896Z"
 }
