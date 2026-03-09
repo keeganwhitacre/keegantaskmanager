@@ -422,7 +422,7 @@
       ],
       "status": "active",
       "priority": "lo",
-      "note": "- random selector in bel dates\n- prompts return for daily reflection\n- possible new theme to replace news?",
+      "note": "- prompts return for daily reflection\n- possible new theme to replace news?",
       "due": "2026-03-08",
       "noteIsMono": false,
       "pinnedToday": false,
@@ -853,5 +853,5 @@
       "2026-03-08": 4
     }
   },
-  "updated": "2026-03-09T00:49:46.207Z"
+  "updated": "2026-03-09T00:50:30.074Z"
 }
