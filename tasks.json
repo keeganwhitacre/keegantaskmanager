@@ -668,18 +668,20 @@
     },
     {
       "id": "1773148994236",
-      "title": "Buy a poster carrier",
+      "title": "Pick up poster carrier",
       "categories": [
+        "conf",
         "personal"
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "Polaris Michaels",
       "due": "2026-03-10",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": ""
     }
   ],
   "projects": [
@@ -906,5 +908,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-10T15:07:40.062Z"
+  "updated": "2026-03-10T15:16:29.283Z"
 }
