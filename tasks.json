@@ -823,7 +823,7 @@
       "2026-W11": {
         "sleep": [
           false,
-          false,
+          true,
           false,
           false,
           false,
@@ -849,7 +849,7 @@
           false
         ],
         "doom": [
-          false,
+          true,
           false,
           false,
           false,
@@ -874,5 +874,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-10T11:25:05.866Z"
+  "updated": "2026-03-10T11:25:15.396Z"
 }
