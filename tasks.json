@@ -443,7 +443,7 @@
       "priority": "hi",
       "pinnedToday": false,
       "note": "Add more context\nAPA formatting\nBold more\nGet Kiana to help find which codes they each are",
-      "due": "2026-03-09",
+      "due": "2026-03-10",
       "projectId": "mmc9gxu8tdgk",
       "noteIsMono": false,
       "done": false,
@@ -457,7 +457,7 @@
       "section": "upcoming",
       "pinnedToday": false,
       "note": "Red shirt? Slacks?\n\nCheck out store this week for nice fit",
-      "due": "2026-03-09",
+      "due": "2026-03-10",
       "noteIsMono": false,
       "done": false,
       "categories": [
@@ -574,7 +574,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "https://m.youtube.com/watch?v=cFBsYCXsCls",
-      "due": "2026-03-09",
+      "due": "2026-03-10",
       "projectId": "",
       "noteIsMono": false,
       "done": false,
@@ -874,5 +874,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-10T11:24:46.780Z"
+  "updated": "2026-03-10T11:24:53.728Z"
 }
