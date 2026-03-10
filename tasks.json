@@ -557,7 +557,7 @@
       "status": "active",
       "priority": "md",
       "note": "Back burner, but modify to fit theory\n- add manifest\n- fix spacing\n- add tasks\n- fix design beyond template\n- user friendly\n- work towards testing notifications\n- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
-      "due": "2026-03-10",
+      "due": "2026-03-31",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
@@ -874,5 +874,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-10T11:24:53.728Z"
+  "updated": "2026-03-10T11:25:00.609Z"
 }
