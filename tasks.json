@@ -648,6 +648,22 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmkl3voggqul",
+      "title": "Print poster",
+      "categories": [
+        "conf"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "",
+      "due": "",
+      "projectId": "mmchwskbfpig",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -874,5 +890,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-10T11:25:15.396Z"
+  "updated": "2026-03-10T12:26:40.493Z"
 }
