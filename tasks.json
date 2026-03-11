@@ -680,9 +680,10 @@
       "due": "2026-03-10",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
-      "projectId": ""
+      "projectId": "",
+      "completedAt": "2026-03-11T01:26:37.691Z"
     }
   ],
   "projects": [
@@ -909,5 +910,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-11T01:26:28.736Z"
+  "updated": "2026-03-11T01:26:40.196Z"
 }
