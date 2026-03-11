@@ -224,7 +224,6 @@
       "pinnedToday": false,
       "done": true,
       "pomodoros": 0,
-      "projectId": "mmchwskbfpig",
       "completedAt": "2026-03-09T22:37:38.977Z"
     },
     {
@@ -378,7 +377,6 @@
       "done": true,
       "pomodoros": 0,
       "pinnedToday": true,
-      "projectId": "mmchwskbfpig",
       "completedAt": "2026-03-05T16:25:49.662Z"
     },
     {
@@ -427,7 +425,6 @@
       "pinnedToday": true,
       "note": "- change age-> objective fragmentation comments bc interoception gets worse",
       "due": "",
-      "projectId": "mmchwskbfpig",
       "noteIsMono": false,
       "done": true,
       "pomodoros": 0,
@@ -464,7 +461,6 @@
       "categories": [
         "conf"
       ],
-      "projectId": "mmchwskbfpig",
       "pomodoros": 0,
       "completedAt": "2026-03-11T20:38:00.524Z"
     },
@@ -662,7 +658,6 @@
       "pinnedToday": true,
       "note": "",
       "due": "",
-      "projectId": "mmchwskbfpig",
       "noteIsMono": false,
       "done": true,
       "pomodoros": 0,
@@ -694,13 +689,6 @@
       "stage": "Review",
       "due": "2026-03-31",
       "note": "<p style=\"font-size: 16px; cursor: text; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; caret-color: rgb(227, 227, 227); color: rgb(227, 227, 227); font-family: &quot;Google Sans Flex&quot;, &quot;Google Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif;\"><br></p>"
-    },
-    {
-      "id": "mmchwskbfpig",
-      "title": "Society For Affective Science",
-      "stage": "Active",
-      "due": "2026-03-11",
-      "note": ""
     },
     {
       "id": "mmdklg8dgrze",
@@ -798,7 +786,7 @@
       "name": "SAS Pittsburgh",
       "date": "2026-03-11"
     },
-    "reflection": "",
+    "reflection": "The enormous load of SAS and the amount of stuff available to me. Additionally, just the fact that as soon as this trip ends im on another.",
     "reflectionDate": "2026-03-11",
     "habits": {
       "2026-W10": {
@@ -912,5 +900,5 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-11T23:32:50.651Z"
+  "updated": "2026-03-11T23:33:38.167Z"
 }
