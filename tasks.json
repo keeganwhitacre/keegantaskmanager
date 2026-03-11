@@ -457,8 +457,8 @@
       "priority": "md",
       "section": "upcoming",
       "pinnedToday": false,
-      "note": "Red shirt? Slacks?\n\nCheck out store this week for nice fit",
-      "due": "2026-03-10",
+      "note": "Red shirt? \nCheck DFW",
+      "due": "2026-03-11",
       "noteIsMono": false,
       "done": false,
       "categories": [
@@ -910,5 +910,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-11T03:49:22.678Z"
+  "updated": "2026-03-11T11:35:26.928Z"
 }
