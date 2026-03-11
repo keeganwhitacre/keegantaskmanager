@@ -460,12 +460,13 @@
       "note": "Check DFW\nSocks + Stan smiths cleannnn",
       "due": "2026-03-11",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "categories": [
         "conf"
       ],
       "projectId": "mmchwskbfpig",
-      "pomodoros": 0
+      "pomodoros": 0,
+      "completedAt": "2026-03-11T20:38:00.524Z"
     },
     {
       "id": "mmdyqlqfb6m7",
@@ -910,5 +911,5 @@
       "2026-03-09": 4
     }
   },
-  "updated": "2026-03-11T12:31:37.290Z"
+  "updated": "2026-03-11T20:38:03.026Z"
 }
