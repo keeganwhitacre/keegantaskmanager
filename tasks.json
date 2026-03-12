@@ -745,7 +745,7 @@
       }
     ]
   },
-  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n\nFeatures\n- colors for added categories\n\nSAS Packing\n- jeans x2\n- underwear x1\n- black socks x2\n- tshirts x2\n- bed shirt x1\n- dress shirts x2\n- polo x1\n- slacks x3\n- belt x2\n- shoes \nNeed to add\n- shorts x2\n- white socks x3\n- ",
+  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n\nFeatures\n- colors for added categories\n\n\n\n\nNotes\n- ",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -900,5 +900,5 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-11T23:33:38.167Z"
+  "updated": "2026-03-12T13:33:33.693Z"
 }
