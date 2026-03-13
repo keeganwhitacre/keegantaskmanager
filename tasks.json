@@ -799,8 +799,8 @@
     "intentionWeek": "2026-W11",
     "quoteIdx": 11,
     "countdown": {
-      "name": "SAS Pittsburgh",
-      "date": "2026-03-11"
+      "name": "San Diego",
+      "date": "2026-03-15"
     },
     "reflection": "",
     "reflectionDate": "2026-03-13",
@@ -917,7 +917,7 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-13T23:02:39.962Z",
+  "updated": "2026-03-13T23:02:55.007Z",
   "cnNotes": [
     {
       "id": "mmphrenmswcl",
