@@ -109,6 +109,8 @@ var dec=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,''))))
   if(dec.scratchpad !== undefined) state.scratchpad=dec.scratchpad;
   if(dec.shop !== undefined){ shopItems=dec.shop; try{localStorage.setItem(SHOP_KEY,JSON.stringify(shopItems));}catch(e){} }
   if(dec.dash !== undefined){ Object.assign(dState, dec.dash); saveDash(false); }
+  if(dec.cnNotes !== undefined && typeof window._cnLoadFromGH === 'function') window._cnLoadFromGH(dec.cnNotes);
+
   
   state.tasks.forEach(function(t){ 
     if(t.category && !t.categories) t.categories = [t.category];
@@ -147,6 +149,7 @@ if(!state._shaLoaded){ ghPushQueued = true; return; }
 ghPushQueued = false;
 showSync('syncing','Saving to GitHub…');
 var payload={tasks:state.tasks, projects:state.projects, bel:belState, scratchpad:state.scratchpad, shop:shopItems, dash:dState, updated:new Date().toISOString()};
+if(typeof cnNotes !== 'undefined') payload.cnNotes = cnNotes;
 var content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
 var body={message:'Update tasks '+new Date().toLocaleTimeString(),content:content};
 if(state.sha) body.sha=state.sha;
@@ -1072,8 +1075,8 @@ var toastTimer; function showToast(msg){ var el=document.getElementById('toast')
 
 // TAB NAVIGATION
 function switchTab(tab) {
-document.body.classList.remove('dash-mode', 'projects-mode', 'projects-detail-mode', 'bel-mode');
-if (tab === 'projects-detail') { document.body.classList.add('projects-mode', 'projects-detail-mode'); } else if (tab !== 'tasks') { document.body.classList.add(tab + '-mode'); }
+document.body.classList.remove('dash-mode', 'projects-mode', 'projects-detail-mode', 'bel-mode', 'confnotes-mode');
+if (tab === 'projects-detail') { document.body.classList.add('projects-mode', 'projects-detail-mode'); } else if (tab === 'confnotes') { document.body.classList.add('confnotes-mode'); document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); }); if(typeof renderCNList === 'function') renderCNList(); return; } else if (tab !== 'tasks') { document.body.classList.add(tab + '-mode'); }
 document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
 var tBtn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)); if(tBtn) tBtn.classList.add('active');
 if (tab === 'dash') { renderDashFull(); if (!weatherLoaded) loadWeather(); if (!clockTimer) clockTimer = setInterval(updateClock, 1000); } else { if (clockTimer) { clearInterval(clockTimer); clockTimer = null; } }
