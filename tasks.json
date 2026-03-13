@@ -915,18 +915,20 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T16:20:57.113Z",
+  "updated": "2026-03-13T16:21:05.564Z",
   "cnNotes": [
     {
       "id": "mmp3pnyuk6nw",
       "title": "Loneliness Symposium",
-      "speaker": "Anita Restrepo, Matthew Southward, Karen Smith,",
+      "speaker": "Anita Restrepo, Matthew Southward, Karen Smith, Elizabeth Holly",
       "body": "",
-      "tags": [],
+      "tags": [
+        "conf"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-13T16:18:32.214Z",
-      "updatedAt": "2026-03-13T16:20:54.611Z"
+      "updatedAt": "2026-03-13T16:21:03.062Z"
     },
     {
       "id": "mmp1zo4x9xnk",
