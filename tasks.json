@@ -251,7 +251,7 @@
       "status": "active",
       "priority": "md",
       "section": "upcoming",
-      "note": "",
+      "note": "FMRI question\nTheory vs application\nFuture undecided",
       "due": "2026-03-23",
       "noteIsMono": false,
       "done": false,
@@ -900,7 +900,7 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T16:41:46.870Z",
+  "updated": "2026-03-13T16:43:45.988Z",
   "cnNotes": [
     {
       "id": "mmp4in17lv8t",
