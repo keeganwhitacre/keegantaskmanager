@@ -915,12 +915,12 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T15:30:28.240Z",
+  "updated": "2026-03-13T15:30:43.800Z",
   "cnNotes": [
     {
       "id": "mmp1zo4x9xnk",
       "title": "",
-      "speaker": "",
+      "speaker": "Anita Restrepo",
       "body": "",
       "tags": [
         "conf"
@@ -928,7 +928,7 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-13T15:30:19.761Z",
-      "updatedAt": "2026-03-13T15:30:25.739Z"
+      "updatedAt": "2026-03-13T15:30:41.299Z"
     }
   ]
 }
