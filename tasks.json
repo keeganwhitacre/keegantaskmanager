@@ -915,12 +915,12 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T16:17:28.607Z",
+  "updated": "2026-03-13T16:17:31.271Z",
   "cnNotes": [
     {
       "id": "mmp1zo4x9xnk",
       "title": "Digital Media Use Symposium",
-      "speaker": "Jennifer Silk",
+      "speaker": "Jennifer Silk,",
       "body": "- Limitations on current studies, meta analysis\n- Transformation framework nesi et al 2018\n- Digital social threat and reward amplified\n    - EMA Study on adolescent female\n        - Suicidal risk sample\n        - Digital social threat and reward distinct factors inversely related\n        - Digital social threat and social anxiety linked",
       "tags": [
         "conf"
@@ -928,7 +928,7 @@
       "projectId": "",
       "bodyIsMono": true,
       "createdAt": "2026-03-13T15:30:19.761Z",
-      "updatedAt": "2026-03-13T16:17:26.105Z"
+      "updatedAt": "2026-03-13T16:17:28.752Z"
     }
   ]
 }
