@@ -900,8 +900,19 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T22:51:33.177Z",
+  "updated": "2026-03-13T22:51:59.728Z",
   "cnNotes": [
+    {
+      "id": "mmphrenmswcl",
+      "title": "Personal Research Project",
+      "speaker": "Keegan",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "createdAt": "2026-03-13T22:51:48.082Z",
+      "updatedAt": "2026-03-13T22:51:57.227Z"
+    },
     {
       "id": "mmpeyq6r3808",
       "title": "Interoception Symposium",
