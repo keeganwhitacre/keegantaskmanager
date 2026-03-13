@@ -761,7 +761,7 @@
       }
     ]
   },
-  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n\nFeatures\n- colors for added categories\n\n\n\n\nNotes\n- long term effects of chatbot reliance - especially in emotions\n- data safety + funding ",
+  "scratchpad": "Bugs\n- scrolling through categories loses the glow\n- still can scroll through the settings and tasks and shopping sheets\n\nFeatures\n- colors for added categories",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -917,7 +917,7 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-13T23:03:46.807Z",
+  "updated": "2026-03-13T23:04:17.971Z",
   "cnNotes": [
     {
       "id": "mmpeyq6r3808",
