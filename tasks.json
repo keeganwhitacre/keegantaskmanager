@@ -915,7 +915,7 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T15:14:05.225Z",
+  "updated": "2026-03-13T15:14:09.502Z",
   "cnNotes": [
     {
       "id": "mmp1epmxcdqf",
@@ -927,17 +927,6 @@
       "bodyIsMono": false,
       "createdAt": "2026-03-13T15:14:01.929Z",
       "updatedAt": "2026-03-13T15:14:02.723Z"
-    },
-    {
-      "id": "mmp1enfcmsqz",
-      "title": "",
-      "speaker": "",
-      "body": "",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "createdAt": "2026-03-13T15:13:59.064Z",
-      "updatedAt": "2026-03-13T15:14:00.759Z"
     }
   ]
 }
