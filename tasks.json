@@ -696,6 +696,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmpi911g2fb5",
+      "title": "Consider possible options w/ EPIC data",
+      "categories": [
+        "lab",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-23",
+      "projectId": "mmgcg8sqamq9",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -917,7 +934,7 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-13T23:04:58.093Z",
+  "updated": "2026-03-13T23:05:32.748Z",
   "cnNotes": [
     {
       "id": "mmpeyq6r3808",
