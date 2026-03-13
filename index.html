@@ -189,14 +189,7 @@
     <div id="cnSearchWrap" class="cn-search-wrap">
       <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes...">
     </div>
-    <div class="cn-filter-row" id="cnFilterRow">
-      <div class="chip active" data-cnfilter="all">All</div>
-      <div class="chip" data-cnfilter="conf">Conference</div>
-      <div class="chip" data-cnfilter="manuscript">Manuscript</div>
-      <div class="chip" data-cnfilter="lab">Lab</div>
-      <div class="chip" data-cnfilter="phd">PhD</div>
-      <div class="chip" data-cnfilter="personal">Personal</div>
-    </div>
+    <div class="cn-filter-row" id="cnFilterRow"></div>
     <div id="cnNotesList"></div>
   </div>
   <div id="cnDetailView" style="display:none;">
@@ -207,17 +200,10 @@
         <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </div>
     </div>
-    <input class="input" id="cnTitleInput" type="text" placeholder="Talk title or topic..." style="font-size:18px; font-weight:600; margin-bottom:8px;">
-    <input class="input" id="cnSpeakerInput" type="text" placeholder="Speaker / presenter..." style="font-size:14px; margin-bottom:8px;">
+    <input class="input" id="cnTitleInput" type="text" placeholder="Title..." style="font-size:18px; font-weight:600; margin-bottom:8px;">
+    <input class="input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." style="font-size:14px; margin-bottom:8px;">
     <div class="sheet-label">Tags</div>
-    <div class="chip-row" id="cnTagRow">
-      <div class="s-chip" data-val="conf">Conference</div>
-      <div class="s-chip" data-val="manuscript">Manuscript</div>
-      <div class="s-chip" data-val="lab">Lab</div>
-      <div class="s-chip" data-val="phd">PhD</div>
-      <div class="s-chip" data-val="personal">Personal</div>
-      <div class="s-chip" data-val="hobby">Hobby</div>
-    </div>
+    <div class="chip-row" id="cnTagRow"></div>
     <div class="sheet-label">Link to Project</div>
     <select class="input" id="cnProjectInput" style="appearance:auto; margin-bottom:14px;">
       <option value="">None</option>
@@ -226,7 +212,7 @@
       Body
       <span id="cnMonoToggle" style="font-size:10px;color:var(--text-muted);cursor:pointer;padding:2px 8px;border:1px solid var(--border-main);border-radius:6px;font-family:var(--font-mono);-webkit-user-select:none;user-select:none;">mono off</span>
     </div>
-    <textarea class="input cn-body-textarea" id="cnBodyInput" placeholder="Notes, thoughts, key takeaways..." rows="12" style="resize:vertical;min-height:200px;line-height:1.7;font-size:14px;"></textarea>
+    <textarea class="input cn-body-textarea" id="cnBodyInput" placeholder="Write anything..." rows="12" style="resize:vertical;min-height:200px;line-height:1.7;font-size:14px;"></textarea>
     <div class="cn-detail-meta" id="cnDetailMeta"></div>
   </div>
 </div>
