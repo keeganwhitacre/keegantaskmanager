@@ -915,7 +915,7 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T15:49:28.238Z",
+  "updated": "2026-03-13T15:49:31.092Z",
   "cnNotes": [
     {
       "id": "mmp1zo4x9xnk",
@@ -926,9 +926,9 @@
         "conf"
       ],
       "projectId": "",
-      "bodyIsMono": false,
+      "bodyIsMono": true,
       "createdAt": "2026-03-13T15:30:19.761Z",
-      "updatedAt": "2026-03-13T15:49:25.735Z"
+      "updatedAt": "2026-03-13T15:49:28.591Z"
     }
   ]
 }
