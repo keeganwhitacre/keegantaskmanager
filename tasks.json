@@ -680,6 +680,22 @@
       "pomodoros": 0,
       "pinnedToday": true,
       "completedAt": "2026-03-13T16:22:17.120Z"
+    },
+    {
+      "id": "mmpi4h6itg29",
+      "title": "Invite Chris to hang w friends",
+      "categories": [
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-25",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -900,7 +916,7 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T22:52:33.714Z",
+  "updated": "2026-03-13T23:02:00.393Z",
   "cnNotes": [
     {
       "id": "mmphrenmswcl",
