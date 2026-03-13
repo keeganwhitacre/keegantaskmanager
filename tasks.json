@@ -547,22 +547,6 @@
       "completedAt": "2026-03-07T17:16:10.469Z"
     },
     {
-      "id": "mmgjl6rr87eu",
-      "title": "Fix EMA and manifest on task manager and EMA",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "Back burner, but modify to fit theory\n- add manifest\n- fix spacing\n- add tasks\n- fix design beyond template\n- user friendly\n- work towards testing notifications\n- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
-      "due": "2026-03-31",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": false,
-      "projectId": "mmgcg8sqamq9"
-    },
-    {
       "id": "mmicdzubswrv",
       "title": "Fix camera seal",
       "categories": [
@@ -696,6 +680,22 @@
       "pomodoros": 0,
       "pinnedToday": true,
       "completedAt": "2026-03-13T16:22:17.120Z"
+    },
+    {
+      "id": "mmgjl6rr87eu",
+      "title": "Fix EMA and manifest on task manager and EMA",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "Back burner, but modify to fit theory\n- add manifest\n- fix spacing\n- add tasks\n- fix design beyond template\n- user friendly\n- work towards testing notifications\n- testing sleep and interoception\n- cloud flare backend\n- pilot study?",
+      "due": "2026-03-31",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": false,
+      "projectId": "mmgcg8sqamq9"
     }
   ],
   "projects": [
@@ -916,7 +916,7 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T16:39:40.421Z",
+  "updated": "2026-03-13T16:39:52.700Z",
   "cnNotes": [
     {
       "id": "mmp3te0kmbek",
