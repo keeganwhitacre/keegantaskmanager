@@ -900,8 +900,19 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T20:40:03.409Z",
+  "updated": "2026-03-13T21:33:32.346Z",
   "cnNotes": [
+    {
+      "id": "mmpeyq6r3808",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "createdAt": "2026-03-13T21:33:30.771Z",
+      "updatedAt": "2026-03-13T21:33:30.771Z"
+    },
     {
       "id": "mmpc3fk9552m",
       "title": "Emotion Language and Awareness",
@@ -913,7 +924,7 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-13T20:13:11.434Z",
-      "updatedAt": "2026-03-13T20:40:00.908Z"
+      "updatedAt": "2026-03-13T21:33:29.837Z"
     },
     {
       "id": "mmp4in17lv8t",
