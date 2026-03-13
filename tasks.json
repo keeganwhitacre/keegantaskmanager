@@ -680,6 +680,21 @@
       "pomodoros": 0,
       "projectId": "",
       "completedAt": "2026-03-11T01:26:37.691Z"
+    },
+    {
+      "id": "mmoxn9nph4q4",
+      "title": "Add in note taking by person and place",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-13",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
