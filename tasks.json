@@ -900,8 +900,19 @@
       "2026-03-11": 4
     }
   },
-  "updated": "2026-03-13T16:40:03.067Z",
+  "updated": "2026-03-13T16:41:10.746Z",
   "cnNotes": [
+    {
+      "id": "mmp4in17lv8t",
+      "title": "Talk with Mal",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "createdAt": "2026-03-13T16:41:04.028Z",
+      "updatedAt": "2026-03-13T16:41:08.245Z"
+    },
     {
       "id": "mmp3te0kmbek",
       "title": "Cool Posters",
