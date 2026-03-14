@@ -934,18 +934,20 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-14T14:51:51.860Z",
+  "updated": "2026-03-14T14:52:07.143Z",
   "cnNotes": [
     {
       "id": "mmqg1tvvjva1",
-      "title": "Clinical Affective Science",
+      "title": "Clinical Affective Science Flash Talks",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "conf"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-14T14:51:41.323Z",
-      "updatedAt": "2026-03-14T14:51:49.358Z"
+      "updatedAt": "2026-03-14T14:52:04.642Z"
     },
     {
       "id": "mmqfm86semj1",
