@@ -1,11 +1,13 @@
 
-var CACHE_VERSION = 'kw-v2';
+var CACHE_VERSION = 'kw-v3';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
   '/app.js',
   '/styles.css',
   '/manifest.json',
+  '/confnotes.js',
+  '/confnotes-styles.css',
   '/fonts/dm-sans-v17-latin-300.woff2',
   '/fonts/dm-sans-v17-latin-regular.woff2',
   '/fonts/dm-sans-v17-latin-500.woff2',
