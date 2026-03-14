@@ -934,18 +934,20 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-14T17:39:24.818Z",
+  "updated": "2026-03-14T17:39:29.777Z",
   "cnNotes": [
     {
       "id": "mmqm176phjs0",
       "title": "Language Symposim",
       "speaker": "Erik Nook, Sandhofer",
       "body": "",
-      "tags": [],
+      "tags": [
+        "conf"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-14T17:39:09.601Z",
-      "updatedAt": "2026-03-14T17:39:22.316Z"
+      "updatedAt": "2026-03-14T17:39:27.275Z"
     },
     {
       "id": "mmqg1tvvjva1",
