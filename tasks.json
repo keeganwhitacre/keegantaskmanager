@@ -934,8 +934,19 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-14T14:40:15.566Z",
+  "updated": "2026-03-14T14:51:51.860Z",
   "cnNotes": [
+    {
+      "id": "mmqg1tvvjva1",
+      "title": "Clinical Affective Science",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "createdAt": "2026-03-14T14:51:41.323Z",
+      "updatedAt": "2026-03-14T14:51:49.358Z"
+    },
     {
       "id": "mmqfm86semj1",
       "title": "Award Symposium",
