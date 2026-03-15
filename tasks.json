@@ -730,6 +730,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmrrs89t7aub",
+      "title": "Use OSU $250",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-31",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -952,7 +969,7 @@
       "2026-03-14": 3
     }
   },
-  "updated": "2026-03-15T12:43:10.259Z",
+  "updated": "2026-03-15T13:07:57.508Z",
   "cnNotes": [
     {
       "id": "mmqonipyx29b",
