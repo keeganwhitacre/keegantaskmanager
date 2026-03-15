@@ -713,6 +713,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mmr6gmo19n9q",
+      "title": "Pack for San Diego",
+      "categories": [
+        "bel",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "hi",
+      "pinnedToday": true,
+      "note": "- bathing suit\n- camera + new seal + film\n- kindle\n- retroid\n- shaver guards\n- underwear x6\n- shorts x3\n- tshirts x6\n- hoodie x1\n- socks x3\n- blue cream shoes\n- jeans\n- chinos\n- grey sweatpants\n- computer\n- jacket\n-",
+      "due": "2026-03-15",
+      "projectId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -934,7 +951,7 @@
       "2026-03-13": 4
     }
   },
-  "updated": "2026-03-14T18:52:46.580Z",
+  "updated": "2026-03-15T03:11:04.371Z",
   "cnNotes": [
     {
       "id": "mmqonipyx29b",
