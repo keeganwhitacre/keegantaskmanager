@@ -559,8 +559,9 @@
       "due": "2026-03-15",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-15T15:55:07.140Z"
     },
     {
       "id": "mmigak09xf4y",
@@ -728,8 +729,9 @@
       "due": "2026-03-15",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-15T15:55:08.587Z"
     },
     {
       "id": "mmrrs89t7aub",
@@ -1110,5 +1112,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-15T14:18:25.978Z"
+  "updated": "2026-03-15T15:55:11.092Z"
 }
