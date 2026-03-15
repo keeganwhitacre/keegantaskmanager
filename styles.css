@@ -577,7 +577,7 @@ body.theme-ios26::before {
   body { max-width: 720px; margin: 0 auto; padding-top: 8px; }
   .header { padding: 20px 32px 0; }
   .header-top { padding-bottom: 4px; }
-  .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #notesView, #projectsView, #projectDetailView, #belView { padding: 0 32px 14px; }
+  .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #projectsView, #projectDetailView, #belView { padding: 0 32px 14px; }
   .spacer { height: 80px; }
   
   #focusModeBtn { left: calc(50% - 360px + 24px); right: auto; }
@@ -596,7 +596,7 @@ body.theme-ios26::before {
 @media (min-width: 1100px) {
   body { max-width: 860px; }
   .header { padding: 24px 40px 0; }
-  .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #notesView, #projectsView, #projectDetailView, #belView { padding: 0 40px 14px; }
+  .tab-bar, .filter-scroll, .search-wrap, .quick-add-wrap, .focus-strip, #taskList, #dashView, #projectsView, #projectDetailView, #belView { padding: 0 40px 14px; }
   
   #focusModeBtn { left: calc(50% - 430px + 24px); right: auto; }
   .fab { right: calc(50% - 430px + 24px); left: auto; }
@@ -610,22 +610,6 @@ body.theme-ios26::before {
 
 /* ── VIEW ROUTING OVERRIDES ── */
 body.focus-mode .hide-in-focus { display: none !important; }
-
-/* Notes Mode Routing Fix */
-body.notes-mode .hide-in-focus, 
-body.notes-mode .filter-scroll, 
-body.notes-mode #taskList, 
-body.notes-mode #spacerEl, 
-body.notes-mode #focusModeBtn, 
-body.notes-mode #fab, 
-body.notes-mode .search-wrap, 
-body.notes-mode .focus-banner, 
-body.notes-mode .tab-bar,
-body.notes-mode #dashView,
-body.notes-mode #projectsView,
-body.notes-mode #projectDetailView,
-body.notes-mode #belView { display: none !important; }
-body.notes-mode #notesView { display: block !important; }
 
 body.dash-mode .hide-in-dash { display: none !important; }
 body.dash-mode #dashView { display: block !important; }
@@ -998,19 +982,6 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 
 
 /* ══════════════════════════════════════════════════════════════════
-   SCRATCHPAD / NOTES
-══════════════════════════════════════════════════════════════════ */
-.notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.notes-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
-.notes-header-right { display: flex; gap: 8px; align-items: center; }
-.notes-sync-status { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
-.notes-mono-toggle { font-size: 10px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; border: 1px solid var(--border-main); border-radius: 6px; font-family: var(--font-mono); }
-.notes-mono-toggle.mono-active { color: var(--accent); border-color: var(--accent-faded); }
-.notes-textarea { width: 100%; min-height: calc(100vh - 280px); background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-input); padding: 16px; color: var(--text-main); -webkit-text-fill-color: var(--text-main); font-family: var(--font-main); font-size: 14px; line-height: 1.7; outline: none; resize: none; box-sizing: border-box; box-shadow: var(--shadow-base); }
-.notes-textarea.mono { font-family: var(--font-mono); }
-
-
-/* ══════════════════════════════════════════════════════════════════
    SHOPPING LIST
 ══════════════════════════════════════════════════════════════════ */
 .shop-add-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
@@ -1063,7 +1034,6 @@ body.deep-focus-mode .fab,
 body.deep-focus-mode #dashView,
 body.deep-focus-mode #projectsView,
 body.deep-focus-mode #projectDetailView,
-body.deep-focus-mode #notesView,
 body.deep-focus-mode #belView,
 body.deep-focus-mode .sync-bar,
 body.deep-focus-mode .bottom-fade {

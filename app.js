@@ -783,16 +783,6 @@ document.getElementById('searchTrigger').addEventListener('click', function() { 
 document.getElementById('searchInput').addEventListener('input', render);
 document.getElementById('filterRow').addEventListener('click', function(e) { const chip = e.target.closest('.chip'); if (!chip) return; document.querySelectorAll('#filterRow .chip').forEach(c => { c.classList.remove('active'); }); chip.classList.add('active'); state.filter = chip.dataset.filter; render(); });
 
-// ══════════════════════════════════════════════════════════════════
-// NOTES / SCRATCHPAD
-// ══════════════════════════════════════════════════════════════════
-
-let notesSyncTimer = null;
-function openNotes() { state.notesOpen = true; document.body.classList.add('notes-mode'); const sp = document.getElementById('scratchpad'); sp.value = state.scratchpad || ''; const isMono = localStorage.getItem(KEYS.notesMono) === 'true'; sp.classList.toggle('mono', isMono); document.getElementById('notesMonoToggle').textContent = isMono ? 'mono on' : 'mono off'; document.getElementById('notesMonoToggle').classList.toggle('mono-active', isMono); document.getElementById('notesBtn').style.background = 'rgba(139,158,255,0.12)'; document.getElementById('notesBtn').style.borderColor = 'rgba(139,158,255,0.3)'; document.getElementById('notesBtn').querySelector('svg').style.stroke = '#8b9eff'; }
-function closeNotes() { state.notesOpen = false; document.body.classList.remove('notes-mode'); document.getElementById('notesBtn').style.background = ''; document.getElementById('notesBtn').style.borderColor = ''; document.getElementById('notesBtn').querySelector('svg').style.stroke = ''; render(); }
-document.getElementById('notesBtn').addEventListener('click', function() { if (state.notesOpen) closeNotes(); else openNotes(); });
-document.getElementById('scratchpad').addEventListener('input', function() { state.scratchpad = this.value; localStorage.setItem(KEYS.notes, state.scratchpad); document.getElementById('notesSyncStatus').textContent = 'unsaved'; if (notesSyncTimer) clearTimeout(notesSyncTimer); notesSyncTimer = setTimeout(function() { ghPush(); document.getElementById('notesSyncStatus').textContent = ''; }, 1500); });
-document.getElementById('notesMonoToggle').addEventListener('click', function() { const sp = document.getElementById('scratchpad'); const isMono = !sp.classList.contains('mono'); sp.classList.toggle('mono', isMono); this.textContent = isMono ? 'mono on' : 'mono off'; this.classList.toggle('mono-active', isMono); localStorage.setItem(KEYS.notesMono, isMono ? 'true' : 'false'); });
 document.getElementById('monoToggle').addEventListener('click', function() { const noteEl = document.getElementById('taskNoteInput'); let isMono = noteEl.style.fontFamily.indexOf('Mono') !== -1; isMono = !isMono; noteEl.style.fontFamily = isMono ? "'DM Mono',monospace" : "'DM Sans',sans-serif"; this.textContent = isMono ? 'mono on' : 'mono off'; });
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
 const cps = document.getElementById('closeProjectSheet'); if (cps) cps.addEventListener('click', closeSheets);

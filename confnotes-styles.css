@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   CONFERENCE NOTES — append to end of styles.css
+   UNIFIED NOTES — scratchpad + note cards + distraction-free editor
 ══════════════════════════════════════════════════════════════════ */
 
 /* View Routing */
@@ -16,7 +16,51 @@ body.confnotes-mode .fab { display: flex !important; }
 .cn-filter-row { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
 .cn-filter-row::-webkit-scrollbar { display: none; }
 
-/* Note cards */
+/* ── SCRATCHPAD AREA ── */
+.cn-scratch-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--shadow-base);
+}
+
+.cn-scratch-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+
+.cn-scratch-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text-muted); font-weight: 700;
+}
+
+.cn-scratch-right { display: flex; gap: 8px; align-items: center; }
+
+.cn-scratch-sync {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+}
+
+.cn-scratch-mono {
+  font-size: 10px; color: var(--text-muted); cursor: pointer; padding: 2px 8px;
+  border: 1px solid var(--border-main); border-radius: 6px; font-family: var(--font-mono);
+  -webkit-user-select: none; user-select: none;
+}
+.cn-scratch-mono.mono-active { color: var(--accent); border-color: var(--accent-faded); }
+
+.cn-scratch-textarea {
+  width: 100%; min-height: 80px; max-height: 200px;
+  background: transparent; border: none; outline: none; resize: vertical;
+  color: var(--text-main); -webkit-text-fill-color: var(--text-main);
+  font-family: var(--font-main); font-size: 14px; line-height: 1.7;
+  box-sizing: border-box; padding: 0;
+}
+.cn-scratch-textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
+.cn-scratch-textarea.mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* ── NOTE CARDS ── */
 .cn-note-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-main);
@@ -55,26 +99,91 @@ body.confnotes-mode .fab { display: flex !important; }
   font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-left: auto;
 }
 
-.cn-body-textarea { font-family: var(--font-main); }
-.cn-body-textarea.mono { font-family: var(--font-mono); font-size: 12px !important; }
-
-.cn-detail-meta {
-  font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);
-  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-divider);
-}
-
 .cn-empty { text-align: center; padding: 48px 20px; color: var(--text-muted); }
 .cn-empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
 .cn-empty-text { font-size: 13px; line-height: 1.6; }
 
-/* Bel-bel theme: add cn-note-card to the glass treatment */
-body.theme-bel-bel .cn-note-card {
+/* ── DISTRACTION-FREE EDITOR ── */
+.cn-detail-fullscreen {
+  display: flex; flex-direction: column;
+  min-height: calc(100vh - 60px);
+  min-height: calc(100dvh - 60px);
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+}
+
+.cn-detail-topbar {
+  display: flex; align-items: center; margin-bottom: 12px;
+  position: sticky; top: 0; z-index: 10;
+  padding: 4px 0;
+}
+
+.cn-detail-topbar-title {
+  font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+.cn-detail-title-input {
+  width: 100%; background: transparent; border: none; outline: none;
+  color: var(--text-main); -webkit-text-fill-color: var(--text-main);
+  font-family: var(--font-main); font-size: 22px; font-weight: 600;
+  line-height: 1.2; margin-bottom: 6px; padding: 0;
+}
+.cn-detail-title-input::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+.cn-detail-source-input {
+  width: 100%; background: transparent; border: none; outline: none;
+  color: var(--text-muted); -webkit-text-fill-color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-bottom: 12px; padding: 0;
+}
+.cn-detail-source-input::placeholder { color: var(--text-muted); opacity: 0.4; }
+
+/* Collapsible metadata drawer */
+.cn-detail-meta-drawer {
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-divider);
+  padding-bottom: 12px;
+}
+
+.cn-detail-meta-toggle {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--text-muted); cursor: pointer; padding: 4px 0;
+  -webkit-user-select: none; user-select: none; list-style: none;
+}
+.cn-detail-meta-toggle::-webkit-details-marker { display: none; }
+.cn-detail-meta-toggle::before {
+  content: '▸ '; font-size: 9px;
+}
+.cn-detail-meta-drawer[open] .cn-detail-meta-toggle::before { content: '▾ '; }
+
+.cn-detail-meta-content {
+  padding-top: 10px;
+}
+
+.cn-detail-body-input {
+  width: 100%; flex: 1; min-height: 300px;
+  background: transparent; border: none; outline: none; resize: none;
+  color: var(--text-main); -webkit-text-fill-color: var(--text-main);
+  font-family: var(--font-main); font-size: 15px; line-height: 1.8;
+  box-sizing: border-box; padding: 0;
+}
+.cn-detail-body-input::placeholder { color: var(--text-muted); opacity: 0.4; }
+.cn-detail-body-input.mono { font-family: var(--font-mono); font-size: 13px; }
+
+.cn-detail-meta {
+  font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);
+  margin-top: 6px; padding-top: 6px;
+}
+
+/* ── THEME OVERRIDES ── */
+body.theme-bel-bel .cn-note-card,
+body.theme-bel-bel .cn-scratch-card {
   background: var(--bg-surface);
   box-shadow: var(--shadow-base);
   border: none;
 }
 
-/* Desktop: include confNotesView in padding rules */
+/* Desktop padding */
 @media (min-width: 768px) {
   #confNotesView { padding: 0 32px 14px; }
 }
@@ -82,8 +191,5 @@ body.theme-bel-bel .cn-note-card {
   #confNotesView { padding: 0 40px 14px; }
 }
 
-/* Deep focus: hide confnotes */
+/* Deep focus: hide notes */
 body.deep-focus-mode #confNotesView { display: none !important; }
-
-/* Notes mode: hide confnotes */
-body.notes-mode #confNotesView { display: none !important; }

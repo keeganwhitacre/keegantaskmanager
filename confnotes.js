@@ -1,15 +1,15 @@
 // ══════════════════════════════════════════════════════════════════
-// NOTES MODULE — confnotes.js
-// Loaded as classic script AFTER app.js (module).
+// UNIFIED NOTES MODULE — confnotes.js
+// Scratchpad + structured notes in one view.
 // Accesses shared state/utils via window._app bridge.
 // ══════════════════════════════════════════════════════════════════
 
 const _a = window._app;
 
-// ── LOCAL STATE ──
 let cnActiveId = null;
 let cnFilter = 'all';
 let cnSaveTimer = null;
+let scratchSyncTimer = null;
 
 // ── HELPERS ──
 function cnTimeAgo(iso) {
@@ -25,12 +25,61 @@ function cnTimeAgo(iso) {
   return _a.fmtShort(then);
 }
 
-// ── LIST RENDERING ──
+// ══════════════════════════════════════════════════════════════════
+// SCRATCHPAD
+// ══════════════════════════════════════════════════════════════════
+
+function initScratchpad() {
+  const sp = document.getElementById('cnScratchpad');
+  const monoBtn = document.getElementById('cnScratchMono');
+  if (!sp || !monoBtn) return;
+
+  sp.value = _a.state.scratchpad || '';
+
+  const isMono = localStorage.getItem('kw_notes_mono_v3') === 'true';
+  sp.classList.toggle('mono', isMono);
+  monoBtn.textContent = isMono ? 'mono on' : 'mono off';
+  monoBtn.classList.toggle('mono-active', isMono);
+
+  sp.addEventListener('input', function() {
+    _a.state.scratchpad = this.value;
+    localStorage.setItem('kw_notes_v3', _a.state.scratchpad);
+    const syncEl = document.getElementById('cnScratchSync');
+    if (syncEl) syncEl.textContent = 'unsaved';
+    if (scratchSyncTimer) clearTimeout(scratchSyncTimer);
+    scratchSyncTimer = setTimeout(function() {
+      _a.ghPush();
+      if (syncEl) syncEl.textContent = '';
+    }, 1500);
+  });
+
+  monoBtn.addEventListener('click', function() {
+    const isMono = !sp.classList.contains('mono');
+    sp.classList.toggle('mono', isMono);
+    this.textContent = isMono ? 'mono on' : 'mono off';
+    this.classList.toggle('mono-active', isMono);
+    localStorage.setItem('kw_notes_mono_v3', isMono ? 'true' : 'false');
+  });
+}
+
+function refreshScratchpad() {
+  const sp = document.getElementById('cnScratchpad');
+  if (sp && document.activeElement !== sp) {
+    sp.value = _a.state.scratchpad || '';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NOTE LIST
+// ══════════════════════════════════════════════════════════════════
+
 function renderCNList() {
   const cnNotes = _a.cnNotes;
   const list = document.getElementById('cnNotesList');
   if (!list) return;
   list.innerHTML = '';
+
+  refreshScratchpad();
 
   let searchQ = '';
   const searchEl = document.getElementById('cnSearchInput');
@@ -87,10 +136,12 @@ function renderCNList() {
   });
 }
 
-// Expose for app.js and sync hook
 window.renderCNList = renderCNList;
 
-// ── DETAIL VIEW ──
+// ══════════════════════════════════════════════════════════════════
+// DISTRACTION-FREE EDITOR
+// ══════════════════════════════════════════════════════════════════
+
 function populateCNProjectSelect() {
   const sel = document.getElementById('cnProjectInput');
   if (!sel) return;
@@ -122,15 +173,19 @@ function openCNDetail(id) {
   const bodyEl = document.getElementById('cnBodyInput');
   const isMono = !!(n.bodyIsMono);
   bodyEl.classList.toggle('mono', isMono);
-  document.getElementById('cnMonoToggle').textContent = isMono ? 'mono on' : 'mono off';
+  const monoBtn = document.getElementById('cnMonoToggle');
+  monoBtn.textContent = isMono ? 'mono on' : 'mono off';
+  monoBtn.classList.toggle('mono-active', isMono);
 
-  // Tags
   const tags = n.tags || [];
   document.querySelectorAll('#cnTagRow .s-chip').forEach(function(c) {
     c.classList.toggle('active', tags.indexOf(c.dataset.val) !== -1);
   });
 
-  // Meta line
+  // Close meta drawer by default for clean editor feel
+  const drawer = document.getElementById('cnMetaDrawer');
+  if (drawer) drawer.removeAttribute('open');
+
   const metaEl = document.getElementById('cnDetailMeta');
   if (metaEl) {
     const parts = [];
@@ -140,7 +195,7 @@ function openCNDetail(id) {
   }
 
   document.getElementById('cnListView').style.display = 'none';
-  document.getElementById('cnDetailView').style.display = 'block';
+  document.getElementById('cnDetailView').style.display = 'flex';
 }
 
 function closeCNDetail() {
@@ -202,7 +257,6 @@ function createNewNote() {
   _a.showToast('New note created');
 }
 
-// Expose for FAB in app.js
 window.createNewNote = createNewNote;
 
 function deleteCNNote(id) {
@@ -212,7 +266,10 @@ function deleteCNNote(id) {
   _a.showToast('Note deleted');
 }
 
-// ── DYNAMIC TAG/FILTER CHIPS FROM CAT_LABEL ──
+// ══════════════════════════════════════════════════════════════════
+// DYNAMIC CHIPS
+// ══════════════════════════════════════════════════════════════════
+
 function rebuildCNChips() {
   const tagRow = document.getElementById('cnTagRow');
   if (tagRow) {
@@ -246,7 +303,11 @@ function rebuildCNChips() {
   }
 }
 
-// ── EVENT WIRING ──
+// ══════════════════════════════════════════════════════════════════
+// EVENT WIRING
+// ══════════════════════════════════════════════════════════════════
+
+initScratchpad();
 rebuildCNChips();
 
 document.getElementById('confNotesBtn').addEventListener('click', function() {
@@ -287,6 +348,7 @@ document.getElementById('cnMonoToggle').addEventListener('click', function() {
   const isMono = !bodyEl.classList.contains('mono');
   bodyEl.classList.toggle('mono', isMono);
   this.textContent = isMono ? 'mono on' : 'mono off';
+  this.classList.toggle('mono-active', isMono);
   queueCNSave();
 });
 
@@ -311,7 +373,6 @@ document.getElementById('cnFilterRow').addEventListener('click', function(e) {
   renderCNList();
 });
 
-// ── KEYBOARD SHORTCUT: 'n' creates note in confnotes mode ──
 document.addEventListener('keydown', function(e) {
   if (!document.body.classList.contains('confnotes-mode')) return;
   const tag = (document.activeElement || {}).tagName || '';
