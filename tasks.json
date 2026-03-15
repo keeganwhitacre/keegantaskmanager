@@ -724,7 +724,7 @@
       "status": "active",
       "priority": "hi",
       "pinnedToday": true,
-      "note": "- bathing suit\n- camera + new seal + film\n- kindle\n- retroid\n- shaver guards\n- underwear x6\n- shorts x3\n- tshirts x6\n- hoodie x1\n- socks x3\n- blue cream shoes\n- jeans\n- chinos\n- grey sweatpants\n- computer\n- jacket\n-",
+      "note": "- shorts x1\n- tshirts x2\n- socks x3",
       "due": "2026-03-15",
       "projectId": "",
       "noteIsMono": false,
@@ -1110,5 +1110,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-15T13:30:54.012Z"
+  "updated": "2026-03-15T13:32:17.472Z"
 }
