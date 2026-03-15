@@ -5,17 +5,20 @@
 
 import {
   KEYS, CAT_DEFAULTS, CAT_LABEL,
-  state, belState, pomo, dState, shopItems, cnNotes,
+  state, dState, cnNotes,
   uid, esc,
   on, emit,
-  loadLocal, saveLocal, saveBel, saveDash, saveShop, saveCN,
+  loadLocal, saveLocal, saveDash, saveCN,
   saveSettings, savePending, saveCollapsed, updateCategories,
-  setShopItems, setCnNotes, setBelState, setDState,
-  getShopItems, getCnNotes, getBelState, getDState,
+  setCnNotes, setBelState, setDState,
+  getCnNotes, getDState,
 } from './state.js';
 
 import { ghFetch, ghPush, testGhConnection, showSync } from './sync.js';
 import { register, switchView, currentViewName } from './router.js';
+import { initPomo, updatePomoUI } from './pomo.js';
+import { initShopping, renderShop } from './shopping.js';
+import { initBel, renderBel } from './bel.js';
 
 // ── Expose globals needed by confnotes.js (loaded as classic script) ──
 // confnotes.js reaches into: ghPush, uid, esc, catCls, CAT_LABEL,
@@ -404,50 +407,6 @@ function render() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// POMODORO TIMER LOGIC
-// ══════════════════════════════════════════════════════════════════
-
-function formatTime(sec) { const m = Math.floor(sec / 60); const s = sec % 60; return m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0'); }
-function updatePomoUI() {
-  document.getElementById('pomoDisplay').textContent = formatTime(pomo.timeLeft);
-  let statusTxt = 'Work Session';
-  if (pomo.mode === 'shortBreak') statusTxt = 'Short Break (5m)';
-  if (pomo.mode === 'longBreak') statusTxt = 'Long Break (15m)';
-  document.getElementById('pomoStatus').textContent = statusTxt + ' • ' + pomo.cycles + ' completed';
-  document.getElementById('pomoStartBtn').textContent = pomo.running ? 'Pause' : 'Start';
-
-  const isDeepFocus = pomo.running && pomo.mode === 'work';
-  document.body.classList.toggle('deep-focus-mode', isDeepFocus);
-  document.documentElement.classList.toggle('deep-focus-mode', isDeepFocus);
-}
-function tickPomo() {
-  pomo.timeLeft--;
-  if (pomo.timeLeft <= 0) {
-    clearInterval(pomo.timer); pomo.running = false;
-    if (pomo.mode === 'work') {
-      pomo.cycles++;
-      if (state.focus) { const t = state.tasks.find(x => x.id === state.focus); if (t) { t.pomodoros = (t.pomodoros || 0) + 1; saveLocal(); ghPush(); } }
-      pomo.mode = (pomo.cycles % 4 === 0) ? 'longBreak' : 'shortBreak';
-      pomo.timeLeft = (pomo.mode === 'longBreak') ? 15 * 60 : 5 * 60; showToast('Session complete! Take a break.');
-    } else {
-      pomo.mode = 'work'; pomo.timeLeft = 25 * 60; showToast('Break over! Ready to focus?');
-    }
-  }
-  updatePomoUI();
-}
-document.getElementById('pomoStartBtn').addEventListener('click', function() {
-  if (pomo.running) { clearInterval(pomo.timer); pomo.running = false; }
-  else { pomo.running = true; pomo.timer = setInterval(tickPomo, 1000); }
-  updatePomoUI();
-});
-document.getElementById('pomoSkipBtn').addEventListener('click', function() {
-  clearInterval(pomo.timer); pomo.running = false;
-  if (pomo.mode === 'work') { pomo.mode = 'shortBreak'; pomo.timeLeft = 5 * 60; showToast('Session skipped.'); }
-  else { pomo.mode = 'work'; pomo.timeLeft = 25 * 60; showToast('Break skipped.'); }
-  updatePomoUI();
-});
-
-// ══════════════════════════════════════════════════════════════════
 // TASK CRUD
 // ══════════════════════════════════════════════════════════════════
 
@@ -717,87 +676,6 @@ if (pdDel) {
     }
   });
 }
-
-// ══════════════════════════════════════════════════════════════════
-// BEL TAB LOGIC
-// ══════════════════════════════════════════════════════════════════
-
-function renderBel() {
-  const bs = getBelState();
-  if (!bs) setBelState({ annivDate: '', giftsList: [], datesList: [], favs: '', love: '' });
-  const f = document.getElementById('belFavs'); if (f) f.innerHTML = getBelState().favs || '';
-  const l = document.getElementById('belLove'); if (l) l.innerHTML = getBelState().love || '';
-  renderBelList('belGiftsList', 'giftsList'); renderBelList('belDatesList', 'datesList'); updateBelTime();
-}
-
-function renderBelList(listId, dataKey) {
-  const list = document.getElementById(listId); if (!list) return;
-  const bs = getBelState();
-  const items = bs[dataKey] || [];
-  list.innerHTML = '';
-  if (items.length === 0) { list.innerHTML = '<div style="font-size:12px; color:#888; font-style:italic; padding-bottom:8px;">List is empty.</div>'; return; }
-  items.forEach(item => {
-    const row = document.createElement('div'); row.className = 'bel-item'; row.dataset.id = item.id; row.dataset.key = dataKey;
-    row.innerHTML = '<div class="bel-cb ' + (item.done ? 'checked' : '') + '" data-action="check"></div><div class="bel-text ' + (item.done ? 'checked' : '') + '" data-action="check">' + esc(item.text) + '</div><div class="bel-del" data-action="del">✕</div>';
-    list.appendChild(row);
-  });
-}
-
-function addBelItem(listKey, inputId, listId) {
-  const bs = getBelState();
-  const inp = document.getElementById(inputId); if (!inp) return; const text = inp.value.trim(); if (!text) return;
-  if (!bs[listKey]) bs[listKey] = [];
-  bs[listKey].push({ id: uid(), text, done: false }); inp.value = ''; saveBel(true); renderBelList(listId, listKey);
-}
-
-const bga = document.getElementById('belGiftAddBtn'); if (bga) bga.addEventListener('click', function() { addBelItem('giftsList', 'belGiftInput', 'belGiftsList'); });
-const bda = document.getElementById('belDateAddBtn'); if (bda) bda.addEventListener('click', function() { addBelItem('datesList', 'belDateInput', 'belDatesList'); });
-const bgi = document.getElementById('belGiftInput'); if (bgi) bgi.addEventListener('keydown', function(e) { if (e.key === 'Enter') addBelItem('giftsList', 'belGiftInput', 'belGiftsList'); });
-const bdi = document.getElementById('belDateInput'); if (bdi) bdi.addEventListener('keydown', function(e) { if (e.key === 'Enter') addBelItem('datesList', 'belDateInput', 'belDatesList'); });
-
-['belGiftsList', 'belDatesList'].forEach(listId => {
-  const l = document.getElementById(listId); if (!l) return;
-  l.addEventListener('click', function(e) {
-    const action = e.target.dataset.action; const row = e.target.closest('.bel-item'); if (!row || !action) return;
-    const id = row.dataset.id; const key = row.dataset.key;
-    const bs = getBelState();
-    if (action === 'check') { const items = bs[key]; for (let i = 0; i < items.length; i++) { if (items[i].id === id) items[i].done = !items[i].done; } }
-    if (action === 'del') { bs[key] = bs[key].filter(i => i.id !== id); }
-    saveBel(true); renderBelList(listId, key);
-  });
-});
-
-function updateBelTime() {
-  const bs = getBelState();
-  const countEl = document.getElementById('belTimeCount'); const annivEl = document.getElementById('belNextAnniv'); if (!countEl || !annivEl) return;
-  if (!bs.annivDate) { countEl.textContent = '--'; annivEl.textContent = 'Tap Edit Date below to start'; return; }
-  const start = new Date(bs.annivDate + 'T00:00:00'); const now = new Date(); now.setHours(0,0,0,0);
-  if (start > now) { countEl.textContent = '--'; annivEl.textContent = 'Date is in the future!'; return; }
-  let yrs = now.getFullYear() - start.getFullYear(); let mos = now.getMonth() - start.getMonth(); let days = now.getDate() - start.getDate();
-  if (days < 0) { mos--; const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0); days += prevMonth.getDate(); }
-  if (mos < 0) { yrs--; mos += 12; }
-  const str = []; if (yrs > 0) str.push(yrs + ' yr' + (yrs > 1 ? 's' : '')); if (mos > 0) str.push(mos + ' mo' + (mos > 1 ? 's' : '')); str.push(days + ' d');
-  countEl.textContent = str.join(', ');
-  const nextAnniv = new Date(start); nextAnniv.setFullYear(now.getFullYear());
-  if (nextAnniv < now) nextAnniv.setFullYear(now.getFullYear() + 1);
-  const diff = Math.round((nextAnniv - now) / 86400000);
-  if (diff === 0) annivEl.textContent = "It's today! Happy Anniversary! ❤️"; else annivEl.textContent = diff + " days until next anniversary";
-}
-
-let belTimer = null;
-['belFavs', 'belLove'].forEach(id => {
-  const el = document.getElementById(id); if (!el) return;
-  el.addEventListener('input', function() {
-    const bs = getBelState();
-    bs[id.replace('bel', '').toLowerCase()] = this.innerHTML;
-    if (belTimer) clearTimeout(belTimer); belTimer = setTimeout(function() { saveBel(true); }, 1000);
-  });
-});
-
-const ebd = document.getElementById('editBelDateBtn');
-if (ebd) { ebd.addEventListener('click', function() { const wrap = document.getElementById('belDateEditWrap'); wrap.style.display = wrap.style.display === 'flex' ? 'none' : 'flex'; if (wrap.style.display === 'flex') { document.getElementById('belAnnivInput').value = getBelState().annivDate || ''; } }); }
-const sbd = document.getElementById('saveBelDateBtn');
-if (sbd) { sbd.addEventListener('click', function() { const d = document.getElementById('belAnnivInput').value; const bs = getBelState(); bs.annivDate = d; document.getElementById('belDateEditWrap').style.display = 'none'; saveBel(true); updateBelTime(); }); }
 
 // ══════════════════════════════════════════════════════════════════
 // SETTINGS
@@ -1177,33 +1055,6 @@ function loadTheme() { let saved = 'ios26'; try { saved = localStorage.getItem(K
 document.getElementById('settingsSheet').addEventListener('click', function(e) { const sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); render(); });
 
 // ══════════════════════════════════════════════════════════════════
-// SHOPPING LIST
-// ══════════════════════════════════════════════════════════════════
-
-function renderShop() {
-  const items = getShopItems();
-  const list = document.getElementById('shopList'); if (!list) return;
-  const active = items.filter(i => !i.done); const done = items.filter(i => i.done); const ordered = active.concat(done);
-  if (ordered.length === 0) { list.innerHTML = '<div class="shop-empty">List is empty. Add something above.</div>'; return; }
-  list.innerHTML = '';
-  ordered.forEach(item => {
-    const row = document.createElement('div'); row.className = 'shop-item'; row.dataset.id = item.id;
-    row.innerHTML = '<div class="shop-cb' + (item.done ? ' checked' : '') + '" data-action="check"></div><div class="shop-item-text' + (item.done ? ' checked' : '') + '" data-action="check">' + esc(item.text) + '</div><div class="shop-del" data-action="del">✕</div>';
-    list.appendChild(row);
-  });
-}
-function shopAddItem(text) { text = text.trim(); if (!text) return; const items = getShopItems(); items.push({ id: Date.now() + Math.random(), text, done: false }); saveShop(); renderShop(); }
-function shopToggle(id) { const items = getShopItems(); for (let i = 0; i < items.length; i++) { if (items[i].id == id) items[i].done = !items[i].done; } saveShop(); renderShop(); }
-function shopDelete(id) { setShopItems(getShopItems().filter(i => i.id != id)); saveShop(); renderShop(); }
-function shopClearDone() { setShopItems(getShopItems().filter(i => !i.done)); saveShop(); renderShop(); }
-
-document.getElementById('shopBtn').addEventListener('click', function() { renderShop(); openSheet('shopSheet'); });
-document.getElementById('shopAddBtn').addEventListener('click', function() { const inp = document.getElementById('shopInput'); shopAddItem(inp.value); inp.value = ''; inp.focus(); });
-document.getElementById('shopInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { shopAddItem(this.value); this.value = ''; } });
-document.getElementById('shopList').addEventListener('click', function(e) { const action = e.target.dataset.action; const row = e.target.closest('.shop-item'); if (!row || !action) return; const id = row.dataset.id; if (action === 'check') shopToggle(id); if (action === 'del') shopDelete(id); });
-document.getElementById('shopClearDone').addEventListener('click', shopClearDone);
-
-// ══════════════════════════════════════════════════════════════════
 // DRAG TO REORDER
 // ══════════════════════════════════════════════════════════════════
 
@@ -1278,6 +1129,9 @@ on('data-pulled', () => {
 loadTheme();
 loadLocal();
 rebuildCategoryUI();
+initPomo(showToast);
+initShopping(openSheet);
+initBel();
 render();
 loadSettingsUI();
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
