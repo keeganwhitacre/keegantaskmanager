@@ -98,6 +98,9 @@ function renderCNList() {
   });
 
   filtered.sort(function(a, b) {
+    // Pinned notes always first
+    const ap = a.pinned ? 1 : 0, bp = b.pinned ? 1 : 0;
+    if (ap !== bp) return bp - ap;
     return (b.updatedAt || b.createdAt || '') > (a.updatedAt || a.createdAt || '') ? 1 : -1;
   });
 
@@ -124,8 +127,10 @@ function renderCNList() {
       if (p) projHtml = '<span class="proj-link-label">\u26CC ' + _a.esc(p.title) + '</span>';
     }
 
+    const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
+
     card.innerHTML =
-      '<div class="cn-card-title">' + _a.esc(n.title || 'Untitled') + '</div>' +
+      '<div class="cn-card-title">' + pinHtml + _a.esc(n.title || 'Untitled') + '</div>' +
       (n.speaker ? '<div class="cn-card-speaker">' + _a.esc(n.speaker) + '</div>' : '') +
       (n.body ? '<div class="cn-card-preview">' + _a.esc(n.body) + '</div>' : '') +
       '<div class="cn-card-meta">' + tagsHtml + projHtml +
@@ -185,6 +190,10 @@ function openCNDetail(id) {
   // Close meta drawer by default for clean editor feel
   const drawer = document.getElementById('cnMetaDrawer');
   if (drawer) drawer.removeAttribute('open');
+
+  // Pin button state
+  const pinBtn = document.getElementById('cnPinBtn');
+  if (pinBtn) pinBtn.classList.toggle('pinned', !!(n.pinned));
 
   const metaEl = document.getElementById('cnDetailMeta');
   if (metaEl) {
@@ -247,6 +256,7 @@ function createNewNote() {
     tags: [],
     projectId: '',
     bodyIsMono: false,
+    pinned: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -327,6 +337,20 @@ document.getElementById('cnBackBtn').addEventListener('click', closeCNDetail);
 document.getElementById('cnDeleteBtn').addEventListener('click', function() {
   if (!cnActiveId) return;
   if (confirm('Delete this note?')) deleteCNNote(cnActiveId);
+});
+
+document.getElementById('cnPinBtn').addEventListener('click', function() {
+  if (!cnActiveId) return;
+  const cnNotes = _a.cnNotes;
+  let n = null;
+  for (let i = 0; i < cnNotes.length; i++) {
+    if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
+  }
+  if (!n) return;
+  n.pinned = !n.pinned;
+  this.classList.toggle('pinned', n.pinned);
+  _a.saveCN(true);
+  _a.showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
 });
 
 document.getElementById('cnTagRow').addEventListener('click', function(e) {
