@@ -809,11 +809,6 @@
         "id": "mme28ppu50fr",
         "text": "Forno Happy Hour",
         "done": false
-      },
-      {
-        "id": "mmrt35s8xtlg",
-        "text": "San Diego!",
-        "done": true
       }
     ]
   },
@@ -1115,5 +1110,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-15T13:47:35.978Z"
+  "updated": "2026-03-15T14:18:25.978Z"
 }
