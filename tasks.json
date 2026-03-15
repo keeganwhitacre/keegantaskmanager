@@ -980,7 +980,8 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-14T17:39:09.601Z",
-      "updatedAt": "2026-03-15T20:30:15.189Z"
+      "updatedAt": "2026-03-15T20:35:15.189Z",
+      "pinned": true
     },
     {
       "id": "mmqg1tvvjva1",
@@ -1098,5 +1099,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-15T20:30:52.775Z"
+  "updated": "2026-03-15T20:35:17.691Z"
 }
