@@ -28,20 +28,6 @@
       ]
     },
     {
-      "id": "mm7swxj4yez9",
-      "title": "Plan spring trip — check Bel's schedule",
-      "status": "active",
-      "priority": "md",
-      "section": "personal",
-      "due": "",
-      "note": "Plan out spring break trip!",
-      "done": false,
-      "noteIsMono": false,
-      "categories": [
-        "bel"
-      ]
-    },
-    {
       "id": "mm9pi4r1vstj",
       "title": "Add induced affect to yuritza poster",
       "status": "active",
@@ -994,7 +980,7 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-14T17:39:09.601Z",
-      "updatedAt": "2026-03-15T20:22:33.228Z"
+      "updatedAt": "2026-03-15T20:30:15.189Z"
     },
     {
       "id": "mmqg1tvvjva1",
@@ -1112,5 +1098,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-15T20:22:35.729Z"
+  "updated": "2026-03-15T20:30:52.775Z"
 }
