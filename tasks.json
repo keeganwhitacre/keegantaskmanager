@@ -738,7 +738,7 @@
     },
     {
       "id": "1773678336900",
-      "title": "Get gold 200, and get alc + bamboo sticks",
+      "title": "get alc + bamboo sticks",
       "categories": [
         "personal"
       ],
@@ -749,7 +749,8 @@
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": ""
     }
   ],
   "projects": [
@@ -1097,5 +1098,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-16T17:56:45.998Z"
+  "updated": "2026-03-16T20:54:46.664Z"
 }
