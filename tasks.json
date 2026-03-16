@@ -849,72 +849,16 @@
     }
   ],
   "dash": {
-    "intention": "Have a great time at SAS, meet new people, present my work, and head to San Diego.",
-    "intentionWeek": "2026-W11",
+    "intention": "",
+    "intentionWeek": "2026-W12",
     "quoteIdx": 11,
     "countdown": {
       "name": "San Diego",
       "date": "2026-03-15"
     },
-    "reflection": "No delays!",
-    "reflectionDate": "2026-03-15",
+    "reflection": "",
+    "reflectionDate": "2026-03-16",
     "habits": {
-      "2026-W10": {
-        "sleep": [
-          true,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false
-        ],
-        "move": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "read": [
-          false,
-          true,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "phone": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "lift": [
-          true,
-          true,
-          true,
-          true,
-          true,
-          false,
-          false
-        ],
-        "doom": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ]
-      },
       "2026-W11": {
         "sleep": [
           false,
@@ -949,6 +893,44 @@
           false,
           false,
           true,
+          false,
+          false
+        ]
+      },
+      "2026-W12": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
+          false,
+          false,
           false,
           false
         ]
@@ -1114,5 +1096,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-16T16:25:39.428Z"
+  "updated": "2026-03-16T17:55:55.448Z"
 }
