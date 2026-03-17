@@ -612,19 +612,19 @@ body.theme-ios26::before {
 body.focus-mode .hide-in-focus { display: none !important; }
 
 body.dash-mode .hide-in-dash { display: none !important; }
-body.dash-mode #dashView { display: block !important; animation: viewIn 0.3s ease both; }
+body.dash-mode #dashView { display: block !important; }
 body.dash-mode .bottom-fade, body.dash-mode #fab, body.dash-mode #focusModeBtn, body.dash-mode .quick-add-wrap { display: none !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
-body.projects-mode #projectsView { display: block !important; animation: viewIn 0.3s ease both; }
+body.projects-mode #projectsView { display: block !important; animation: viewIn 0.4s ease both; }
 body.projects-mode .bottom-fade, body.projects-mode #fab, body.projects-mode #focusModeBtn, body.projects-mode .quick-add-wrap { display: none !important; }
 
 body.projects-detail-mode .hide-in-project-detail { display: none !important; }
-body.projects-detail-mode #projectDetailView { display: block !important; animation: viewIn 0.3s ease both; }
+body.projects-detail-mode #projectDetailView { display: block !important; animation: viewIn 0.4s ease both; }
 body.projects-detail-mode #projectsView { display: none !important; }
 
 body.bel-mode .hide-in-bel { display: none !important; }
-body.bel-mode #belView { display: block !important; animation: viewIn 0.3s ease both; }
+body.bel-mode #belView { display: block !important; animation: viewIn 0.4s ease both; }
 body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, body.bel-mode .quick-add-wrap { display: none !important; }
 
 
@@ -1094,13 +1094,13 @@ body.deep-focus-mode #pomoDisplay {
    No JS needed — pure CSS. */
 
 @keyframes viewIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Task list re-entrance when switching back to tasks tab */
 #taskList.view-animate {
-  animation: viewIn 0.3s ease both;
+  animation: viewIn 0.4s ease both;
 }
 
 
@@ -1172,36 +1172,36 @@ body.deep-focus-mode #pomoDisplay {
 /* ── STAGGER ENTRANCE ── */
 
 @keyframes staggerUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .stagger-child {
-  animation: staggerUp 0.28s ease both;
-  animation-delay: calc(var(--si, 0) * 45ms);
+  animation: staggerUp 0.35s ease both;
+  animation-delay: calc(var(--si, 0) * 60ms);
 }
 
 
 /* ── SHEET CONTENT CASCADE ── */
 
 @keyframes sheetItemIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.sheet.open > .handle { animation: sheetItemIn 0.22s ease both; }
-.sheet.open > .sheet-title { animation: sheetItemIn 0.22s ease both; animation-delay: 30ms; }
-.sheet.open > .sheet-label { animation: sheetItemIn 0.22s ease both; animation-delay: 50ms; }
-.sheet.open > .input { animation: sheetItemIn 0.22s ease both; animation-delay: 70ms; }
-.sheet.open > .chip-row { animation: sheetItemIn 0.22s ease both; animation-delay: 90ms; }
-.sheet.open > .sheet-btn { animation: sheetItemIn 0.22s ease both; animation-delay: 120ms; }
-.sheet.open > .divider { animation: sheetItemIn 0.22s ease both; animation-delay: 60ms; }
+.sheet.open > .handle { animation: sheetItemIn 0.28s ease both; }
+.sheet.open > .sheet-title { animation: sheetItemIn 0.28s ease both; animation-delay: 40ms; }
+.sheet.open > .sheet-label { animation: sheetItemIn 0.28s ease both; animation-delay: 70ms; }
+.sheet.open > .input { animation: sheetItemIn 0.28s ease both; animation-delay: 100ms; }
+.sheet.open > .chip-row { animation: sheetItemIn 0.28s ease both; animation-delay: 130ms; }
+.sheet.open > .sheet-btn { animation: sheetItemIn 0.28s ease both; animation-delay: 160ms; }
+.sheet.open > .divider { animation: sheetItemIn 0.28s ease both; animation-delay: 80ms; }
 
 
 /* ── SMOOTHER SHEET SLIDE ── */
 
-.sheet { transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.34s; }
-.sheet.open { transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
+.sheet { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.42s; }
+.sheet.open { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
 
 /* Smoother overlay */
 .overlay { transition: opacity 0.28s ease; }

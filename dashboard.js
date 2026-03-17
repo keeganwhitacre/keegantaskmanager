@@ -281,7 +281,7 @@ function onDashEnter() {
       void el.offsetWidth;
       el.classList.add('stagger-child');
     });
-  }, 10);
+  }, 50);
 }
 
 function onDashExit() {

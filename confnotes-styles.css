@@ -4,7 +4,11 @@
 
 /* View Routing */
 body.confnotes-mode .hide-in-confnotes { display: none !important; }
-body.confnotes-mode #confNotesView { display: block !important; animation: viewIn 0.3s ease both; }
+body.confnotes-mode #confNotesView { display: block !important; animation: cnViewIn 0.4s ease both; }
+@keyframes cnViewIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 body.confnotes-mode .bottom-fade, body.confnotes-mode #focusModeBtn, body.confnotes-mode .quick-add-wrap { display: none !important; }
 body.confnotes-mode .fab { display: flex !important; }
 
