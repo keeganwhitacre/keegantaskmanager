@@ -752,6 +752,21 @@
       "pomodoros": 0,
       "projectId": "",
       "completedAt": "2026-03-16T21:45:50.050Z"
+    },
+    {
+      "id": "mmv614wfk7nn",
+      "title": "Do brackets tonight!!!",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-17",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
