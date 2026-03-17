@@ -16,8 +16,8 @@ function renderShop() {
   if (ordered.length === 0) { list.innerHTML = '<div class="shop-empty">List is empty. Add something above.</div>'; return; }
   list.innerHTML = '';
   ordered.forEach(function(item, idx) {
-    const row = document.createElement('div'); row.className = 'shop-item'; row.dataset.id = item.id;
-    row.style.setProperty('--stagger-i', idx);
+    const row = document.createElement('div'); row.className = 'shop-item stagger-child'; row.dataset.id = item.id;
+    row.style.setProperty('--si', idx);
     row.innerHTML = '<div class="shop-cb' + (item.done ? ' checked' : '') + '" data-action="check"></div><div class="shop-item-text' + (item.done ? ' checked' : '') + '" data-action="check">' + esc(item.text) + '</div><div class="shop-del" data-action="del">✕</div>';
     list.appendChild(row);
   });

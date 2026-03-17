@@ -233,9 +233,9 @@ function renderHabits() {
         const isNowChecked = ds.habits[week][h.id][i]; saveDash(true);
         if (h.bad) { cb.classList.toggle('checked-bad', isNowChecked); cb.classList.remove('checked'); }
         else { cb.classList.toggle('checked', isNowChecked); cb.classList.remove('checked-bad'); }
-        // Pop animation
-        cb.classList.remove('just-checked'); void cb.offsetWidth; cb.classList.add('just-checked');
-        cb.addEventListener('animationend', function handler() { cb.classList.remove('just-checked'); cb.removeEventListener('animationend', handler); });
+        cb.classList.remove('just-checked');
+        void cb.offsetWidth;
+        cb.classList.add('just-checked');
       });
       checksEl.appendChild(cb);
     });
@@ -273,24 +273,17 @@ function onDashEnter() {
   if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
 
   // Stagger-animate dashboard cards
-  // Must wait for paint after display:none → display:block
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      var dash = document.getElementById('dashView');
-      if (!dash) return;
-      var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
-      items.forEach(function(el, i) {
-        el.classList.remove('stagger-in');
-        el.style.setProperty('--stagger-i', i);
-        el.classList.add('stagger-in');
-        el.addEventListener('animationend', function handler() {
-          el.classList.remove('stagger-in');
-          el.style.removeProperty('--stagger-i');
-          el.removeEventListener('animationend', handler);
-        });
-      });
+  setTimeout(function() {
+    var dash = document.getElementById('dashView');
+    if (!dash) return;
+    var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
+    items.forEach(function(el, i) {
+      el.classList.remove('stagger-child');
+      el.style.setProperty('--si', i);
+      void el.offsetWidth;
+      el.classList.add('stagger-child');
     });
-  });
+  }, 0);
 }
 
 function onDashExit() {
