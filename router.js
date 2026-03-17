@@ -86,6 +86,29 @@ function switchView(viewName) {
     view.onEnter();
   }
 
+  // ── Animate the incoming view container ──
+  const containerMap = {
+    tasks: 'taskList',
+    dash: 'dashView',
+    projects: 'projectsView',
+    'projects-detail': 'projectDetailView',
+    bel: 'belView',
+  };
+  const containerId = containerMap[viewName];
+  if (containerId) {
+    const el = document.getElementById(containerId);
+    if (el) {
+      el.classList.remove('view-enter');
+      // Force reflow so re-adding the class restarts the animation
+      void el.offsetWidth;
+      el.classList.add('view-enter');
+      el.addEventListener('animationend', function handler() {
+        el.classList.remove('view-enter');
+        el.removeEventListener('animationend', handler);
+      });
+    }
+  }
+
   // Notify the bus
   emit('view-changed', { from: prev, to: viewName });
 }

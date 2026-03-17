@@ -701,7 +701,7 @@ body.focus-mode #focusBanner { display: flex; }
 .sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
 .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
 .sec-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); background: var(--border-divider); border: 1px solid transparent; padding: 1px 9px; border-radius: 8px; font-weight: 700; }
-.section.collapsed .sec-tasks { display: none; }
+/* .section.collapsed .sec-tasks — now handled by animation system (max-height transition) */
 .sec-toggle { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 0 2px; transition: transform 0.2s; }
 .section.collapsed .sec-toggle { transform: rotate(-90deg); }
 
@@ -1081,4 +1081,500 @@ body.deep-focus-mode #pomoDisplay {
 /* Fix the huge gap under the project title in Project Details */
 #pdTitleInput {
   min-height: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ANIMATION SYSTEM
+   
+   Philosophy: every transition uses the same family of easing curves
+   so the app feels cohesive. Three tiers:
+   
+   1. Micro (≤150ms)  — button presses, checkbox taps, chip toggles.
+      Uses ease-out so the "pop" is instant and the settle is smooth.
+   
+   2. Meso (150–300ms) — view cross-fades, section collapses, card
+      entrances. Uses cubic-bezier(0.4, 0, 0.2, 1) (Material "standard")
+      for smooth deceleration.
+   
+   3. Macro (300–500ms) — sheet slides, overlay fades, full-screen 
+      mode changes. Uses cubic-bezier(0.16, 1, 0.3, 1) (spring-like
+      overshoot feel without actual overshoot).
+   
+   All animations respect prefers-reduced-motion at the bottom.
+══════════════════════════════════════════════════════════════════ */
+
+/* ── EASING TOKENS ── */
+:root {
+  --ease-micro: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decel: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+/* ── 1. VIEW CROSS-FADE ──
+   Views (#taskList, #dashView, #projectsView, etc.) fade in when
+   the router activates them. We use a keyframe so it only plays
+   once per view-switch rather than fighting with display:none. */
+
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* The router adds .view-enter; CSS does the rest */
+.view-enter {
+  animation: viewFadeIn 0.28s var(--ease-standard) both;
+}
+
+
+/* ── 2. STAGGERED CARD/ITEM ENTRANCES ──
+   Dashboard cards, project cards, and shopping items get a subtle
+   rise-and-fade. The JS sets --stagger-i on each child. */
+
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-in {
+  opacity: 0;
+  animation: staggerIn 0.32s var(--ease-decel) forwards;
+  animation-delay: calc(var(--stagger-i, 0) * 50ms);
+}
+
+/* Dashboard cards */
+#dashView .d-card.stagger-in,
+#dashView .d-grid-2.stagger-in {
+  animation-duration: 0.35s;
+}
+
+/* Project cards */
+.project-card.stagger-in {
+  animation-duration: 0.3s;
+}
+
+
+/* ── 3. SECTION COLLAPSE/EXPAND ──
+   Instead of instant display:none toggle, sec-tasks gets a smooth
+   max-height + opacity transition. Requires JS to set a data-height
+   or we use a large max-height value as a cap. */
+
+.sec-tasks {
+  overflow: hidden;
+  transition: max-height 0.3s var(--ease-standard), opacity 0.25s var(--ease-standard);
+  max-height: 2000px; /* generous cap */
+  opacity: 1;
+}
+
+.section.collapsed .sec-tasks {
+  max-height: 0 !important;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.sec-toggle {
+  transition: transform 0.25s var(--ease-standard);
+}
+
+.section.collapsed .sec-toggle {
+  transform: rotate(-90deg);
+}
+
+
+/* ── 4. SEARCH & QUICK-ADD REVEAL ──
+   Smooth height reveal instead of hard display toggle.
+   JS will swap to using .anim-open instead of .open. */
+
+.search-wrap, .quick-add-wrap {
+  display: block !important; /* always in DOM */
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 0.3s var(--ease-standard), opacity 0.22s var(--ease-standard), padding 0.3s var(--ease-standard);
+}
+
+.search-wrap.open, .quick-add-wrap.open {
+  max-height: 80px;
+  opacity: 1;
+  padding-bottom: 14px;
+  overflow: visible;
+}
+
+
+/* ── 5. MICRO-INTERACTIONS ── */
+
+/* Icon buttons — scale press */
+.icon-btn {
+  transition: background 0.12s var(--ease-micro), transform 0.12s var(--ease-micro), box-shadow 0.12s var(--ease-micro);
+}
+.icon-btn:active {
+  transform: scale(0.88);
+}
+
+/* FAB — breathing + press */
+.fab {
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s var(--ease-micro);
+}
+.fab:active {
+  transform: scale(0.88) !important;
+}
+
+/* FAB icon rotation when sheet opens */
+.fab.sheet-open {
+  transform: rotate(45deg);
+}
+
+/* Tab buttons — smooth color/bg shift (already has transition: all 0.12s, enhancing) */
+.tab-btn {
+  transition: all 0.18s var(--ease-micro);
+}
+.tab-btn:active {
+  transform: scale(0.95);
+}
+
+/* Filter chips */
+.chip {
+  transition: all 0.18s var(--ease-micro);
+}
+.chip:active {
+  transform: scale(0.95);
+}
+
+/* Selection chips inside sheets */
+.s-chip {
+  transition: all 0.18s var(--ease-micro), box-shadow 0.2s var(--ease-micro);
+}
+.s-chip:active {
+  transform: scale(0.94);
+}
+
+/* Sheet buttons */
+.sheet-btn {
+  transition: transform 0.12s var(--ease-micro), background 0.15s var(--ease-micro), box-shadow 0.15s var(--ease-micro);
+}
+.sheet-btn:active {
+  transform: scale(0.97);
+}
+
+/* Pomo button */
+.pomo-btn {
+  transition: transform 0.12s var(--ease-micro), background 0.15s var(--ease-micro);
+}
+.pomo-btn:active {
+  transform: scale(0.94);
+}
+
+/* Shopping add button */
+.shop-add-btn {
+  transition: transform 0.12s var(--ease-micro), box-shadow 0.15s var(--ease-micro);
+}
+.shop-add-btn:active {
+  transform: scale(0.94);
+}
+
+/* Quick add send button */
+.quick-add-send {
+  transition: transform 0.12s var(--ease-micro), box-shadow 0.15s var(--ease-micro);
+}
+.quick-add-send:active {
+  transform: scale(0.88);
+}
+
+/* Task cards — subtle hover lift on desktop */
+@media (hover: hover) {
+  .task {
+    transition: background 0.1s, transform 0.18s var(--ease-micro), box-shadow 0.18s var(--ease-micro);
+  }
+  .task:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-base), 0 4px 16px rgba(0,0,40,0.08);
+  }
+}
+
+/* Project cards — hover lift */
+@media (hover: hover) {
+  .project-card {
+    transition: transform 0.18s var(--ease-micro), box-shadow 0.18s var(--ease-micro);
+  }
+  .project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-base), 0 6px 20px rgba(0,0,40,0.1);
+  }
+}
+
+/* Dashboard cards — subtle hover */
+@media (hover: hover) {
+  .d-card {
+    transition: transform 0.18s var(--ease-micro), box-shadow 0.18s var(--ease-micro);
+  }
+  .d-card:hover {
+    transform: translateY(-1px);
+  }
+}
+
+
+/* ── 6. FOCUS STRIP ENTRANCE ── */
+
+@keyframes focusSlideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.focus-strip {
+  transition: opacity 0.3s var(--ease-standard), transform 0.3s var(--ease-standard);
+}
+
+.focus-strip.anim-enter {
+  animation: focusSlideIn 0.35s var(--ease-decel) both;
+}
+
+
+/* ── 7. SHEET CONTENT STAGGER ──
+   Elements inside an open sheet animate in with a slight cascade. */
+
+@keyframes sheetItemIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sheet.open .sheet-title,
+.sheet.open .handle {
+  animation: sheetItemIn 0.25s var(--ease-decel) both;
+}
+
+.sheet.open .sheet-label {
+  animation: sheetItemIn 0.25s var(--ease-decel) both;
+  animation-delay: 40ms;
+}
+
+.sheet.open .input {
+  animation: sheetItemIn 0.25s var(--ease-decel) both;
+  animation-delay: 60ms;
+}
+
+.sheet.open .chip-row {
+  animation: sheetItemIn 0.25s var(--ease-decel) both;
+  animation-delay: 80ms;
+}
+
+.sheet.open .sheet-btn {
+  animation: sheetItemIn 0.25s var(--ease-decel) both;
+  animation-delay: 120ms;
+}
+
+
+/* ── 8. TOAST ENTRANCE (enhance existing) ── */
+.toast, .toast-undo {
+  transition: all 0.28s var(--ease-spring);
+}
+
+.toast.show, .toast-undo.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* ── 9. OVERLAY (enhance existing) ── */
+.overlay {
+  transition: opacity 0.28s var(--ease-standard);
+}
+
+
+/* ── 10. CHECKBOX ANIMATION (enhance existing) ──
+   After the pop, a brief color ripple. */
+
+@keyframes cbCheck {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.3); }
+  55%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.cb.popping {
+  animation: cbCheck 0.35s var(--ease-spring) !important;
+}
+
+
+/* ── 11. EMPTY STATE ── */
+
+@keyframes emptyFade {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.empty-state {
+  animation: emptyFade 0.4s var(--ease-decel) both;
+}
+
+
+/* ── 12. HEADER ENTRANCE (first load only) ── */
+
+@keyframes headerSlide {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.header.anim-init {
+  animation: headerSlide 0.4s var(--ease-decel) both;
+}
+
+.tab-bar.anim-init {
+  animation: headerSlide 0.4s var(--ease-decel) both;
+  animation-delay: 80ms;
+}
+
+.filter-scroll.anim-init {
+  animation: headerSlide 0.4s var(--ease-decel) both;
+  animation-delay: 140ms;
+}
+
+
+/* ── 13. SETTINGS / SHEET TOGGLES ──
+   The theme swatches and settings fields */
+
+.theme-swatch {
+  transition: transform 0.15s var(--ease-micro), outline-color 0.2s var(--ease-micro);
+}
+.theme-swatch:active {
+  transform: scale(0.9);
+}
+
+.settings-field {
+  transition: opacity 0.2s var(--ease-standard);
+}
+
+
+/* ── 14. BEL ITEMS ── */
+
+.bel-item {
+  transition: opacity 0.2s var(--ease-standard), transform 0.2s var(--ease-standard);
+}
+
+.bel-cb {
+  transition: all 0.18s var(--ease-micro);
+}
+
+.bel-cb:active {
+  transform: scale(0.88);
+}
+
+
+/* ── 15. SHOPPING ITEMS ── */
+
+@keyframes shopItemIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.shop-item {
+  animation: shopItemIn 0.25s var(--ease-decel) both;
+  animation-delay: calc(var(--stagger-i, 0) * 30ms);
+}
+
+.shop-cb {
+  transition: all 0.18s var(--ease-micro);
+}
+
+.shop-cb:active {
+  transform: scale(0.88);
+}
+
+
+/* ── 16. HABIT CHECKBOX ── */
+
+.d-habit-cb {
+  transition: all 0.18s var(--ease-micro), transform 0.15s var(--ease-spring);
+}
+
+.d-habit-cb:active {
+  transform: scale(0.85);
+}
+
+@keyframes habitPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.d-habit-cb.just-checked {
+  animation: habitPop 0.3s var(--ease-spring);
+}
+
+
+/* ── 17. MOOD BUTTON (enhance) ── */
+
+.mood-btn:active {
+  transform: scale(0.9);
+}
+
+
+/* ── 18. PROGRESS BAR SHIMMER ── */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.d-book-prog-fill {
+  background-size: 200% 100%;
+  animation: shimmer 2.5s ease-in-out infinite;
+  background-image: linear-gradient(90deg, var(--accent) 0%, var(--success) 40%, var(--accent) 60%, var(--success) 100%);
+}
+
+
+/* ── 19. SYNC BAR (enhance) ── */
+
+.sync-bar {
+  transition: transform 0.35s var(--ease-spring);
+}
+
+
+/* ── 20. CLOSE BUTTON ── */
+
+.close-btn {
+  transition: transform 0.12s var(--ease-micro), background 0.12s;
+}
+
+.close-btn:active {
+  transform: scale(0.85);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   REDUCED MOTION — respect user's OS-level preference.
+   Disables all transforms and shortens transitions to near-instant
+   opacity changes only (still gives visual feedback, just no movement).
+══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.1s !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .view-enter,
+  .stagger-in,
+  .task-wrap.entering,
+  .sheet.open .sheet-title,
+  .sheet.open .handle,
+  .sheet.open .sheet-label,
+  .sheet.open .input,
+  .sheet.open .chip-row,
+  .sheet.open .sheet-btn,
+  .header.anim-init,
+  .tab-bar.anim-init,
+  .filter-scroll.anim-init,
+  .empty-state,
+  .shop-item,
+  .focus-strip.anim-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

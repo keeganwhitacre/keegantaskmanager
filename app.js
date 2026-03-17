@@ -594,8 +594,9 @@ function renderProjects() {
     return da - db;
   });
 
-  sorted.forEach(p => {
-    const card = document.createElement('div'); card.className = 'project-card'; card.dataset.id = p.id;
+  sorted.forEach(function(p, idx) {
+    const card = document.createElement('div'); card.className = 'project-card stagger-in'; card.dataset.id = p.id;
+    card.style.setProperty('--stagger-i', idx);
     const dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
     let tHTML = ''; const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
     if (pTasks.length > 0) {
@@ -961,3 +962,19 @@ initDashboard({ isActuallyDueToday, dueClass, fmtDue });
 render();
 loadSettingsUI();
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
+
+// ── Initial load entrance animations ──
+(function() {
+  var header = document.querySelector('.header');
+  var tabBar = document.querySelector('.tab-bar');
+  var filterScroll = document.querySelector('.filter-scroll');
+  if (header) header.classList.add('anim-init');
+  if (tabBar) tabBar.classList.add('anim-init');
+  if (filterScroll) filterScroll.classList.add('anim-init');
+  // Clean up classes after animation to avoid replaying on DOM changes
+  setTimeout(function() {
+    if (header) header.classList.remove('anim-init');
+    if (tabBar) tabBar.classList.remove('anim-init');
+    if (filterScroll) filterScroll.classList.remove('anim-init');
+  }, 600);
+})();
