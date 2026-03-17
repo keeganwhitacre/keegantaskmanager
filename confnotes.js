@@ -204,15 +204,37 @@ function openCNDetail(id) {
   }
 
   document.getElementById('cnListView').style.display = 'none';
-  document.getElementById('cnDetailView').style.display = 'flex';
+  var detailEl = document.getElementById('cnDetailView');
+  detailEl.style.display = 'flex';
+  detailEl.classList.remove('view-enter');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      detailEl.classList.add('view-enter');
+      detailEl.addEventListener('animationend', function handler() {
+        detailEl.classList.remove('view-enter');
+        detailEl.removeEventListener('animationend', handler);
+      });
+    });
+  });
 }
 
 function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
   document.getElementById('cnDetailView').style.display = 'none';
-  document.getElementById('cnListView').style.display = 'block';
+  var listEl = document.getElementById('cnListView');
+  listEl.style.display = 'block';
   renderCNList();
+  listEl.classList.remove('view-enter');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      listEl.classList.add('view-enter');
+      listEl.addEventListener('animationend', function handler() {
+        listEl.classList.remove('view-enter');
+        listEl.removeEventListener('animationend', handler);
+      });
+    });
+  });
 }
 
 function saveCNDetailNow() {
