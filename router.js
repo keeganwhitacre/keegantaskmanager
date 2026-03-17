@@ -87,6 +87,11 @@ function switchView(viewName) {
   }
 
   // ── Animate the incoming view container ──
+  // Views start with display:none and get display:block via body-class CSS.
+  // We need to wait until the browser has actually painted the element as
+  // visible before adding the animation class — otherwise the initial
+  // keyframe (opacity:0, translateY) never renders. Double-rAF guarantees
+  // one full paint cycle has completed.
   const containerMap = {
     tasks: 'taskList',
     dash: 'dashView',
@@ -99,12 +104,14 @@ function switchView(viewName) {
     const el = document.getElementById(containerId);
     if (el) {
       el.classList.remove('view-enter');
-      // Force reflow so re-adding the class restarts the animation
-      void el.offsetWidth;
-      el.classList.add('view-enter');
-      el.addEventListener('animationend', function handler() {
-        el.classList.remove('view-enter');
-        el.removeEventListener('animationend', handler);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          el.classList.add('view-enter');
+          el.addEventListener('animationend', function handler() {
+            el.classList.remove('view-enter');
+            el.removeEventListener('animationend', handler);
+          });
+        });
       });
     }
   }

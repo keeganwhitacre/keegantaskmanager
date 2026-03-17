@@ -390,7 +390,33 @@ function render() {
       header.addEventListener('click', function() {
         state.collapsed['grp_' + g.id] = !state.collapsed['grp_' + g.id];
         saveCollapsed();
-        section.classList.toggle('collapsed', state.collapsed['grp_' + g.id]);
+        var isNowCollapsed = state.collapsed['grp_' + g.id];
+        var secTasks = section.querySelector('.sec-tasks');
+
+        if (isNowCollapsed && secTasks) {
+          // Collapsing: set explicit height first so transition has a start value
+          secTasks.style.maxHeight = secTasks.scrollHeight + 'px';
+          void secTasks.offsetHeight; // flush
+          section.classList.add('collapsed');
+          secTasks.style.maxHeight = '0px';
+          // Clean up inline style after transition
+          secTasks.addEventListener('transitionend', function handler() {
+            secTasks.style.maxHeight = '';
+            secTasks.removeEventListener('transitionend', handler);
+          });
+        } else if (secTasks) {
+          // Expanding: remove collapsed, measure, animate from 0
+          section.classList.remove('collapsed');
+          secTasks.style.maxHeight = '0px';
+          void secTasks.offsetHeight; // flush
+          secTasks.style.maxHeight = secTasks.scrollHeight + 'px';
+          secTasks.addEventListener('transitionend', function handler() {
+            secTasks.style.maxHeight = '';
+            secTasks.removeEventListener('transitionend', handler);
+          });
+        } else {
+          section.classList.toggle('collapsed', isNowCollapsed);
+        }
       });
       section.appendChild(header);
 

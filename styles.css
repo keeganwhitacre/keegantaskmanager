@@ -669,8 +669,8 @@ body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, bod
 
 /* Search & Quick Add */
 .search-trigger { position: relative; margin: 0 auto 14px 20px; display: flex; justify-content: flex-start; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; }
-.search-wrap, .quick-add-wrap { padding: 0 20px 14px; display: none; }
-.search-wrap.open, .quick-add-wrap.open { display: block; }
+.search-wrap, .quick-add-wrap { padding: 0 20px; max-height: 0; opacity: 0; overflow: hidden; pointer-events: none; transition: max-height 0.3s var(--ease-standard, ease), opacity 0.22s var(--ease-standard, ease), padding 0.3s var(--ease-standard, ease); }
+.search-wrap.open, .quick-add-wrap.open { max-height: 80px; opacity: 1; padding-bottom: 14px; overflow: visible; pointer-events: auto; }
 
 .search-input, .quick-add-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-input); padding: 10px 16px; color: var(--text-main); -webkit-text-fill-color: var(--text-main); font-family: var(--font-main); font-size: 16px; outline: none; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 .search-input:focus, .quick-add-input:focus { border-color: var(--accent); }
@@ -702,8 +702,8 @@ body.focus-mode #focusBanner { display: flex; }
 .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
 .sec-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); background: var(--border-divider); border: 1px solid transparent; padding: 1px 9px; border-radius: 8px; font-weight: 700; }
 /* .section.collapsed .sec-tasks — now handled by animation system (max-height transition) */
-.sec-toggle { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 0 2px; transition: transform 0.2s; }
-.section.collapsed .sec-toggle { transform: rotate(-90deg); }
+.sec-toggle { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 0 2px; }
+/* .section.collapsed .sec-toggle rotation now in animation system */
 
 .task-wrap { position: relative; margin-bottom: 8px; border-radius: var(--radius-card); overflow: hidden; }
 .task-wrap.entering { animation: taskIn 0.22s ease both; }
@@ -1168,7 +1168,7 @@ body.deep-focus-mode #pomoDisplay {
 }
 
 .section.collapsed .sec-tasks {
-  max-height: 0 !important;
+  max-height: 0;
   opacity: 0;
   margin: 0;
   pointer-events: none;
@@ -1184,25 +1184,8 @@ body.deep-focus-mode #pomoDisplay {
 
 
 /* ── 4. SEARCH & QUICK-ADD REVEAL ──
-   Smooth height reveal instead of hard display toggle.
-   JS will swap to using .anim-open instead of .open. */
-
-.search-wrap, .quick-add-wrap {
-  display: block !important; /* always in DOM */
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  padding-top: 0;
-  padding-bottom: 0;
-  transition: max-height 0.3s var(--ease-standard), opacity 0.22s var(--ease-standard), padding 0.3s var(--ease-standard);
-}
-
-.search-wrap.open, .quick-add-wrap.open {
-  max-height: 80px;
-  opacity: 1;
-  padding-bottom: 14px;
-  overflow: visible;
-}
+   Now handled inline in the original .search-wrap/.quick-add-wrap rules
+   using max-height + opacity transition instead of display toggle. */
 
 
 /* ── 5. MICRO-INTERACTIONS ── */
