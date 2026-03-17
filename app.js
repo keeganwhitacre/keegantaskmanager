@@ -131,6 +131,7 @@ function makeTaskWrap(t, delay) {
   wrap.className = 'task-wrap entering';
   wrap.dataset.id = t.id;
   wrap.style.animationDelay = (delay || 0) + 'ms';
+  wrap.addEventListener('animationend', function() { wrap.classList.remove('entering'); }, { once: true });
 
   const bgDefer = document.createElement('div');
   bgDefer.className = 'swipe-bg-defer';
@@ -183,6 +184,7 @@ function makeArchiveWrap(t, delay) {
   const wrap = document.createElement('div');
   wrap.className = 'task-wrap entering';
   wrap.style.animationDelay = (delay || 0) + 'ms';
+  wrap.addEventListener('animationend', function() { wrap.classList.remove('entering'); }, { once: true });
 
   const el = document.createElement('div');
   el.className = 'task ' + (t.priority || 'md') + ' done archived';
@@ -252,7 +254,7 @@ function attachSwipe(wrap, el, bg, id) {
     const dx = e.touches[0].clientX - startX; const dy = e.touches[0].clientY - startY;
     if (!dragging && Math.abs(dy) > Math.abs(dx) + 5) { maybeSwipe = false; return; }
     dragging = true; currentX = dx;
-    const clamped = Math.max(-120, Math.min(120, dx)); el.style.transform = 'translateX(' + clamped + 'px)';
+    const clamped = Math.max(-120, Math.min(120, dx)); el.style.transform = 'translate3d(' + clamped + 'px,0,0)';
     const pct = Math.min(Math.abs(dx) / THRESHOLD, 1);
     if (dx < 0) { bg.style.opacity = pct; if (bgDefer) bgDefer.style.opacity = 0; } else { if (bgDefer) bgDefer.style.opacity = pct; bg.style.opacity = 0; }
     e.preventDefault();
@@ -264,18 +266,18 @@ function attachSwipe(wrap, el, bg, id) {
     if (currentX <= -THRESHOLD) {
       wrap.classList.add('removing'); setTimeout(function() { deleteTask(id); }, 200);
     } else if (currentX >= THRESHOLD) {
-      el.style.transition = 'transform 0.2s ease'; el.style.transform = 'translateX(0)';
-      if (bgDefer) bgDefer.style.opacity = 0; setTimeout(function() { el.style.transition = ''; deferTask(id); }, 150);
+      el.style.transition = 'transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1)'; el.style.transform = 'translate3d(0,0,0)';
+      if (bgDefer) bgDefer.style.opacity = 0; setTimeout(function() { el.style.transition = ''; el.style.transform = ''; deferTask(id); }, 180);
     } else {
-      el.style.transition = 'transform 0.2s ease'; el.style.transform = 'translateX(0)';
-      bg.style.opacity = 0; if (bgDefer) bgDefer.style.opacity = 0; setTimeout(function() { el.style.transition = ''; }, 200);
+      el.style.transition = 'transform 0.26s cubic-bezier(0.2, 0.9, 0.3, 1)'; el.style.transform = 'translate3d(0,0,0)';
+      bg.style.opacity = 0; if (bgDefer) bgDefer.style.opacity = 0; setTimeout(function() { el.style.transition = ''; el.style.transform = ''; }, 260);
     }
   }, { passive: true });
 }
 
 function animateCheck(id, el) {
   const cb = el.querySelector('.cb'); cb.classList.add('popping');
-  setTimeout(function() { cb.classList.remove('popping'); }, 300); toggleDone(id);
+  setTimeout(function() { cb.classList.remove('popping'); }, 260); toggleDone(id);
 }
 
 function filterTask(t) {
@@ -333,7 +335,7 @@ function render() {
       const header = document.createElement('div'); header.className = 'sec-header';
       header.innerHTML = '<div class="sec-title">Completed</div><div class="sec-count">' + archived.length + '</div>';
       section.appendChild(header);
-      archived.forEach((t, i) => { section.appendChild(makeArchiveWrap(t, i * 25)); });
+      archived.forEach((t, i) => { section.appendChild(makeArchiveWrap(t, Math.min(i * 20, 400))); });
       list.appendChild(section);
     }
   } else {
@@ -395,8 +397,8 @@ function render() {
       section.appendChild(header);
 
       const tasksWrap = document.createElement('div'); tasksWrap.className = 'sec-tasks';
-      tasks.forEach((t, i) => { tasksWrap.appendChild(makeTaskWrap(t, isCollapsed ? 0 : delayBase + i * 30)); });
-      section.appendChild(tasksWrap); delayBase += tasks.length * 30 + 50; list.appendChild(section);
+      tasks.forEach((t, i) => { tasksWrap.appendChild(makeTaskWrap(t, isCollapsed ? 0 : Math.min(delayBase + i * 25, 400))); });
+      section.appendChild(tasksWrap); delayBase += Math.min(tasks.length * 25, 300) + 30; list.appendChild(section);
     });
 
     if (!anyVisible) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">✓</div><div>' + (state.focusMode ? 'Nothing due today' : 'No tasks match this filter') + '</div></div>'; }
@@ -793,8 +795,8 @@ document.getElementById('closeShopSheet').addEventListener('click', closeSheets)
 document.querySelectorAll('.sheet').forEach(sheet => {
   let startY = 0, dragging = false;
   sheet.addEventListener('touchstart', function(e) { if (sheet.scrollTop > 0) return; startY = e.touches[0].clientY; dragging = true; }, { passive: true });
-  sheet.addEventListener('touchmove', function(e) { if (!dragging) return; const dy = e.touches[0].clientY - startY; if (dy > 0) { sheet.style.transform = 'translateY(' + dy + 'px)'; sheet.style.transition = 'none'; } }, { passive: true });
-  sheet.addEventListener('touchend', function(e) { if (!dragging) return; dragging = false; const dy = e.changedTouches[0].clientY - startY; sheet.style.transition = ''; if (dy > 80) { closeSheets(); } else { sheet.style.transform = ''; } }, { passive: true });
+  sheet.addEventListener('touchmove', function(e) { if (!dragging) return; const dy = e.touches[0].clientY - startY; if (dy > 0) { sheet.style.transform = 'translate3d(0,' + dy + 'px,0)'; sheet.style.transition = 'none'; } }, { passive: true });
+  sheet.addEventListener('touchend', function(e) { if (!dragging) return; dragging = false; const dy = e.changedTouches[0].clientY - startY; if (dy > 80) { sheet.style.transition = ''; closeSheets(); } else { sheet.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1)'; sheet.style.transform = ''; setTimeout(function() { sheet.style.transition = ''; }, 300); } }, { passive: true });
 });
 
 // ══════════════════════════════════════════════════════════════════
@@ -904,15 +906,18 @@ function addDragHandles(wrap, taskId) {
 function startDrag(e, wrap, taskId) {
   if (dragState) return; if (navigator.vibrate) navigator.vibrate(30);
   const list = wrap.parentNode; const rect = wrap.getBoundingClientRect(); const offsetY = e.clientY - rect.top;
-  const ghost = wrap.cloneNode(true); ghost.style.cssText = 'position:fixed;left:' + rect.left + 'px;top:' + rect.top + 'px;width:' + rect.width + 'px;opacity:0.85;pointer-events:none;z-index:9999;transition:none;box-shadow:0 8px 30px rgba(0,0,0,0.4);border-radius:14px;';
+  const ghost = wrap.cloneNode(true); ghost.style.cssText = 'position:fixed;left:' + rect.left + 'px;top:' + rect.top + 'px;width:' + rect.width + 'px;opacity:0.9;pointer-events:none;z-index:9999;transition:none;will-change:transform;-webkit-transform:scale(1.03);transform:scale(1.03);box-shadow:0 8px 24px rgba(0,0,0,0.25);border-radius:14px;';
   document.body.appendChild(ghost); wrap.style.opacity = '0.3';
-  dragState = { taskId, wrap, ghost, list, offsetY };
+  dragState = { taskId, wrap, ghost, list, offsetY, initialTop: rect.top };
   document.addEventListener('pointermove', onDragMove, { passive: false }); document.addEventListener('pointerup', onDragEnd); document.addEventListener('pointercancel', onDragEnd);
 }
 
 function onDragMove(e) {
   if (!dragState) return; e.preventDefault();
-  const ghost = dragState.ghost; ghost.style.top = (e.clientY - dragState.offsetY) + 'px';
+  const ghost = dragState.ghost;
+  var dy = e.clientY - dragState.offsetY - dragState.initialTop;
+  ghost.style.transform = 'translate3d(0,' + dy + 'px,0) scale(1.03)';
+  ghost.style.webkitTransform = 'translate3d(0,' + dy + 'px,0) scale(1.03)';
   let overEl = null; const siblings = dragState.list.querySelectorAll('.task-wrap');
   siblings.forEach(sib => { if (sib === dragState.wrap) return; const r = sib.getBoundingClientRect(); if (e.clientY >= r.top && e.clientY <= r.bottom) overEl = sib; sib.classList.remove('drag-over'); });
   if (overEl) overEl.classList.add('drag-over');

@@ -94,8 +94,7 @@ function switchView(viewName) {
   // one full paint cycle has completed.
   //
   // Views that use stagger animations on their children (dash, projects)
-  // skip the container-level fade — otherwise the parent's opacity:0
-  // hides all children and the stagger is invisible.
+  // use a simpler opacity-only fade so stagger translateY isn't fought.
   const containerMap = {
     tasks: 'taskList',
     dash: 'dashView',
@@ -106,15 +105,17 @@ function switchView(viewName) {
   };
   const staggerViews = { dash: true, projects: true };
   const containerId = containerMap[viewName];
-  if (containerId && !staggerViews[viewName]) {
+  if (containerId) {
     const el = document.getElementById(containerId);
     if (el) {
+      const animClass = staggerViews[viewName] ? 'view-enter-fade' : 'view-enter';
       el.classList.remove('view-enter');
+      el.classList.remove('view-enter-fade');
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
-          el.classList.add('view-enter');
+          el.classList.add(animClass);
           el.addEventListener('animationend', function handler() {
-            el.classList.remove('view-enter');
+            el.classList.remove(animClass);
             el.removeEventListener('animationend', handler);
           });
         });

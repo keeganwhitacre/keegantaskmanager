@@ -271,17 +271,19 @@ function onDashEnter() {
   if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
 
   // Stagger dashboard cards after view is visible
-  setTimeout(function() {
-    var dash = document.getElementById('dashView');
-    if (!dash) return;
-    var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
-    items.forEach(function(el, i) {
-      el.classList.remove('stagger-child');
-      el.style.setProperty('--si', i);
-      void el.offsetWidth;
-      el.classList.add('stagger-child');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var dash = document.getElementById('dashView');
+      if (!dash) return;
+      var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
+      items.forEach(function(el, i) {
+        el.classList.remove('stagger-child');
+        el.style.setProperty('--si', i);
+        void el.offsetWidth;
+        el.classList.add('stagger-child');
+      });
     });
-  }, 50);
+  });
 }
 
 function onDashExit() {

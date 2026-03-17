@@ -4,16 +4,12 @@
 
 /* View Routing */
 body.confnotes-mode .hide-in-confnotes { display: none !important; }
-body.confnotes-mode #confNotesView { display: block !important; animation: cnViewIn 0.4s ease both; }
-@keyframes cnViewIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+body.confnotes-mode #confNotesView { display: block !important; }
 body.confnotes-mode .bottom-fade, body.confnotes-mode #focusModeBtn, body.confnotes-mode .quick-add-wrap { display: none !important; }
 body.confnotes-mode .fab { display: flex !important; }
 
 /* Search */
-.cn-search-wrap { display: block !important; max-height: 0; opacity: 0; overflow: hidden; margin-bottom: 0; pointer-events: none; transition: max-height 0.25s ease, opacity 0.2s ease, margin 0.25s ease; }
+.cn-search-wrap { display: block !important; max-height: 0; opacity: 0; overflow: hidden; margin-bottom: 0; pointer-events: none; transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.22s ease, margin 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
 .cn-search-wrap.open { max-height: 60px; opacity: 1; margin-bottom: 12px; overflow: visible; pointer-events: auto; }
 
 /* Filter row */
@@ -72,11 +68,12 @@ body.confnotes-mode .fab { display: flex !important; }
   padding: 14px 16px;
   margin-bottom: 8px;
   cursor: pointer;
-  transition: background 0.1s, transform 0.12s ease;
+  transition: background 0.1s, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
   backdrop-filter: var(--glass-filter);
   -webkit-backdrop-filter: var(--glass-filter);
   box-shadow: var(--shadow-base);
-  animation: taskIn 0.22s ease both;
+  animation: taskIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 .cn-note-card:active { transform: scale(0.98); }
 
@@ -109,7 +106,7 @@ body.confnotes-mode .fab { display: flex !important; }
 }
 
 /* Pin button in editor topbar */
-.cn-pin-btn { border-color: transparent; background: transparent; transition: all 0.15s ease; }
+.cn-pin-btn { border-color: transparent; background: transparent; transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
 .cn-pin-btn:active { transform: scale(0.85); }
 .cn-pin-btn svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.15s; }
 .cn-pin-btn.pinned { background: var(--accent-faded); border-color: var(--accent); }

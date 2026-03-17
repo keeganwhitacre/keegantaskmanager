@@ -616,15 +616,15 @@ body.dash-mode #dashView { display: block !important; }
 body.dash-mode .bottom-fade, body.dash-mode #fab, body.dash-mode #focusModeBtn, body.dash-mode .quick-add-wrap { display: none !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
-body.projects-mode #projectsView { display: block !important; animation: viewIn 0.4s ease both; }
+body.projects-mode #projectsView { display: block !important; }
 body.projects-mode .bottom-fade, body.projects-mode #fab, body.projects-mode #focusModeBtn, body.projects-mode .quick-add-wrap { display: none !important; }
 
 body.projects-detail-mode .hide-in-project-detail { display: none !important; }
-body.projects-detail-mode #projectDetailView { display: block !important; animation: viewIn 0.4s ease both; }
+body.projects-detail-mode #projectDetailView { display: block !important; }
 body.projects-detail-mode #projectsView { display: none !important; }
 
 body.bel-mode .hide-in-bel { display: none !important; }
-body.bel-mode #belView { display: block !important; animation: viewIn 0.4s ease both; }
+body.bel-mode #belView { display: block !important; }
 body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, body.bel-mode .quick-add-wrap { display: none !important; }
 
 
@@ -633,7 +633,7 @@ body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, bod
 ══════════════════════════════════════════════════════════════════ */
 
 /* Sync Bar */
-.sync-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 300; padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; gap: 8px; transform: translateY(-100%); transition: transform 0.3s ease; pointer-events: none; }
+.sync-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 300; padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; gap: 8px; transform: translateY(-100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); pointer-events: none; }
 .sync-bar.show { transform: translateY(0); }
 .sync-bar.syncing { background: rgba(10,10,10,0.97); color: #555; }
 .sync-bar.success { background: rgba(20,60,35,0.97); color: #52d9a0; border-bottom: 1px solid rgba(82,217,160,0.2); }
@@ -706,10 +706,10 @@ body.focus-mode #focusBanner { display: flex; }
 .section.collapsed .sec-toggle { transform: rotate(-90deg); }
 
 .task-wrap { position: relative; margin-bottom: 8px; border-radius: var(--radius-card); overflow: hidden; }
-.task-wrap.entering { animation: taskIn 0.22s ease both; }
+.task-wrap.entering { animation: taskIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both; will-change: transform, opacity; }
 @keyframes taskIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.task-wrap.removing { animation: taskOut 0.18s ease forwards; pointer-events: none; }
-@keyframes taskOut  { to{opacity:0;max-height:0;margin-bottom:0} }
+.task-wrap.removing { animation: taskOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
+@keyframes taskOut  { to{opacity:0;transform:translateY(-4px);max-height:0;margin-bottom:0} }
 
 .swipe-bg { position: absolute; inset: 0; background: rgba(255,58,48,0.15); border-radius: var(--radius-card); display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; opacity: 0; transition: opacity 0.1s; pointer-events: none; }
 .swipe-bg svg { width: 18px; height: 18px; stroke: var(--danger); fill: none; stroke-width: 2; stroke-linecap: round; }
@@ -724,10 +724,9 @@ body.focus-mode #focusBanner { display: flex; }
 .task.done { opacity: 0.3; }
 .task.dimmed { opacity: 0.45; border-style: dashed; }
 
-.cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--task-cb-border); background: var(--task-cb-bg); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.18s; cursor: pointer; color: var(--text-inverse); }
+.cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--task-cb-border); background: var(--task-cb-bg); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.18s cubic-bezier(0.2, 0.9, 0.3, 1); cursor: pointer; color: var(--text-inverse); }
 .task.done .cb { background: var(--success); border-color: var(--success); }
-.cb.popping { animation: cbPop 0.28s ease; }
-@keyframes cbPop { 0%{transform:scale(1)} 45%{transform:scale(1.35)} 100%{transform:scale(1)} }
+.cb.popping { animation: cbPop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
 
 .task-body { flex: 1; min-width: 0; }
 .task-title { font-size: 14px; font-weight: 500; color: var(--text-main); line-height: 1.4; margin-bottom: 5px; }
@@ -798,7 +797,7 @@ body.focus-mode #focusBanner { display: flex; }
 #focusModeBtn { position: fixed; left: 20px; bottom: calc(28px + env(safe-area-inset-bottom)); height: 52px; padding: 0 18px; background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: 99px; display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--text-muted); cursor: pointer; z-index: 100; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 #focusModeBtn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-.overlay { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.22s; backdrop-filter: var(--overlay-filter); -webkit-backdrop-filter: var(--overlay-filter); }
+.overlay { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s cubic-bezier(0.2, 0.9, 0.3, 1); backdrop-filter: var(--overlay-filter); -webkit-backdrop-filter: var(--overlay-filter); }
 .overlay.open { opacity: 1; pointer-events: all; }
 
 .sheet { 
@@ -811,13 +810,16 @@ body.focus-mode #focusBanner { display: flex; }
   
   visibility: hidden; 
   overscroll-behavior-y: contain; 
-  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), visibility 0s 0.28s; 
+  will-change: transform;
+  -webkit-transform: translateY(100%);
+  transition: transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s 0.36s; 
 }
 .sheet.open { 
   transform: translateY(0); 
+  -webkit-transform: translateY(0);
   visibility: visible; 
   box-shadow: var(--shadow-base); 
-  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1), visibility 0s; 
+  transition: transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s; 
 }
 .handle { width: 36px; height: 4px; background: var(--border-divider); border-radius: 2px; margin: 0 auto 18px; }
 .sheet-title { font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 16px; }
@@ -848,7 +850,7 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 .settings-status { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-main); font-size: 12px; color: var(--text-muted); margin-bottom: 14px; font-family: var(--font-mono); }
 .settings-status.connected { color: var(--success); border-color: rgba(52,199,89,0.2); background: rgba(52,199,89,0.04); }
 
-.toast, .toast-undo { position: fixed; bottom: calc(96px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-toast); border: 1px solid var(--border-main); color: var(--text-main); font-size: 13px; font-weight: 500; padding: 9px 18px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.18s ease; pointer-events: none; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-toast); }
+.toast, .toast-undo { position: fixed; bottom: calc(96px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(16px); background: var(--bg-toast); border: 1px solid var(--border-main); color: var(--text-main); font-size: 13px; font-weight: 500; padding: 9px 18px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); pointer-events: none; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-toast); }
 .toast.show, .toast-undo.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
 .toast-undo { display: flex; align-items: center; gap: 8px; padding-left: 18px; }
 .toast-undo-btn { background: var(--accent); color: var(--accent-text); border: none; border-radius: 99px; padding: 4px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font-mono); box-shadow: 0 1px 6px var(--accent-faded); }
@@ -1094,77 +1096,92 @@ body.deep-focus-mode #pomoDisplay {
    No JS needed — pure CSS. */
 
 @keyframes viewIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Task list re-entrance when switching back to tasks tab */
 #taskList.view-animate {
-  animation: viewIn 0.4s ease both;
+  animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* Router-driven view entrance — single source for all view transitions */
+.view-enter {
+  animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+/* Opacity-only entrance for views with stagger children (dash, projects) */
+@keyframes viewFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.view-enter-fade {
+  animation: viewFadeIn 0.2s ease both;
 }
 
 
 /* ── MICRO-INTERACTIONS ── */
+/* iOS pattern: instant scale-down on :active, spring bounce-back on release */
 
-.icon-btn { transition: background 0.12s ease, transform 0.1s ease; }
-.icon-btn:active { transform: scale(0.88); }
+.icon-btn { transition: background 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.icon-btn:active { transform: scale(0.88); transition-duration: 0.06s; }
 
-.tab-btn { transition: all 0.15s ease-out; }
-.tab-btn:active { transform: scale(0.95); }
+.tab-btn { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.tab-btn:active { transform: scale(0.96); transition-duration: 0.06s; }
 
-.chip { transition: all 0.15s ease-out; }
-.chip:active { transform: scale(0.95); }
+.chip { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.chip:active { transform: scale(0.96); transition-duration: 0.06s; }
 
-.s-chip { transition: all 0.15s ease-out; }
-.s-chip:active { transform: scale(0.94); }
+.s-chip { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.s-chip:active { transform: scale(0.95); transition-duration: 0.06s; }
 
-.fab { transition: transform 0.12s ease; }
-.fab:active { transform: scale(0.88) !important; }
+.fab { transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.fab:active { transform: scale(0.88) !important; transition-duration: 0.06s; }
 
-.sheet-btn { transition: transform 0.1s ease, background 0.12s ease; }
-.sheet-btn:active { transform: scale(0.97); }
+.sheet-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.15s ease; }
+.sheet-btn:active { transform: scale(0.97); transition-duration: 0.06s; }
 
-.pomo-btn { transition: transform 0.1s ease; }
-.pomo-btn:active { transform: scale(0.94); }
+.pomo-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.pomo-btn:active { transform: scale(0.94); transition-duration: 0.06s; }
 
-.shop-add-btn { transition: transform 0.1s ease; }
-.shop-add-btn:active { transform: scale(0.94); }
+.shop-add-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.shop-add-btn:active { transform: scale(0.94); transition-duration: 0.06s; }
 
-.quick-add-send { transition: transform 0.1s ease; }
-.quick-add-send:active { transform: scale(0.88); }
+.quick-add-send { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.quick-add-send:active { transform: scale(0.88); transition-duration: 0.06s; }
 
-.close-btn { transition: transform 0.1s ease; }
-.close-btn:active { transform: scale(0.85); }
+.close-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.close-btn:active { transform: scale(0.85); transition-duration: 0.06s; }
 
-.theme-swatch { transition: transform 0.12s ease; }
-.theme-swatch:active { transform: scale(0.9); }
+.theme-swatch { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.theme-swatch:active { transform: scale(0.9); transition-duration: 0.06s; }
 
-.bel-cb { transition: all 0.15s ease-out; }
-.bel-cb:active { transform: scale(0.88); }
+.bel-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.bel-cb:active { transform: scale(0.88); transition-duration: 0.06s; }
 
-.shop-cb { transition: all 0.15s ease-out; }
-.shop-cb:active { transform: scale(0.88); }
+.shop-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.shop-cb:active { transform: scale(0.88); transition-duration: 0.06s; }
 
-.mood-btn:active { transform: scale(0.9) !important; }
+.mood-btn:active { transform: scale(0.9) !important; transition-duration: 0.06s; }
 
-.d-habit-cb { transition: all 0.15s ease-out; }
-.d-habit-cb:active { transform: scale(0.85); }
+.d-habit-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.d-habit-cb:active { transform: scale(0.85); transition-duration: 0.06s; }
 
-.d-quote-btn { transition: transform 0.1s ease; }
-.d-quote-btn:active { transform: scale(0.85); }
+.d-quote-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.d-quote-btn:active { transform: scale(0.85); transition-duration: 0.06s; }
 
 
 /* ── HOVER EFFECTS (desktop only) ── */
 
 @media (hover: hover) {
-  .task { transition: background 0.1s, transform 0.15s ease, box-shadow 0.15s ease; }
+  .task { transition: background 0.1s, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
   .task:hover { transform: translateY(-1px); box-shadow: var(--shadow-base), 0 4px 16px rgba(0,0,40,0.07); }
   .task.done:hover { transform: none; box-shadow: var(--shadow-base); }
 
-  .project-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .project-card { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
   .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-base), 0 6px 20px rgba(0,0,40,0.09); }
 
-  .d-card { transition: transform 0.15s ease; }
+  .d-card { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
   .d-card:hover { transform: translateY(-1px); }
 }
 
@@ -1172,79 +1189,72 @@ body.deep-focus-mode #pomoDisplay {
 /* ── STAGGER ENTRANCE ── */
 
 @keyframes staggerUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .stagger-child {
-  animation: staggerUp 0.35s ease both;
-  animation-delay: calc(var(--si, 0) * 60ms);
+  animation: staggerUp 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  animation-delay: calc(var(--si, 0) * 35ms);
+  will-change: transform, opacity;
 }
 
 
 /* ── SHEET CONTENT CASCADE ── */
 
 @keyframes sheetItemIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.sheet.open > .handle { animation: sheetItemIn 0.28s ease both; }
-.sheet.open > .sheet-title { animation: sheetItemIn 0.28s ease both; animation-delay: 40ms; }
-.sheet.open > .sheet-label { animation: sheetItemIn 0.28s ease both; animation-delay: 70ms; }
-.sheet.open > .input { animation: sheetItemIn 0.28s ease both; animation-delay: 100ms; }
-.sheet.open > .chip-row { animation: sheetItemIn 0.28s ease both; animation-delay: 130ms; }
-.sheet.open > .sheet-btn { animation: sheetItemIn 0.28s ease both; animation-delay: 160ms; }
-.sheet.open > .divider { animation: sheetItemIn 0.28s ease both; animation-delay: 80ms; }
+.sheet.open > .handle { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.sheet.open > .sheet-title { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 25ms; }
+.sheet.open > .sheet-label { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 45ms; }
+.sheet.open > .input { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 65ms; }
+.sheet.open > .chip-row { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 85ms; }
+.sheet.open > .sheet-btn { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 105ms; }
+.sheet.open > .divider { animation: sheetItemIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) both; animation-delay: 50ms; }
 
 
 /* ── SMOOTHER SHEET SLIDE ── */
-
-.sheet { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.42s; }
-.sheet.open { transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
-
-/* Smoother overlay */
-.overlay { transition: opacity 0.28s ease; }
-
-/* Smoother toast pop */
-.toast, .toast-undo { transition: all 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
-
-/* Smoother sync bar */
-.sync-bar { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
+/* (consolidated into .sheet / .sheet.open rules above) */
 
 
 /* ── BETTER CHECKBOX POP ── */
 
 @keyframes cbPop {
   0%   { transform: scale(1); }
-  35%  { transform: scale(1.3); }
-  55%  { transform: scale(0.92); }
+  40%  { transform: scale(1.25); }
+  70%  { transform: scale(0.95); }
   100% { transform: scale(1); }
 }
 
 /* Habit checkbox pop */
 @keyframes habitPop {
   0%   { transform: scale(1); }
-  40%  { transform: scale(1.25); }
+  40%  { transform: scale(1.2); }
+  70%  { transform: scale(0.96); }
   100% { transform: scale(1); }
 }
-.d-habit-cb.just-checked { animation: habitPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.d-habit-cb.just-checked { animation: habitPop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
 
 
 /* ── SECTION COLLAPSE ── */
 
-.sec-toggle { transition: transform 0.25s ease; }
+.sec-toggle { transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
 
 .sec-tasks {
   overflow: hidden;
-  max-height: 5000px;
+  max-height: 2000px;
   opacity: 1;
-  transition: max-height 0.35s ease, opacity 0.25s ease;
+  will-change: opacity;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
 }
 .section.collapsed .sec-tasks {
   max-height: 0 !important;
   opacity: 0;
   pointer-events: none;
+  transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease;
 }
 
 
@@ -1258,7 +1268,7 @@ body.deep-focus-mode #pomoDisplay {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   pointer-events: none;
-  transition: max-height 0.25s ease, opacity 0.2s ease, padding-bottom 0.25s ease;
+  transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.22s ease, padding-bottom 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 .search-wrap.open, .quick-add-wrap.open {
   max-height: 70px;
@@ -1272,10 +1282,10 @@ body.deep-focus-mode #pomoDisplay {
 /* ── EMPTY STATE ── */
 
 @keyframes emptyIn {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
-.empty-state { animation: emptyIn 0.35s ease both; }
+.empty-state { animation: emptyIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
 
 
 /* ── BOOK PROGRESS SHIMMER ── */
