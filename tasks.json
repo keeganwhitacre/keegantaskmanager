@@ -963,13 +963,13 @@
       "id": "mmv5l41vrf1o",
       "title": "San Diego",
       "speaker": "",
-      "body": "",
+      "body": "Tuesday\n- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-17T21:57:36.067Z",
-      "updatedAt": "2026-03-17T21:57:46.930Z"
+      "updatedAt": "2026-03-17T21:57:54.419Z"
     },
     {
       "id": "mmqonipyx29b",
@@ -1113,5 +1113,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-17T21:57:49.436Z"
+  "updated": "2026-03-17T21:57:56.920Z"
 }
