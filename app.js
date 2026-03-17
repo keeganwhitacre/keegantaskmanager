@@ -595,7 +595,7 @@ function renderProjects() {
   });
 
   sorted.forEach(function(p, idx) {
-    const card = document.createElement('div'); card.className = 'project-card'; card.dataset.id = p.id;
+    const card = document.createElement('div'); card.className = 'project-card stagger-child'; card.dataset.id = p.id;
     card.style.setProperty('--si', idx);
     const dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
     let tHTML = ''; const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
@@ -609,13 +609,6 @@ function renderProjects() {
     card.addEventListener('click', function() { openProjectDetail(p.id); });
     list.appendChild(card);
   });
-
-  // Stagger animation after cards are in the DOM
-  setTimeout(function() {
-    list.querySelectorAll('.project-card').forEach(function(card) {
-      card.classList.add('stagger-child');
-    });
-  }, 0);
 }
 
 const newProjBtn = document.getElementById('newProjectBtn');
@@ -840,7 +833,11 @@ let toastTimer; function showToast(msg) { const el = document.getElementById('to
 // ══════════════════════════════════════════════════════════════════
 
 register('tasks', {
-  onEnter: render,
+  onEnter: function() {
+    render();
+    var tl = document.getElementById('taskList');
+    if (tl) { tl.classList.remove('view-animate'); void tl.offsetWidth; tl.classList.add('view-animate'); }
+  },
 });
 register('dash', {
   onEnter: onDashEnter,

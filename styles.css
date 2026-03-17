@@ -612,19 +612,19 @@ body.theme-ios26::before {
 body.focus-mode .hide-in-focus { display: none !important; }
 
 body.dash-mode .hide-in-dash { display: none !important; }
-body.dash-mode #dashView { display: block !important; }
+body.dash-mode #dashView { display: block !important; animation: viewIn 0.3s ease both; }
 body.dash-mode .bottom-fade, body.dash-mode #fab, body.dash-mode #focusModeBtn, body.dash-mode .quick-add-wrap { display: none !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
-body.projects-mode #projectsView { display: block !important; }
+body.projects-mode #projectsView { display: block !important; animation: viewIn 0.3s ease both; }
 body.projects-mode .bottom-fade, body.projects-mode #fab, body.projects-mode #focusModeBtn, body.projects-mode .quick-add-wrap { display: none !important; }
 
 body.projects-detail-mode .hide-in-project-detail { display: none !important; }
-body.projects-detail-mode #projectDetailView { display: block !important; }
+body.projects-detail-mode #projectDetailView { display: block !important; animation: viewIn 0.3s ease both; }
 body.projects-detail-mode #projectsView { display: none !important; }
 
 body.bel-mode .hide-in-bel { display: none !important; }
-body.bel-mode #belView { display: block !important; }
+body.bel-mode #belView { display: block !important; animation: viewIn 0.3s ease both; }
 body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, body.bel-mode .quick-add-wrap { display: none !important; }
 
 
@@ -669,8 +669,8 @@ body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, bod
 
 /* Search & Quick Add */
 .search-trigger { position: relative; margin: 0 auto 14px 20px; display: flex; justify-content: flex-start; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; }
-.search-wrap, .quick-add-wrap { padding: 0 20px 14px; display: none; }
-.search-wrap.open, .quick-add-wrap.open { display: block; }
+.search-wrap, .quick-add-wrap { padding: 0 20px 14px; }
+/* .open state handled by animation system (max-height) */
 
 .search-input, .quick-add-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-input); padding: 10px 16px; color: var(--text-main); -webkit-text-fill-color: var(--text-main); font-family: var(--font-main); font-size: 16px; outline: none; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
 .search-input:focus, .quick-add-input:focus { border-color: var(--accent); }
@@ -701,7 +701,7 @@ body.focus-mode #focusBanner { display: flex; }
 .sec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
 .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
 .sec-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); background: var(--border-divider); border: 1px solid transparent; padding: 1px 9px; border-radius: 8px; font-weight: 700; }
-.section.collapsed .sec-tasks { display: none; }
+/* .section.collapsed .sec-tasks handled by animation system (max-height) */
 .sec-toggle { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 0 2px; transition: transform 0.2s; }
 .section.collapsed .sec-toggle { transform: rotate(-90deg); }
 
@@ -1085,22 +1085,26 @@ body.deep-focus-mode #pomoDisplay {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   ANIMATION POLISH
-   
-   Rules here are purely additive — they enhance existing elements
-   without changing display, visibility, or layout. Organized as:
-   
-   1. Micro-interactions (button press feedback)
-   2. Enhanced existing transitions (smoother easing)
-   3. Hover effects (desktop only)
-   4. Stagger entrance for dynamically-created content
-   5. Sheet content cascade
-   6. Section collapse smoothing
-   7. Reduced motion override
+   ANIMATION SYSTEM
 ══════════════════════════════════════════════════════════════════ */
 
+/* ── VIEW TRANSITION ──
+   When a body mode class activates a view with display:block,
+   the browser starts any animation on that element from scratch.
+   No JS needed — pure CSS. */
 
-/* ── 1. MICRO-INTERACTIONS: press feedback ── */
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Task list re-entrance when switching back to tasks tab */
+#taskList.view-animate {
+  animation: viewIn 0.3s ease both;
+}
+
+
+/* ── MICRO-INTERACTIONS ── */
 
 .icon-btn { transition: background 0.12s ease, transform 0.1s ease; }
 .icon-btn:active { transform: scale(0.88); }
@@ -1150,26 +1154,67 @@ body.deep-focus-mode #pomoDisplay {
 .d-quote-btn:active { transform: scale(0.85); }
 
 
-/* ── 2. ENHANCED EXISTING TRANSITIONS ── */
+/* ── HOVER EFFECTS (desktop only) ── */
 
-/* Smoother sheet slide */
-.sheet {
-  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.34s;
+@media (hover: hover) {
+  .task { transition: background 0.1s, transform 0.15s ease, box-shadow 0.15s ease; }
+  .task:hover { transform: translateY(-1px); box-shadow: var(--shadow-base), 0 4px 16px rgba(0,0,40,0.07); }
+  .task.done:hover { transform: none; box-shadow: var(--shadow-base); }
+
+  .project-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-base), 0 6px 20px rgba(0,0,40,0.09); }
+
+  .d-card { transition: transform 0.15s ease; }
+  .d-card:hover { transform: translateY(-1px); }
 }
-.sheet.open {
-  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s;
+
+
+/* ── STAGGER ENTRANCE ── */
+
+@keyframes staggerUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+.stagger-child {
+  animation: staggerUp 0.28s ease both;
+  animation-delay: calc(var(--si, 0) * 45ms);
+}
+
+
+/* ── SHEET CONTENT CASCADE ── */
+
+@keyframes sheetItemIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sheet.open > .handle { animation: sheetItemIn 0.22s ease both; }
+.sheet.open > .sheet-title { animation: sheetItemIn 0.22s ease both; animation-delay: 30ms; }
+.sheet.open > .sheet-label { animation: sheetItemIn 0.22s ease both; animation-delay: 50ms; }
+.sheet.open > .input { animation: sheetItemIn 0.22s ease both; animation-delay: 70ms; }
+.sheet.open > .chip-row { animation: sheetItemIn 0.22s ease both; animation-delay: 90ms; }
+.sheet.open > .sheet-btn { animation: sheetItemIn 0.22s ease both; animation-delay: 120ms; }
+.sheet.open > .divider { animation: sheetItemIn 0.22s ease both; animation-delay: 60ms; }
+
+
+/* ── SMOOTHER SHEET SLIDE ── */
+
+.sheet { transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s 0.34s; }
+.sheet.open { transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
 
 /* Smoother overlay */
 .overlay { transition: opacity 0.28s ease; }
 
-/* Smoother toast */
+/* Smoother toast pop */
 .toast, .toast-undo { transition: all 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
 
 /* Smoother sync bar */
 .sync-bar { transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
 
-/* Better checkbox pop */
+
+/* ── BETTER CHECKBOX POP ── */
+
 @keyframes cbPop {
   0%   { transform: scale(1); }
   35%  { transform: scale(1.3); }
@@ -1183,132 +1228,27 @@ body.deep-focus-mode #pomoDisplay {
   40%  { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
-.d-habit-cb.just-checked {
-  animation: habitPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+.d-habit-cb.just-checked { animation: habitPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+
+/* ── SECTION COLLAPSE ── */
+
+.sec-toggle { transition: transform 0.25s ease; }
+
+.sec-tasks {
+  overflow: hidden;
+  max-height: 5000px;
+  opacity: 1;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
 }
-
-/* Section toggle chevron */
-.sec-toggle { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
-
-/* Book progress bar shimmer */
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-.d-book-prog-fill {
-  background-size: 200% 100%;
-  background-image: linear-gradient(90deg, var(--accent) 0%, var(--success) 40%, var(--accent) 60%, var(--success) 100%);
-  animation: shimmer 2.5s ease-in-out infinite;
-}
-
-/* Focus dot glow — already exists, just noting it's kept */
-
-
-/* ── 3. HOVER EFFECTS (desktop only) ── */
-
-@media (hover: hover) {
-  .task {
-    transition: background 0.1s, transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .task:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-base), 0 4px 16px rgba(0, 0, 40, 0.07);
-  }
-  .task.done:hover { transform: none; box-shadow: var(--shadow-base); }
-
-  .project-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .project-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-base), 0 6px 20px rgba(0, 0, 40, 0.09);
-  }
-
-  .d-card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .d-card:hover {
-    transform: translateY(-1px);
-  }
-
-  .cn-note-card {
-    transition: background 0.1s, transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .cn-note-card:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-base), 0 4px 16px rgba(0, 0, 40, 0.07);
-  }
+.section.collapsed .sec-tasks {
+  max-height: 0 !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
 
-/* ── 4. STAGGER ENTRANCE for dynamically-created content ──
-   Used by JS: add .stagger-child to items, set --si as index.
-   Items start visible (no flash), then the animation plays.
-   The animation is subtle enough that missing it isn't jarring. */
-
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.stagger-child {
-  animation: fadeSlideUp 0.28s ease both;
-  animation-delay: calc(var(--si, 0) * 45ms);
-}
-
-
-/* ── 5. SHEET CONTENT CASCADE ──
-   When a sheet opens, its children animate in with slight delays. */
-
-@keyframes sheetContentIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.sheet.open > .handle {
-  animation: sheetContentIn 0.22s ease both;
-}
-.sheet.open > .sheet-title {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 30ms;
-}
-.sheet.open > .sheet-label {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 50ms;
-}
-.sheet.open > .input {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 70ms;
-}
-.sheet.open > .chip-row {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 90ms;
-}
-.sheet.open > .sheet-btn {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 120ms;
-}
-.sheet.open > .divider {
-  animation: sheetContentIn 0.22s ease both;
-  animation-delay: 60ms;
-}
-
-
-/* ── 6. EMPTY STATE ENTRANCE ── */
-
-@keyframes emptyFadeIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.empty-state {
-  animation: emptyFadeIn 0.35s ease both;
-}
-
-
-/* ── 7. SEARCH/QUICK-ADD SMOOTH REVEAL ──
-   Override display:none/block with max-height animation.
-   The base padding and the .open state padding must match
-   original values exactly to avoid layout shifts. */
+/* ── SEARCH / QUICK-ADD SMOOTH REVEAL ── */
 
 .search-wrap, .quick-add-wrap {
   display: block !important;
@@ -1329,7 +1269,29 @@ body.deep-focus-mode #pomoDisplay {
 }
 
 
-/* ── 8. REDUCED MOTION ── */
+/* ── EMPTY STATE ── */
+
+@keyframes emptyIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.empty-state { animation: emptyIn 0.35s ease both; }
+
+
+/* ── BOOK PROGRESS SHIMMER ── */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.d-book-prog-fill {
+  background-size: 200% 100%;
+  background-image: linear-gradient(90deg, var(--accent) 0%, var(--success) 40%, var(--accent) 60%, var(--success) 100%);
+  animation: shimmer 2.5s ease-in-out infinite;
+}
+
+
+/* ── REDUCED MOTION ── */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

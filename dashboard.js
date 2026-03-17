@@ -233,9 +233,7 @@ function renderHabits() {
         const isNowChecked = ds.habits[week][h.id][i]; saveDash(true);
         if (h.bad) { cb.classList.toggle('checked-bad', isNowChecked); cb.classList.remove('checked'); }
         else { cb.classList.toggle('checked', isNowChecked); cb.classList.remove('checked-bad'); }
-        cb.classList.remove('just-checked');
-        void cb.offsetWidth;
-        cb.classList.add('just-checked');
+        cb.classList.remove('just-checked'); void cb.offsetWidth; cb.classList.add('just-checked');
       });
       checksEl.appendChild(cb);
     });
@@ -272,7 +270,7 @@ function onDashEnter() {
   if (!weatherLoaded) loadWeather();
   if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
 
-  // Stagger-animate dashboard cards
+  // Stagger dashboard cards after view is visible
   setTimeout(function() {
     var dash = document.getElementById('dashView');
     if (!dash) return;
@@ -283,7 +281,7 @@ function onDashEnter() {
       void el.offsetWidth;
       el.classList.add('stagger-child');
     });
-  }, 0);
+  }, 10);
 }
 
 function onDashExit() {
