@@ -621,7 +621,7 @@ function renderProjects() {
   });
 
   sorted.forEach(function(p, idx) {
-    const card = document.createElement('div'); card.className = 'project-card stagger-in'; card.dataset.id = p.id;
+    const card = document.createElement('div'); card.className = 'project-card'; card.dataset.id = p.id;
     card.style.setProperty('--stagger-i', idx);
     const dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
     let tHTML = ''; const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
@@ -634,6 +634,20 @@ function renderProjects() {
     card.innerHTML = '<div class="project-header"><div class="project-title">' + esc(p.title) + '</div><div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div></div><div class="project-meta" style="margin-bottom:0;">' + pTasks.length + ' active task' + (pTasks.length !== 1 ? 's' : '') + dStr + '</div>' + tHTML;
     card.addEventListener('click', function() { openProjectDetail(p.id); });
     list.appendChild(card);
+  });
+
+  // Stagger animation after paint
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      list.querySelectorAll('.project-card').forEach(function(card) {
+        card.classList.add('stagger-in');
+        card.addEventListener('animationend', function handler() {
+          card.classList.remove('stagger-in');
+          card.style.removeProperty('--stagger-i');
+          card.removeEventListener('animationend', handler);
+        });
+      });
+    });
   });
 }
 

@@ -92,15 +92,21 @@ function switchView(viewName) {
   // visible before adding the animation class — otherwise the initial
   // keyframe (opacity:0, translateY) never renders. Double-rAF guarantees
   // one full paint cycle has completed.
+  //
+  // Views that use stagger animations on their children (dash, projects)
+  // skip the container-level fade — otherwise the parent's opacity:0
+  // hides all children and the stagger is invisible.
   const containerMap = {
     tasks: 'taskList',
     dash: 'dashView',
     projects: 'projectsView',
     'projects-detail': 'projectDetailView',
     bel: 'belView',
+    confnotes: 'confNotesView',
   };
+  const staggerViews = { dash: true, projects: true };
   const containerId = containerMap[viewName];
-  if (containerId) {
+  if (containerId && !staggerViews[viewName]) {
     const el = document.getElementById(containerId);
     if (el) {
       el.classList.remove('view-enter');

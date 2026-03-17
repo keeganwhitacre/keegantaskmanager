@@ -273,22 +273,24 @@ function onDashEnter() {
   if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
 
   // Stagger-animate dashboard cards
-  const dash = document.getElementById('dashView');
-  if (dash) {
-    // Select top-level card containers (individual cards + grid wrappers)
-    const items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
-    items.forEach(function(el, i) {
-      el.classList.remove('stagger-in');
-      void el.offsetWidth;
-      el.style.setProperty('--stagger-i', i);
-      el.classList.add('stagger-in');
-      el.addEventListener('animationend', function handler() {
+  // Must wait for paint after display:none → display:block
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var dash = document.getElementById('dashView');
+      if (!dash) return;
+      var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
+      items.forEach(function(el, i) {
         el.classList.remove('stagger-in');
-        el.style.removeProperty('--stagger-i');
-        el.removeEventListener('animationend', handler);
+        el.style.setProperty('--stagger-i', i);
+        el.classList.add('stagger-in');
+        el.addEventListener('animationend', function handler() {
+          el.classList.remove('stagger-in');
+          el.style.removeProperty('--stagger-i');
+          el.removeEventListener('animationend', handler);
+        });
       });
     });
-  }
+  });
 }
 
 function onDashExit() {
