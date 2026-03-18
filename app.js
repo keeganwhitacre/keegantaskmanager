@@ -596,8 +596,9 @@ function renderProjects() {
     return da - db;
   });
 
+  var cards = [];
   sorted.forEach(function(p, idx) {
-    const card = document.createElement('div'); card.className = 'project-card stagger-child'; card.dataset.id = p.id;
+    const card = document.createElement('div'); card.className = 'project-card stagger-ready'; card.dataset.id = p.id;
     card.style.setProperty('--si', idx);
     const dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
     let tHTML = ''; const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
@@ -610,6 +611,14 @@ function renderProjects() {
     card.innerHTML = '<div class="project-header"><div class="project-title">' + esc(p.title) + '</div><div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div></div><div class="project-meta" style="margin-bottom:0;">' + pTasks.length + ' active task' + (pTasks.length !== 1 ? 's' : '') + dStr + '</div>' + tHTML;
     card.addEventListener('click', function() { openProjectDetail(p.id); });
     list.appendChild(card);
+    cards.push(card);
+  });
+
+  // Defer stagger animation until Safari has committed display:block
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      cards.forEach(function(c) { c.classList.add('stagger-child'); });
+    });
   });
 }
 
@@ -840,8 +849,10 @@ register('tasks', {
     var tl = document.getElementById('taskList');
     if (tl) {
       tl.classList.remove('view-animate');
+      tl.style.opacity = '0';
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
+          tl.style.opacity = '';
           tl.classList.add('view-animate');
         });
       });

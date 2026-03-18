@@ -274,15 +274,17 @@ function onDashEnter() {
   var dash = document.getElementById('dashView');
   if (!dash) return;
   var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
-  // First frame: strip old animation classes
+  // Immediately: strip old animation, hide cards
   items.forEach(function(el, i) {
     el.classList.remove('stagger-child');
+    el.classList.add('stagger-ready');
     el.style.setProperty('--si', i);
   });
-  // Second frame: apply — browser has committed display:block by now
+  // After display:block is committed: start animation
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       items.forEach(function(el) {
+        el.classList.remove('stagger-ready');
         el.classList.add('stagger-child');
       });
     });
@@ -291,6 +293,13 @@ function onDashEnter() {
 
 function onDashExit() {
   if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+  // Clean up animation classes so re-entry starts fresh
+  var dash = document.getElementById('dashView');
+  if (dash) {
+    dash.querySelectorAll('.stagger-child, .stagger-ready').forEach(function(el) {
+      el.classList.remove('stagger-child', 'stagger-ready');
+    });
+  }
 }
 
 // ── INIT: wire up DOM events, receive dependencies ──

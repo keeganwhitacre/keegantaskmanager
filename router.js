@@ -102,8 +102,10 @@ function switchView(viewName) {
     const el = document.getElementById(elId);
     if (el) {
       el.classList.remove('view-enter');
+      el.style.opacity = '0';
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
+          el.style.opacity = '';
           el.classList.add('view-enter');
           el.addEventListener('animationend', function handler() {
             el.classList.remove('view-enter');

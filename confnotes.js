@@ -111,6 +111,7 @@ function renderCNList() {
     return;
   }
 
+  var cards = [];
   filtered.forEach(function(n, i) {
     const card = document.createElement('div');
     card.className = 'cn-note-card';
@@ -138,6 +139,14 @@ function renderCNList() {
 
     card.addEventListener('click', function() { openCNDetail(n.id); });
     list.appendChild(card);
+    cards.push(card);
+  });
+
+  // Defer animation start until Safari has committed display:block
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      cards.forEach(function(c) { c.classList.add('entering'); });
+    });
   });
 }
 

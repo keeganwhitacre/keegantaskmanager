@@ -1184,6 +1184,12 @@ body.deep-focus-mode #pomoDisplay {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Cards start invisible; .stagger-child is added via JS after display:block
+   has been committed, so the animation's from-state (opacity:0) matches
+   and there's no visible flash on Safari iOS. */
+.stagger-ready {
+  opacity: 0;
+}
 .stagger-child {
   animation: staggerUp 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
   animation-delay: calc(var(--si, 0) * 35ms);
