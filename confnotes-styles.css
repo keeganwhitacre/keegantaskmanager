@@ -4,7 +4,7 @@
 
 /* View Routing */
 body.confnotes-mode .hide-in-confnotes { display: none !important; }
-body.confnotes-mode #confNotesView { display: block !important; }
+body.confnotes-mode #confNotesView { display: block !important; animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
 body.confnotes-mode .bottom-fade, body.confnotes-mode #focusModeBtn, body.confnotes-mode .quick-add-wrap { display: none !important; }
 body.confnotes-mode .fab { display: flex !important; }
 

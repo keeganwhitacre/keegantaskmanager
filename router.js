@@ -87,35 +87,19 @@ function switchView(viewName) {
   }
 
   // ── Animate the incoming view container ──
-  // Views start with display:none and get display:block via body-class CSS.
-  // We need to wait until the browser has actually painted the element as
-  // visible before adding the animation class — otherwise the initial
-  // keyframe (opacity:0, translateY) never renders. Double-rAF guarantees
-  // one full paint cycle has completed.
-  //
-  // Views that use stagger animations on their children (dash, projects)
-  // use a simpler opacity-only fade so stagger translateY isn't fought.
-  const containerMap = {
-    tasks: 'taskList',
-    dash: 'dashView',
-    projects: 'projectsView',
-    'projects-detail': 'projectDetailView',
-    bel: 'belView',
-    confnotes: 'confNotesView',
-  };
-  const staggerViews = { dash: true, projects: true };
-  const containerId = containerMap[viewName];
-  if (containerId) {
-    const el = document.getElementById(containerId);
+  // Most views animate via CSS (animation on body-class display:block rules)
+  // or via onEnter (tasks does its own view-animate + task stagger).
+  // projects-detail is the only view that needs router-driven animation
+  // because it shares body classes with projects view.
+  if (viewName === 'projects-detail') {
+    const el = document.getElementById('projectDetailView');
     if (el) {
-      const animClass = staggerViews[viewName] ? 'view-enter-fade' : 'view-enter';
       el.classList.remove('view-enter');
-      el.classList.remove('view-enter-fade');
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
-          el.classList.add(animClass);
+          el.classList.add('view-enter');
           el.addEventListener('animationend', function handler() {
-            el.classList.remove(animClass);
+            el.classList.remove('view-enter');
             el.removeEventListener('animationend', handler);
           });
         });
