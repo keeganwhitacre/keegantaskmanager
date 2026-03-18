@@ -325,6 +325,11 @@
     </div>
   </div>
 
+  <div class="d-card snapshot-card" id="dSnapshotCard" style="display:none;">
+    <div class="d-card-label">Today So Far</div>
+    <div class="snapshot-body" id="dSnapshotBody"></div>
+  </div>
+
   <div class="d-card">
     <div class="d-card-label">Today's Tasks</div>
     <div id="dTaskList"></div>
@@ -387,7 +392,10 @@
       <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
       <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
     </div>
-    <div class="affect-mini-history" id="dAffectHistory"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="affect-mini-history" id="dAffectHistory"></div>
+      <div class="affect-log-count" id="dAffectLogCount" style="display:none;"></div>
+    </div>
   </div>
 
   <div class="d-card">

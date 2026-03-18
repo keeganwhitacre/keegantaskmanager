@@ -22,33 +22,42 @@ let weeklyReflectTimer = null;
 // ── DATA ──
 
 const QUOTES = [
-  { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
-  { text: "Do not seek to have events happen as you want them to, but instead want them to happen as they do happen, and your life will go well.", attr: "Epictetus" },
-  { text: "You have power over your mind, not outside events. Realize this, and you will find strength.", attr: "Marcus Aurelius" },
-  { text: "Simplicity is the ultimate sophistication.", attr: "Leonardo da Vinci" },
-  { text: "The impediment to action advances action. What stands in the way becomes the way.", attr: "Marcus Aurelius" },
-  { text: "We suffer more in imagination than in reality.", attr: "Seneca" },
-  { text: "Be curious, not judgmental.", attr: "Walt Whitman" },
-  { text: "The unexamined life is not worth living.", attr: "Socrates" },
-  { text: "To know what you know and what you do not know — that is true knowledge.", attr: "Confucius" },
+  { text: "I don't sing because I'm happy; I'm happy because I sing.", attr: "William James" },
   { text: "Between stimulus and response there is a space. In that space is our power to choose our response.", attr: "Viktor Frankl" },
+  { text: "The body is our general medium for having a world.", attr: "Merleau-Ponty" },
+  { text: "Emotions are not reactions to the world. They are your constructions of the world.", attr: "Lisa Feldman Barrett" },
+  { text: "An emotion is your brain's creation of what your bodily sensations mean, in relation to what is going on around you.", attr: "Lisa Feldman Barrett" },
+  { text: "We suffer more in imagination than in reality.", attr: "Seneca" },
+  { text: "The impediment to action advances action. What stands in the way becomes the way.", attr: "Marcus Aurelius" },
+  { text: "The unexamined life is not worth living.", attr: "Socrates" },
+  { text: "Every experience is preceded by expectation.", attr: "William James" },
+  { text: "The world of experience is produced by the mind that experiences it.", attr: "John Dewey" },
   { text: "Hard choices, easy life. Easy choices, hard life.", attr: "Jerzy Gregorek" },
-  { text: "Most of what we say and do is not essential. Ask yourself at every moment: Is this necessary?", attr: "Marcus Aurelius" },
+  { text: "Your experiences are not a window on reality. They are the product of a brain predicting what comes next.", attr: "Lisa Feldman Barrett" },
   { text: "The mind that is not baffled is not employed. The impeded stream is the one that sings.", attr: "Wendell Berry" },
-  { text: "Perfectionism is the enemy of the good.", attr: "Voltaire" },
+  { text: "Nothing is so practical as a good theory.", attr: "Kurt Lewin" },
   { text: "A year from now you will wish you had started today.", attr: "Karen Lamb" },
+  { text: "Concepts are not reflections of reality; they are tools for constructing it.", attr: "John Dewey" },
+  { text: "Most of what we say and do is not essential. Ask yourself at every moment: Is this necessary?", attr: "Marcus Aurelius" },
+  { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
 ];
 
 const PROMPTS = [
   "What's one thing you're avoiding that you already know the answer to?",
   "What's the one task that, if done today, would make everything else easier?",
-  "What does the best version of today look like?",
+  "What am I noticing in my body right now? What does it mean to me?",
   "What would finishing strong today actually require?",
-  "What are you pretending not to know?",
+  "Am I categorizing my experience right now, or actually attending to it?",
   "What's the most important thing, and are you doing it first?",
-  "What would you do if you had half the time you think you need?",
+  "What sensations are present right now? How am I making sense of them?",
   "What's cluttering your mental space right now?",
+  "If I had to invent a new word for how I feel right now, what would it be?",
+  "What does the best version of today look like?",
+  "What predictions is my brain making right now — and are they accurate?",
   "If you could only accomplish three things today, what would they be?",
+  "What concept am I using to understand this feeling? Is there a better one?",
+  "What are you pretending not to know?",
+  "How is my body budget right now — depleted, balanced, or surplus?",
 ];
 
 const WEEKLY_PROMPTS = [
@@ -207,21 +216,45 @@ function renderReflection() {
 function migrateOldMoods() {
   var ds = getDState();
   if (!ds.affect) ds.affect = {};
+  // Migrate old moods → affect arrays
   if (ds.moods && Object.keys(ds.moods).length > 0) {
     Object.keys(ds.moods).forEach(function(dateStr) {
       if (!ds.affect[dateStr]) {
         var oldVal = ds.moods[dateStr]; // 1-5
-        ds.affect[dateStr] = { v: oldVal - 1, a: 2, ctx: null };
+        ds.affect[dateStr] = [{ v: oldVal - 1, a: 2, ctx: null, t: dateStr + 'T12:00:00' }];
       }
     });
     saveDash(false);
   }
+  // Migrate single-object affect entries → arrays
+  Object.keys(ds.affect).forEach(function(dateStr) {
+    var entry = ds.affect[dateStr];
+    if (entry && !Array.isArray(entry)) {
+      ds.affect[dateStr] = [{ v: entry.v, a: entry.a, ctx: entry.ctx || null, t: entry.t || dateStr + 'T12:00:00' }];
+    }
+  });
+}
+
+// Get the latest affect entry for a date (returns object or null)
+function getLatestAffect(dateStr) {
+  var ds = getDState();
+  if (!ds.affect || !ds.affect[dateStr]) return null;
+  var arr = ds.affect[dateStr];
+  if (!Array.isArray(arr)) return arr; // safety
+  return arr.length > 0 ? arr[arr.length - 1] : null;
+}
+
+// Get all entries for a date
+function getAffectEntries(dateStr) {
+  var ds = getDState();
+  if (!ds.affect || !ds.affect[dateStr]) return [];
+  var arr = ds.affect[dateStr];
+  return Array.isArray(arr) ? arr : [arr];
 }
 
 function affectToColor(v, a) {
   var vn = v / (GRID_SIZE - 1);
   var an = a / (GRID_SIZE - 1);
-  // Corners: TL=orange(anxious) TR=red-pink(excited) BL=blue(depleted) BR=green(content)
   var tl = [255, 149, 0], tr = [255, 59, 48], bl = [90, 130, 200], br = [48, 209, 88];
   var r = Math.round(tl[0]*(1-vn)*an + tr[0]*vn*an + bl[0]*(1-vn)*(1-an) + br[0]*vn*(1-an));
   var g = Math.round(tl[1]*(1-vn)*an + tr[1]*vn*an + bl[1]*(1-vn)*(1-an) + br[1]*vn*(1-an));
@@ -233,7 +266,8 @@ function renderAffect() {
   var ds = getDState();
   if (!ds.affect) ds.affect = {};
   var today = getTodayStr();
-  var entry = ds.affect[today];
+  var entry = getLatestAffect(today);
+  var entries = getAffectEntries(today);
 
   var dot = document.getElementById('dAffectDot');
   if (entry) {
@@ -258,16 +292,37 @@ function renderAffect() {
     statusEl.textContent = 'tap to log';
   }
 
+  // Log count indicator
+  var logCountEl = document.getElementById('dAffectLogCount');
+  if (logCountEl) {
+    if (entries.length > 1) {
+      logCountEl.style.display = 'block';
+      logCountEl.textContent = entries.length + ' logs today';
+    } else {
+      logCountEl.style.display = 'none';
+    }
+  }
+
+  // Mini history (last 7 days)
   var histEl = document.getElementById('dAffectHistory');
   histEl.innerHTML = '';
   for (var i = 6; i >= 0; i--) {
     var d = new Date(); d.setDate(d.getDate() - i);
     var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    var ae = ds.affect[dStr];
+    var ae = getLatestAffect(dStr);
+    var dayEntries = getAffectEntries(dStr);
     var miniDot = document.createElement('div');
     miniDot.className = 'affect-mini-dot' + (dStr === today ? ' today' : '');
-    miniDot.style.background = ae ? affectToColor(ae.v, ae.a) : 'var(--border-divider)';
-    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') : '');
+    if (ae) {
+      miniDot.style.background = affectToColor(ae.v, ae.a);
+      // Show subtle ring if multiple entries
+      if (dayEntries.length > 1) {
+        miniDot.style.boxShadow = 'inset 0 0 0 1.5px rgba(255,255,255,0.5)';
+      }
+    } else {
+      miniDot.style.background = 'var(--border-divider)';
+    }
+    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') + (dayEntries.length > 1 ? ' (' + dayEntries.length + ' logs)' : '') : '');
     histEl.appendChild(miniDot);
   }
 }
@@ -286,10 +341,34 @@ function handleAffectGridInput(e, grid) {
   var ds = getDState();
   if (!ds.affect) ds.affect = {};
   var today = getTodayStr();
-  var existing = ds.affect[today];
-  ds.affect[today] = { v: v, a: a, ctx: (existing && existing.ctx) || null };
+  var now = new Date().toISOString();
 
-  // Backward compat: also write to moods
+  if (!ds.affect[today]) ds.affect[today] = [];
+  if (!Array.isArray(ds.affect[today])) ds.affect[today] = [ds.affect[today]];
+
+  var entries = ds.affect[today];
+  var latest = entries.length > 0 ? entries[entries.length - 1] : null;
+
+  // If last entry was less than 2 hours ago, overwrite it (dragging / adjusting)
+  // Otherwise append a new entry
+  var shouldAppend = true;
+  if (latest && latest.t) {
+    var lastTime = new Date(latest.t).getTime();
+    var elapsed = Date.now() - lastTime;
+    if (elapsed < 2 * 60 * 60 * 1000) shouldAppend = false; // less than 2 hours
+  }
+
+  if (shouldAppend && entries.length > 0) {
+    entries.push({ v: v, a: a, ctx: null, t: now });
+  } else if (entries.length > 0) {
+    entries[entries.length - 1].v = v;
+    entries[entries.length - 1].a = a;
+    entries[entries.length - 1].t = now;
+  } else {
+    entries.push({ v: v, a: a, ctx: null, t: now });
+  }
+
+  // Backward compat
   if (!ds.moods) ds.moods = {};
   ds.moods[today] = v + 1;
 
@@ -301,6 +380,7 @@ function handleAffectGridInput(e, grid) {
 
   renderAffect();
   renderInsights();
+  renderSnapshot();
 }
 
 // ── HABITS ──
@@ -422,7 +502,13 @@ function buildDailyData() {
   var affect = ds.affect || {};
   Object.keys(affect).forEach(function(dateStr) {
     if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
-    daily[dateStr].affect = affect[dateStr];
+    // Use latest entry for insights
+    var arr = affect[dateStr];
+    if (Array.isArray(arr) && arr.length > 0) {
+      daily[dateStr].affect = arr[arr.length - 1];
+    } else if (arr && !Array.isArray(arr)) {
+      daily[dateStr].affect = arr; // legacy single object
+    }
   });
 
   return daily;
@@ -897,12 +983,86 @@ function renderWeeklyReflection() {
   });
 }
 
+// ── DAILY SNAPSHOT ──
+
+function renderSnapshot() {
+  var card = document.getElementById('dSnapshotCard');
+  var body = document.getElementById('dSnapshotBody');
+  if (!card || !body) return;
+
+  var today = getTodayStr();
+  var ds = getDState();
+  var parts = [];
+
+  // Tasks completed today
+  var doneToday = state.tasks.filter(function(t) {
+    return t.done && t.completedAt && new Date(t.completedAt).toDateString() === new Date().toDateString();
+  });
+  if (doneToday.length > 0) {
+    // Find dominant category
+    var catCounts = {};
+    doneToday.forEach(function(t) {
+      (t.categories || []).forEach(function(c) { catCounts[c] = (catCounts[c] || 0) + 1; });
+    });
+    var topCat = null, topCount = 0;
+    Object.keys(catCounts).forEach(function(c) { if (catCounts[c] > topCount) { topCat = c; topCount = catCounts[c]; } });
+
+    var taskStr = '<span class="snap-num">' + doneToday.length + '</span> task' + (doneToday.length !== 1 ? 's' : '') + ' done';
+    if (topCat) taskStr += ' <span class="snap-dim">(mostly ' + esc(topCat) + ')</span>';
+    parts.push(taskStr);
+  }
+
+  // Pomodoro sessions today
+  var pomoToday = 0;
+  state.tasks.forEach(function(t) {
+    if (t.completedAt && new Date(t.completedAt).toDateString() === new Date().toDateString()) {
+      pomoToday += (t.pomodoros || 0);
+    }
+    // Also count pomos on incomplete tasks that might have been worked today
+    // (pomodoros increment during the day on focused tasks)
+  });
+  // Simpler: just count from pomo cycles if focus was used today
+  // Actually, pomo.cycles resets — skip this unless we track it daily
+
+  // Affect
+  var ae = getLatestAffect(today);
+  if (ae) {
+    var vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
+    var aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
+    var affectStr = 'feeling <span class="snap-affect" style="color:' + affectToColor(ae.v, ae.a) + '">' + vLabels[ae.v] + ', ' + aLabels[ae.a] + '</span>';
+    if (ae.ctx) affectStr += ' <span class="snap-dim">(' + esc(ae.ctx) + ')</span>';
+    parts.push(affectStr);
+  }
+
+  // Habits checked today
+  var week = getISOWeek(new Date());
+  var todayDow = getDayOfWeek();
+  var habitsChecked = [];
+  HABITS.forEach(function(h) {
+    var checks = ds.habits && ds.habits[week] && ds.habits[week][h.id];
+    if (checks && checks[todayDow] && !h.bad) habitsChecked.push(h.label.toLowerCase());
+    if (checks && checks[todayDow] && h.bad) habitsChecked.push(h.label.toLowerCase());
+  });
+  if (habitsChecked.length > 0) {
+    parts.push(habitsChecked.join(', '));
+  }
+
+  // Show or hide
+  if (parts.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+  body.innerHTML = parts.map(function(p) { return '<div class="snap-line">' + p + '</div>'; }).join('');
+}
+
 // ── FULL RENDER ──
 
 function renderDashFull() {
   updateClock(); renderIntention(); renderDashTasks(); renderCountdown();
   renderQuote(); renderReflection(); renderAffect(); renderHabits(); renderBook();
-  renderInsights();
+  renderSnapshot(); renderInsights();
 }
 
 // ── ENTER / EXIT ──
@@ -983,9 +1143,10 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
     var ds = getDState();
     if (!ds.affect) ds.affect = {};
     var today = getTodayStr();
-    if (!ds.affect[today]) return; // Must log affect first
-    ds.affect[today].ctx = (ds.affect[today].ctx === ctx) ? null : ctx;
-    saveDash(true); renderAffect(); renderInsights();
+    var latest = getLatestAffect(today);
+    if (!latest) return; // Must log affect first
+    latest.ctx = (latest.ctx === ctx) ? null : ctx;
+    saveDash(true); renderAffect(); renderInsights(); renderSnapshot();
   });
 
   // Weekly reflection
