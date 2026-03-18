@@ -1,7 +1,8 @@
 // ══════════════════════════════════════════════════════════════════
 // DASHBOARD MODULE — all dashboard widgets
 // Clock, weather, intention, countdown, quotes, reflection,
-// mood tracker, habits, book tracker, today's tasks summary
+// affect grid (valence × arousal), habits, book tracker,
+// constructionist insights, weekly reflection
 // ══════════════════════════════════════════════════════════════════
 
 import { state, esc, saveDash, getDState } from './state.js';
@@ -16,6 +17,7 @@ let _fmtDue = () => '';
 let clockTimer = null;
 let weatherLoaded = false;
 let reflectTimer = null;
+let weeklyReflectTimer = null;
 
 // ── DATA ──
 
@@ -49,12 +51,28 @@ const PROMPTS = [
   "If you could only accomplish three things today, what would they be?",
 ];
 
+const WEEKLY_PROMPTS = [
+  "Looking at this week's affect pattern, how would you describe the emotional theme?",
+  "What concept or word best captures how this week felt overall?",
+  "If this week's experience had a color and a texture, what would they be?",
+  "What sensations showed up most often this week? How did you make sense of them?",
+  "What category would you give the dominant feeling-tone of this week?",
+];
+
 const HABITS = [
   { id: 'sleep', label: 'Slept 7h+', bad: false },
   { id: 'read',  label: 'Read',      bad: false },
   { id: 'lift',  label: 'Lifted',    bad: false },
   { id: 'doom',  label: 'Doom scrolled', bad: true },
 ];
+
+// Affect grid constants
+const GRID_SIZE = 5; // 5x5 grid, values 0-4
+const CTX_COLORS = {
+  work: '#ff9500', writing: '#af52de', social: '#ff2d55',
+  rest: '#5ac8fa', exercise: '#30d158', lab: '#007aff',
+  none: 'var(--text-muted)'
+};
 
 // ── TIME HELPERS ──
 
@@ -180,25 +198,109 @@ function renderReflection() {
   document.getElementById('dReflect').value = ds.reflection || '';
 }
 
-// ── MOOD ──
+// ══════════════════════════════════════════════════════════════════
+// AFFECT GRID — 2D valence x arousal
+// Data: ds.affect = { "YYYY-MM-DD": { v: 0-4, a: 0-4, ctx: "work"|null } }
+// Backward compat: ds.moods = { "YYYY-MM-DD": 1-5 } migrated on init
+// ══════════════════════════════════════════════════════════════════
 
-function renderMood() {
-  const ds = getDState();
-  if (!ds.moods) ds.moods = {};
-  const today = getTodayStr(); const todayMood = ds.moods[today];
-  document.querySelectorAll('.mood-btn').forEach(btn => { const val = parseInt(btn.dataset.val); btn.classList.toggle('active', val === todayMood); });
-  const heatmap = document.getElementById('dMoodHeatmap'); heatmap.innerHTML = '';
-  const colors = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
-  let sum = 0, count = 0;
-  for (let i = 13; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    const val = ds.moods[dStr]; const cell = document.createElement('div'); cell.className = 'mood-cell';
-    if (val) { cell.style.background = colors[val]; sum += val; count++; }
-    heatmap.appendChild(cell);
+function migrateOldMoods() {
+  var ds = getDState();
+  if (!ds.affect) ds.affect = {};
+  if (ds.moods && Object.keys(ds.moods).length > 0) {
+    Object.keys(ds.moods).forEach(function(dateStr) {
+      if (!ds.affect[dateStr]) {
+        var oldVal = ds.moods[dateStr]; // 1-5
+        ds.affect[dateStr] = { v: oldVal - 1, a: 2, ctx: null };
+      }
+    });
+    saveDash(false);
   }
-  const avgEl = document.getElementById('dMoodAvg');
-  if (count > 0) { avgEl.textContent = '14-day avg: ' + (sum/count).toFixed(1); } else { avgEl.textContent = ''; }
+}
+
+function affectToColor(v, a) {
+  var vn = v / (GRID_SIZE - 1);
+  var an = a / (GRID_SIZE - 1);
+  // Corners: TL=orange(anxious) TR=red-pink(excited) BL=blue(depleted) BR=green(content)
+  var tl = [255, 149, 0], tr = [255, 59, 48], bl = [90, 130, 200], br = [48, 209, 88];
+  var r = Math.round(tl[0]*(1-vn)*an + tr[0]*vn*an + bl[0]*(1-vn)*(1-an) + br[0]*vn*(1-an));
+  var g = Math.round(tl[1]*(1-vn)*an + tr[1]*vn*an + bl[1]*(1-vn)*(1-an) + br[1]*vn*(1-an));
+  var b = Math.round(tl[2]*(1-vn)*an + tr[2]*vn*an + bl[2]*(1-vn)*(1-an) + br[2]*vn*(1-an));
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function renderAffect() {
+  var ds = getDState();
+  if (!ds.affect) ds.affect = {};
+  var today = getTodayStr();
+  var entry = ds.affect[today];
+
+  var dot = document.getElementById('dAffectDot');
+  if (entry) {
+    dot.style.display = 'block';
+    dot.style.left = (entry.v / (GRID_SIZE - 1)) * 100 + '%';
+    dot.style.top = (1 - entry.a / (GRID_SIZE - 1)) * 100 + '%';
+    dot.style.background = affectToColor(entry.v, entry.a);
+  } else {
+    dot.style.display = 'none';
+  }
+
+  document.querySelectorAll('.affect-ctx-chip').forEach(function(chip) {
+    chip.classList.toggle('active', !!(entry && entry.ctx === chip.dataset.ctx));
+  });
+
+  var statusEl = document.getElementById('dAffectStatus');
+  if (entry) {
+    var vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
+    var aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
+    statusEl.textContent = vLabels[entry.v] + ' · ' + aLabels[entry.a];
+  } else {
+    statusEl.textContent = 'tap to log';
+  }
+
+  var histEl = document.getElementById('dAffectHistory');
+  histEl.innerHTML = '';
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    var ae = ds.affect[dStr];
+    var miniDot = document.createElement('div');
+    miniDot.className = 'affect-mini-dot' + (dStr === today ? ' today' : '');
+    miniDot.style.background = ae ? affectToColor(ae.v, ae.a) : 'var(--border-divider)';
+    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') : '');
+    histEl.appendChild(miniDot);
+  }
+}
+
+function handleAffectGridInput(e, grid) {
+  var rect = grid.getBoundingClientRect();
+  var clientX = e.clientX, clientY = e.clientY;
+  if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+
+  var x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  var y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+
+  var v = Math.round(x * (GRID_SIZE - 1));
+  var a = Math.round((1 - y) * (GRID_SIZE - 1));
+
+  var ds = getDState();
+  if (!ds.affect) ds.affect = {};
+  var today = getTodayStr();
+  var existing = ds.affect[today];
+  ds.affect[today] = { v: v, a: a, ctx: (existing && existing.ctx) || null };
+
+  // Backward compat: also write to moods
+  if (!ds.moods) ds.moods = {};
+  ds.moods[today] = v + 1;
+
+  saveDash(true);
+
+  var dot = document.getElementById('dAffectDot');
+  dot.classList.add('placing');
+  setTimeout(function() { dot.classList.remove('placing'); }, 200);
+
+  renderAffect();
+  renderInsights();
 }
 
 // ── HABITS ──
@@ -256,39 +358,31 @@ function renderBook() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// INSIGHTS — historical mood + habit analytics
+// INSIGHTS — constructionist affect analytics
 // ══════════════════════════════════════════════════════════════════
 
-const MOOD_COLORS = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
-const MOOD_EMPTY = 'var(--border-divider)';
-
-// Convert ISO week key + day index to date string YYYY-MM-DD
 function weekDayToDate(isoWeek, dayIdx) {
-  // isoWeek = "2025-W12", dayIdx = 0(Mon)..6(Sun)
-  const parts = isoWeek.split('-W');
-  const year = parseInt(parts[0]);
-  const week = parseInt(parts[1]);
-  // Jan 4 is always in week 1
-  const jan4 = new Date(year, 0, 4);
-  const dow = jan4.getDay() || 7; // Mon=1..Sun=7
-  const weekStart = new Date(jan4);
+  var parts = isoWeek.split('-W');
+  var year = parseInt(parts[0]);
+  var week = parseInt(parts[1]);
+  var jan4 = new Date(year, 0, 4);
+  var dow = jan4.getDay() || 7;
+  var weekStart = new Date(jan4);
   weekStart.setDate(jan4.getDate() - dow + 1 + (week - 1) * 7);
-  const d = new Date(weekStart);
+  var d = new Date(weekStart);
   d.setDate(d.getDate() + dayIdx);
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-// Build a flat map: dateStr → { habits: {id: bool}, mood: number|null }
 function buildDailyData() {
-  const ds = getDState();
-  const daily = {}; // dateStr → {habits:{}, mood:null}
+  var ds = getDState();
+  var daily = {};
 
-  // Populate from habit data
-  const weeks = Object.keys(ds.habits || {}).sort();
+  var weeks = Object.keys(ds.habits || {}).sort();
   weeks.forEach(function(wk) {
     for (var d = 0; d < 7; d++) {
       var dateStr = weekDayToDate(wk, d);
-      if (!daily[dateStr]) daily[dateStr] = { habits: {}, mood: null };
+      if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
       HABITS.forEach(function(h) {
         var checks = (ds.habits[wk] && ds.habits[wk][h.id]) || [];
         if (checks[d]) daily[dateStr].habits[h.id] = true;
@@ -296,11 +390,10 @@ function buildDailyData() {
     }
   });
 
-  // Populate from mood data
-  var moods = ds.moods || {};
-  Object.keys(moods).forEach(function(dateStr) {
-    if (!daily[dateStr]) daily[dateStr] = { habits: {}, mood: null };
-    daily[dateStr].mood = moods[dateStr];
+  var affect = ds.affect || {};
+  Object.keys(affect).forEach(function(dateStr) {
+    if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
+    daily[dateStr].affect = affect[dateStr];
   });
 
   return daily;
@@ -312,311 +405,430 @@ function renderInsights() {
 
   var daily = buildDailyData();
   var dates = Object.keys(daily).sort();
-  if (dates.length < 7) {
-    container.innerHTML = '<div class="ins-empty">Keep logging for a few more days to see insights here.</div>';
+  var today = getTodayStr();
+  var affectDates = dates.filter(function(d) { return d <= today && daily[d] && daily[d].affect; });
+
+  if (affectDates.length < 5) {
+    container.innerHTML = '<div class="ins-empty">Log your affect for ' + (5 - affectDates.length) + ' more days to see insights here.</div>';
+    renderWeeklyReflection();
     return;
   }
 
   var html = '';
 
-  // ── 1. MOOD CALENDAR HEATMAP ──
+  // 1. AFFECT SPACE SCATTERPLOT
   html += '<div class="ins-section">';
-  html += '<div class="ins-label">Mood Calendar</div>';
-  html += renderMoodCalendar(daily, dates);
+  html += '<div class="ins-label">Your Affect Space <span class="ins-sub">(last 90 days)</span></div>';
+  html += renderAffectScatter(daily, affectDates);
   html += '</div>';
 
-  // ── 2. ROLLING MOOD TREND ──
-  var moodDates = dates.filter(function(d) { return daily[d].mood != null; });
-  if (moodDates.length >= 3) {
+  // 2. DUAL TREND
+  if (affectDates.length >= 7) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Mood Trend <span class="ins-sub">(7-day rolling avg)</span></div>';
-    html += renderMoodTrend(daily, dates);
+    html += '<div class="ins-label">Valence & Arousal Trend <span class="ins-sub">(7-day rolling avg)</span></div>';
+    html += renderDualTrend(daily, dates);
     html += '</div>';
   }
 
-  // ── 3. HABIT COMPLETION RATES ──
+  // 3. AFFECT VARIABILITY
+  if (affectDates.length >= 14) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Affect Variability <span class="ins-sub">(14-day window)</span></div>';
+    html += renderVariability(daily, affectDates);
+    html += '</div>';
+  }
+
+  // 4. CONTEXT PROFILES
+  var ctxDates = affectDates.filter(function(d) { return daily[d].affect.ctx; });
+  if (ctxDates.length >= 5) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Affect × Context <span class="ins-sub">(avg valence & arousal by activity)</span></div>';
+    html += renderContextProfiles(daily, ctxDates);
+    html += '</div>';
+  }
+
+  // 5. HABIT CO-OCCURRENCE
+  if (affectDates.length >= 14) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Affect × Habits <span class="ins-sub">(co-occurrence, not causal)</span></div>';
+    html += renderHabitAffect(daily, affectDates);
+    html += '</div>';
+  }
+
+  // 6. TEMPORAL DYNAMICS
+  if (affectDates.length >= 14) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Day-of-Week Patterns</div>';
+    html += renderTemporalDynamics(daily, affectDates);
+    html += '</div>';
+  }
+
+  // 7. HABIT COMPLETION
   html += '<div class="ins-section">';
   html += '<div class="ins-label">Habit Completion</div>';
   html += renderHabitRates(daily, dates);
   html += '</div>';
 
-  // ── 4. MOOD × HABIT CORRELATIONS ──
-  if (moodDates.length >= 14) {
-    html += '<div class="ins-section">';
-    html += '<div class="ins-label">Mood × Habits <span class="ins-sub">(avg mood on days with vs without)</span></div>';
-    html += renderCorrelations(daily, dates);
-    html += '</div>';
-  } else if (moodDates.length > 0) {
-    html += '<div class="ins-section">';
-    html += '<div class="ins-note">Log mood for ' + (14 - moodDates.length) + ' more days to see mood × habit correlations.</div>';
-    html += '</div>';
-  }
-
   container.innerHTML = html;
+  renderWeeklyReflection();
 }
 
-function renderMoodCalendar(daily, dates) {
-  // Show a month-view calendar grid for the last ~90 days, grouped by month
-  var today = new Date();
-  var startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 89); // last 90 days
+// ── SCATTER ──
+function renderAffectScatter(daily, affectDates) {
+  var w = 240, h = 240, pad = 24;
+  var innerW = w - pad * 2, innerH = h - pad * 2;
 
-  var html = '';
-  var currentMonth = -1;
+  var cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 90);
+  var cutStr = cutoff.getFullYear() + '-' + String(cutoff.getMonth()+1).padStart(2,'0') + '-' + String(cutoff.getDate()).padStart(2,'0');
+  var recent = affectDates.filter(function(d) { return d >= cutStr; });
 
-  // Group into weeks (Mon-Sun rows)
-  // First, find the Monday on or before startDate
-  var cursor = new Date(startDate);
-  var dow = cursor.getDay() || 7;
-  cursor.setDate(cursor.getDate() - (dow - 1));
+  var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" style="max-width:260px;margin:0 auto;display:block;">';
+  svg += '<defs>';
+  svg += '<radialGradient id="scBg1" cx="100%" cy="0%"><stop offset="0%" stop-color="#ff3b30" stop-opacity="0.06"/><stop offset="60%" stop-color="#ff3b30" stop-opacity="0"/></radialGradient>';
+  svg += '<radialGradient id="scBg2" cx="0%" cy="0%"><stop offset="0%" stop-color="#ff9500" stop-opacity="0.06"/><stop offset="60%" stop-color="#ff9500" stop-opacity="0"/></radialGradient>';
+  svg += '<radialGradient id="scBg3" cx="100%" cy="100%"><stop offset="0%" stop-color="#30d158" stop-opacity="0.06"/><stop offset="60%" stop-color="#30d158" stop-opacity="0"/></radialGradient>';
+  svg += '<radialGradient id="scBg4" cx="0%" cy="100%"><stop offset="0%" stop-color="#5a82c8" stop-opacity="0.06"/><stop offset="60%" stop-color="#5a82c8" stop-opacity="0"/></radialGradient>';
+  svg += '</defs>';
+  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="var(--border-divider)"/>';
+  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg1)"/>';
+  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg2)"/>';
+  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg3)"/>';
+  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg4)"/>';
 
-  html += '<div class="ins-cal-wrap">';
-  html += '<div class="ins-cal-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>';
-  html += '<div class="ins-cal-grid">';
+  var cx = pad + innerW/2, cy = pad + innerH/2;
+  svg += '<line x1="'+pad+'" y1="'+cy+'" x2="'+(pad+innerW)+'" y2="'+cy+'" stroke="var(--text-muted)" stroke-opacity="0.15" stroke-width="0.5"/>';
+  svg += '<line x1="'+cx+'" y1="'+pad+'" x2="'+cx+'" y2="'+(pad+innerH)+'" stroke="var(--text-muted)" stroke-opacity="0.15" stroke-width="0.5"/>';
 
-  var endDate = new Date(today);
-  endDate.setDate(endDate.getDate() + 1);
+  svg += '<text x="'+cx+'" y="'+(pad-8)+'" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">wired</text>';
+  svg += '<text x="'+cx+'" y="'+(pad+innerH+14)+'" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">drained</text>';
+  svg += '<text x="'+(pad-4)+'" y="'+(cy+3)+'" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">rough</text>';
+  svg += '<text x="'+(pad+innerW+4)+'" y="'+(cy+3)+'" text-anchor="start" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">good</text>';
 
-  while (cursor <= endDate) {
-    // Month label row
-    if (cursor.getMonth() !== currentMonth) {
-      currentMonth = cursor.getMonth();
-      var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      html += '<div class="ins-cal-month">' + monthNames[currentMonth] + '</div>';
-    }
+  var usedCtx = {};
+  recent.forEach(function(dateStr, i) {
+    var ae = daily[dateStr].affect;
+    var px = pad + (ae.v / (GRID_SIZE - 1)) * innerW;
+    var py = pad + (1 - ae.a / (GRID_SIZE - 1)) * innerH;
+    var color = ae.ctx ? (CTX_COLORS[ae.ctx] || CTX_COLORS.none) : CTX_COLORS.none;
+    if (ae.ctx) usedCtx[ae.ctx] = color;
+    var opacity = Math.max(0.2, 1 - ((recent.length - i) / recent.length) * 0.7);
+    svg += '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="5" fill="'+color+'" opacity="'+opacity.toFixed(2)+'" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>';
+  });
+  svg += '</svg>';
 
-    html += '<div class="ins-cal-row">';
-    for (var i = 0; i < 7; i++) {
-      var dStr = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
-      var val = daily[dStr] ? daily[dStr].mood : null;
-      var isToday = dStr === getTodayStr();
-      var isFuture = cursor > today;
-      var bg = val ? MOOD_COLORS[val] : MOOD_EMPTY;
-      var cls = 'ins-cal-cell' + (isToday ? ' today' : '') + (isFuture ? ' future' : '');
-      var title = dStr + (val ? ' — mood ' + val : '');
-      html += '<div class="' + cls + '" style="background:' + (isFuture ? 'transparent' : bg) + '" title="' + title + '"></div>';
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    html += '</div>';
+  var ctxKeys = Object.keys(usedCtx);
+  if (ctxKeys.length > 0) {
+    svg += '<div class="ins-scatter-legend">';
+    ctxKeys.forEach(function(k) { svg += '<div class="ins-scatter-legend-item"><div class="ins-scatter-legend-dot" style="background:'+usedCtx[k]+'"></div>'+k+'</div>'; });
+    svg += '<div class="ins-scatter-legend-item"><div class="ins-scatter-legend-dot" style="background:var(--text-muted)"></div>unlabeled</div>';
+    svg += '</div>';
   }
 
-  html += '</div>'; // grid
-  // Legend
-  html += '<div class="ins-cal-legend">';
-  html += '<span class="ins-cal-legend-label">low</span>';
-  for (var v = 1; v <= 5; v++) {
-    html += '<div class="ins-cal-cell legend" style="background:' + MOOD_COLORS[v] + '"></div>';
-  }
-  html += '<span class="ins-cal-legend-label">high</span>';
-  html += '</div>';
-  html += '</div>'; // wrap
-
-  return html;
+  svg += '<div class="ins-note" style="margin-top:8px;">'+recent.length+' days plotted. Each dot is one day in your affect space.</div>';
+  return svg;
 }
 
-function renderMoodTrend(daily, dates) {
-  // Compute 7-day rolling average, render as SVG sparkline
+// ── DUAL TREND ──
+function renderDualTrend(daily, dates) {
   var allDates = [];
-  var today = new Date();
-  var start = new Date(today);
-  start.setDate(start.getDate() - 89);
+  var today = new Date(); var start = new Date(today); start.setDate(start.getDate() - 59);
   var cursor = new Date(start);
   while (cursor <= today) {
     allDates.push(cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0'));
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  // Build rolling 7-day averages
-  var points = [];
+  var vPoints = [], aPoints = [];
   for (var i = 0; i < allDates.length; i++) {
-    var sum = 0, count = 0;
+    var vSum = 0, aSum = 0, count = 0;
     for (var j = Math.max(0, i - 6); j <= i; j++) {
-      var m = daily[allDates[j]] ? daily[allDates[j]].mood : null;
-      if (m != null) { sum += m; count++; }
+      var ae = daily[allDates[j]] ? daily[allDates[j]].affect : null;
+      if (ae) { vSum += ae.v; aSum += ae.a; count++; }
     }
-    if (count >= 2) { points.push({ idx: i, val: sum / count }); }
+    if (count >= 2) {
+      vPoints.push({ idx: i, val: vSum / count });
+      aPoints.push({ idx: i, val: aSum / count });
+    }
   }
 
-  if (points.length < 3) return '<div class="ins-note">Not enough consecutive data for trend line.</div>';
+  if (vPoints.length < 3) return '<div class="ins-note">Not enough data for trend.</div>';
 
   var w = 280, h = 60, padX = 2, padY = 4;
-  var minV = 1, maxV = 5;
   var xScale = (w - 2 * padX) / (allDates.length - 1);
-  var yScale = (h - 2 * padY) / (maxV - minV);
+  var yScale = (h - 2 * padY) / (GRID_SIZE - 1);
 
-  var pathD = '';
-  points.forEach(function(p, pi) {
-    var x = padX + p.idx * xScale;
-    var y = h - padY - (p.val - minV) * yScale;
-    pathD += (pi === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+  function buildPath(points) {
+    var d = '';
+    points.forEach(function(p, pi) {
+      var x = padX + p.idx * xScale;
+      var y = h - padY - p.val * yScale;
+      d += (pi === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    return d;
+  }
+
+  var html = '<div class="ins-dual-trend-wrap">';
+  html += '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">';
+  for (var g = 0; g < GRID_SIZE; g++) {
+    var gy = h - padY - g * yScale;
+    html += '<line x1="0" y1="'+gy.toFixed(1)+'" x2="'+w+'" y2="'+gy.toFixed(1)+'" stroke="var(--border-divider)" stroke-width="0.5"/>';
+  }
+  html += '<path d="'+buildPath(vPoints)+'" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>';
+  html += '<path d="'+buildPath(aPoints)+'" fill="none" stroke="#ff9500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" stroke-dasharray="4,3"/>';
+  html += '</svg>';
+
+  html += '<div class="ins-dual-trend-legend">';
+  html += '<span><span class="legend-line" style="background:#30d158;"></span> valence</span>';
+  html += '<span><span class="legend-line" style="background:#ff9500;"></span> arousal</span>';
+  if (vPoints.length > 0) {
+    html += '<span style="margin-left:auto;">now: v='+vPoints[vPoints.length-1].val.toFixed(1)+' a='+aPoints[aPoints.length-1].val.toFixed(1)+'</span>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+// ── VARIABILITY ──
+function renderVariability(daily, affectDates) {
+  var recent = affectDates.slice(-14);
+  if (recent.length < 7) return '<div class="ins-note">Need more data for variability.</div>';
+
+  var vs = [], as = [];
+  recent.forEach(function(d) { var ae = daily[d].affect; vs.push(ae.v); as.push(ae.a); });
+
+  function stdev(arr) {
+    var n = arr.length, mean = arr.reduce(function(s,x){return s+x;},0)/n;
+    return Math.sqrt(arr.reduce(function(s,x){return s+(x-mean)*(x-mean);},0)/n);
+  }
+
+  var vSD = stdev(vs), aSD = stdev(as);
+  var combined = (vSD + aSD) / 2;
+  var normalized = Math.min(1, combined / 1.5);
+  var pct = Math.round(normalized * 100);
+
+  var radius = 20, stroke = 5, circ = 2 * Math.PI * radius;
+  var offset = circ * (1 - normalized);
+  var ringColor = normalized > 0.5 ? '#30d158' : (normalized > 0.25 ? '#ffcc00' : '#ff9500');
+
+  var html = '<div class="ins-variability">';
+  html += '<div class="ins-variability-ring"><svg viewBox="0 0 52 52">';
+  html += '<circle cx="26" cy="26" r="'+radius+'" fill="none" stroke="var(--border-divider)" stroke-width="'+stroke+'"/>';
+  html += '<circle cx="26" cy="26" r="'+radius+'" fill="none" stroke="'+ringColor+'" stroke-width="'+stroke+'" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" stroke-linecap="round"/>';
+  html += '</svg><div class="ins-variability-val">'+pct+'</div></div>';
+
+  var granLabel = normalized > 0.5 ? 'High' : (normalized > 0.25 ? 'Moderate' : 'Low');
+  html += '<div class="ins-variability-text">';
+  html += '<strong>'+granLabel+' variability</strong> over '+recent.length+' days. ';
+  html += 'Valence SD: '+vSD.toFixed(2)+', Arousal SD: '+aSD.toFixed(2)+'. ';
+  if (normalized > 0.5) html += 'Your affect is differentiated — a wide range of states.';
+  else if (normalized > 0.25) html += 'Moderate spread in your day-to-day experience.';
+  else html += 'Fairly consistent affect — staying in a narrow band.';
+  html += '</div></div>';
+  return html;
+}
+
+// ── CONTEXT PROFILES ──
+function renderContextProfiles(daily, ctxDates) {
+  var profiles = {};
+  ctxDates.forEach(function(d) {
+    var ae = daily[d].affect, ctx = ae.ctx;
+    if (!profiles[ctx]) profiles[ctx] = { vSum:0, aSum:0, count:0 };
+    profiles[ctx].vSum += ae.v; profiles[ctx].aSum += ae.a; profiles[ctx].count++;
   });
 
-  // Gradient fill path
-  var lastPt = points[points.length - 1];
-  var firstPt = points[0];
-  var fillD = pathD + ' L' + (padX + lastPt.idx * xScale).toFixed(1) + ',' + h + ' L' + (padX + firstPt.idx * xScale).toFixed(1) + ',' + h + ' Z';
+  var keys = Object.keys(profiles).sort(function(a,b){ return profiles[b].count - profiles[a].count; });
+  var html = '<div class="ins-context-profile">';
+  keys.forEach(function(ctx) {
+    var p = profiles[ctx];
+    if (p.count < 2) return;
+    var avgV = p.vSum/p.count, avgA = p.aSum/p.count;
+    var vPct = (avgV/(GRID_SIZE-1))*100, aPct = (avgA/(GRID_SIZE-1))*100;
+    var color = CTX_COLORS[ctx] || CTX_COLORS.none;
 
-  var currentAvg = points[points.length - 1].val;
-  var startAvg = points[0].val;
-  var delta = currentAvg - startAvg;
-  var deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1);
-  var deltaClass = delta > 0.2 ? 'pos' : (delta < -0.2 ? 'neg' : 'flat');
-
-  var html = '<div class="ins-trend-wrap">';
-  html += '<svg class="ins-trend-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">';
-  html += '<defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.02"/></linearGradient></defs>';
-  // Y gridlines at 1,2,3,4,5
-  for (var g = 1; g <= 5; g++) {
-    var gy = h - padY - (g - minV) * yScale;
-    html += '<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + w + '" y2="' + gy.toFixed(1) + '" stroke="var(--border-divider)" stroke-width="0.5"/>';
-  }
-  html += '<path d="' + fillD + '" fill="url(#trendFill)"/>';
-  html += '<path d="' + pathD + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-  // End dot
-  var endX = padX + lastPt.idx * xScale;
-  var endY = h - padY - (lastPt.val - minV) * yScale;
-  html += '<circle cx="' + endX.toFixed(1) + '" cy="' + endY.toFixed(1) + '" r="3" fill="var(--accent)"/>';
-  html += '</svg>';
-  html += '<div class="ins-trend-stats">';
-  html += '<span>Now: <strong>' + currentAvg.toFixed(1) + '</strong></span>';
-  html += '<span class="ins-trend-delta ' + deltaClass + '">' + deltaStr + ' over period</span>';
+    html += '<div class="ins-ctx-row">';
+    html += '<div class="ins-ctx-label">'+esc(ctx)+'</div>';
+    html += '<div class="ins-ctx-bar-wrap">';
+    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,vPct).toFixed(0)+'%;background:'+color+';opacity:0.8;">v '+avgV.toFixed(1)+'</div>';
+    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,aPct).toFixed(0)+'%;background:'+color+';opacity:0.45;">a '+avgA.toFixed(1)+'</div>';
+    html += '</div>';
+    html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);width:20px;text-align:right;">'+p.count+'d</div>';
+    html += '</div>';
+  });
   html += '</div>';
+  html += '<div class="ins-note" style="margin-top:8px;">Solid = avg valence, faded = avg arousal. Higher = more pleasant / more energized.</div>';
+  return html;
+}
+
+// ── HABIT × AFFECT ──
+function renderHabitAffect(daily, affectDates) {
+  var html = '<div class="ins-corr">';
+
+  HABITS.forEach(function(h) {
+    var wV=0, wA=0, wC=0, woV=0, woA=0, woC=0;
+    affectDates.forEach(function(d) {
+      var ae = daily[d].affect, did = daily[d].habits[h.id];
+      if (did) { wV+=ae.v; wA+=ae.a; wC++; } else { woV+=ae.v; woA+=ae.a; woC++; }
+    });
+
+    if (wC < 3 || woC < 3) {
+      html += '<div class="ins-corr-row"><span class="ins-corr-name">'+esc(h.label)+'</span><span class="ins-corr-val muted">not enough data</span></div>';
+      return;
+    }
+
+    var wAvgV=wV/wC, woAvgV=woV/woC, wAvgA=wA/wC, woAvgA=woA/woC;
+    var vDiff=wAvgV-woAvgV, aDiff=wAvgA-woAvgA;
+    var effectiveVDiff = h.bad ? -vDiff : vDiff;
+
+    var label, cls;
+    if (Math.abs(vDiff)<0.15 && Math.abs(aDiff)<0.15) {
+      label='no clear co-occurrence'; cls='flat';
+    } else {
+      var parts=[];
+      if (Math.abs(vDiff)>=0.15) {
+        parts.push(h.bad ? 'valence '+Math.abs(vDiff).toFixed(1)+(vDiff>0?' higher with':' higher without') : 'valence '+(vDiff>0?'+':'')+vDiff.toFixed(1));
+      }
+      if (Math.abs(aDiff)>=0.15) parts.push('arousal '+(aDiff>0?'+':'')+aDiff.toFixed(1));
+      label=parts.join(', ');
+      cls = effectiveVDiff>0.15 ? 'pos' : (effectiveVDiff<-0.15 ? 'neg' : 'flat');
+    }
+
+    html += '<div class="ins-corr-row"><span class="ins-corr-name">'+esc(h.label)+'</span><span class="ins-corr-val '+cls+'">'+label+'</span></div>';
+    html += '<div class="ins-corr-bars">';
+    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">with</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:'+((wAvgV/(GRID_SIZE-1))*100).toFixed(0)+'%;background:var(--accent)"></div></div><span class="ins-corr-bar-val">'+wAvgV.toFixed(1)+'</span></div>';
+    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">w/o</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:'+((woAvgV/(GRID_SIZE-1))*100).toFixed(0)+'%;background:var(--text-muted)"></div></div><span class="ins-corr-bar-val">'+woAvgV.toFixed(1)+'</span></div>';
+    html += '</div>';
+  });
+
+  html += '<div class="ins-note" style="margin-top:10px;">Based on '+affectDates.length+' days. Co-occurrence ≠ causation.</div>';
   html += '</div>';
   return html;
 }
 
+// ── TEMPORAL DYNAMICS ──
+function renderTemporalDynamics(daily, affectDates) {
+  var dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var buckets = []; for (var i=0;i<7;i++) buckets.push({vSum:0,aSum:0,count:0});
+
+  affectDates.forEach(function(dateStr) {
+    var d = new Date(dateStr+'T12:00:00');
+    var dow = d.getDay(), idx = dow===0?6:dow-1;
+    var ae = daily[dateStr].affect;
+    buckets[idx].vSum+=ae.v; buckets[idx].aSum+=ae.a; buckets[idx].count++;
+  });
+
+  var html = '<div style="display:flex;flex-direction:column;gap:2px;">';
+  buckets.forEach(function(b,i) {
+    if (b.count<1) { html+='<div class="ins-temporal-row"><div class="ins-temporal-day">'+dayNames[i]+'</div><div style="font-size:10px;color:var(--text-muted);font-style:italic;">—</div></div>'; return; }
+    var avgV=b.vSum/b.count, avgA=b.aSum/b.count;
+    var vPct=(avgV/(GRID_SIZE-1))*100, aPct=(avgA/(GRID_SIZE-1))*100;
+    html += '<div class="ins-temporal-row"><div class="ins-temporal-day">'+dayNames[i]+'</div>';
+    html += '<div class="ins-temporal-bars">';
+    html += '<div class="ins-temporal-bar" style="width:'+Math.max(8,vPct).toFixed(0)+'%;background:#30d158;opacity:0.7;"></div>';
+    html += '<div class="ins-temporal-bar" style="width:'+Math.max(8,aPct).toFixed(0)+'%;background:#ff9500;opacity:0.45;"></div>';
+    html += '</div>';
+    html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);width:52px;text-align:right;">'+avgV.toFixed(1)+' / '+avgA.toFixed(1)+'</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="ins-note" style="margin-top:6px;">Green = valence, orange = arousal. Scale: 0 (rough/drained) to 4 (good/wired).</div>';
+  return html;
+}
+
+// ── HABIT RATES ──
 function renderHabitRates(daily, dates) {
-  // For each habit, compute % of logged days where it was checked
   var today = getTodayStr();
   var relevantDates = dates.filter(function(d) { return d <= today; });
   if (relevantDates.length === 0) return '';
 
   var html = '<div class="ins-habit-rates">';
   HABITS.forEach(function(h) {
-    var total = 0, checked = 0;
-    var streakCurrent = 0, streakMax = 0, inStreak = true;
-    // Walk backwards for current streak
-    for (var i = relevantDates.length - 1; i >= 0; i--) {
-      var d = daily[relevantDates[i]];
-      var did = d && d.habits[h.id];
-      total++;
-      if (did) checked++;
-      if (inStreak && did && !h.bad) { streakCurrent++; }
-      else if (inStreak && !did && !h.bad) { inStreak = false; }
-      // For bad habits, streak = consecutive days WITHOUT
-      if (h.bad && inStreak && !did) { streakCurrent++; }
-      else if (h.bad && inStreak && did) { inStreak = false; }
+    var total=0, checked=0, streakCurrent=0, inStreak=true;
+    for (var i=relevantDates.length-1;i>=0;i--) {
+      var d=daily[relevantDates[i]], did=d&&d.habits[h.id];
+      total++; if(did) checked++;
+      if(inStreak&&did&&!h.bad) streakCurrent++;
+      else if(inStreak&&!did&&!h.bad) inStreak=false;
+      if(h.bad&&inStreak&&!did) streakCurrent++;
+      else if(h.bad&&inStreak&&did) inStreak=false;
     }
+    var pct=total>0?Math.round((checked/total)*100):0;
+    var barColor=h.bad?'var(--danger)':'var(--success)';
+    var streakLabel='';
+    if(!h.bad&&streakCurrent>1) streakLabel=' · '+streakCurrent+'-day streak';
+    else if(h.bad&&streakCurrent>1) streakLabel=' · '+streakCurrent+' days clean';
 
-    var pct = total > 0 ? Math.round((checked / total) * 100) : 0;
-    // For bad habits, show "X% of days" without the positive framing
-    var barColor = h.bad ? 'var(--danger)' : 'var(--success)';
-    var streakLabel = '';
-    if (!h.bad && streakCurrent > 1) { streakLabel = ' · ' + streakCurrent + '-day streak'; }
-    else if (h.bad && streakCurrent > 1) { streakLabel = ' · ' + streakCurrent + ' days clean'; }
-
-    html += '<div class="ins-habit-row">';
-    html += '<div class="ins-habit-info"><span class="ins-habit-name">' + esc(h.label) + '</span><span class="ins-habit-pct">' + pct + '%' + streakLabel + '</span></div>';
-    html += '<div class="ins-habit-bar"><div class="ins-habit-bar-fill" style="width:' + Math.min(100, pct) + '%;background:' + barColor + '"></div></div>';
-    html += '</div>';
+    html+='<div class="ins-habit-row"><div class="ins-habit-info"><span class="ins-habit-name">'+esc(h.label)+'</span><span class="ins-habit-pct">'+pct+'%'+streakLabel+'</span></div>';
+    html+='<div class="ins-habit-bar"><div class="ins-habit-bar-fill" style="width:'+Math.min(100,pct)+'%;background:'+barColor+'"></div></div></div>';
   });
   html += '</div>';
   return html;
 }
 
-function renderCorrelations(daily, dates) {
-  var today = getTodayStr();
-  var moodDays = dates.filter(function(d) { return d <= today && daily[d] && daily[d].mood != null; });
+// ── WEEKLY REFLECTION ──
+function renderWeeklyReflection() {
+  var ds = getDState();
+  var card = document.getElementById('dWeeklyReflectCard');
+  if (!card) return;
 
-  if (moodDays.length < 14) return '';
+  var now = new Date(), week = getISOWeek(now);
+  var dow = now.getDay();
+  var affectCount = Object.keys(ds.affect || {}).length;
 
-  var html = '<div class="ins-corr">';
+  // Show Fri-Sun or if enough data exists
+  if (affectCount < 5 && dow !== 0 && dow !== 5 && dow !== 6) {
+    card.style.display = 'none'; return;
+  }
+  card.style.display = 'block';
 
-  HABITS.forEach(function(h) {
-    var withSum = 0, withCount = 0, withoutSum = 0, withoutCount = 0;
-    moodDays.forEach(function(d) {
-      var mood = daily[d].mood;
-      var did = daily[d].habits[h.id];
-      if (did) { withSum += mood; withCount++; }
-      else { withoutSum += mood; withoutCount++; }
-    });
+  if (!ds.weeklyReflections) ds.weeklyReflections = {};
 
-    if (withCount < 3 || withoutCount < 3) {
-      html += '<div class="ins-corr-row"><span class="ins-corr-name">' + esc(h.label) + '</span><span class="ins-corr-val muted">not enough data</span></div>';
-      return;
-    }
+  var doy = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  var weekNum = Math.floor(doy / 7);
+  document.getElementById('dWeeklyPrompt').textContent = WEEKLY_PROMPTS[weekNum % WEEKLY_PROMPTS.length];
+  document.getElementById('dWeeklyReflect').value = ds.weeklyReflections[week] || '';
 
-    var withAvg = withSum / withCount;
-    var withoutAvg = withoutSum / withoutCount;
-    var diff = withAvg - withoutAvg;
-
-    // For bad habits, flip the framing
-    var label, cls;
-    if (h.bad) {
-      // Higher mood on days you didn't doom scroll = good
-      label = (diff < -0.1) ? 'mood ' + Math.abs(diff).toFixed(1) + ' higher without' : (diff > 0.1 ? 'mood ' + diff.toFixed(1) + ' higher with' : 'no clear effect');
-      cls = diff < -0.1 ? 'pos' : (diff > 0.1 ? 'neg' : 'flat');
-    } else {
-      label = (diff > 0.1) ? 'mood ' + diff.toFixed(1) + ' higher with' : (diff < -0.1 ? 'mood ' + Math.abs(diff).toFixed(1) + ' lower with' : 'no clear effect');
-      cls = diff > 0.1 ? 'pos' : (diff < -0.1 ? 'neg' : 'flat');
-    }
-
-    html += '<div class="ins-corr-row">';
-    html += '<span class="ins-corr-name">' + esc(h.label) + '</span>';
-    html += '<span class="ins-corr-val ' + cls + '">' + label + '</span>';
-    html += '</div>';
-
-    // Mini comparison bars
-    html += '<div class="ins-corr-bars">';
-    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">with</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:' + ((withAvg / 5) * 100).toFixed(0) + '%;background:var(--accent)"></div></div><span class="ins-corr-bar-val">' + withAvg.toFixed(1) + '</span></div>';
-    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">w/o</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:' + ((withoutAvg / 5) * 100).toFixed(0) + '%;background:var(--text-muted)"></div></div><span class="ins-corr-bar-val">' + withoutAvg.toFixed(1) + '</span></div>';
-    html += '</div>';
+  var pastEl = document.getElementById('dPastLabels');
+  pastEl.innerHTML = '';
+  Object.keys(ds.weeklyReflections).sort().reverse().slice(0,8).forEach(function(wk) {
+    var text = ds.weeklyReflections[wk];
+    if (!text || text.length < 2) return;
+    var el = document.createElement('span');
+    el.className = 'ins-past-label';
+    el.textContent = wk.replace(/^\d{4}-/,'') + ': ' + (text.length>35 ? text.slice(0,33)+'…' : text);
+    el.title = wk + ': ' + text;
+    pastEl.appendChild(el);
   });
-
-  html += '<div class="ins-note" style="margin-top:10px;">Based on ' + moodDays.length + ' days of mood data.</div>';
-  html += '</div>';
-  return html;
 }
 
 // ── FULL RENDER ──
 
 function renderDashFull() {
   updateClock(); renderIntention(); renderDashTasks(); renderCountdown();
-  renderQuote(); renderReflection(); renderMood(); renderHabits(); renderBook();
+  renderQuote(); renderReflection(); renderAffect(); renderHabits(); renderBook();
   renderInsights();
 }
 
-// ── ENTER / EXIT (called by router) ──
+// ── ENTER / EXIT ──
 
 function onDashEnter() {
   renderDashFull();
   if (!weatherLoaded) loadWeather();
   if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
 
-  // Stagger dashboard cards after view is visible
   var dash = document.getElementById('dashView');
   if (!dash) return;
   var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
-  // Immediately: strip old animation, hide cards
   items.forEach(function(el, i) {
-    el.classList.remove('stagger-child');
-    el.classList.add('stagger-ready');
+    el.classList.remove('stagger-child'); el.classList.add('stagger-ready');
     el.style.setProperty('--si', i);
   });
-  // After display:block is committed: start animation
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      items.forEach(function(el) {
-        el.classList.remove('stagger-ready');
-        el.classList.add('stagger-child');
-      });
+      items.forEach(function(el) { el.classList.remove('stagger-ready'); el.classList.add('stagger-child'); });
     });
   });
 }
 
 function onDashExit() {
   if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
-  // Clean up animation classes so re-entry starts fresh
   var dash = document.getElementById('dashView');
   if (dash) {
     dash.querySelectorAll('.stagger-child, .stagger-ready').forEach(function(el) {
@@ -625,12 +837,14 @@ function onDashExit() {
   }
 }
 
-// ── INIT: wire up DOM events, receive dependencies ──
+// ── INIT ──
 
 function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
   _isActuallyDueToday = isActuallyDueToday;
   _dueClass = dueClass;
   _fmtDue = fmtDue;
+
+  migrateOldMoods();
 
   // Intention
   document.getElementById('dIntention').addEventListener('input', function() { getDState().intention = this.value; saveDash(true); });
@@ -652,14 +866,40 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
   // Reflection
   document.getElementById('dReflect').addEventListener('input', function() { getDState().reflection = this.value; if (reflectTimer) clearTimeout(reflectTimer); reflectTimer = setTimeout(function() { saveDash(); }, 800); });
 
-  // Mood
-  document.getElementById('dMoodSelect').addEventListener('click', function(e) {
-    const btn = e.target.closest('.mood-btn'); if (!btn) return;
-    const val = parseInt(btn.dataset.val); const today = getTodayStr(); const ds = getDState();
-    if (!ds.moods) ds.moods = {};
-    if (ds.moods[today] === val) { delete ds.moods[today]; } else { ds.moods[today] = val; }
-    saveDash(true); renderMood();
+  // ── AFFECT GRID ──
+  var grid = document.getElementById('dAffectGrid');
+  var isDrawing = false;
+  grid.addEventListener('pointerdown', function(e) {
+    isDrawing = true; grid.setPointerCapture(e.pointerId);
+    handleAffectGridInput(e, grid);
   });
+  grid.addEventListener('pointermove', function(e) { if (isDrawing) handleAffectGridInput(e, grid); });
+  grid.addEventListener('pointerup', function() { isDrawing = false; });
+  grid.addEventListener('pointercancel', function() { isDrawing = false; });
+
+  // Context chips
+  document.getElementById('dAffectContextRow').addEventListener('click', function(e) {
+    var chip = e.target.closest('.affect-ctx-chip'); if (!chip) return;
+    var ctx = chip.dataset.ctx;
+    var ds = getDState();
+    if (!ds.affect) ds.affect = {};
+    var today = getTodayStr();
+    if (!ds.affect[today]) return; // Must log affect first
+    ds.affect[today].ctx = (ds.affect[today].ctx === ctx) ? null : ctx;
+    saveDash(true); renderAffect(); renderInsights();
+  });
+
+  // Weekly reflection
+  var weeklyEl = document.getElementById('dWeeklyReflect');
+  if (weeklyEl) {
+    weeklyEl.addEventListener('input', function() {
+      var ds = getDState(), week = getISOWeek(new Date());
+      if (!ds.weeklyReflections) ds.weeklyReflections = {};
+      ds.weeklyReflections[week] = this.value;
+      if (weeklyReflectTimer) clearTimeout(weeklyReflectTimer);
+      weeklyReflectTimer = setTimeout(function() { saveDash(true); }, 800);
+    });
+  }
 
   // Book
   document.getElementById('dBookSetBtn').addEventListener('click', function() {

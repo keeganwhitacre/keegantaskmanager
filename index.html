@@ -362,19 +362,32 @@
     <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
   </div>
 
-  <div class="d-card">
+  <div class="d-card affect-card">
     <div class="d-card-label" style="display:flex; justify-content:space-between;">
-      <span>Daily Mood</span>
-      <span id="dMoodAvg" style="text-transform:none; opacity:0.8;"></span>
+      <span>How are you feeling?</span>
+      <span id="dAffectStatus" style="text-transform:none; opacity:0.8;"></span>
     </div>
-    <div class="mood-row" id="dMoodSelect">
-      <button class="mood-btn" data-val="1" style="--mood-col:#ff3b30;"></button>
-      <button class="mood-btn" data-val="2" style="--mood-col:#ff9500;"></button>
-      <button class="mood-btn" data-val="3" style="--mood-col:#ffcc00;"></button>
-      <button class="mood-btn" data-val="4" style="--mood-col:#a2d952;"></button>
-      <button class="mood-btn" data-val="5" style="--mood-col:#30d158;"></button>
+    <div class="affect-grid-wrap">
+      <div class="affect-axis-label affect-y-top">wired</div>
+      <div class="affect-axis-label affect-y-bot">drained</div>
+      <div class="affect-axis-label affect-x-left">rough</div>
+      <div class="affect-axis-label affect-x-right">good</div>
+      <div class="affect-grid" id="dAffectGrid">
+        <div class="affect-grid-bg"></div>
+        <div class="affect-crosshair-h"></div>
+        <div class="affect-crosshair-v"></div>
+        <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
+      </div>
     </div>
-    <div class="mood-heatmap" id="dMoodHeatmap"></div>
+    <div class="affect-context-row" id="dAffectContextRow">
+      <div class="affect-ctx-chip" data-ctx="work">Work</div>
+      <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
+      <div class="affect-ctx-chip" data-ctx="social">Social</div>
+      <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
+      <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
+      <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
+    </div>
+    <div class="affect-mini-history" id="dAffectHistory"></div>
   </div>
 
   <div class="d-card">
@@ -404,13 +417,20 @@
     <div id="dHabitRows"></div>
   </div>
 
-  <details class="d-card ins-card" id="dInsightsCard">
+  <details class="d-card ins-card" id="dInsightsCard" open>
     <summary class="ins-toggle">
       <span class="d-card-label" style="margin-bottom:0;">Insights</span>
       <span class="ins-chevron">▸</span>
     </summary>
     <div class="ins-content" id="dInsightsContent"></div>
   </details>
+
+  <div class="d-card ins-card" id="dWeeklyReflectCard" style="display:none;">
+    <div class="d-card-label">Weekly Affect Reflection</div>
+    <div class="ins-weekly-prompt" id="dWeeklyPrompt"></div>
+    <textarea class="d-reflect-input" id="dWeeklyReflect" rows="2" placeholder="Describe the emotional theme of this week..." autocorrect="off" autocapitalize="sentences"></textarea>
+    <div class="ins-past-labels" id="dPastLabels"></div>
+  </div>
 </div>
 
 <div id="focusModeBtn" class="hide-in-bel hide-in-project-detail hide-in-confnotes">
