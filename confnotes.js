@@ -217,8 +217,8 @@ function openCNDetail(id) {
   var detailEl = document.getElementById('cnDetailView');
   detailEl.style.display = 'flex';
 
-  // Always start in edit mode
-  toggleMdPreview(true);
+  // Default to preview if note has content, edit if empty
+  toggleMdPreview((n.body || '').trim() ? 'on' : 'off');
 }
 
 function closeCNDetail() {
@@ -261,16 +261,20 @@ function queueCNSave() {
   cnSaveTimer = setTimeout(saveCNDetailNow, 1200);
 }
 
-function toggleMdPreview(forceOff) {
+function toggleMdPreview(mode) {
+  // mode: 'on' = force preview, 'off' = force edit, undefined = toggle
   var bodyEl = document.getElementById('cnBodyInput');
   var previewEl = document.getElementById('cnMdPreview');
   var toggleBtn = document.getElementById('cnMdToggle');
   if (!bodyEl || !previewEl || !toggleBtn) return;
 
-  if (forceOff) { cnMdPreview = false; }
-  else { cnMdPreview = !cnMdPreview; }
+  var wantPreview;
+  if (mode === 'on') wantPreview = true;
+  else if (mode === 'off') wantPreview = false;
+  else wantPreview = !cnMdPreview;
 
-  if (cnMdPreview && typeof marked !== 'undefined') {
+  if (wantPreview && typeof marked !== 'undefined') {
+    cnMdPreview = true;
     // Flush any pending edits before rendering
     saveCNDetailNow();
     previewEl.innerHTML = marked.parse(bodyEl.value || '', { breaks: true, gfm: true });
@@ -290,7 +294,7 @@ function toggleMdPreview(forceOff) {
     bodyEl.style.display = '';
     toggleBtn.textContent = 'preview';
     toggleBtn.classList.remove('md-active');
-    if (forceOff !== true) bodyEl.focus();
+    if (mode !== 'off') bodyEl.focus();
   }
 }
 
@@ -425,7 +429,13 @@ document.getElementById('cnMonoToggle').addEventListener('click', function() {
 });
 
 document.getElementById('cnMdToggle').addEventListener('click', function() {
-  toggleMdPreview(false);
+  toggleMdPreview(); // no arg = toggle
+});
+
+document.getElementById('cnMdPreview').addEventListener('click', function(e) {
+  // Don't swallow link clicks — let them open in new tab
+  if (e.target.closest('a')) return;
+  toggleMdPreview('off');
 });
 
 document.getElementById('cnSearchToggle').addEventListener('click', function() {
