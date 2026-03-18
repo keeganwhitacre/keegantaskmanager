@@ -35,7 +35,6 @@
     .cat-settings-row .input { margin-bottom:0; }
   </style>
   <script type="module" src="app.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script>
   <script type="module" src="confnotes.js"></script>
   <script>
   if ('serviceWorker' in navigator) {
@@ -220,7 +219,6 @@
       <button id="cnBackBtn" class="icon-btn" style="margin-right:8px;">&#8249;</button>
       <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
       <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-        <span id="cnMdToggle" class="cn-scratch-mono" title="Preview markdown">preview</span>
         <span id="cnMonoToggle" class="cn-scratch-mono">mono off</span>
         <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
@@ -249,7 +247,6 @@
     </details>
 
     <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write anything..."></textarea>
-    <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
   </div>
 </div>
 
@@ -403,6 +400,14 @@
     </div>
     <div id="dHabitRows"></div>
   </div>
+
+  <details class="d-card ins-card" id="dInsightsCard">
+    <summary class="ins-toggle">
+      <span class="d-card-label" style="margin-bottom:0;">Insights</span>
+      <span class="ins-chevron">▸</span>
+    </summary>
+    <div class="ins-content" id="dInsightsContent"></div>
+  </details>
 </div>
 
 <div id="focusModeBtn" class="hide-in-bel hide-in-project-detail hide-in-confnotes">

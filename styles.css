@@ -945,6 +945,69 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 .mood-heatmap { display: flex; gap: 4px; justify-content: flex-end; }
 .mood-cell { width: 12px; height: 12px; border-radius: 3px; background: var(--border-divider); transition: background 0.3s; }
 
+/* ── INSIGHTS CARD ── */
+.ins-card { cursor: default; }
+.ins-card[open] .ins-chevron { transform: rotate(90deg); }
+.ins-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; -webkit-user-select: none; user-select: none; padding: 2px 0; }
+.ins-toggle::-webkit-details-marker { display: none; }
+.ins-chevron { font-size: 10px; color: var(--text-muted); transition: transform 0.2s ease; }
+.ins-content { padding-top: 14px; }
+.ins-section { margin-bottom: 20px; }
+.ins-section:last-child { margin-bottom: 4px; }
+.ins-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; font-weight: 600; }
+.ins-sub { font-weight: 400; letter-spacing: 0.04em; text-transform: none; }
+.ins-note { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); font-style: italic; }
+.ins-empty { font-size: 12px; color: var(--text-muted); font-style: italic; padding: 8px 0; }
+
+/* Mood calendar */
+.ins-cal-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ins-cal-day-labels { display: flex; gap: 3px; margin-bottom: 2px; padding-left: 0; }
+.ins-cal-day-labels span { width: 14px; height: 14px; font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); text-align: center; line-height: 14px; flex-shrink: 0; }
+.ins-cal-grid { display: flex; flex-direction: column; gap: 3px; }
+.ins-cal-month { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 0.06em; margin-top: 6px; margin-bottom: 2px; text-transform: uppercase; }
+.ins-cal-month:first-child { margin-top: 0; }
+.ins-cal-row { display: flex; gap: 3px; }
+.ins-cal-cell { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; transition: background 0.2s; }
+.ins-cal-cell.today { outline: 2px solid var(--accent); outline-offset: -1px; }
+.ins-cal-cell.future { opacity: 0; pointer-events: none; }
+.ins-cal-cell.legend { width: 12px; height: 12px; }
+.ins-cal-legend { display: flex; align-items: center; gap: 3px; margin-top: 10px; justify-content: flex-end; }
+.ins-cal-legend-label { font-family: var(--font-mono); font-size: 8px; color: var(--text-muted); margin: 0 2px; }
+
+/* Mood trend */
+.ins-trend-wrap { margin-bottom: 4px; }
+.ins-trend-svg { width: 100%; height: 60px; display: block; }
+.ins-trend-stats { display: flex; justify-content: space-between; margin-top: 6px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+.ins-trend-stats strong { color: var(--text-main); }
+.ins-trend-delta.pos { color: var(--success); }
+.ins-trend-delta.neg { color: var(--danger); }
+.ins-trend-delta.flat { color: var(--text-muted); }
+
+/* Habit rates */
+.ins-habit-rates { display: flex; flex-direction: column; gap: 12px; }
+.ins-habit-row { display: flex; flex-direction: column; gap: 4px; }
+.ins-habit-info { display: flex; justify-content: space-between; align-items: baseline; }
+.ins-habit-name { font-size: 13px; color: var(--text-main); }
+.ins-habit-pct { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+.ins-habit-bar { height: 6px; background: var(--border-divider); border-radius: 3px; overflow: hidden; }
+.ins-habit-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+
+/* Correlations */
+.ins-corr { display: flex; flex-direction: column; gap: 14px; }
+.ins-corr-row { display: flex; justify-content: space-between; align-items: baseline; }
+.ins-corr-name { font-size: 13px; color: var(--text-main); }
+.ins-corr-val { font-family: var(--font-mono); font-size: 11px; }
+.ins-corr-val.pos { color: var(--success); }
+.ins-corr-val.neg { color: var(--danger); }
+.ins-corr-val.flat { color: var(--text-muted); }
+.ins-corr-val.muted { color: var(--text-muted); font-style: italic; }
+.ins-corr-bars { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+.ins-corr-bar-row { display: flex; align-items: center; gap: 8px; }
+.ins-corr-bar-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); width: 24px; text-align: right; }
+.ins-corr-bar { flex: 1; height: 5px; background: var(--border-divider); border-radius: 3px; overflow: hidden; }
+.ins-corr-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+.ins-corr-bar-val { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); width: 22px; }
+
 
 /* ══════════════════════════════════════════════════════════════════
    PROJECTS

@@ -210,7 +210,6 @@ function renderHabits() {
   if (!ds.habits[week]) { ds.habits[week] = {}; }
   let habitsDirty = false;
   HABITS.forEach(h => { if (!ds.habits[week][h.id]) { ds.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; } });
-  const weeks = Object.keys(ds.habits).sort(); while (weeks.length > 2) { delete ds.habits[weeks.shift()]; habitsDirty = true; }
   if (habitsDirty) saveDash(false);
 
   const labelRow = document.getElementById('dHabitDayLabels'); labelRow.innerHTML = '';
@@ -256,11 +255,335 @@ function renderBook() {
     (b.total ? '<div class="d-book-prog-wrap"><div class="d-book-prog-fill" style="width:' + pctClamped + '%"></div></div><div class="d-book-pct">' + pct + '% · ' + (pagesLeft !== null ? pagesLeft + ' pages left' : '') + '</div>' : '');
 }
 
+// ══════════════════════════════════════════════════════════════════
+// INSIGHTS — historical mood + habit analytics
+// ══════════════════════════════════════════════════════════════════
+
+const MOOD_COLORS = {1:'#ff3b30', 2:'#ff9500', 3:'#ffcc00', 4:'#a2d952', 5:'#30d158'};
+const MOOD_EMPTY = 'var(--border-divider)';
+
+// Convert ISO week key + day index to date string YYYY-MM-DD
+function weekDayToDate(isoWeek, dayIdx) {
+  // isoWeek = "2025-W12", dayIdx = 0(Mon)..6(Sun)
+  const parts = isoWeek.split('-W');
+  const year = parseInt(parts[0]);
+  const week = parseInt(parts[1]);
+  // Jan 4 is always in week 1
+  const jan4 = new Date(year, 0, 4);
+  const dow = jan4.getDay() || 7; // Mon=1..Sun=7
+  const weekStart = new Date(jan4);
+  weekStart.setDate(jan4.getDate() - dow + 1 + (week - 1) * 7);
+  const d = new Date(weekStart);
+  d.setDate(d.getDate() + dayIdx);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+// Build a flat map: dateStr → { habits: {id: bool}, mood: number|null }
+function buildDailyData() {
+  const ds = getDState();
+  const daily = {}; // dateStr → {habits:{}, mood:null}
+
+  // Populate from habit data
+  const weeks = Object.keys(ds.habits || {}).sort();
+  weeks.forEach(function(wk) {
+    for (var d = 0; d < 7; d++) {
+      var dateStr = weekDayToDate(wk, d);
+      if (!daily[dateStr]) daily[dateStr] = { habits: {}, mood: null };
+      HABITS.forEach(function(h) {
+        var checks = (ds.habits[wk] && ds.habits[wk][h.id]) || [];
+        if (checks[d]) daily[dateStr].habits[h.id] = true;
+      });
+    }
+  });
+
+  // Populate from mood data
+  var moods = ds.moods || {};
+  Object.keys(moods).forEach(function(dateStr) {
+    if (!daily[dateStr]) daily[dateStr] = { habits: {}, mood: null };
+    daily[dateStr].mood = moods[dateStr];
+  });
+
+  return daily;
+}
+
+function renderInsights() {
+  var container = document.getElementById('dInsightsContent');
+  if (!container) return;
+
+  var daily = buildDailyData();
+  var dates = Object.keys(daily).sort();
+  if (dates.length < 7) {
+    container.innerHTML = '<div class="ins-empty">Keep logging for a few more days to see insights here.</div>';
+    return;
+  }
+
+  var html = '';
+
+  // ── 1. MOOD CALENDAR HEATMAP ──
+  html += '<div class="ins-section">';
+  html += '<div class="ins-label">Mood Calendar</div>';
+  html += renderMoodCalendar(daily, dates);
+  html += '</div>';
+
+  // ── 2. ROLLING MOOD TREND ──
+  var moodDates = dates.filter(function(d) { return daily[d].mood != null; });
+  if (moodDates.length >= 3) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Mood Trend <span class="ins-sub">(7-day rolling avg)</span></div>';
+    html += renderMoodTrend(daily, dates);
+    html += '</div>';
+  }
+
+  // ── 3. HABIT COMPLETION RATES ──
+  html += '<div class="ins-section">';
+  html += '<div class="ins-label">Habit Completion</div>';
+  html += renderHabitRates(daily, dates);
+  html += '</div>';
+
+  // ── 4. MOOD × HABIT CORRELATIONS ──
+  if (moodDates.length >= 14) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Mood × Habits <span class="ins-sub">(avg mood on days with vs without)</span></div>';
+    html += renderCorrelations(daily, dates);
+    html += '</div>';
+  } else if (moodDates.length > 0) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-note">Log mood for ' + (14 - moodDates.length) + ' more days to see mood × habit correlations.</div>';
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function renderMoodCalendar(daily, dates) {
+  // Show a month-view calendar grid for the last ~90 days, grouped by month
+  var today = new Date();
+  var startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 89); // last 90 days
+
+  var html = '';
+  var currentMonth = -1;
+
+  // Group into weeks (Mon-Sun rows)
+  // First, find the Monday on or before startDate
+  var cursor = new Date(startDate);
+  var dow = cursor.getDay() || 7;
+  cursor.setDate(cursor.getDate() - (dow - 1));
+
+  html += '<div class="ins-cal-wrap">';
+  html += '<div class="ins-cal-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>';
+  html += '<div class="ins-cal-grid">';
+
+  var endDate = new Date(today);
+  endDate.setDate(endDate.getDate() + 1);
+
+  while (cursor <= endDate) {
+    // Month label row
+    if (cursor.getMonth() !== currentMonth) {
+      currentMonth = cursor.getMonth();
+      var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      html += '<div class="ins-cal-month">' + monthNames[currentMonth] + '</div>';
+    }
+
+    html += '<div class="ins-cal-row">';
+    for (var i = 0; i < 7; i++) {
+      var dStr = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
+      var val = daily[dStr] ? daily[dStr].mood : null;
+      var isToday = dStr === getTodayStr();
+      var isFuture = cursor > today;
+      var bg = val ? MOOD_COLORS[val] : MOOD_EMPTY;
+      var cls = 'ins-cal-cell' + (isToday ? ' today' : '') + (isFuture ? ' future' : '');
+      var title = dStr + (val ? ' — mood ' + val : '');
+      html += '<div class="' + cls + '" style="background:' + (isFuture ? 'transparent' : bg) + '" title="' + title + '"></div>';
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    html += '</div>';
+  }
+
+  html += '</div>'; // grid
+  // Legend
+  html += '<div class="ins-cal-legend">';
+  html += '<span class="ins-cal-legend-label">low</span>';
+  for (var v = 1; v <= 5; v++) {
+    html += '<div class="ins-cal-cell legend" style="background:' + MOOD_COLORS[v] + '"></div>';
+  }
+  html += '<span class="ins-cal-legend-label">high</span>';
+  html += '</div>';
+  html += '</div>'; // wrap
+
+  return html;
+}
+
+function renderMoodTrend(daily, dates) {
+  // Compute 7-day rolling average, render as SVG sparkline
+  var allDates = [];
+  var today = new Date();
+  var start = new Date(today);
+  start.setDate(start.getDate() - 89);
+  var cursor = new Date(start);
+  while (cursor <= today) {
+    allDates.push(cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0'));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  // Build rolling 7-day averages
+  var points = [];
+  for (var i = 0; i < allDates.length; i++) {
+    var sum = 0, count = 0;
+    for (var j = Math.max(0, i - 6); j <= i; j++) {
+      var m = daily[allDates[j]] ? daily[allDates[j]].mood : null;
+      if (m != null) { sum += m; count++; }
+    }
+    if (count >= 2) { points.push({ idx: i, val: sum / count }); }
+  }
+
+  if (points.length < 3) return '<div class="ins-note">Not enough consecutive data for trend line.</div>';
+
+  var w = 280, h = 60, padX = 2, padY = 4;
+  var minV = 1, maxV = 5;
+  var xScale = (w - 2 * padX) / (allDates.length - 1);
+  var yScale = (h - 2 * padY) / (maxV - minV);
+
+  var pathD = '';
+  points.forEach(function(p, pi) {
+    var x = padX + p.idx * xScale;
+    var y = h - padY - (p.val - minV) * yScale;
+    pathD += (pi === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+  });
+
+  // Gradient fill path
+  var lastPt = points[points.length - 1];
+  var firstPt = points[0];
+  var fillD = pathD + ' L' + (padX + lastPt.idx * xScale).toFixed(1) + ',' + h + ' L' + (padX + firstPt.idx * xScale).toFixed(1) + ',' + h + ' Z';
+
+  var currentAvg = points[points.length - 1].val;
+  var startAvg = points[0].val;
+  var delta = currentAvg - startAvg;
+  var deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+  var deltaClass = delta > 0.2 ? 'pos' : (delta < -0.2 ? 'neg' : 'flat');
+
+  var html = '<div class="ins-trend-wrap">';
+  html += '<svg class="ins-trend-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">';
+  html += '<defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0.02"/></linearGradient></defs>';
+  // Y gridlines at 1,2,3,4,5
+  for (var g = 1; g <= 5; g++) {
+    var gy = h - padY - (g - minV) * yScale;
+    html += '<line x1="0" y1="' + gy.toFixed(1) + '" x2="' + w + '" y2="' + gy.toFixed(1) + '" stroke="var(--border-divider)" stroke-width="0.5"/>';
+  }
+  html += '<path d="' + fillD + '" fill="url(#trendFill)"/>';
+  html += '<path d="' + pathD + '" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  // End dot
+  var endX = padX + lastPt.idx * xScale;
+  var endY = h - padY - (lastPt.val - minV) * yScale;
+  html += '<circle cx="' + endX.toFixed(1) + '" cy="' + endY.toFixed(1) + '" r="3" fill="var(--accent)"/>';
+  html += '</svg>';
+  html += '<div class="ins-trend-stats">';
+  html += '<span>Now: <strong>' + currentAvg.toFixed(1) + '</strong></span>';
+  html += '<span class="ins-trend-delta ' + deltaClass + '">' + deltaStr + ' over period</span>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderHabitRates(daily, dates) {
+  // For each habit, compute % of logged days where it was checked
+  var today = getTodayStr();
+  var relevantDates = dates.filter(function(d) { return d <= today; });
+  if (relevantDates.length === 0) return '';
+
+  var html = '<div class="ins-habit-rates">';
+  HABITS.forEach(function(h) {
+    var total = 0, checked = 0;
+    var streakCurrent = 0, streakMax = 0, inStreak = true;
+    // Walk backwards for current streak
+    for (var i = relevantDates.length - 1; i >= 0; i--) {
+      var d = daily[relevantDates[i]];
+      var did = d && d.habits[h.id];
+      total++;
+      if (did) checked++;
+      if (inStreak && did && !h.bad) { streakCurrent++; }
+      else if (inStreak && !did && !h.bad) { inStreak = false; }
+      // For bad habits, streak = consecutive days WITHOUT
+      if (h.bad && inStreak && !did) { streakCurrent++; }
+      else if (h.bad && inStreak && did) { inStreak = false; }
+    }
+
+    var pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+    // For bad habits, show "X% of days" without the positive framing
+    var barColor = h.bad ? 'var(--danger)' : 'var(--success)';
+    var streakLabel = '';
+    if (!h.bad && streakCurrent > 1) { streakLabel = ' · ' + streakCurrent + '-day streak'; }
+    else if (h.bad && streakCurrent > 1) { streakLabel = ' · ' + streakCurrent + ' days clean'; }
+
+    html += '<div class="ins-habit-row">';
+    html += '<div class="ins-habit-info"><span class="ins-habit-name">' + esc(h.label) + '</span><span class="ins-habit-pct">' + pct + '%' + streakLabel + '</span></div>';
+    html += '<div class="ins-habit-bar"><div class="ins-habit-bar-fill" style="width:' + Math.min(100, pct) + '%;background:' + barColor + '"></div></div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderCorrelations(daily, dates) {
+  var today = getTodayStr();
+  var moodDays = dates.filter(function(d) { return d <= today && daily[d] && daily[d].mood != null; });
+
+  if (moodDays.length < 14) return '';
+
+  var html = '<div class="ins-corr">';
+
+  HABITS.forEach(function(h) {
+    var withSum = 0, withCount = 0, withoutSum = 0, withoutCount = 0;
+    moodDays.forEach(function(d) {
+      var mood = daily[d].mood;
+      var did = daily[d].habits[h.id];
+      if (did) { withSum += mood; withCount++; }
+      else { withoutSum += mood; withoutCount++; }
+    });
+
+    if (withCount < 3 || withoutCount < 3) {
+      html += '<div class="ins-corr-row"><span class="ins-corr-name">' + esc(h.label) + '</span><span class="ins-corr-val muted">not enough data</span></div>';
+      return;
+    }
+
+    var withAvg = withSum / withCount;
+    var withoutAvg = withoutSum / withoutCount;
+    var diff = withAvg - withoutAvg;
+
+    // For bad habits, flip the framing
+    var label, cls;
+    if (h.bad) {
+      // Higher mood on days you didn't doom scroll = good
+      label = (diff < -0.1) ? 'mood ' + Math.abs(diff).toFixed(1) + ' higher without' : (diff > 0.1 ? 'mood ' + diff.toFixed(1) + ' higher with' : 'no clear effect');
+      cls = diff < -0.1 ? 'pos' : (diff > 0.1 ? 'neg' : 'flat');
+    } else {
+      label = (diff > 0.1) ? 'mood ' + diff.toFixed(1) + ' higher with' : (diff < -0.1 ? 'mood ' + Math.abs(diff).toFixed(1) + ' lower with' : 'no clear effect');
+      cls = diff > 0.1 ? 'pos' : (diff < -0.1 ? 'neg' : 'flat');
+    }
+
+    html += '<div class="ins-corr-row">';
+    html += '<span class="ins-corr-name">' + esc(h.label) + '</span>';
+    html += '<span class="ins-corr-val ' + cls + '">' + label + '</span>';
+    html += '</div>';
+
+    // Mini comparison bars
+    html += '<div class="ins-corr-bars">';
+    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">with</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:' + ((withAvg / 5) * 100).toFixed(0) + '%;background:var(--accent)"></div></div><span class="ins-corr-bar-val">' + withAvg.toFixed(1) + '</span></div>';
+    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">w/o</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:' + ((withoutAvg / 5) * 100).toFixed(0) + '%;background:var(--text-muted)"></div></div><span class="ins-corr-bar-val">' + withoutAvg.toFixed(1) + '</span></div>';
+    html += '</div>';
+  });
+
+  html += '<div class="ins-note" style="margin-top:10px;">Based on ' + moodDays.length + ' days of mood data.</div>';
+  html += '</div>';
+  return html;
+}
+
 // ── FULL RENDER ──
 
 function renderDashFull() {
   updateClock(); renderIntention(); renderDashTasks(); renderCountdown();
   renderQuote(); renderReflection(); renderMood(); renderHabits(); renderBook();
+  renderInsights();
 }
 
 // ── ENTER / EXIT (called by router) ──
