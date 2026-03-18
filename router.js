@@ -94,7 +94,6 @@ function switchView(viewName) {
   // confnotes: card stagger via CSS animationDelay
   // tasks: view-animate on #taskList in its onEnter
   const viewElMap = {
-    'projects-detail': 'projectDetailView',
     bel: 'belView',
   };
   const elId = viewElMap[viewName];

@@ -706,8 +706,8 @@ body.focus-mode #focusBanner { display: flex; }
 .section.collapsed .sec-toggle { transform: rotate(-90deg); }
 
 .task-wrap { position: relative; margin-bottom: 8px; border-radius: var(--radius-card); overflow: hidden; }
-.task-wrap.entering { animation: taskIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both; will-change: transform, opacity; }
-@keyframes taskIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.task-wrap.entering { animation: taskIn 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes taskIn { from{opacity:0} to{opacity:1} }
 .task-wrap.removing { animation: taskOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards; pointer-events: none; }
 @keyframes taskOut  { to{opacity:0;transform:translateY(-4px);max-height:0;margin-bottom:0} }
 
@@ -1180,8 +1180,8 @@ body.deep-focus-mode #pomoDisplay {
 /* ── STAGGER ENTRANCE ── */
 
 @keyframes staggerUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Cards start invisible; .stagger-child is added via JS after display:block
@@ -1193,7 +1193,6 @@ body.deep-focus-mode #pomoDisplay {
 .stagger-child {
   animation: staggerUp 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) both;
   animation-delay: calc(var(--si, 0) * 35ms);
-  will-change: transform, opacity;
 }
 
 
