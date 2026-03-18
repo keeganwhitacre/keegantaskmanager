@@ -976,6 +976,18 @@
   },
   "cnNotes": [
     {
+      "id": "mmw8qve1jaoc",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "createdAt": "2026-03-18T16:13:49.801Z",
+      "updatedAt": "2026-03-18T16:13:49.801Z"
+    },
+    {
       "id": "mmv5l41vrf1o",
       "title": "San Diego",
       "speaker": "",
@@ -985,7 +997,7 @@
       "bodyIsMono": true,
       "pinned": false,
       "createdAt": "2026-03-17T21:57:36.067Z",
-      "updatedAt": "2026-03-18T16:07:35.266Z"
+      "updatedAt": "2026-03-18T16:13:47.345Z"
     },
     {
       "id": "mmqonipyx29b",
@@ -1129,5 +1141,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-18T16:07:37.768Z"
+  "updated": "2026-03-18T16:13:49.847Z"
 }
