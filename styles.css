@@ -612,11 +612,11 @@ body.theme-ios26::before {
 body.focus-mode .hide-in-focus { display: none !important; }
 
 body.dash-mode .hide-in-dash { display: none !important; }
-body.dash-mode #dashView { display: block !important; animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+body.dash-mode #dashView { display: block !important; }
 body.dash-mode .bottom-fade, body.dash-mode #fab, body.dash-mode #focusModeBtn, body.dash-mode .quick-add-wrap { display: none !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
-body.projects-mode #projectsView { display: block !important; animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+body.projects-mode #projectsView { display: block !important; }
 body.projects-mode .bottom-fade, body.projects-mode #fab, body.projects-mode #focusModeBtn, body.projects-mode .quick-add-wrap { display: none !important; }
 
 body.projects-detail-mode .hide-in-project-detail { display: none !important; }
@@ -624,7 +624,7 @@ body.projects-detail-mode #projectDetailView { display: block !important; }
 body.projects-detail-mode #projectsView { display: none !important; }
 
 body.bel-mode .hide-in-bel { display: none !important; }
-body.bel-mode #belView { display: block !important; animation: viewIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+body.bel-mode #belView { display: block !important; }
 body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, body.bel-mode .quick-add-wrap { display: none !important; }
 
 
@@ -1091,9 +1091,10 @@ body.deep-focus-mode #pomoDisplay {
 ══════════════════════════════════════════════════════════════════ */
 
 /* ── VIEW TRANSITION ──
-   When a body mode class activates a view with display:block,
-   the browser starts any animation on that element from scratch.
-   No JS needed — pure CSS. */
+   Animations are driven exclusively from JS (router.js or onEnter hooks)
+   to avoid double-animation on Safari iOS where display:block + animation
+   in one CSS rule causes a two-pass style recalc (visible stutter).
+   The view-routing rules above only toggle display — no animation. */
 
 @keyframes viewIn {
   from { opacity: 0; transform: translateY(6px); }

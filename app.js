@@ -838,7 +838,14 @@ register('tasks', {
   onEnter: function() {
     render();
     var tl = document.getElementById('taskList');
-    if (tl) { tl.classList.remove('view-animate'); void tl.offsetWidth; tl.classList.add('view-animate'); }
+    if (tl) {
+      tl.classList.remove('view-animate');
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          tl.classList.add('view-animate');
+        });
+      });
+    }
   },
 });
 register('dash', {

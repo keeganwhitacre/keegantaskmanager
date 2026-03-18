@@ -1,9 +1,11 @@
 // ══════════════════════════════════════════════════════════════════
 // ROUTER MODULE — declarative view switching
-// Replaces the body-class + hide-in-* system with a single
-// switchView() call. CSS rules in styles.css remain the same
-// for now (we still toggle body classes), but the logic is
-// centralized and each view's enter/exit behavior is declared.
+// All view entrance animations are driven from JS (either here via
+// view-enter class, or in the view's own onEnter callback).
+// CSS view-routing rules handle display toggling only — no animation
+// declarations on the display:block rules, to avoid double-animation
+// on Safari iOS PWA where display+animation in one rule can cause
+// a two-pass style evaluation (visible as a vertical shake/stutter).
 // ══════════════════════════════════════════════════════════════════
 
 import { emit } from './state.js';
@@ -87,12 +89,18 @@ function switchView(viewName) {
   }
 
   // ── Animate the incoming view container ──
-  // Most views animate via CSS (animation on body-class display:block rules)
-  // or via onEnter (tasks does its own view-animate + task stagger).
-  // projects-detail is the only view that needs router-driven animation
-  // because it shares body classes with projects view.
-  if (viewName === 'projects-detail') {
-    const el = document.getElementById('projectDetailView');
+  // Each view gets a single animation source via the router's view-enter class.
+  // Tasks handles its own (view-animate on #taskList in its onEnter).
+  const viewElMap = {
+    dash: 'dashView',
+    projects: 'projectsView',
+    'projects-detail': 'projectDetailView',
+    bel: 'belView',
+    confnotes: 'confNotesView',
+  };
+  const elId = viewElMap[viewName];
+  if (elId) {
+    const el = document.getElementById(elId);
     if (el) {
       el.classList.remove('view-enter');
       requestAnimationFrame(function() {
