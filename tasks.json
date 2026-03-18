@@ -889,7 +889,7 @@
   "dash": {
     "intention": "",
     "intentionWeek": "2026-W12",
-    "quoteIdx": 13,
+    "quoteIdx": 12,
     "countdown": {
       "name": "Leaving San Diego :(",
       "date": "2026-03-20"
@@ -1221,5 +1221,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-18T23:38:10.210Z"
+  "updated": "2026-03-18T23:38:32.176Z"
 }
