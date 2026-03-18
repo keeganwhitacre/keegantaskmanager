@@ -630,7 +630,7 @@ function openProjectDetail(id) {
   const p = state.projects.find(x => x.id === id); if (!p) return;
   state.activeProjectId = id;
   document.getElementById('pdTitleInput').value = p.title || ''; document.getElementById('pdDueInput').value = p.due || ''; document.getElementById('pdNotesInput').innerHTML = p.note || ''; setChip('pdStageRow', p.stage || 'Planning');
-  renderProjectTasks(); switchView('projects-detail');
+  switchView('projects-detail');
 }
 
 function saveProjectDetail() {

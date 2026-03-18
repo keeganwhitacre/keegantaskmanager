@@ -206,16 +206,6 @@ function openCNDetail(id) {
   document.getElementById('cnListView').style.display = 'none';
   var detailEl = document.getElementById('cnDetailView');
   detailEl.style.display = 'flex';
-  detailEl.classList.remove('view-enter');
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      detailEl.classList.add('view-enter');
-      detailEl.addEventListener('animationend', function handler() {
-        detailEl.classList.remove('view-enter');
-        detailEl.removeEventListener('animationend', handler);
-      });
-    });
-  });
 }
 
 function closeCNDetail() {
@@ -225,16 +215,6 @@ function closeCNDetail() {
   var listEl = document.getElementById('cnListView');
   listEl.style.display = 'block';
   renderCNList();
-  listEl.classList.remove('view-enter');
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      listEl.classList.add('view-enter');
-      listEl.addEventListener('animationend', function handler() {
-        listEl.classList.remove('view-enter');
-        listEl.removeEventListener('animationend', handler);
-      });
-    });
-  });
 }
 
 function saveCNDetailNow() {

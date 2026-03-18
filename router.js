@@ -89,14 +89,13 @@ function switchView(viewName) {
   }
 
   // ── Animate the incoming view container ──
-  // Each view gets a single animation source via the router's view-enter class.
-  // Tasks handles its own (view-animate on #taskList in its onEnter).
+  // Only for views that don't self-animate in their onEnter.
+  // dash: stagger cards in onDashEnter
+  // confnotes: card stagger via CSS animationDelay
+  // tasks: view-animate on #taskList in its onEnter
   const viewElMap = {
-    dash: 'dashView',
-    projects: 'projectsView',
     'projects-detail': 'projectDetailView',
     bel: 'belView',
-    confnotes: 'confNotesView',
   };
   const elId = viewElMap[viewName];
   if (elId) {

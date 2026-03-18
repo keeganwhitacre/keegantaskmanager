@@ -1097,8 +1097,8 @@ body.deep-focus-mode #pomoDisplay {
    The view-routing rules above only toggle display — no animation. */
 
 @keyframes viewIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Task list re-entrance when switching back to tasks tab */
