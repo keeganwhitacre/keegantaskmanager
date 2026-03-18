@@ -10,6 +10,7 @@ let cnActiveId = null;
 let cnFilter = 'all';
 let cnSaveTimer = null;
 let scratchSyncTimer = null;
+let cnMdPreview = false;
 
 // ── HELPERS ──
 function cnTimeAgo(iso) {
@@ -215,6 +216,9 @@ function openCNDetail(id) {
   document.getElementById('cnListView').style.display = 'none';
   var detailEl = document.getElementById('cnDetailView');
   detailEl.style.display = 'flex';
+
+  // Always start in edit mode
+  toggleMdPreview(true);
 }
 
 function closeCNDetail() {
@@ -255,6 +259,39 @@ function saveCNDetailNow() {
 function queueCNSave() {
   if (cnSaveTimer) clearTimeout(cnSaveTimer);
   cnSaveTimer = setTimeout(saveCNDetailNow, 1200);
+}
+
+function toggleMdPreview(forceOff) {
+  var bodyEl = document.getElementById('cnBodyInput');
+  var previewEl = document.getElementById('cnMdPreview');
+  var toggleBtn = document.getElementById('cnMdToggle');
+  if (!bodyEl || !previewEl || !toggleBtn) return;
+
+  if (forceOff) { cnMdPreview = false; }
+  else { cnMdPreview = !cnMdPreview; }
+
+  if (cnMdPreview && typeof marked !== 'undefined') {
+    // Flush any pending edits before rendering
+    saveCNDetailNow();
+    previewEl.innerHTML = marked.parse(bodyEl.value || '', { breaks: true, gfm: true });
+    // Open links in new tab
+    previewEl.querySelectorAll('a').forEach(function(a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+    });
+    bodyEl.style.display = 'none';
+    previewEl.style.display = 'block';
+    toggleBtn.textContent = 'edit';
+    toggleBtn.classList.add('md-active');
+  } else {
+    cnMdPreview = false;
+    previewEl.style.display = 'none';
+    previewEl.innerHTML = '';
+    bodyEl.style.display = '';
+    toggleBtn.textContent = 'preview';
+    toggleBtn.classList.remove('md-active');
+    if (forceOff !== true) bodyEl.focus();
+  }
 }
 
 function createNewNote() {
@@ -385,6 +422,10 @@ document.getElementById('cnMonoToggle').addEventListener('click', function() {
   this.textContent = isMono ? 'mono on' : 'mono off';
   this.classList.toggle('mono-active', isMono);
   queueCNSave();
+});
+
+document.getElementById('cnMdToggle').addEventListener('click', function() {
+  toggleMdPreview(false);
 });
 
 document.getElementById('cnSearchToggle').addEventListener('click', function() {
