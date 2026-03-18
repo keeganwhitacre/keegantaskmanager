@@ -724,7 +724,7 @@ body.focus-mode #focusBanner { display: flex; }
 .task.done { opacity: 0.3; }
 .task.dimmed { opacity: 0.45; border-style: dashed; }
 
-.cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--task-cb-border); background: var(--task-cb-bg); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.18s cubic-bezier(0.2, 0.9, 0.3, 1); cursor: pointer; color: var(--text-inverse); }
+.cb { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--task-cb-border); background: var(--task-cb-bg); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.18s; cursor: pointer; color: var(--text-inverse); }
 .task.done .cb { background: var(--success); border-color: var(--success); }
 .cb.popping { animation: cbPop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1); }
 
@@ -1112,67 +1112,66 @@ body.deep-focus-mode #pomoDisplay {
 
 
 /* ── MICRO-INTERACTIONS ── */
-/* iOS pattern: instant scale-down on :active, spring bounce-back on release */
 
-.icon-btn { transition: background 0.15s ease, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.icon-btn:active { transform: scale(0.88); transition-duration: 0.06s; }
+.icon-btn { transition: background 0.12s ease, transform 0.1s ease; }
+.icon-btn:active { transform: scale(0.88); }
 
-.tab-btn { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.tab-btn:active { transform: scale(0.96); transition-duration: 0.06s; }
+.tab-btn { transition: all 0.15s ease-out; }
+.tab-btn:active { transform: scale(0.95); }
 
-.chip { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.chip:active { transform: scale(0.96); transition-duration: 0.06s; }
+.chip { transition: all 0.15s ease-out; }
+.chip:active { transform: scale(0.95); }
 
-.s-chip { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.s-chip:active { transform: scale(0.95); transition-duration: 0.06s; }
+.s-chip { transition: all 0.15s ease-out; }
+.s-chip:active { transform: scale(0.94); }
 
-.fab { transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.fab:active { transform: scale(0.88) !important; transition-duration: 0.06s; }
+.fab { transition: transform 0.12s ease; }
+.fab:active { transform: scale(0.88) !important; }
 
-.sheet-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.15s ease; }
-.sheet-btn:active { transform: scale(0.97); transition-duration: 0.06s; }
+.sheet-btn { transition: transform 0.1s ease, background 0.12s ease; }
+.sheet-btn:active { transform: scale(0.97); }
 
-.pomo-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.pomo-btn:active { transform: scale(0.94); transition-duration: 0.06s; }
+.pomo-btn { transition: transform 0.1s ease; }
+.pomo-btn:active { transform: scale(0.94); }
 
-.shop-add-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.shop-add-btn:active { transform: scale(0.94); transition-duration: 0.06s; }
+.shop-add-btn { transition: transform 0.1s ease; }
+.shop-add-btn:active { transform: scale(0.94); }
 
-.quick-add-send { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.quick-add-send:active { transform: scale(0.88); transition-duration: 0.06s; }
+.quick-add-send { transition: transform 0.1s ease; }
+.quick-add-send:active { transform: scale(0.88); }
 
-.close-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.close-btn:active { transform: scale(0.85); transition-duration: 0.06s; }
+.close-btn { transition: transform 0.1s ease; }
+.close-btn:active { transform: scale(0.85); }
 
-.theme-swatch { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.theme-swatch:active { transform: scale(0.9); transition-duration: 0.06s; }
+.theme-swatch { transition: transform 0.12s ease; }
+.theme-swatch:active { transform: scale(0.9); }
 
-.bel-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.bel-cb:active { transform: scale(0.88); transition-duration: 0.06s; }
+.bel-cb { transition: all 0.15s ease-out; }
+.bel-cb:active { transform: scale(0.88); }
 
-.shop-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.shop-cb:active { transform: scale(0.88); transition-duration: 0.06s; }
+.shop-cb { transition: all 0.15s ease-out; }
+.shop-cb:active { transform: scale(0.88); }
 
-.mood-btn:active { transform: scale(0.9) !important; transition-duration: 0.06s; }
+.mood-btn:active { transform: scale(0.9) !important; }
 
-.d-habit-cb { transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.d-habit-cb:active { transform: scale(0.85); transition-duration: 0.06s; }
+.d-habit-cb { transition: all 0.15s ease-out; }
+.d-habit-cb:active { transform: scale(0.85); }
 
-.d-quote-btn { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
-.d-quote-btn:active { transform: scale(0.85); transition-duration: 0.06s; }
+.d-quote-btn { transition: transform 0.1s ease; }
+.d-quote-btn:active { transform: scale(0.85); }
 
 
 /* ── HOVER EFFECTS (desktop only) ── */
 
 @media (hover: hover) {
-  .task { transition: background 0.1s, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+  .task { transition: background 0.1s, transform 0.15s ease, box-shadow 0.15s ease; }
   .task:hover { transform: translateY(-1px); box-shadow: var(--shadow-base), 0 4px 16px rgba(0,0,40,0.07); }
   .task.done:hover { transform: none; box-shadow: var(--shadow-base); }
 
-  .project-card { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+  .project-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
   .project-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-base), 0 6px 20px rgba(0,0,40,0.09); }
 
-  .d-card { transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+  .d-card { transition: transform 0.15s ease; }
   .d-card:hover { transform: translateY(-1px); }
 }
 
@@ -1223,11 +1222,10 @@ body.deep-focus-mode #pomoDisplay {
 /* Habit checkbox pop */
 @keyframes habitPop {
   0%   { transform: scale(1); }
-  40%  { transform: scale(1.2); }
-  70%  { transform: scale(0.96); }
+  40%  { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
-.d-habit-cb.just-checked { animation: habitPop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.d-habit-cb.just-checked { animation: habitPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
 
 /* ── SECTION COLLAPSE ── */

@@ -68,7 +68,7 @@ body.confnotes-mode .fab { display: flex !important; }
   padding: 14px 16px;
   margin-bottom: 8px;
   cursor: pointer;
-  transition: background 0.1s, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+  transition: background 0.1s, transform 0.12s ease;
   backdrop-filter: var(--glass-filter);
   -webkit-backdrop-filter: var(--glass-filter);
   box-shadow: var(--shadow-base);
@@ -106,7 +106,7 @@ body.confnotes-mode .fab { display: flex !important; }
 }
 
 /* Pin button in editor topbar */
-.cn-pin-btn { border-color: transparent; background: transparent; transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.cn-pin-btn { border-color: transparent; background: transparent; transition: all 0.15s ease; }
 .cn-pin-btn:active { transform: scale(0.85); }
 .cn-pin-btn svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.15s; }
 .cn-pin-btn.pinned { background: var(--accent-faded); border-color: var(--accent); }
