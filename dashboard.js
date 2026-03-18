@@ -60,10 +60,10 @@ const WEEKLY_PROMPTS = [
 ];
 
 const HABITS = [
-  { id: 'sleep', label: 'Slept 7h+', bad: false },
-  { id: 'read',  label: 'Read',      bad: false },
-  { id: 'lift',  label: 'Lifted',    bad: false },
-  { id: 'doom',  label: 'Doom scrolled', bad: true },
+  { id: 'sleep', label: 'Slept 7h+', bad: false, days: [0,1,2,3,4,5,6] },
+  { id: 'read',  label: 'Read',      bad: false, days: [0,1,2,3,4,5,6] },
+  { id: 'lift',  label: 'Lifted',    bad: false, days: [0,1,2,3,4] },
+  { id: 'doom',  label: 'Doom scrolled', bad: true, days: [0,1,2,3,4,5,6] },
 ];
 
 // Affect grid constants
@@ -320,22 +320,38 @@ function renderHabits() {
   const rowsEl = document.getElementById('dHabitRows'); rowsEl.innerHTML = '';
   HABITS.forEach(h => {
     const checks = ds.habits[week][h.id] || [false,false,false,false,false,false,false];
+    const scheduleDays = h.days || [0,1,2,3,4,5,6];
     const row = document.createElement('div'); row.className = 'd-habit-row';
     const label = document.createElement('div'); label.className = 'd-habit-label'; label.textContent = h.label;
+    // Show schedule hint if not every day
+    if (scheduleDays.length < 7) {
+      const hint = document.createElement('span');
+      hint.style.cssText = 'font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:4px;font-family:var(--font-mono);';
+      const dayAbbr = ['M','T','W','T','F','S','S'];
+      hint.textContent = scheduleDays.map(function(d){ return dayAbbr[d]; }).join('');
+      label.appendChild(hint);
+    }
     row.appendChild(label);
     const checksEl = document.createElement('div'); checksEl.className = 'd-habit-checks';
     checks.forEach((checked, i) => {
       const cb = document.createElement('div'); const isBad = h.bad;
-      cb.className = 'd-habit-cb' + (checked ? (isBad ? ' checked-bad' : ' checked') : '') + (i === todayDow ? ' today-col' : '') + (i > todayDow ? ' future' : '');
+      const isOffDay = scheduleDays.indexOf(i) === -1;
+      cb.className = 'd-habit-cb'
+        + (isOffDay ? ' off-day' : '')
+        + (checked && !isOffDay ? (isBad ? ' checked-bad' : ' checked') : '')
+        + (i === todayDow ? ' today-col' : '')
+        + (i > todayDow ? ' future' : '');
       cb.dataset.habit = h.id; cb.dataset.day = i;
-      cb.addEventListener('click', function() {
-        if (!ds.habits[week][h.id]) ds.habits[week][h.id] = [false,false,false,false,false,false,false];
-        ds.habits[week][h.id][i] = !ds.habits[week][h.id][i];
-        const isNowChecked = ds.habits[week][h.id][i]; saveDash(true);
-        if (h.bad) { cb.classList.toggle('checked-bad', isNowChecked); cb.classList.remove('checked'); }
-        else { cb.classList.toggle('checked', isNowChecked); cb.classList.remove('checked-bad'); }
-        cb.classList.remove('just-checked'); requestAnimationFrame(function() { requestAnimationFrame(function() { cb.classList.add('just-checked'); }); });
-      });
+      if (!isOffDay) {
+        cb.addEventListener('click', function() {
+          if (!ds.habits[week][h.id]) ds.habits[week][h.id] = [false,false,false,false,false,false,false];
+          ds.habits[week][h.id][i] = !ds.habits[week][h.id][i];
+          const isNowChecked = ds.habits[week][h.id][i]; saveDash(true);
+          if (h.bad) { cb.classList.toggle('checked-bad', isNowChecked); cb.classList.remove('checked'); }
+          else { cb.classList.toggle('checked', isNowChecked); cb.classList.remove('checked-bad'); }
+          cb.classList.remove('just-checked'); requestAnimationFrame(function() { requestAnimationFrame(function() { cb.classList.add('just-checked'); }); });
+        });
+      }
       checksEl.appendChild(cb);
     });
     row.appendChild(checksEl); rowsEl.appendChild(row);
@@ -352,9 +368,22 @@ function renderBook() {
   const pct = (b.total && b.current) ? Math.round((b.current / b.total) * 100) : 0;
   const pctClamped = Math.min(100, Math.max(0, pct));
   const pagesLeft = (b.total && b.current) ? (b.total - b.current) : null;
+
+  // Calculate days since last progress update
+  var nudgeHtml = '';
+  if (b.lastUpdated) {
+    var lastDate = new Date(b.lastUpdated); lastDate.setHours(0,0,0,0);
+    var now = new Date(); now.setHours(0,0,0,0);
+    var daysSince = Math.round((now - lastDate) / 86400000);
+    if (daysSince >= 3 && pct < 100) {
+      nudgeHtml = '<div class="d-book-nudge">Haven\'t read in ' + daysSince + ' day' + (daysSince !== 1 ? 's' : '') + ' — pick it back up?</div>';
+    }
+  }
+
   content.innerHTML = '<div class="d-book-title">' + esc(b.title) + '</div>' +
     (b.author ? '<div class="d-book-author">' + esc(b.author) + '</div>' : '') +
-    (b.total ? '<div class="d-book-prog-wrap"><div class="d-book-prog-fill" style="width:' + pctClamped + '%"></div></div><div class="d-book-pct">' + pct + '% · ' + (pagesLeft !== null ? pagesLeft + ' pages left' : '') + '</div>' : '');
+    (b.total ? '<div class="d-book-prog-wrap"><div class="d-book-prog-fill" style="width:' + pctClamped + '%"></div></div><div class="d-book-pct">' + pct + '% · ' + (pagesLeft !== null ? pagesLeft + ' pages left' : '') + '</div>' : '') +
+    nudgeHtml;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -416,7 +445,13 @@ function renderInsights() {
 
   var html = '';
 
-  // 1. AFFECT SPACE SCATTERPLOT
+  // 1. AFFECT CALENDAR HEATMAP
+  html += '<div class="ins-section">';
+  html += '<div class="ins-label">Affect Calendar <span class="ins-sub">(last 90 days)</span></div>';
+  html += renderAffectCalendar(daily);
+  html += '</div>';
+
+  // 2. AFFECT SPACE SCATTERPLOT
   html += '<div class="ins-section">';
   html += '<div class="ins-label">Your Affect Space <span class="ins-sub">(last 90 days)</span></div>';
   html += renderAffectScatter(daily, affectDates);
@@ -471,6 +506,63 @@ function renderInsights() {
 
   container.innerHTML = html;
   renderWeeklyReflection();
+}
+
+// ── AFFECT CALENDAR ──
+function renderAffectCalendar(daily) {
+  var today = new Date();
+  var startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 89);
+
+  var html = '<div class="ins-cal-wrap">';
+  html += '<div class="ins-cal-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>';
+  html += '<div class="ins-cal-grid">';
+
+  // Find Monday on or before startDate
+  var cursor = new Date(startDate);
+  var dow = cursor.getDay() || 7;
+  cursor.setDate(cursor.getDate() - (dow - 1));
+
+  var endDate = new Date(today);
+  endDate.setDate(endDate.getDate() + 1);
+  var currentMonth = -1;
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var todayStr = getTodayStr();
+
+  while (cursor <= endDate) {
+    if (cursor.getMonth() !== currentMonth) {
+      currentMonth = cursor.getMonth();
+      html += '<div class="ins-cal-month">' + monthNames[currentMonth] + '</div>';
+    }
+    html += '<div class="ins-cal-row">';
+    for (var i = 0; i < 7; i++) {
+      var dStr = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
+      var ae = daily[dStr] ? daily[dStr].affect : null;
+      var isToday = dStr === todayStr;
+      var isFuture = cursor > today;
+      var bg = ae ? affectToColor(ae.v, ae.a) : 'var(--border-divider)';
+      var cls = 'ins-cal-cell' + (isToday ? ' today' : '') + (isFuture ? ' future' : '');
+      var title = dStr + (ae ? ' — valence:' + ae.v + ' arousal:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') : '');
+      html += '<div class="' + cls + '" style="background:' + (isFuture ? 'transparent' : bg) + '" title="' + title + '"></div>';
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    html += '</div>';
+  }
+  html += '</div>'; // grid
+
+  // Legend: show the four corners
+  html += '<div class="ins-cal-legend">';
+  html += '<span class="ins-cal-legend-label">drained+rough</span>';
+  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(0, 0) + '"></div>';
+  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 0) + '"></div>';
+  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 2) + '"></div>';
+  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 4) + '"></div>';
+  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(4, 4) + '"></div>';
+  html += '<span class="ins-cal-legend-label">wired+good</span>';
+  html += '</div>';
+
+  html += '</div>'; // wrap
+  return html;
 }
 
 // ── SCATTER ──
@@ -740,8 +832,15 @@ function renderHabitRates(daily, dates) {
 
   var html = '<div class="ins-habit-rates">';
   HABITS.forEach(function(h) {
+    var scheduleDays = h.days || [0,1,2,3,4,5,6];
     var total=0, checked=0, streakCurrent=0, inStreak=true;
     for (var i=relevantDates.length-1;i>=0;i--) {
+      // Check if this date is a scheduled day for this habit
+      var dateObj = new Date(relevantDates[i]+'T12:00:00');
+      var dow = dateObj.getDay(); // 0=Sun
+      var dowMon = dow===0?6:dow-1; // Convert to Mon=0
+      if (scheduleDays.indexOf(dowMon) === -1) continue; // skip off-days entirely
+
       var d=daily[relevantDates[i]], did=d&&d.habits[h.id];
       total++; if(did) checked++;
       if(inStreak&&did&&!h.bad) streakCurrent++;
@@ -913,7 +1012,13 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
   document.getElementById('dBookSave').addEventListener('click', function() {
     const ds = getDState(); const title = document.getElementById('dBookTitle').value.trim(); const author = document.getElementById('dBookAuthor').value.trim();
     const current = parseInt(document.getElementById('dBookCurrent').value) || 0; const total = parseInt(document.getElementById('dBookTotal').value) || 0;
-    if (!title) return; ds.book = { title, author, current, total }; saveDash(true); renderBook(); document.getElementById('dBookEdit').classList.remove('open');
+    if (!title) return;
+    var oldCurrent = ds.book ? ds.book.current : 0;
+    var lastUpdated = (ds.book && ds.book.lastUpdated) ? ds.book.lastUpdated : new Date().toISOString();
+    // Only update timestamp if page count actually changed
+    if (current !== oldCurrent) lastUpdated = new Date().toISOString();
+    ds.book = { title, author, current, total, lastUpdated: lastUpdated };
+    saveDash(true); renderBook(); document.getElementById('dBookEdit').classList.remove('open');
   });
 }
 

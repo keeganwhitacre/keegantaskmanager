@@ -1688,3 +1688,28 @@ body.deep-focus-mode #pomoDisplay {
   border: 1px solid var(--border-divider);
   color: var(--text-muted);
 }
+
+/* Habit off-day cells */
+.d-habit-cb.off-day {
+  opacity: 0.15;
+  pointer-events: none;
+  cursor: default;
+  background: transparent !important;
+  border-style: dashed !important;
+}
+.d-habit-cb.off-day::after {
+  content: '' !important;
+}
+
+/* Book nudge */
+.d-book-nudge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.2);
+  border-radius: 8px;
+  line-height: 1.4;
+}
