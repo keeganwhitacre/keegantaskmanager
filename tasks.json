@@ -875,7 +875,7 @@
       "date": "2026-03-20"
     },
     "reflection": "",
-    "reflectionDate": "2026-03-17",
+    "reflectionDate": "2026-03-18",
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -919,7 +919,7 @@
         "sleep": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -1129,5 +1129,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-18T03:45:50.930Z"
+  "updated": "2026-03-18T15:02:29.023Z"
 }
