@@ -5,7 +5,7 @@
 // constructionist insights, weekly reflection
 // ══════════════════════════════════════════════════════════════════
 
-import { state, esc, saveDash, getDState } from './state.js';
+import { state, esc, saveDash, getDState, getHabits, showToast } from './state.js';
 import { switchView } from './router.js';
 
 // ── Dependencies injected from app.js via init ──
@@ -64,13 +64,6 @@ const WEEKLY_PROMPTS = [
   "If this week's experience had a color and a texture, what would they be?",
   "What sensations showed up most often this week? How did you make sense of them?",
   "What category would you give the dominant feeling-tone of this week?",
-];
-
-const HABITS = [
-  { id: 'sleep', label: 'Slept 7h+', bad: false, days: [0,1,2,3,4,5,6] },
-  { id: 'read',  label: 'Read',      bad: false, days: [0,1,2,3,4,5,6] },
-  { id: 'lift',  label: 'Lifted',    bad: false, days: [0,1,2,3,4] },
-  { id: 'doom',  label: 'Doom scrolled', bad: true, days: [0,1,2,3,4,5,6] },
 ];
 
 // Affect grid constants
@@ -327,14 +320,14 @@ function renderHabits() {
   const dayLabels = ['M','T','W','T','F','S','S'];
   if (!ds.habits[week]) { ds.habits[week] = {}; }
   let habitsDirty = false;
-  HABITS.forEach(h => { if (!ds.habits[week][h.id]) { ds.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; } });
+  getHabits().forEach(h => { if (!ds.habits[week][h.id]) { ds.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; } });
   if (habitsDirty) saveDash(false);
 
   const labelRow = document.getElementById('dHabitDayLabels'); labelRow.innerHTML = '';
   dayLabels.forEach((l, i) => { const el = document.createElement('div'); el.className = 'd-day-label' + (i === todayDow ? ' today-col' : ''); el.textContent = l; labelRow.appendChild(el); });
 
   const rowsEl = document.getElementById('dHabitRows'); rowsEl.innerHTML = '';
-  HABITS.forEach(h => {
+  getHabits().forEach(h => {
     const checks = ds.habits[week][h.id] || [false,false,false,false,false,false,false];
     const scheduleDays = h.days || [0,1,2,3,4,5,6];
     const row = document.createElement('div'); row.className = 'd-habit-row';
@@ -400,7 +393,7 @@ function buildDailyData() {
     for (var d = 0; d < 7; d++) {
       var dateStr = weekDayToDate(wk, d);
       if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
-      HABITS.forEach(function(h) {
+      getHabits().forEach(function(h) {
         var checks = (ds.habits[wk] && ds.habits[wk][h.id]) || [];
         if (checks[d]) daily[dateStr].habits[h.id] = true;
       });
@@ -748,7 +741,7 @@ function renderContextProfiles(daily, ctxDates) {
 function renderHabitAffect(daily, affectDates) {
   var html = '<div class="ins-corr">';
 
-  HABITS.forEach(function(h) {
+  getHabits().forEach(function(h) {
     var wV=0, wA=0, wC=0, woV=0, woA=0, woC=0;
     affectDates.forEach(function(d) {
       var ae = daily[d].affect, did = daily[d].habits[h.id];
@@ -825,7 +818,7 @@ function renderHabitRates(daily, dates) {
   if (relevantDates.length === 0) return '';
 
   var html = '<div class="ins-habit-rates">';
-  HABITS.forEach(function(h) {
+  getHabits().forEach(function(h) {
     var scheduleDays = h.days || [0,1,2,3,4,5,6];
     var total=0, checked=0, streakCurrent=0, inStreak=true;
     for (var i=relevantDates.length-1;i>=0;i--) {
@@ -946,7 +939,7 @@ function renderSnapshot() {
   var week = getISOWeek(new Date());
   var todayDow = getDayOfWeek();
   var habitsChecked = [];
-  HABITS.forEach(function(h) {
+  getHabits().forEach(function(h) {
     var checks = ds.habits && ds.habits[week] && ds.habits[week][h.id];
     if (checks && checks[todayDow] && !h.bad) habitsChecked.push(h.label.toLowerCase());
     if (checks && checks[todayDow] && h.bad) habitsChecked.push(h.label.toLowerCase());

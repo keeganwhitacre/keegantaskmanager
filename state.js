@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════
 // STATE MODULE — single source of truth
-// Unified state, persistence, categories, pub/sub event bus
+// Unified state, persistence, categories, habits, pub/sub event bus
 // ══════════════════════════════════════════════════════════════════
 
 // ── LOCALSTORAGE KEYS ──
@@ -33,6 +33,16 @@ const CAT_DEFAULTS = {
 };
 
 let CAT_LABEL = Object.assign({}, CAT_DEFAULTS);
+
+// ── HABITS ──
+const HABIT_DEFAULTS = [
+  { id: 'sleep', label: 'Slept 7h+', bad: false, days: [0,1,2,3,4,5,6] },
+  { id: 'read',  label: 'Read',      bad: false, days: [0,1,2,3,4,5,6] },
+  { id: 'lift',  label: 'Lifted',    bad: false, days: [0,1,2,3,4] },
+  { id: 'doom',  label: 'Doom scrolled', bad: true, days: [0,1,2,3,4,5,6] },
+];
+
+let HABITS = HABIT_DEFAULTS.map(h => Object.assign({}, h, { days: h.days.slice() }));
 
 // ── STATE OBJECTS ──
 // Core app state
@@ -99,6 +109,20 @@ function esc(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function fmtShort(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate();
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2000);
+}
+
 // ── PUB/SUB EVENT BUS ──
 // Modules subscribe to state changes; anyone can emit.
 // Events: 'tasks', 'projects', 'bel', 'dash', 'shop', 'confnotes',
@@ -138,6 +162,13 @@ function loadLocal() {
 
   // Restore custom category labels
   if (state.settings.customCats) Object.assign(CAT_LABEL, state.settings.customCats);
+
+  // Restore custom habits
+  if (state.settings.customHabits) {
+    HABITS = state.settings.customHabits.map(function(h) {
+      return Object.assign({}, h, { days: (h.days || [0,1,2,3,4,5,6]).slice() });
+    });
+  }
 
   try { const f = localStorage.getItem(KEYS.focus); if (f) state.focus = f; } catch (e) { /* */ }
   try { const n = localStorage.getItem(KEYS.notes); if (n !== null) state.scratchpad = n; } catch (e) { /* */ }
@@ -237,6 +268,19 @@ function updateCategories(newCats) {
   saveSettings();
 }
 
+// ── HABIT MANAGEMENT ──
+function getHabits() { return HABITS; }
+
+function updateHabits(newHabits) {
+  HABITS = newHabits.map(function(h) {
+    return Object.assign({}, h, { days: (h.days || [0,1,2,3,4,5,6]).slice() });
+  });
+  state.settings.customHabits = HABITS.map(function(h) {
+    return { id: h.id, label: h.label, bad: !!h.bad, days: h.days.slice() };
+  });
+  saveSettings();
+}
+
 // ── FULL SYNC PAYLOAD ──
 // Used by sync module to build the GitHub push payload
 function buildSyncPayload() {
@@ -285,6 +329,8 @@ export {
   KEYS,
   CAT_DEFAULTS,
   CAT_LABEL,
+  HABIT_DEFAULTS,
+  HABITS,
   state,
   belState,
   pomo,
@@ -293,6 +339,8 @@ export {
   cnNotes,
   uid,
   esc,
+  fmtShort,
+  showToast,
   on,
   off,
   emit,
@@ -306,6 +354,8 @@ export {
   savePending,
   saveCollapsed,
   updateCategories,
+  getHabits,
+  updateHabits,
   buildSyncPayload,
   applySyncPayload,
 };

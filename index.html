@@ -29,11 +29,20 @@
   <link rel="modulepreload" href="bel.js">
   <link rel="modulepreload" href="dashboard.js">
   <link rel="modulepreload" href="timeline.js">
+  <link rel="modulepreload" href="confnotes.js">
 
   
   <style>
     .cat-settings-row { display:flex; align-items:center; gap:8px; }
     .cat-settings-row .input { margin-bottom:0; }
+    .habit-settings-row { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--border-divider, #3a3b42); border-radius:10px; }
+    .habit-settings-top { display:flex; align-items:center; gap:8px; }
+    .habit-settings-top .input { margin-bottom:0; }
+    .habit-day-toggles { display:flex; gap:4px; }
+    .habit-day-toggle { width:28px; height:24px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); font-size:10px; font-family:var(--font-mono, monospace); cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; }
+    .habit-day-toggle.active { background:var(--accent, #007aff); color:#fff; border-color:var(--accent, #007aff); }
+    .habit-bad-toggle { font-size:10px; padding:3px 8px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); cursor:pointer; -webkit-user-select:none; user-select:none; font-family:var(--font-mono, monospace); }
+    .habit-bad-toggle.active { background:rgba(255,58,48,0.15); color:#ff3a30; border-color:rgba(255,58,48,0.3); }
   </style>
   <script type="module" src="app.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js" defer></script>
@@ -581,6 +590,16 @@
   <div style="display:flex;gap:8px;">
     <button class="sheet-btn" id="addCatBtn" style="flex:1;margin-top:0;">+ Add Category</button>
     <button class="sheet-btn primary" id="saveCatsBtn" style="flex:1;margin-top:0;">Save Categories</button>
+  </div>
+  <div class="divider"></div>
+  <div class="sheet-label">Habits</div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
+    Customize tracked habits. Mark bad habits to flag them red. Set which days each habit applies to (M=0 … S=6).
+  </div>
+  <div id="habitSettingsRows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
+  <div style="display:flex;gap:8px;">
+    <button class="sheet-btn" id="addHabitBtn" style="flex:1;margin-top:0;">+ Add Habit</button>
+    <button class="sheet-btn primary" id="saveHabitsBtn" style="flex:1;margin-top:0;">Save Habits</button>
   </div>
 </div>
 

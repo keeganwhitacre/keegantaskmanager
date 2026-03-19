@@ -1,10 +1,14 @@
 // ══════════════════════════════════════════════════════════════════
-// UNIFIED NOTES MODULE — confnotes.js
+// UNIFIED NOTES MODULE — confnotes.js (ES module)
 // Scratchpad + structured notes in one view.
-// Accesses shared state/utils via window._app bridge.
 // ══════════════════════════════════════════════════════════════════
 
-const _a = window._app;
+import {
+  state, CAT_LABEL, uid, esc, fmtShort, showToast,
+  saveCN, getCnNotes, setCnNotes,
+} from './state.js';
+import { ghPush } from './sync.js';
+import { catCls } from './app.js';
 
 let cnActiveId = null;
 let cnFilter = 'all';
@@ -73,7 +77,7 @@ function cnTimeAgo(iso) {
   if (diffHr < 24) return diffHr + 'h ago';
   const diffDay = Math.floor(diffHr / 24);
   if (diffDay < 7) return diffDay + 'd ago';
-  return _a.fmtShort(then);
+  return fmtShort(then);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -85,7 +89,7 @@ function initScratchpad() {
   const monoBtn = document.getElementById('cnScratchMono');
   if (!sp || !monoBtn) return;
 
-  sp.value = _a.state.scratchpad || '';
+  sp.value = state.scratchpad || '';
 
   const isMono = localStorage.getItem('kw_notes_mono_v3') === 'true';
   sp.classList.toggle('mono', isMono);
@@ -93,13 +97,13 @@ function initScratchpad() {
   monoBtn.classList.toggle('mono-active', isMono);
 
   sp.addEventListener('input', function() {
-    _a.state.scratchpad = this.value;
-    localStorage.setItem('kw_notes_v3', _a.state.scratchpad);
+    state.scratchpad = this.value;
+    localStorage.setItem('kw_notes_v3', state.scratchpad);
     const syncEl = document.getElementById('cnScratchSync');
     if (syncEl) syncEl.textContent = 'unsaved';
     if (scratchSyncTimer) clearTimeout(scratchSyncTimer);
     scratchSyncTimer = setTimeout(function() {
-      _a.ghPush();
+      ghPush();
       if (syncEl) syncEl.textContent = '';
     }, 1500);
   });
@@ -116,7 +120,7 @@ function initScratchpad() {
 function refreshScratchpad() {
   const sp = document.getElementById('cnScratchpad');
   if (sp && document.activeElement !== sp) {
-    sp.value = _a.state.scratchpad || '';
+    sp.value = state.scratchpad || '';
   }
 }
 
@@ -125,7 +129,7 @@ function refreshScratchpad() {
 // ══════════════════════════════════════════════════════════════════
 
 function renderCNList() {
-  const cnNotes = _a.cnNotes;
+  const cnNotes = getCnNotes();
   const list = document.getElementById('cnNotesList');
   if (!list) return;
   list.innerHTML = '';
@@ -170,22 +174,22 @@ function renderCNList() {
     card.dataset.id = n.id;
 
     const tagsHtml = (n.tags || []).map(function(t) {
-      return '<span class="cat ' + _a.catCls(t) + '">' + _a.esc(_a.CAT_LABEL[t] || t) + '</span>';
+      return '<span class="cat ' + catCls(t) + '">' + esc(CAT_LABEL[t] || t) + '</span>';
     }).join('');
 
     let projHtml = '';
     if (n.projectId) {
-      const p = (_a.state.projects || []).find(function(x) { return x.id === n.projectId; });
-      if (p) projHtml = '<span class="proj-link-label">\u26CC ' + _a.esc(p.title) + '</span>';
+      const p = (state.projects || []).find(function(x) { return x.id === n.projectId; });
+      if (p) projHtml = '<span class="proj-link-label">\u26CC ' + esc(p.title) + '</span>';
     }
 
     const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
     const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
 
     card.innerHTML =
-      '<div class="cn-card-title">' + lockHtml + pinHtml + _a.esc(n.title || 'Untitled') + '</div>' +
-      (n.speaker ? '<div class="cn-card-speaker">' + _a.esc(n.speaker) + '</div>' : '') +
-      (n.body ? '<div class="cn-card-preview">' + _a.esc(n.body) + '</div>' : '') +
+      '<div class="cn-card-title">' + lockHtml + pinHtml + esc(n.title || 'Untitled') + '</div>' +
+      (n.speaker ? '<div class="cn-card-speaker">' + esc(n.speaker) + '</div>' : '') +
+      (n.body ? '<div class="cn-card-preview">' + esc(n.body) + '</div>' : '') +
       '<div class="cn-card-meta">' + tagsHtml + projHtml +
       '<span class="cn-card-time">' + cnTimeAgo(n.updatedAt || n.createdAt) + '</span></div>';
 
@@ -219,8 +223,6 @@ function renderCNList() {
   });
 }
 
-window.renderCNList = renderCNList;
-
 // ══════════════════════════════════════════════════════════════════
 // DISTRACTION-FREE EDITOR
 // ══════════════════════════════════════════════════════════════════
@@ -229,7 +231,7 @@ function populateCNProjectSelect() {
   const sel = document.getElementById('cnProjectInput');
   if (!sel) return;
   sel.innerHTML = '<option value="">None</option>';
-  (_a.state.projects || []).forEach(function(p) {
+  (state.projects || []).forEach(function(p) {
     const opt = document.createElement('option');
     opt.value = p.id;
     opt.textContent = p.title;
@@ -238,7 +240,7 @@ function populateCNProjectSelect() {
 }
 
 function openCNDetail(id) {
-  const cnNotes = _a.cnNotes;
+  const cnNotes = getCnNotes();
   let n = null;
   for (let i = 0; i < cnNotes.length; i++) {
     if (cnNotes[i].id === id) { n = cnNotes[i]; break; }
@@ -307,7 +309,7 @@ function closeCNDetail() {
 
 function saveCNDetailNow() {
   if (!cnActiveId) return;
-  const cnNotes = _a.cnNotes;
+  const cnNotes = getCnNotes();
   let n = null;
   for (let i = 0; i < cnNotes.length; i++) {
     if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
@@ -328,7 +330,7 @@ function saveCNDetailNow() {
   n.tags = tags;
   n.updatedAt = new Date().toISOString();
 
-  _a.saveCN(true);
+  saveCN(true);
 }
 
 function queueCNSave() {
@@ -374,9 +376,9 @@ function toggleMdPreview(mode) {
 }
 
 function createNewNote() {
-  const cnNotes = _a.cnNotes;
+  const cnNotes = getCnNotes();
   const n = {
-    id: _a.uid(),
+    id: uid(),
     title: '',
     speaker: '',
     body: '',
@@ -388,19 +390,17 @@ function createNewNote() {
     updatedAt: new Date().toISOString()
   };
   cnNotes.unshift(n);
-  _a.saveCN(false);
+  saveCN(false);
   openCNDetail(n.id);
   setTimeout(function() { document.getElementById('cnTitleInput').focus(); }, 100);
-  _a.showToast('New note created');
+  showToast('New note created');
 }
 
-window.createNewNote = createNewNote;
-
 function deleteCNNote(id) {
-  _a.cnNotes = _a.cnNotes.filter(function(n) { return n.id !== id; });
-  _a.saveCN(true);
+  setCnNotes(getCnNotes().filter(function(n) { return n.id !== id; }));
+  saveCN(true);
   closeCNDetail();
-  _a.showToast('Note deleted');
+  showToast('Note deleted');
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -413,11 +413,11 @@ function rebuildCNChips() {
     const activeVals = [];
     tagRow.querySelectorAll('.s-chip.active').forEach(function(c) { activeVals.push(c.dataset.val); });
     tagRow.innerHTML = '';
-    Object.keys(_a.CAT_LABEL).forEach(function(key) {
+    Object.keys(CAT_LABEL).forEach(function(key) {
       const c = document.createElement('div');
       c.className = 's-chip' + (activeVals.indexOf(key) !== -1 ? ' active' : '');
       c.dataset.val = key;
-      c.textContent = _a.CAT_LABEL[key];
+      c.textContent = CAT_LABEL[key];
       tagRow.appendChild(c);
     });
   }
@@ -430,11 +430,11 @@ function rebuildCNChips() {
     allChip.dataset.cnfilter = 'all';
     allChip.textContent = 'All';
     filterRow.appendChild(allChip);
-    Object.keys(_a.CAT_LABEL).forEach(function(key) {
+    Object.keys(CAT_LABEL).forEach(function(key) {
       const c = document.createElement('div');
       c.className = 'chip' + (currentFilter === key ? ' active' : '');
       c.dataset.cnfilter = key;
-      c.textContent = _a.CAT_LABEL[key];
+      c.textContent = CAT_LABEL[key];
       filterRow.appendChild(c);
     });
   }
@@ -458,7 +458,7 @@ document.getElementById('cnDeleteBtn').addEventListener('click', function() {
 
 document.getElementById('cnPinBtn').addEventListener('click', function() {
   if (!cnActiveId) return;
-  const cnNotes = _a.cnNotes;
+  const cnNotes = getCnNotes();
   let n = null;
   for (let i = 0; i < cnNotes.length; i++) {
     if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
@@ -466,13 +466,13 @@ document.getElementById('cnPinBtn').addEventListener('click', function() {
   if (!n) return;
   n.pinned = !n.pinned;
   this.classList.toggle('pinned', n.pinned);
-  _a.saveCN(true);
-  _a.showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
+  saveCN(true);
+  showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
 });
 
 document.getElementById('cnLockBtn').addEventListener('click', function() {
   if (!cnActiveId || !hasPinSet()) return;
-  var cnNotes = _a.cnNotes;
+  var cnNotes = getCnNotes();
   var n = null;
   for (var i = 0; i < cnNotes.length; i++) {
     if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
@@ -480,8 +480,8 @@ document.getElementById('cnLockBtn').addEventListener('click', function() {
   if (!n) return;
   n.locked = !n.locked;
   this.classList.toggle('locked', n.locked);
-  _a.saveCN(true);
-  _a.showToast(n.locked ? 'Note locked' : 'Note unlocked');
+  saveCN(true);
+  showToast(n.locked ? 'Note locked' : 'Note unlocked');
 });
 
 document.getElementById('cnTagRow').addEventListener('click', function(e) {
@@ -549,3 +549,6 @@ document.addEventListener('keydown', function(e) {
     createNewNote();
   }
 });
+
+// ── EXPORTS ──
+export { renderCNList, createNewNote, rebuildCNChips };

@@ -6,10 +6,11 @@
 import {
   KEYS, CAT_DEFAULTS, CAT_LABEL,
   state, cnNotes,
-  uid, esc,
+  uid, esc, fmtShort, showToast,
   on, emit,
   loadLocal, saveLocal, saveCN,
   saveSettings, savePending, saveCollapsed, updateCategories,
+  getHabits, updateHabits,
   setCnNotes, setBelState,
   getCnNotes,
 } from './state.js';
@@ -21,37 +22,7 @@ import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode } from './dashboard.js';
 import { initTimeline, renderTimeline, onTimelineEnter } from './timeline.js';
-
-// ── Expose globals needed by confnotes.js (loaded as classic script) ──
-// confnotes.js reaches into: ghPush, uid, esc, catCls, CAT_LABEL,
-// state.projects, showToast, fmtShort, switchView, toggleQuickAdd, openAddSheet, cnNotes
-window._app = {
-  get state() { return state; },
-  get CAT_LABEL() { return CAT_LABEL; },
-  get cnNotes() { return getCnNotes(); },
-  set cnNotes(v) { setCnNotes(v); },
-  uid, esc,
-  ghPush,
-  catCls,
-  showToast,
-  fmtShort,
-  switchView,
-  saveCN,
-  get toggleQuickAdd() { return toggleQuickAdd; },
-  get openAddSheet() { return openAddSheet; },
-};
-
-// Also keep window._cnLoadFromGH hook for sync (used from sync → state → applySyncPayload)
-// confnotes.js will overwrite this if loaded.
-window._cnLoadFromGH = function(data) {
-  if (data) {
-    setCnNotes(data);
-    try { localStorage.setItem(KEYS.confnotes, JSON.stringify(data)); } catch(e) {}
-    if (document.body.classList.contains('notes-mode') && typeof window.renderCNList === 'function') {
-      window.renderCNList();
-    }
-  }
-};
+import { renderCNList, createNewNote, rebuildCNChips } from './confnotes.js';
 
 // ══════════════════════════════════════════════════════════════════
 // RENDER & TIME LOGIC
@@ -113,11 +84,6 @@ function fmtDue(due) {
   return fmtShort(d);
 }
 
-function fmtShort(d) {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return months[d.getMonth()] + ' ' + d.getDate();
-}
-
 // ── DYNAMIC CATEGORY COLORS ──
 // Built-in categories have CSS classes in styles.css.
 // Custom categories get auto-assigned from a palette and injected as CSS rules.
@@ -172,7 +138,7 @@ function refreshDynamicCatColors() {
   styleEl.textContent = css;
 }
 
-function catCls(cat) {
+export function catCls(cat) {
   if (BUILTIN_CAT_CLS[cat]) return BUILTIN_CAT_CLS[cat];
   // Dynamic category — ensure it has a color assigned
   _assignCatColor(cat);
@@ -777,6 +743,7 @@ function rebuildCategoryUI() {
       catRow.appendChild(c);
     });
   }
+  rebuildCNChips();
 }
 
 function loadCategoriesUI() {
@@ -817,6 +784,7 @@ function loadSettingsUI() {
   document.getElementById('ghToken').value = state.settings.ghToken || '';
   updateGhUI(!!state.settings.ghToken);
   loadCategoriesUI();
+  loadHabitsUI();
   updatePinUI();
 }
 document.getElementById('saveSettingsBtn').addEventListener('click', function() {
@@ -844,6 +812,108 @@ if (addCatBtn) addCatBtn.addEventListener('click', function() {
 document.getElementById('settingsSheet').addEventListener('click', function(e) {
   const del = e.target.closest('.cat-del-btn');
   if (del) { const row = del.closest('.cat-settings-row'); if (row) row.remove(); }
+  const hdel = e.target.closest('.habit-del-btn');
+  if (hdel) { const row = hdel.closest('.habit-settings-row'); if (row) row.remove(); }
+});
+
+// ── HABIT SETTINGS UI ──
+
+const DAY_LABELS = ['M','T','W','T','F','S','S'];
+
+function loadHabitsUI() {
+  const container = document.getElementById('habitSettingsRows');
+  if (!container) return;
+  container.innerHTML = '';
+  getHabits().forEach(function(h) {
+    container.appendChild(makeHabitRow(h));
+  });
+}
+
+function makeHabitRow(h) {
+  const row = document.createElement('div');
+  row.className = 'habit-settings-row';
+
+  const top = document.createElement('div');
+  top.className = 'habit-settings-top';
+
+  const idInput = document.createElement('input');
+  idInput.className = 'input';
+  idInput.style.cssText = 'width:80px;margin-bottom:0;font-family:var(--font-mono);font-size:12px;';
+  idInput.value = h.id || '';
+  idInput.placeholder = 'id';
+  idInput.dataset.orig = h.id || '';
+  idInput.autocapitalize = 'none';
+
+  const labelInput = document.createElement('input');
+  labelInput.className = 'input';
+  labelInput.style.cssText = 'flex:1;margin-bottom:0;';
+  labelInput.value = h.label || '';
+  labelInput.placeholder = 'Label';
+
+  const badBtn = document.createElement('div');
+  badBtn.className = 'habit-bad-toggle' + (h.bad ? ' active' : '');
+  badBtn.textContent = 'bad';
+  badBtn.title = 'Mark as bad habit (tracked to avoid)';
+  badBtn.addEventListener('click', function() { badBtn.classList.toggle('active'); });
+
+  const delBtn = document.createElement('div');
+  delBtn.className = 'habit-del-btn';
+  delBtn.style.cssText = 'cursor:pointer;padding:0 8px;font-size:18px;color:#ff3a30;line-height:1;flex-shrink:0;';
+  delBtn.textContent = '×';
+
+  top.appendChild(idInput);
+  top.appendChild(labelInput);
+  top.appendChild(badBtn);
+  top.appendChild(delBtn);
+
+  const daysRow = document.createElement('div');
+  daysRow.className = 'habit-day-toggles';
+  var days = h.days || [0,1,2,3,4,5,6];
+  DAY_LABELS.forEach(function(label, i) {
+    var btn = document.createElement('div');
+    btn.className = 'habit-day-toggle' + (days.indexOf(i) !== -1 ? ' active' : '');
+    btn.textContent = label;
+    btn.dataset.day = i;
+    btn.addEventListener('click', function() { btn.classList.toggle('active'); });
+    daysRow.appendChild(btn);
+  });
+
+  row.appendChild(top);
+  row.appendChild(daysRow);
+  return row;
+}
+
+function saveHabitsFromUI() {
+  const container = document.getElementById('habitSettingsRows');
+  if (!container) return;
+  var habits = [];
+  container.querySelectorAll('.habit-settings-row').forEach(function(row) {
+    var top = row.querySelector('.habit-settings-top');
+    var inputs = top.querySelectorAll('input');
+    var id = inputs[0].value.trim().toLowerCase().replace(/\s+/g, '_');
+    var label = inputs[1].value.trim();
+    if (!id || !label) return;
+    var bad = !!top.querySelector('.habit-bad-toggle.active');
+    var days = [];
+    row.querySelectorAll('.habit-day-toggle.active').forEach(function(btn) {
+      days.push(parseInt(btn.dataset.day));
+    });
+    habits.push({ id: id, label: label, bad: bad, days: days });
+  });
+  updateHabits(habits);
+  showToast('Habits saved');
+}
+
+const saveHabitsBtn = document.getElementById('saveHabitsBtn');
+if (saveHabitsBtn) saveHabitsBtn.addEventListener('click', saveHabitsFromUI);
+
+const addHabitBtn = document.getElementById('addHabitBtn');
+if (addHabitBtn) addHabitBtn.addEventListener('click', function() {
+  const container = document.getElementById('habitSettingsRows');
+  if (!container) return;
+  var row = makeHabitRow({ id: '', label: '', bad: false, days: [0,1,2,3,4,5,6] });
+  container.appendChild(row);
+  row.querySelector('input').focus();
 });
 
 // ── NOTES PIN MANAGEMENT ──
@@ -998,12 +1068,12 @@ document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd
 // FAB
 document.getElementById('fab').addEventListener('click', function() {
   if (document.body.classList.contains('notes-mode')) {
-    if (typeof window.createNewNote === 'function') window.createNewNote();
+    createNewNote();
   } else {
     toggleQuickAdd();
   }
 });
-(function() { let pressTimer; document.getElementById('fab').addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { if (document.body.classList.contains('notes-mode')) { if (typeof window.createNewNote === 'function') window.createNewNote(); } else { toggleQuickAdd(); openAddSheet(); } }, 600); }, { passive: true }); document.getElementById('fab').addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true }); document.getElementById('fab').addEventListener('contextmenu', function(e) { e.preventDefault(); }); })();
+(function() { let pressTimer; document.getElementById('fab').addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { if (document.body.classList.contains('notes-mode')) { createNewNote(); } else { toggleQuickAdd(); openAddSheet(); } }, 600); }, { passive: true }); document.getElementById('fab').addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true }); document.getElementById('fab').addEventListener('contextmenu', function(e) { e.preventDefault(); }); })();
 
 document.getElementById('overlay').addEventListener('click', closeSheets);
 document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
@@ -1014,8 +1084,6 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
 // ══════════════════════════════════════════════════════════════════
 // TOAST
 // ══════════════════════════════════════════════════════════════════
-
-let toastTimer; function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2000); }
 
 // ══════════════════════════════════════════════════════════════════
 // ROUTER REGISTRATION
@@ -1054,7 +1122,7 @@ register('projects-detail', {
   onEnter: renderProjectTasks,
 });
 register('notes', {
-  onEnter: function() { if (typeof window.renderCNList === 'function') window.renderCNList(); },
+  onEnter: function() { renderCNList(); },
 });
 register('bel', {
   onEnter: renderBel,
@@ -1161,7 +1229,7 @@ on('data-pulled', () => {
   else if (view === 'projects') renderProjects();
   else if (view === 'projects-detail') renderProjectTasks();
   else if (view === 'bel') renderBel();
-  else if (view === 'notes' && typeof window.renderCNList === 'function') window.renderCNList();
+  else if (view === 'notes') renderCNList();
   else render();
 });
 
@@ -1173,7 +1241,7 @@ loadTheme();
 loadLocal();
 rebuildCategoryUI();
 refreshDynamicCatColors();
-initPomo(showToast);
+initPomo();
 initShopping(openSheet);
 initBel();
 initTimeline();

@@ -4,17 +4,10 @@
 // to build a unified timeline of each day and week.
 // ══════════════════════════════════════════════════════════════════
 
-import { state, esc, getDState } from './state.js';
+import { state, esc, getDState, getHabits } from './state.js';
 import { switchView } from './router.js';
 
 // ── Constants ──
-
-const HABITS = [
-  { id: 'sleep', label: 'Slept 7h+', bad: false, days: [0,1,2,3,4,5,6] },
-  { id: 'read',  label: 'Read',      bad: false, days: [0,1,2,3,4,5,6] },
-  { id: 'lift',  label: 'Lifted',    bad: false, days: [0,1,2,3,4] },
-  { id: 'doom',  label: 'Doom scrolled', bad: true, days: [0,1,2,3,4,5,6] },
-];
 
 const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -115,7 +108,7 @@ function buildWeekData(weekStart) {
 
     // Habits
     const habits = {};
-    HABITS.forEach(function(h) {
+    getHabits().forEach(function(h) {
       const checks = ds.habits && ds.habits[isoWeek] && ds.habits[isoWeek][h.id];
       habits[h.id] = !!(checks && checks[d]);
     });
@@ -316,7 +309,7 @@ function renderWeekSummary(week) {
   const trendLabel = trend > 0.5 ? '↗ up' : trend < -0.5 ? '↘ down' : '→ steady';
 
   // Habit rates
-  const habitHtml = HABITS.filter(function(h) { return !h.bad; }).map(function(h) {
+  const habitHtml = getHabits().filter(function(h) { return !h.bad; }).map(function(h) {
     const completed = days.filter(function(d) { return d.habits[h.id]; }).length;
     const pct = days.length > 0 ? Math.round((completed / days.length) * 100) : 0;
     const color = pct >= 70 ? 'var(--success)' : pct >= 40 ? '#ff9500' : 'var(--danger)';
@@ -374,9 +367,9 @@ function renderDayCard(day, idx) {
   const dayNum = day.dateObj.getDate();
   const dowLabel = DAY_NAMES[day.dow];
   const tasksDone = day.tasks.length;
-  const goodHabits = HABITS.filter(function(h) { return !h.bad && day.habits[h.id]; }).length;
-  const totalGood = HABITS.filter(function(h) { return !h.bad; }).length;
-  const badHabits = HABITS.filter(function(h) { return h.bad && day.habits[h.id]; });
+  const goodHabits = getHabits().filter(function(h) { return !h.bad && day.habits[h.id]; }).length;
+  const totalGood = getHabits().filter(function(h) { return !h.bad; }).length;
+  const badHabits = getHabits().filter(function(h) { return h.bad && day.habits[h.id]; });
 
   let html = '<div class="tl-day-card' + (isToday ? ' today' : '') + (isExpanded ? ' expanded' : '') + '" data-date="' + day.date + '" style="animation-delay:' + (idx * 40) + 'ms;">';
 
@@ -450,12 +443,12 @@ function renderDayCard(day, idx) {
     html += '<div class="tl-detail-section">';
     html += '<div class="tl-detail-label">Habits</div>';
     html += '<div class="tl-habit-chips">';
-    HABITS.forEach(function(h) {
+    getHabits().forEach(function(h) {
       if (day.habits[h.id]) {
         html += '<span class="tl-habit-chip' + (h.bad ? ' bad' : '') + '">' + (h.bad ? '✗' : '✓') + ' ' + esc(h.label) + '</span>';
       }
     });
-    const missed = HABITS.filter(function(h) { return !h.bad && !day.habits[h.id]; });
+    const missed = getHabits().filter(function(h) { return !h.bad && !day.habits[h.id]; });
     if (missed.length > 0) {
       html += '<div class="tl-missed">missed: ' + missed.map(function(h) { return h.label.toLowerCase(); }).join(', ') + '</div>';
     }
