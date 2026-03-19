@@ -20,6 +20,7 @@ import { initPomo, updatePomoUI } from './pomo.js';
 import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderDashFull, onDashEnter, onDashExit } from './dashboard.js';
+import { initTimeline, renderTimeline, onTimelineEnter } from './timeline.js';
 
 // ── Expose globals needed by confnotes.js (loaded as classic script) ──
 // confnotes.js reaches into: ghPush, uid, esc, catCls, CAT_LABEL,
@@ -1052,6 +1053,9 @@ register('bel', {
 register('confnotes', {
   onEnter: function() { if (typeof window.renderCNList === 'function') window.renderCNList(); },
 });
+register('timeline', {
+  onEnter: onTimelineEnter,
+});
 
 // Tab buttons
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
@@ -1151,6 +1155,7 @@ on('data-pulled', () => {
   else if (view === 'projects-detail') renderProjectTasks();
   else if (view === 'bel') renderBel();
   else if (view === 'confnotes' && typeof window.renderCNList === 'function') window.renderCNList();
+  else if (view === 'timeline') renderTimeline();
   else render();
 });
 
@@ -1165,6 +1170,7 @@ refreshDynamicCatColors();
 initPomo(showToast);
 initShopping(openSheet);
 initBel();
+initTimeline();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
 render();
 loadSettingsUI();

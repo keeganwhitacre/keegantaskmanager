@@ -25,10 +25,11 @@ const views = {
   'projects-detail': { bodyClasses: ['projects-mode', 'projects-detail-mode'], onEnter: null, onExit: null },
   bel:              { bodyClasses: ['bel-mode'],                         onEnter: null, onExit: null },
   confnotes:        { bodyClasses: ['confnotes-mode'],                   onEnter: null, onExit: null },
+  timeline:         { bodyClasses: ['timeline-mode'],                    onEnter: null, onExit: null },
 };
 
 // All body classes the router manages (used for cleanup on switch)
-const ALL_CLASSES = ['dash-mode', 'projects-mode', 'projects-detail-mode', 'bel-mode', 'confnotes-mode'];
+const ALL_CLASSES = ['dash-mode', 'projects-mode', 'projects-detail-mode', 'bel-mode', 'confnotes-mode', 'timeline-mode'];
 
 let currentView = 'tasks';
 

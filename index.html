@@ -28,6 +28,7 @@
   <link rel="modulepreload" href="shopping.js">
   <link rel="modulepreload" href="bel.js">
   <link rel="modulepreload" href="dashboard.js">
+  <link rel="modulepreload" href="timeline.js">
 
   
   <style>
@@ -57,6 +58,9 @@
       <div class="date-sub" id="dateSub"></div>
     </div>
     <div class="header-right">
+      <div class="icon-btn" id="timelineBtn" title="Weekly Timeline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
       <div class="icon-btn" id="confNotesBtn" title="Notes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </div>
@@ -70,18 +74,18 @@
   </div>
 </div>
 
-<div class="tab-bar hide-in-bel hide-in-project-detail hide-in-confnotes">
+<div class="tab-bar hide-in-bel hide-in-project-detail hide-in-confnotes hide-in-timeline">
   <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
   <button class="tab-btn" id="tabDash" data-tab="dash">Dashboard</button>
   <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
 </div>
 
-<div class="search-trigger hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="searchTrigger" title="Search">
+<div class="search-trigger hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline" id="searchTrigger" title="Search">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   <span>Search</span>
 </div>
 
-<div class="search-wrap hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="searchWrap">
+<div class="search-wrap hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline" id="searchWrap">
   <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
 </div>
 
@@ -100,7 +104,7 @@
   <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
 </div>
 
-<div class="quick-add-wrap hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="quickAddWrap">
+<div class="quick-add-wrap hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline" id="quickAddWrap">
   <div class="quick-add-row">
     <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
     <button class="quick-add-send" id="quickAddSend">
@@ -109,7 +113,7 @@
   </div>
 </div>
 
-<div class="focus-strip hide-in-focus hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="focusStrip">
+<div class="focus-strip hide-in-focus hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline hide-in-timeline" id="focusStrip">
   <div class="focus-dot"></div>
   <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
     <div class="focus-eye">Pinned Focus</div>
@@ -120,7 +124,7 @@
   <div class="focus-arr" id="focusArr">›</div>
 </div>
 
-<div class="filter-scroll hide-in-focus hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="filterRow">
+<div class="filter-scroll hide-in-focus hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline hide-in-timeline" id="filterRow">
   <div class="chip active" data-filter="all">All</div>
   <div class="chip" data-filter="today">Today</div>
   <div class="chip" data-filter="manuscript">Manuscript</div>
@@ -134,8 +138,8 @@
   <div class="chip" data-filter="archive">Archive</div>
 </div>
 
-<div id="taskList" class="hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" style="min-height:calc(100vh - 320px);"></div>
-<div class="spacer hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes" id="spacerEl"></div>
+<div id="taskList" class="hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline" style="min-height:calc(100vh - 320px);"></div>
+<div class="spacer hide-in-dash hide-in-bel hide-in-project hide-in-project-detail hide-in-confnotes hide-in-timeline" id="spacerEl"></div>
 
 <div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
@@ -254,6 +258,14 @@
     <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write anything..."></textarea>
     <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
   </div>
+</div>
+
+<div id="timelineView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; align-items:center; margin-bottom:16px;">
+    <button id="closeTimelineBtn" class="icon-btn" style="margin-right:12px;">&#8249;</button>
+    <div class="sheet-title" style="margin-bottom:0; flex:1;">Weekly Timeline</div>
+  </div>
+  <div id="timelineContent"></div>
 </div>
 
 <div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
