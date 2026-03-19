@@ -12,6 +12,56 @@ let cnSaveTimer = null;
 let scratchSyncTimer = null;
 let cnMdPreview = false;
 
+// ── LOCK SYSTEM ──
+let _pinUnlocked = false; // session-only, resets on reload
+
+async function hashPin(pin) {
+  const encoded = new TextEncoder().encode(pin);
+  const hash = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function getStoredPinHash() {
+  try { return localStorage.getItem('kw_notes_pin_hash') || ''; } catch(e) { return ''; }
+}
+
+function hasPinSet() {
+  return !!getStoredPinHash();
+}
+
+function showPinModal(title, callback) {
+  var overlay = document.getElementById('pinModalOverlay');
+  var input = document.getElementById('pinModalInput');
+  var error = document.getElementById('pinModalError');
+  var titleEl = document.getElementById('pinModalTitle');
+  titleEl.textContent = title || 'Enter PIN';
+  input.value = '';
+  error.textContent = '';
+  overlay.style.display = 'flex';
+  setTimeout(function() { input.focus(); }, 100);
+
+  // Clean up old listeners
+  var confirmBtn = document.getElementById('pinModalConfirm');
+  var cancelBtn = document.getElementById('pinModalCancel');
+  var newConfirm = confirmBtn.cloneNode(true);
+  var newCancel = cancelBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+  function dismiss() { overlay.style.display = 'none'; input.value = ''; }
+
+  newCancel.addEventListener('click', function() { dismiss(); callback(null); });
+  newConfirm.addEventListener('click', function() {
+    var val = input.value;
+    if (!val) { error.textContent = 'Enter a PIN'; return; }
+    callback(val, error, dismiss);
+  });
+  input.addEventListener('keydown', function handler(e) {
+    if (e.key === 'Enter') { newConfirm.click(); }
+    if (e.key === 'Escape') { dismiss(); callback(null); }
+  });
+}
+
 // ── HELPERS ──
 function cnTimeAgo(iso) {
   if (!iso) return '';
@@ -115,7 +165,7 @@ function renderCNList() {
   var cards = [];
   filtered.forEach(function(n, i) {
     const card = document.createElement('div');
-    card.className = 'cn-note-card';
+    card.className = 'cn-note-card' + (n.locked ? ' locked-card' : '');
     card.style.animationDelay = (i * 30) + 'ms';
     card.dataset.id = n.id;
 
@@ -130,15 +180,33 @@ function renderCNList() {
     }
 
     const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
+    const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
 
     card.innerHTML =
-      '<div class="cn-card-title">' + pinHtml + _a.esc(n.title || 'Untitled') + '</div>' +
+      '<div class="cn-card-title">' + lockHtml + pinHtml + _a.esc(n.title || 'Untitled') + '</div>' +
       (n.speaker ? '<div class="cn-card-speaker">' + _a.esc(n.speaker) + '</div>' : '') +
       (n.body ? '<div class="cn-card-preview">' + _a.esc(n.body) + '</div>' : '') +
       '<div class="cn-card-meta">' + tagsHtml + projHtml +
       '<span class="cn-card-time">' + cnTimeAgo(n.updatedAt || n.createdAt) + '</span></div>';
 
-    card.addEventListener('click', function() { openCNDetail(n.id); });
+    card.addEventListener('click', function() {
+      if (n.locked && !_pinUnlocked) {
+        showPinModal('Enter PIN to unlock', function(pin, errorEl, dismiss) {
+          if (!pin) return;
+          hashPin(pin).then(function(h) {
+            if (h === getStoredPinHash()) {
+              _pinUnlocked = true;
+              dismiss();
+              openCNDetail(n.id);
+            } else {
+              errorEl.textContent = 'Wrong PIN';
+            }
+          });
+        });
+        return;
+      }
+      openCNDetail(n.id);
+    });
     list.appendChild(card);
     cards.push(card);
   });
@@ -204,6 +272,13 @@ function openCNDetail(id) {
   // Pin button state
   const pinBtn = document.getElementById('cnPinBtn');
   if (pinBtn) pinBtn.classList.toggle('pinned', !!(n.pinned));
+
+  // Lock button state
+  const lockBtn = document.getElementById('cnLockBtn');
+  if (lockBtn) {
+    lockBtn.style.display = hasPinSet() ? '' : 'none';
+    lockBtn.classList.toggle('locked', !!(n.locked));
+  }
 
   const metaEl = document.getElementById('cnDetailMeta');
   if (metaEl) {
@@ -403,6 +478,20 @@ document.getElementById('cnPinBtn').addEventListener('click', function() {
   this.classList.toggle('pinned', n.pinned);
   _a.saveCN(true);
   _a.showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
+});
+
+document.getElementById('cnLockBtn').addEventListener('click', function() {
+  if (!cnActiveId || !hasPinSet()) return;
+  var cnNotes = _a.cnNotes;
+  var n = null;
+  for (var i = 0; i < cnNotes.length; i++) {
+    if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
+  }
+  if (!n) return;
+  n.locked = !n.locked;
+  this.classList.toggle('locked', n.locked);
+  _a.saveCN(true);
+  _a.showToast(n.locked ? 'Note locked' : 'Note unlocked');
 });
 
 document.getElementById('cnTagRow').addEventListener('click', function(e) {

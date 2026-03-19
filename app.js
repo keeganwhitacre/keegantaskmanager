@@ -816,6 +816,7 @@ function loadSettingsUI() {
   document.getElementById('ghToken').value = state.settings.ghToken || '';
   updateGhUI(!!state.settings.ghToken);
   loadCategoriesUI();
+  updatePinUI();
 }
 document.getElementById('saveSettingsBtn').addEventListener('click', function() {
   const u = document.getElementById('ghUser').value.trim(); const r = document.getElementById('ghRepo').value.trim(); const t = document.getElementById('ghToken').value.trim();
@@ -842,6 +843,125 @@ if (addCatBtn) addCatBtn.addEventListener('click', function() {
 document.getElementById('settingsSheet').addEventListener('click', function(e) {
   const del = e.target.closest('.cat-del-btn');
   if (del) { const row = del.closest('.cat-settings-row'); if (row) row.remove(); }
+});
+
+// ── NOTES PIN MANAGEMENT ──
+
+function _hashPinSync(pin) {
+  // Returns a promise
+  var encoded = new TextEncoder().encode(pin);
+  return crypto.subtle.digest('SHA-256', encoded).then(function(hash) {
+    return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  });
+}
+
+function updatePinUI() {
+  var hasPin = !!localStorage.getItem('kw_notes_pin_hash');
+  var statusEl = document.getElementById('pinStatus');
+  var setBtn = document.getElementById('setPinBtn');
+  var clearBtn = document.getElementById('clearPinBtn');
+  if (statusEl) statusEl.textContent = hasPin ? '🔒 PIN is set' : 'No PIN set';
+  if (setBtn) setBtn.textContent = hasPin ? 'Change PIN' : 'Set PIN';
+  if (clearBtn) clearBtn.style.display = hasPin ? '' : 'none';
+}
+
+document.getElementById('setPinBtn').addEventListener('click', function() {
+  var existingHash = localStorage.getItem('kw_notes_pin_hash');
+  if (existingHash) {
+    // Verify current PIN first
+    var overlay = document.getElementById('pinModalOverlay');
+    var input = document.getElementById('pinModalInput');
+    var error = document.getElementById('pinModalError');
+    var titleEl = document.getElementById('pinModalTitle');
+    titleEl.textContent = 'Current PIN';
+    input.value = ''; error.textContent = '';
+    overlay.style.display = 'flex';
+    setTimeout(function() { input.focus(); }, 100);
+
+    var confirmBtn = document.getElementById('pinModalConfirm');
+    var cancelBtn = document.getElementById('pinModalCancel');
+    var newConfirm = confirmBtn.cloneNode(true);
+    var newCancel = cancelBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+    newCancel.addEventListener('click', function() { overlay.style.display = 'none'; });
+    newConfirm.addEventListener('click', function() {
+      _hashPinSync(input.value).then(function(h) {
+        if (h !== existingHash) { error.textContent = 'Wrong PIN'; return; }
+        overlay.style.display = 'none';
+        promptNewPin();
+      });
+    });
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') newConfirm.click(); if (e.key === 'Escape') { overlay.style.display = 'none'; } });
+  } else {
+    promptNewPin();
+  }
+});
+
+function promptNewPin() {
+  var overlay = document.getElementById('pinModalOverlay');
+  var input = document.getElementById('pinModalInput');
+  var error = document.getElementById('pinModalError');
+  var titleEl = document.getElementById('pinModalTitle');
+  titleEl.textContent = 'Set new PIN';
+  input.value = ''; error.textContent = '';
+  overlay.style.display = 'flex';
+  setTimeout(function() { input.focus(); }, 100);
+
+  var confirmBtn = document.getElementById('pinModalConfirm');
+  var cancelBtn = document.getElementById('pinModalCancel');
+  var newConfirm = confirmBtn.cloneNode(true);
+  var newCancel = cancelBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+  newCancel.addEventListener('click', function() { overlay.style.display = 'none'; });
+  newConfirm.addEventListener('click', function() {
+    var pin = input.value;
+    if (pin.length < 4) { error.textContent = 'At least 4 characters'; return; }
+    _hashPinSync(pin).then(function(h) {
+      localStorage.setItem('kw_notes_pin_hash', h);
+      overlay.style.display = 'none';
+      updatePinUI();
+      showToast('PIN set');
+    });
+  });
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') newConfirm.click(); if (e.key === 'Escape') { overlay.style.display = 'none'; } });
+}
+
+document.getElementById('clearPinBtn').addEventListener('click', function() {
+  var overlay = document.getElementById('pinModalOverlay');
+  var input = document.getElementById('pinModalInput');
+  var error = document.getElementById('pinModalError');
+  var titleEl = document.getElementById('pinModalTitle');
+  titleEl.textContent = 'Enter PIN to remove';
+  input.value = ''; error.textContent = '';
+  overlay.style.display = 'flex';
+  setTimeout(function() { input.focus(); }, 100);
+
+  var confirmBtn = document.getElementById('pinModalConfirm');
+  var cancelBtn = document.getElementById('pinModalCancel');
+  var newConfirm = confirmBtn.cloneNode(true);
+  var newCancel = cancelBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+  newCancel.addEventListener('click', function() { overlay.style.display = 'none'; });
+  newConfirm.addEventListener('click', function() {
+    _hashPinSync(input.value).then(function(h) {
+      if (h !== localStorage.getItem('kw_notes_pin_hash')) { error.textContent = 'Wrong PIN'; return; }
+      // Unlock all locked notes
+      var cnNotes = getCnNotes();
+      cnNotes.forEach(function(n) { n.locked = false; });
+      saveCN(true);
+      localStorage.removeItem('kw_notes_pin_hash');
+      overlay.style.display = 'none';
+      updatePinUI();
+      showToast('PIN removed, all notes unlocked');
+    });
+  });
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') newConfirm.click(); if (e.key === 'Escape') { overlay.style.display = 'none'; } });
 });
 
 // ══════════════════════════════════════════════════════════════════

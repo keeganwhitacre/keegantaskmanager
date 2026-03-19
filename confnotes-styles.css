@@ -262,3 +262,81 @@ body.theme-bel-bel .cn-scratch-card {
 
 /* Deep focus: hide notes */
 body.deep-focus-mode #confNotesView { display: none !important; }
+
+/* ── Lock button ── */
+.cn-lock-btn { border-color: transparent; background: transparent; transition: all 0.15s ease; }
+.cn-lock-btn:active { transform: scale(0.85); }
+.cn-lock-btn svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.15s; }
+.cn-lock-btn.locked { background: rgba(255, 149, 0, 0.12); border-color: rgba(255, 149, 0, 0.4); }
+.cn-lock-btn.locked svg { stroke: #ff9500; }
+
+/* ── Locked note card ── */
+.cn-note-card.locked-card .cn-card-preview {
+  filter: blur(6px);
+  -webkit-filter: blur(6px);
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+.cn-card-lock-icon {
+  font-size: 11px;
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+/* ── PIN modal ── */
+.pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.pin-modal {
+  background: var(--bg-surface, #1c1c1e);
+  border: 1px solid var(--border-main, rgba(255,255,255,0.08));
+  border-radius: 18px;
+  padding: 28px 24px 22px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+.pin-modal-title {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+  color: var(--text-primary, #fff);
+}
+.pin-modal-input {
+  width: 100%;
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.3em;
+  font-family: var(--font-mono);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-main, rgba(255,255,255,0.12));
+  background: var(--bg-card, rgba(255,255,255,0.04));
+  color: var(--text-primary, #fff);
+  margin-bottom: 8px;
+  outline: none;
+  box-sizing: border-box;
+}
+.pin-modal-input:focus {
+  border-color: var(--accent, #007aff);
+}
+.pin-modal-error {
+  font-size: 12px;
+  color: #ff3a30;
+  text-align: center;
+  min-height: 18px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+}
