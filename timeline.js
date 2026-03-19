@@ -486,25 +486,8 @@ function _affectLabel(v, a) {
 // ── Public API ──
 
 function initTimeline() {
-  // Close button
-  const closeBtn = document.getElementById('closeTimelineBtn');
-  if (closeBtn) {
-    closeBtn.addEventListener('click', function() {
-      switchView('tasks');
-    });
-  }
-
-  // Timeline icon button in header
-  const tlBtn = document.getElementById('timelineBtn');
-  if (tlBtn) {
-    tlBtn.addEventListener('click', function() {
-      if (document.body.classList.contains('timeline-mode')) {
-        switchView('tasks');
-      } else {
-        switchView('timeline');
-      }
-    });
-  }
+  // No standalone wiring needed — timeline lives inside the Reflect tab.
+  // renderTimeline() is called by the reflect view's Review mode.
 }
 
 function onTimelineEnter() {
@@ -512,23 +495,6 @@ function onTimelineEnter() {
   _expandedDay = null;
   _weekCount = 4;
   renderTimeline();
-
-  // Stagger animate
-  var view = document.getElementById('timelineView');
-  if (view) {
-    view.classList.remove('view-enter');
-    view.style.opacity = '0';
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        view.style.opacity = '';
-        view.classList.add('view-enter');
-        view.addEventListener('animationend', function handler() {
-          view.classList.remove('view-enter');
-          view.removeEventListener('animationend', handler);
-        });
-      });
-    });
-  }
 }
 
 export { initTimeline, renderTimeline, onTimelineEnter };

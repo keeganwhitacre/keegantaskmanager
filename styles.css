@@ -611,9 +611,14 @@ body.theme-ios26::before {
 /* ── VIEW ROUTING OVERRIDES ── */
 body.focus-mode .hide-in-focus { display: none !important; }
 
-body.dash-mode .hide-in-dash { display: none !important; }
-body.dash-mode #dashView { display: block !important; }
-body.dash-mode .bottom-fade, body.dash-mode #fab, body.dash-mode #focusModeBtn, body.dash-mode .quick-add-wrap { display: none !important; }
+body.reflect-mode .hide-in-reflect { display: none !important; }
+body.reflect-mode #reflectView { display: block !important; }
+body.reflect-mode .bottom-fade, body.reflect-mode #fab, body.reflect-mode #focusModeBtn, body.reflect-mode .quick-add-wrap { display: none !important; }
+
+body.notes-mode .hide-in-notes { display: none !important; }
+body.notes-mode #confNotesView { display: block !important; }
+body.notes-mode .bottom-fade, body.notes-mode #focusModeBtn, body.notes-mode .quick-add-wrap { display: none !important; }
+body.notes-mode .fab { display: flex !important; }
 
 body.projects-mode .hide-in-project { display: none !important; }
 body.projects-mode #projectsView { display: block !important; }
@@ -626,10 +631,6 @@ body.projects-detail-mode #projectsView { display: none !important; }
 body.bel-mode .hide-in-bel { display: none !important; }
 body.bel-mode #belView { display: block !important; }
 body.bel-mode .bottom-fade, body.bel-mode #fab, body.bel-mode #focusModeBtn, body.bel-mode .quick-add-wrap { display: none !important; }
-
-body.timeline-mode .hide-in-timeline { display: none !important; }
-body.timeline-mode #timelineView { display: block !important; }
-body.timeline-mode .bottom-fade, body.timeline-mode #fab, body.timeline-mode #focusModeBtn, body.timeline-mode .quick-add-wrap { display: none !important; }
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2140,4 +2141,58 @@ body.theme-newsprint .tl-day-card.today {
 }
 body.theme-newsprint .tl-reflection {
   border-left-color: #1a1a1a;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   REFLECT — Segmented Control (Today / Review)
+══════════════════════════════════════════════════════════════════ */
+
+.reflect-seg-wrap {
+  padding: 0 20px 14px;
+}
+.reflect-seg {
+  display: flex;
+  background: var(--border-divider);
+  border-radius: 10px;
+  padding: 2px;
+  gap: 2px;
+}
+.reflect-seg-btn {
+  flex: 1;
+  padding: 7px 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.reflect-seg-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  font-weight: 600;
+}
+
+/* Neon theme override */
+body.theme-neon .reflect-seg {
+  background: #1e1028;
+}
+body.theme-neon .reflect-seg-btn.active {
+  background: #2d1f3d;
+  box-shadow: 0 1px 6px rgba(168, 85, 255, 0.1);
+}
+
+/* Newsprint theme override */
+body.theme-newsprint .reflect-seg {
+  background: #e8e4dc;
+}
+body.theme-newsprint .reflect-seg-btn.active {
+  background: #f8f6f0;
+  box-shadow: none;
 }

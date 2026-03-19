@@ -19,7 +19,7 @@ import { register, switchView, currentViewName } from './router.js';
 import { initPomo, updatePomoUI } from './pomo.js';
 import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
-import { initDashboard, renderDashFull, onDashEnter, onDashExit } from './dashboard.js';
+import { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode } from './dashboard.js';
 import { initTimeline, renderTimeline, onTimelineEnter } from './timeline.js';
 
 // ── Expose globals needed by confnotes.js (loaded as classic script) ──
@@ -47,7 +47,7 @@ window._cnLoadFromGH = function(data) {
   if (data) {
     setCnNotes(data);
     try { localStorage.setItem(KEYS.confnotes, JSON.stringify(data)); } catch(e) {}
-    if (document.body.classList.contains('confnotes-mode') && typeof window.renderCNList === 'function') {
+    if (document.body.classList.contains('notes-mode') && typeof window.renderCNList === 'function') {
       window.renderCNList();
     }
   }
@@ -997,19 +997,19 @@ document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd
 
 // FAB
 document.getElementById('fab').addEventListener('click', function() {
-  if (document.body.classList.contains('confnotes-mode')) {
+  if (document.body.classList.contains('notes-mode')) {
     if (typeof window.createNewNote === 'function') window.createNewNote();
   } else {
     toggleQuickAdd();
   }
 });
-(function() { let pressTimer; document.getElementById('fab').addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { if (document.body.classList.contains('confnotes-mode')) { if (typeof window.createNewNote === 'function') window.createNewNote(); } else { toggleQuickAdd(); openAddSheet(); } }, 600); }, { passive: true }); document.getElementById('fab').addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true }); document.getElementById('fab').addEventListener('contextmenu', function(e) { e.preventDefault(); }); })();
+(function() { let pressTimer; document.getElementById('fab').addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { if (document.body.classList.contains('notes-mode')) { if (typeof window.createNewNote === 'function') window.createNewNote(); } else { toggleQuickAdd(); openAddSheet(); } }, 600); }, { passive: true }); document.getElementById('fab').addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true }); document.getElementById('fab').addEventListener('contextmenu', function(e) { e.preventDefault(); }); })();
 
 document.getElementById('overlay').addEventListener('click', closeSheets);
 document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
 document.getElementById('deleteTaskBtn').addEventListener('click', function() { if (state.editingId) deleteTask(state.editingId); closeSheets(); });
 document.getElementById('settingsBtn').addEventListener('click', function() { loadSettingsUI(); openSheet('settingsSheet'); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSheets(); return; } const tag = (document.activeElement || {}).tagName || ''; const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable; if (inInput) return; if (document.body.classList.contains('confnotes-mode')) return; if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); } if (e.key === '/') { e.preventDefault(); const wrap = document.getElementById('searchWrap'); wrap.classList.add('open'); document.getElementById('searchInput').focus(); } });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSheets(); return; } const tag = (document.activeElement || {}).tagName || ''; const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable; if (inInput) return; if (document.body.classList.contains('notes-mode')) return; if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); } if (e.key === '/') { e.preventDefault(); const wrap = document.getElementById('searchWrap'); wrap.classList.add('open'); document.getElementById('searchInput').focus(); } });
 
 // ══════════════════════════════════════════════════════════════════
 // TOAST
@@ -1037,9 +1037,15 @@ register('tasks', {
     }
   },
 });
-register('dash', {
-  onEnter: onDashEnter,
-  onExit:  onDashExit,
+register('reflect', {
+  onEnter: function() {
+    onReflectEnter();
+    // If entering review mode, also trigger timeline
+    if (getReflectMode() === 'review') {
+      onTimelineEnter();
+    }
+  },
+  onExit: onReflectExit,
 });
 register('projects', {
   onEnter: renderProjects,
@@ -1047,20 +1053,18 @@ register('projects', {
 register('projects-detail', {
   onEnter: renderProjectTasks,
 });
-register('bel', {
-  onEnter: renderBel,
-});
-register('confnotes', {
+register('notes', {
   onEnter: function() { if (typeof window.renderCNList === 'function') window.renderCNList(); },
 });
-register('timeline', {
-  onEnter: onTimelineEnter,
+register('bel', {
+  onEnter: renderBel,
 });
 
 // Tab buttons
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
-document.getElementById('tabDash').addEventListener('click', function() { switchView('dash'); });
+document.getElementById('tabReflect').addEventListener('click', function() { switchView('reflect'); });
 const tpBtn = document.getElementById('tabProjects'); if (tpBtn) tpBtn.addEventListener('click', function() { switchView('projects'); });
+document.getElementById('tabNotes').addEventListener('click', function() { switchView('notes'); });
 
 // Secret routing buttons
 const sbt = document.getElementById('secretBelTrigger'); if (sbt) sbt.addEventListener('click', function() { switchView('bel'); });
@@ -1150,12 +1154,14 @@ on('data-pulled', () => {
   rebuildCategoryUI();
   refreshDynamicCatColors();
   const view = currentViewName();
-  if (view === 'dash') renderDashFull();
+  if (view === 'reflect') {
+    if (getReflectMode() === 'today') renderReflectToday();
+    else renderTimeline();
+  }
   else if (view === 'projects') renderProjects();
   else if (view === 'projects-detail') renderProjectTasks();
   else if (view === 'bel') renderBel();
-  else if (view === 'confnotes' && typeof window.renderCNList === 'function') window.renderCNList();
-  else if (view === 'timeline') renderTimeline();
+  else if (view === 'notes' && typeof window.renderCNList === 'function') window.renderCNList();
   else render();
 });
 
@@ -1172,6 +1178,11 @@ initShopping(openSheet);
 initBel();
 initTimeline();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
+
+// Wire review segmented control to trigger timeline rendering
+var _segReview = document.getElementById('reflectSegReview');
+if (_segReview) _segReview.addEventListener('click', function() { onTimelineEnter(); });
+
 render();
 loadSettingsUI();
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);

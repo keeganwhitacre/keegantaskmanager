@@ -14,8 +14,6 @@ let _dueClass = () => '';
 let _fmtDue = () => '';
 
 // ── Dashboard-local state ──
-let clockTimer = null;
-let weatherLoaded = false;
 let reflectTimer = null;
 let weeklyReflectTimer = null;
 
@@ -90,56 +88,6 @@ function getWeekStart(d) { const date = new Date(d); const day = date.getDay(); 
 function getTodayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function getDayOfWeek() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
 
-// ── CLOCK ──
-
-function updateClock() {
-  const d = new Date(); const h = d.getHours(); const m = d.getMinutes();
-  const ampm = h >= 12 ? 'pm' : 'am'; const h12 = h % 12 || 12;
-  document.getElementById('dClock').childNodes[0].textContent = h12 + ':' + String(m).padStart(2, '0');
-  document.getElementById('dAmpm').textContent = ampm;
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('dDateSmall').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-}
-
-// ── WEATHER ──
-
-function fetchWeatherAt(lat, lon, cityHint, regionHint) {
-  const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=1';
-  fetch(url).then(r => r.json()).then(d => {
-    weatherLoaded = true; const cur = d.current; const daily = d.daily;
-    document.getElementById('dWeatherTemp').textContent = Math.round(cur.temperature_2m) + '°';
-    document.getElementById('dWeatherDesc').textContent = weatherDesc(cur.weathercode);
-    document.getElementById('dWeatherHigh').textContent = 'H: ' + Math.round(daily.temperature_2m_max[0]) + '°';
-    document.getElementById('dWeatherLow').textContent = 'L: ' + Math.round(daily.temperature_2m_min[0]) + '°';
-    if (cityHint) { document.getElementById('dWeatherLabel').textContent = cityHint + (regionHint ? ', ' + regionHint : ''); }
-    else { fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon).then(r => r.json()).then(geo => { const city = (geo.address && (geo.address.city || geo.address.town || geo.address.village)) || ''; const st = (geo.address && geo.address.state) || ''; if (city) document.getElementById('dWeatherLabel').textContent = city + (st ? ', ' + st : ''); }).catch(function() {}); }
-  }).catch(function() { document.getElementById('dWeatherDesc').textContent = 'Unavailable'; });
-}
-
-function loadWeather() {
-  if (weatherLoaded) return;
-  if (!navigator.geolocation) { document.getElementById('dWeatherDesc').textContent = 'Location unavailable'; return; }
-  navigator.geolocation.getCurrentPosition(
-    pos => { fetchWeatherAt(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4)); },
-    function() {
-      document.getElementById('dWeatherDesc').textContent = 'Locating…';
-      fetch('https://ipapi.co/json/').then(r => r.json()).then(d => {
-        if (d && d.latitude && d.longitude) { fetchWeatherAt(d.latitude.toFixed(4), d.longitude.toFixed(4), d.city, d.region); }
-        else { document.getElementById('dWeatherDesc').textContent = 'Location unavailable'; }
-      }).catch(function() { document.getElementById('dWeatherDesc').textContent = 'Unavailable'; });
-    },
-    { timeout: 8000 }
-  );
-}
-
-function weatherDesc(code) {
-  if (code === 0) return 'Clear sky'; if (code <= 2) return 'Partly cloudy'; if (code === 3) return 'Overcast';
-  if (code <= 9) return 'Fog'; if (code <= 19) return 'Drizzle'; if (code <= 29) return 'Rain';
-  if (code <= 39) return 'Snow'; if (code <= 49) return 'Fog'; if (code <= 59) return 'Drizzle';
-  if (code <= 69) return 'Rain'; if (code <= 79) return 'Snow'; if (code <= 84) return 'Rain showers';
-  if (code <= 94) return 'Snow showers'; return 'Thunderstorm';
-}
-
 // ── INTENTION ──
 
 function renderIntention() {
@@ -170,29 +118,6 @@ function renderDashTasks() {
   const openText = document.getElementById('dOpenTasks');
   openText.textContent = open + ' open task' + (open !== 1 ? 's' : '') + '  switch to Tasks';
   openText.onclick = function() { switchView('tasks'); };
-}
-
-// ── COUNTDOWN ──
-
-function renderCountdown() {
-  const ds = getDState();
-  const cd = ds.countdown;
-  if (!cd || !cd.date) { document.getElementById('dCountdownNum').textContent = '—'; document.getElementById('dCountdownUnit').textContent = ''; document.getElementById('dCountdownEvent').textContent = 'No event set'; return; }
-  const today = new Date(); today.setHours(0,0,0,0); const target = new Date(cd.date + 'T00:00:00'); const diff = Math.round((target - today) / 86400000);
-  if (diff < 0) { document.getElementById('dCountdownNum').textContent = Math.abs(diff); document.getElementById('dCountdownUnit').textContent = 'days ago'; }
-  else if (diff === 0) { document.getElementById('dCountdownNum').textContent = 'Today'; document.getElementById('dCountdownUnit').textContent = ''; }
-  else { document.getElementById('dCountdownNum').textContent = diff; document.getElementById('dCountdownUnit').textContent = diff === 1 ? 'day away' : 'days away'; }
-  document.getElementById('dCountdownEvent').textContent = cd.name || cd.date;
-}
-
-// ── QUOTES ──
-
-function renderQuote() {
-  const ds = getDState();
-  const q = QUOTES[ds.quoteIdx % QUOTES.length];
-  document.getElementById('dQuoteText').textContent = '"' + q.text + '"';
-  document.getElementById('dQuoteAttr').textContent = '— ' + q.attr;
-  document.getElementById('dQuoteIdx').textContent = (ds.quoteIdx % QUOTES.length + 1) + ' / ' + QUOTES.length;
 }
 
 // ── REFLECTION ──
@@ -438,34 +363,6 @@ function renderHabits() {
     });
     row.appendChild(checksEl); rowsEl.appendChild(row);
   });
-}
-
-// ── BOOK ──
-
-function renderBook() {
-  const ds = getDState();
-  const b = ds.book; const content = document.getElementById('dBookContent'); const btn = document.getElementById('dBookSetBtn');
-  if (!b || !b.title) { content.innerHTML = '<div class="d-book-empty">No book set — tap to add one</div>'; btn.textContent = '+ set book'; return; }
-  btn.textContent = 'Update progress';
-  const pct = (b.total && b.current) ? Math.round((b.current / b.total) * 100) : 0;
-  const pctClamped = Math.min(100, Math.max(0, pct));
-  const pagesLeft = (b.total && b.current) ? (b.total - b.current) : null;
-
-  // Calculate days since last progress update
-  var nudgeHtml = '';
-  if (b.lastUpdated) {
-    var lastDate = new Date(b.lastUpdated); lastDate.setHours(0,0,0,0);
-    var now = new Date(); now.setHours(0,0,0,0);
-    var daysSince = Math.round((now - lastDate) / 86400000);
-    if (daysSince >= 3 && pct < 100) {
-      nudgeHtml = '<div class="d-book-nudge">Haven\'t read in ' + daysSince + ' day' + (daysSince !== 1 ? 's' : '') + ' — pick it back up?</div>';
-    }
-  }
-
-  content.innerHTML = '<div class="d-book-title">' + esc(b.title) + '</div>' +
-    (b.author ? '<div class="d-book-author">' + esc(b.author) + '</div>' : '') +
-    (b.total ? '<div class="d-book-prog-wrap"><div class="d-book-prog-fill" style="width:' + pctClamped + '%"></div></div><div class="d-book-pct">' + pct + '% · ' + (pagesLeft !== null ? pagesLeft + ' pages left' : '') + '</div>' : '') +
-    nudgeHtml;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1059,24 +956,50 @@ function renderSnapshot() {
   body.innerHTML = parts.map(function(p) { return '<div class="snap-line">' + p + '</div>'; }).join('');
 }
 
-// ── FULL RENDER ──
+// ── FULL RENDER (Today mode) ──
 
-function renderDashFull() {
-  updateClock(); renderIntention(); renderDashTasks(); renderCountdown();
-  renderQuote(); renderReflection(); renderAffect(); renderHabits(); renderBook();
+function renderReflectToday() {
+  renderIntention(); renderDashTasks();
+  renderReflection(); renderAffect(); renderHabits();
   renderSnapshot(); renderInsights();
+}
+
+// ── Segmented control state ──
+let _reflectMode = 'today'; // 'today' or 'review'
+
+function getReflectMode() { return _reflectMode; }
+
+function setReflectMode(mode) {
+  _reflectMode = mode;
+  var todayEl = document.getElementById('reflectToday');
+  var reviewEl = document.getElementById('reflectReview');
+  var segToday = document.getElementById('reflectSegToday');
+  var segReview = document.getElementById('reflectSegReview');
+  if (!todayEl || !reviewEl) return;
+
+  if (mode === 'today') {
+    todayEl.style.display = '';
+    reviewEl.style.display = 'none';
+    if (segToday) segToday.classList.add('active');
+    if (segReview) segReview.classList.remove('active');
+    renderReflectToday();
+  } else {
+    todayEl.style.display = 'none';
+    reviewEl.style.display = '';
+    if (segToday) segToday.classList.remove('active');
+    if (segReview) segReview.classList.add('active');
+  }
 }
 
 // ── ENTER / EXIT ──
 
-function onDashEnter() {
-  renderDashFull();
-  if (!weatherLoaded) loadWeather();
-  if (!clockTimer) clockTimer = setInterval(updateClock, 1000);
+function onReflectEnter() {
+  setReflectMode(_reflectMode);
 
-  var dash = document.getElementById('dashView');
-  if (!dash) return;
-  var items = dash.querySelectorAll(':scope > .d-card, :scope > .d-grid-2');
+  // Stagger animate the Today cards
+  var container = document.getElementById('reflectToday');
+  if (!container || _reflectMode !== 'today') return;
+  var items = container.querySelectorAll(':scope > .d-card, :scope > .d-grid-2, :scope > details');
   items.forEach(function(el, i) {
     el.classList.remove('stagger-child'); el.classList.add('stagger-ready');
     el.style.setProperty('--si', i);
@@ -1088,11 +1011,10 @@ function onDashEnter() {
   });
 }
 
-function onDashExit() {
-  if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
-  var dash = document.getElementById('dashView');
-  if (dash) {
-    dash.querySelectorAll('.stagger-child, .stagger-ready').forEach(function(el) {
+function onReflectExit() {
+  var container = document.getElementById('reflectToday');
+  if (container) {
+    container.querySelectorAll('.stagger-child, .stagger-ready').forEach(function(el) {
       el.classList.remove('stagger-child', 'stagger-ready');
     });
   }
@@ -1109,20 +1031,6 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
 
   // Intention
   document.getElementById('dIntention').addEventListener('input', function() { getDState().intention = this.value; saveDash(true); });
-
-  // Countdown
-  document.getElementById('dCountdownSetBtn').addEventListener('click', function() {
-    const edit = document.getElementById('dCountdownEdit'); edit.classList.toggle('open');
-    if (edit.classList.contains('open')) { const ds = getDState(); document.getElementById('dCountdownName').value = ds.countdown.name || ''; document.getElementById('dCountdownDate').value = ds.countdown.date || ''; }
-  });
-  document.getElementById('dCountdownSave').addEventListener('click', function() {
-    const name = document.getElementById('dCountdownName').value.trim(); const date = document.getElementById('dCountdownDate').value;
-    if (!date) return; getDState().countdown = { name, date }; saveDash(true); renderCountdown(); document.getElementById('dCountdownEdit').classList.remove('open');
-  });
-
-  // Quotes
-  document.getElementById('dQuotePrev').addEventListener('click', function() { const ds = getDState(); ds.quoteIdx = (ds.quoteIdx - 1 + QUOTES.length) % QUOTES.length; saveDash(true); renderQuote(); });
-  document.getElementById('dQuoteNext').addEventListener('click', function() { const ds = getDState(); ds.quoteIdx = (ds.quoteIdx + 1) % QUOTES.length; saveDash(true); renderQuote(); });
 
   // Reflection
   document.getElementById('dReflect').addEventListener('input', function() { getDState().reflection = this.value; if (reflectTimer) clearTimeout(reflectTimer); reflectTimer = setTimeout(function() { saveDash(); }, 800); });
@@ -1146,7 +1054,7 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
     if (!ds.affect) ds.affect = {};
     var today = getTodayStr();
     var latest = getLatestAffect(today);
-    if (!latest) return; // Must log affect first
+    if (!latest) return;
     latest.ctx = (latest.ctx === ctx) ? null : ctx;
     saveDash(true); renderAffect(); renderInsights(); renderSnapshot();
   });
@@ -1163,26 +1071,12 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
     });
   }
 
-  // Book
-  document.getElementById('dBookSetBtn').addEventListener('click', function() {
-    const ds = getDState(); const edit = document.getElementById('dBookEdit'); edit.classList.toggle('open');
-    if (edit.classList.contains('open') && ds.book) {
-      document.getElementById('dBookTitle').value = ds.book.title || ''; document.getElementById('dBookAuthor').value = ds.book.author || '';
-      document.getElementById('dBookCurrent').value = ds.book.current || ''; document.getElementById('dBookTotal').value = ds.book.total || '';
-      setTimeout(function() { document.getElementById('dBookCurrent').focus(); }, 50);
-    }
-  });
-  document.getElementById('dBookSave').addEventListener('click', function() {
-    const ds = getDState(); const title = document.getElementById('dBookTitle').value.trim(); const author = document.getElementById('dBookAuthor').value.trim();
-    const current = parseInt(document.getElementById('dBookCurrent').value) || 0; const total = parseInt(document.getElementById('dBookTotal').value) || 0;
-    if (!title) return;
-    var oldCurrent = ds.book ? ds.book.current : 0;
-    var lastUpdated = (ds.book && ds.book.lastUpdated) ? ds.book.lastUpdated : new Date().toISOString();
-    // Only update timestamp if page count actually changed
-    if (current !== oldCurrent) lastUpdated = new Date().toISOString();
-    ds.book = { title, author, current, total, lastUpdated: lastUpdated };
-    saveDash(true); renderBook(); document.getElementById('dBookEdit').classList.remove('open');
-  });
+  // Segmented control
+  var segToday = document.getElementById('reflectSegToday');
+  var segReview = document.getElementById('reflectSegReview');
+  if (segToday) segToday.addEventListener('click', function() { setReflectMode('today'); });
+  if (segReview) segReview.addEventListener('click', function() { setReflectMode('review'); });
 }
 
-export { initDashboard, renderDashFull, onDashEnter, onDashExit };
+export { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode };
+

@@ -447,17 +447,7 @@ function rebuildCNChips() {
 initScratchpad();
 rebuildCNChips();
 
-document.getElementById('confNotesBtn').addEventListener('click', function() {
-  if (document.body.classList.contains('confnotes-mode')) {
-    _a.switchView('tasks');
-  } else {
-    _a.switchView('confnotes');
-  }
-});
-
-document.getElementById('closeConfNotesBtn').addEventListener('click', function() {
-  _a.switchView('tasks');
-});
+// Note: confnotes is now tab-navigated as "Notes" — no icon or close button needed
 
 document.getElementById('cnBackBtn').addEventListener('click', closeCNDetail);
 
@@ -549,7 +539,7 @@ document.getElementById('cnFilterRow').addEventListener('click', function(e) {
 });
 
 document.addEventListener('keydown', function(e) {
-  if (!document.body.classList.contains('confnotes-mode')) return;
+  if (!document.body.classList.contains('notes-mode')) return;
   const tag = (document.activeElement || {}).tagName || '';
   const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
   if (inInput) return;

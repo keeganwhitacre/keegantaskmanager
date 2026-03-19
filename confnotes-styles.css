@@ -2,11 +2,7 @@
    UNIFIED NOTES — scratchpad + note cards + distraction-free editor
 ══════════════════════════════════════════════════════════════════ */
 
-/* View Routing */
-body.confnotes-mode .hide-in-confnotes { display: none !important; }
-body.confnotes-mode #confNotesView { display: block !important; }
-body.confnotes-mode .bottom-fade, body.confnotes-mode #focusModeBtn, body.confnotes-mode .quick-add-wrap { display: none !important; }
-body.confnotes-mode .fab { display: flex !important; }
+/* View Routing — now handled by notes-mode in styles.css */
 
 /* Search */
 .cn-search-wrap { display: block !important; max-height: 0; opacity: 0; overflow: hidden; margin-bottom: 0; pointer-events: none; transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.22s ease, margin 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
