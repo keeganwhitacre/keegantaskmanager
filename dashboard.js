@@ -272,8 +272,10 @@ function renderAffect() {
   var dot = document.getElementById('dAffectDot');
   if (entry) {
     dot.style.display = 'block';
-    dot.style.left = (entry.v / (GRID_SIZE - 1)) * 100 + '%';
-    dot.style.top = (1 - entry.a / (GRID_SIZE - 1)) * 100 + '%';
+    // Inset the dot so it doesn't get clipped at the edges of the grid
+    var PAD = 6; // percent inset from each edge
+    dot.style.left = PAD + (entry.v / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
+    dot.style.top = PAD + (1 - entry.a / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
     dot.style.background = affectToColor(entry.v, entry.a);
   } else {
     dot.style.display = 'none';
