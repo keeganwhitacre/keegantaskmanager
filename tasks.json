@@ -769,23 +769,6 @@
       "pomodoros": 0,
       "projectId": "",
       "completedAt": "2026-03-19T14:46:32.527Z"
-    },
-    {
-      "id": "1773951462878",
-      "title": "Hahahha",
-      "categories": [
-        "personal",
-        "photo"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-19",
-      "noteIsMono": false,
-      "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": ""
     }
   ],
   "projects": [
@@ -1253,5 +1236,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-19T20:17:51.173Z"
+  "updated": "2026-03-19T20:17:58.915Z"
 }
