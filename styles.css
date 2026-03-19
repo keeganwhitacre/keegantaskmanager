@@ -2152,20 +2152,25 @@ body.theme-newsprint .tl-reflection {
 }
 .reflect-seg {
   display: flex;
-  background: var(--border-divider);
-  border-radius: 10px;
-  padding: 2px;
-  gap: 2px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 3px;
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--shadow-base);
 }
 .reflect-seg-btn {
   flex: 1;
   padding: 7px 0;
   border: none;
-  border-radius: 8px;
+  border-radius: calc(var(--radius-pill) - 3px);
   background: transparent;
-  font-family: var(--font-main);
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 500;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
@@ -2173,26 +2178,27 @@ body.theme-newsprint .tl-reflection {
   user-select: none;
 }
 .reflect-seg-btn.active {
-  background: var(--bg-surface);
-  color: var(--text-main);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  background: var(--bg-tab-active);
+  color: var(--tab-active-text);
   font-weight: 600;
 }
 
-/* Neon theme override */
-body.theme-neon .reflect-seg {
-  background: #1e1028;
+/* ── Bel-bel: gradient active state matching tabs ── */
+body.theme-bel-bel .reflect-seg {
+  background: var(--bg-surface);
+  border: none;
+  border-radius: 99px;
+  box-shadow: var(--shadow-base);
 }
-body.theme-neon .reflect-seg-btn.active {
-  background: #2d1f3d;
-  box-shadow: 0 1px 6px rgba(168, 85, 255, 0.1);
+body.theme-bel-bel .reflect-seg-btn {
+  font-family: var(--font-main);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 99px;
+  padding: 10px 0;
 }
-
-/* Newsprint theme override */
-body.theme-newsprint .reflect-seg {
-  background: #e8e4dc;
-}
-body.theme-newsprint .reflect-seg-btn.active {
-  background: #f8f6f0;
-  box-shadow: none;
+body.theme-bel-bel .reflect-seg-btn.active {
+  background: linear-gradient(to bottom left, #FB5A27 20%, #8115E6 80%);
+  color: #ffffff;
+  box-shadow: inset 0 0 20px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
