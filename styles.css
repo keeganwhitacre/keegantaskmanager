@@ -1745,10 +1745,12 @@ body.deep-focus-mode #pomoDisplay {
   display: flex;
   gap: 6px;
   margin-bottom: 12px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 2px 20px 4px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 2px;
 }
 .tl-week-nav::-webkit-scrollbar { display: none; }
 

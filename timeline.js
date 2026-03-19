@@ -168,18 +168,26 @@ let _expandedDay = null;
 let _weekCount = 4;
 const MAX_WEEKS = 12;
 
-function renderTimeline() {
+function renderTimeline(navOnly) {
   _weeks = buildWeeks(_weekCount);
-  const container = document.getElementById('timelineContent');
-  if (!container) return;
 
-  const week = _weeks[_activeWeekIdx];
-  if (!week) return;
+  // Always render nav (but preserve scroll position)
+  renderTimelineNav();
 
-  let html = '';
+  if (!navOnly) {
+    renderTimelineBody();
+  }
+}
 
-  // Week navigator
-  html += '<div class="tl-week-nav">';
+function renderTimelineNav() {
+  const nav = document.getElementById('timelineNav');
+  if (!nav) return;
+
+  // Save scroll position before re-render
+  var existingScroller = nav.querySelector('.tl-week-nav');
+  var savedScroll = existingScroller ? existingScroller.scrollLeft : 0;
+
+  let html = '<div class="tl-week-nav">';
   _weeks.forEach(function(w, i) {
     const wStart = w.start;
     const label = i === 0 ? 'This week' : i === 1 ? 'Last week' : MONTHS[wStart.getMonth()] + ' ' + wStart.getDate();
@@ -202,6 +210,53 @@ function renderTimeline() {
     html += '</div>';
   }
 
+  nav.innerHTML = html;
+
+  // Restore scroll position
+  var newScroller = nav.querySelector('.tl-week-nav');
+  if (newScroller && savedScroll > 0) {
+    newScroller.scrollLeft = savedScroll;
+  }
+
+  // If active week is off-screen, scroll it into view
+  var activeChip = nav.querySelector('.tl-week-chip.active');
+  if (activeChip && newScroller) {
+    var navRect = newScroller.getBoundingClientRect();
+    var chipRect = activeChip.getBoundingClientRect();
+    if (chipRect.left < navRect.left || chipRect.right > navRect.right) {
+      activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
+
+  // Wire up nav interactions
+  nav.querySelectorAll('.tl-week-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      _activeWeekIdx = parseInt(this.dataset.week);
+      _expandedDay = null;
+      renderTimelineNav(); // re-render nav to update active state (preserves scroll)
+      renderTimelineBody(); // re-render body for new week
+    });
+  });
+
+  var loadMore = document.getElementById('tlLoadMore');
+  if (loadMore) {
+    loadMore.addEventListener('click', function(e) {
+      e.stopPropagation();
+      _weekCount = Math.min(MAX_WEEKS, _weekCount + 4);
+      renderTimeline();
+    });
+  }
+}
+
+function renderTimelineBody() {
+  const body = document.getElementById('timelineBody');
+  if (!body) return;
+
+  const week = _weeks[_activeWeekIdx];
+  if (!week) return;
+
+  let html = '';
+
   // Week header
   const weekStartStr = MONTHS[week.start.getMonth()] + ' ' + week.start.getDate();
   html += '<div class="tl-week-header">';
@@ -221,33 +276,16 @@ function renderTimeline() {
     html += '<div class="tl-empty">No data for this week yet.</div>';
   }
 
-  container.innerHTML = html;
+  body.innerHTML = html;
 
-  // Wire up interactions
-  container.querySelectorAll('.tl-week-chip').forEach(function(chip) {
-    chip.addEventListener('click', function() {
-      _activeWeekIdx = parseInt(this.dataset.week);
-      _expandedDay = null;
-      renderTimeline();
-    });
-  });
-
-  container.querySelectorAll('.tl-day-card').forEach(function(card) {
+  // Wire up day card interactions
+  body.querySelectorAll('.tl-day-card').forEach(function(card) {
     card.addEventListener('click', function() {
       const d = this.dataset.date;
       _expandedDay = (_expandedDay === d) ? null : d;
-      renderTimeline();
+      renderTimelineBody(); // only re-render body, nav stays put
     });
   });
-
-  const loadMore = document.getElementById('tlLoadMore');
-  if (loadMore) {
-    loadMore.addEventListener('click', function(e) {
-      e.stopPropagation();
-      _weekCount = Math.min(MAX_WEEKS, _weekCount + 4);
-      renderTimeline();
-    });
-  }
 }
 
 function renderWeekSummary(week) {
