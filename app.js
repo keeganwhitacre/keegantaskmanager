@@ -117,9 +117,65 @@ function fmtShort(d) {
   return months[d.getMonth()] + ' ' + d.getDate();
 }
 
+// ── DYNAMIC CATEGORY COLORS ──
+// Built-in categories have CSS classes in styles.css.
+// Custom categories get auto-assigned from a palette and injected as CSS rules.
+const BUILTIN_CAT_CLS = { manuscript:'cat-manuscript', lab:'cat-lab', phd:'cat-phd', conf:'cat-conf', bel:'cat-bel', personal:'cat-personal', hobby:'cat-hobby' };
+
+const CAT_PALETTE = [
+  [255, 140,  60],  // warm orange
+  [ 90, 200, 170],  // teal
+  [230, 115, 200],  // pink-magenta
+  [130, 170, 255],  // soft blue
+  [240, 200,  80],  // gold
+  [120, 220, 120],  // green
+  [200, 140, 100],  // warm brown
+  [180, 130, 240],  // violet
+  [100, 210, 230],  // cyan
+  [255, 130, 130],  // coral
+];
+
+let _catStyleEl = null;
+const _catColorCache = {};  // key → palette index
+
+function _ensureCatStyleEl() {
+  if (!_catStyleEl) {
+    _catStyleEl = document.createElement('style');
+    _catStyleEl.id = 'dynamic-cat-colors';
+    document.head.appendChild(_catStyleEl);
+  }
+  return _catStyleEl;
+}
+
+function _assignCatColor(key) {
+  if (_catColorCache[key] !== undefined) return _catColorCache[key];
+  // Assign the next unused palette index
+  const usedIndices = Object.values(_catColorCache);
+  let idx = 0;
+  while (usedIndices.indexOf(idx) !== -1 && idx < CAT_PALETTE.length) idx++;
+  if (idx >= CAT_PALETTE.length) idx = Object.keys(_catColorCache).length % CAT_PALETTE.length;
+  _catColorCache[key] = idx;
+  return idx;
+}
+
+function refreshDynamicCatColors() {
+  const styleEl = _ensureCatStyleEl();
+  let css = '';
+  Object.keys(CAT_LABEL).forEach(key => {
+    if (BUILTIN_CAT_CLS[key]) return; // handled by styles.css
+    const idx = _assignCatColor(key);
+    const rgb = CAT_PALETTE[idx];
+    const cls = 'cat-' + key.replace(/[^a-z0-9_-]/g, '_');
+    css += '.' + cls + ' { background: rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.08); color: rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); border: 1px solid rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.18); }\n';
+  });
+  styleEl.textContent = css;
+}
+
 function catCls(cat) {
-  const m = { manuscript:'cat-manuscript', lab:'cat-lab', phd:'cat-phd', conf:'cat-conf', bel:'cat-bel', personal:'cat-personal', hobby:'cat-hobby' };
-  return m[cat] || '';
+  if (BUILTIN_CAT_CLS[cat]) return BUILTIN_CAT_CLS[cat];
+  // Dynamic category — ensure it has a color assigned
+  _assignCatColor(cat);
+  return 'cat-' + cat.replace(/[^a-z0-9_-]/g, '_');
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -748,6 +804,7 @@ function saveCategoriesFromUI() {
   });
   updateCategories(newCats);
   rebuildCategoryUI();
+  refreshDynamicCatColors();
   render();
   showToast('Categories saved');
 }
@@ -966,6 +1023,8 @@ function onDragEnd(e) {
 // ══════════════════════════════════════════════════════════════════
 
 on('data-pulled', () => {
+  rebuildCategoryUI();
+  refreshDynamicCatColors();
   const view = currentViewName();
   if (view === 'dash') renderDashFull();
   else if (view === 'projects') renderProjects();
@@ -982,6 +1041,7 @@ on('data-pulled', () => {
 loadTheme();
 loadLocal();
 rebuildCategoryUI();
+refreshDynamicCatColors();
 initPomo(showToast);
 initShopping(openSheet);
 initBel();
