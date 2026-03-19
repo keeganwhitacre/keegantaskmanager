@@ -220,7 +220,7 @@
       "priority": "lo",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-23",
+      "due": "2026-03-24",
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false,
@@ -1236,5 +1236,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-19T20:15:56.534Z"
+  "updated": "2026-03-19T20:16:38.538Z"
 }
