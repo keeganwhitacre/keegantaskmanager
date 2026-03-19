@@ -384,23 +384,6 @@
       "completedAt": "2026-03-05T17:23:36.918Z"
     },
     {
-      "id": "1772721364069",
-      "title": "Add features + debug?",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
-      "status": "active",
-      "priority": "lo",
-      "note": "- prompts return for daily reflection?",
-      "due": "",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": ""
-    },
-    {
       "id": "mmdrdpgk1v1j",
       "title": "Finalize poster",
       "categories": [
@@ -768,6 +751,24 @@
       "pomodoros": 0,
       "pinnedToday": true,
       "completedAt": "2026-03-18T01:11:03.016Z"
+    },
+    {
+      "id": "1772721364069",
+      "title": "Add features + debug?",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "note": "- prompts return for daily reflection?",
+      "due": "",
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "done": true,
+      "pomodoros": 0,
+      "projectId": "",
+      "completedAt": "2026-03-19T14:46:32.527Z"
     }
   ],
   "projects": [
@@ -1222,5 +1223,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-19T14:46:02.896Z"
+  "updated": "2026-03-19T14:46:35.031Z"
 }
