@@ -122,14 +122,23 @@ function renderDashTasks() {
 
 // ── REFLECTION ──
 
+function migrateReflections() {
+  var ds = getDState();
+  // Migrate old single-string reflection to keyed structure
+  if (!ds.reflections) ds.reflections = {};
+  if (ds.reflection && ds.reflectionDate && !ds.reflections[ds.reflectionDate]) {
+    ds.reflections[ds.reflectionDate] = ds.reflection;
+  }
+}
+
 function renderReflection() {
   const ds = getDState();
+  if (!ds.reflections) ds.reflections = {};
   const today = getTodayStr();
-  if (ds.reflectionDate !== today) { ds.reflection = ''; ds.reflectionDate = today; saveDash(true); }
   const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   const prompt = PROMPTS[doy % PROMPTS.length];
   document.getElementById('dPrompt').textContent = prompt;
-  document.getElementById('dReflect').value = ds.reflection || '';
+  document.getElementById('dReflect').value = ds.reflections[today] || '';
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1028,12 +1037,19 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
   _fmtDue = fmtDue;
 
   migrateOldMoods();
+  migrateReflections();
 
   // Intention
   document.getElementById('dIntention').addEventListener('input', function() { getDState().intention = this.value; saveDash(true); });
 
   // Reflection
-  document.getElementById('dReflect').addEventListener('input', function() { getDState().reflection = this.value; if (reflectTimer) clearTimeout(reflectTimer); reflectTimer = setTimeout(function() { saveDash(); }, 800); });
+  document.getElementById('dReflect').addEventListener('input', function() {
+    var ds = getDState();
+    if (!ds.reflections) ds.reflections = {};
+    ds.reflections[getTodayStr()] = this.value;
+    if (reflectTimer) clearTimeout(reflectTimer);
+    reflectTimer = setTimeout(function() { saveDash(true); }, 800);
+  });
 
   // ── AFFECT GRID ──
   var grid = document.getElementById('dAffectGrid');

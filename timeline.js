@@ -120,10 +120,10 @@ function buildWeekData(weekStart) {
       habits[h.id] = !!(checks && checks[d]);
     });
 
-    // Reflection (only matches if reflection was written on this date)
+    // Reflection
     let reflection = '';
-    if (ds.reflectionDate === dStr) {
-      reflection = ds.reflection || '';
+    if (ds.reflections && ds.reflections[dStr]) {
+      reflection = ds.reflections[dStr];
     }
 
     // Pomodoro total from completed tasks
