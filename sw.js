@@ -15,6 +15,7 @@ var STATIC_ASSETS = [
   '/shopping.js',
   '/state.js',
   '/sync.js',
+  '/timeline.js',
   '/fonts/dm-sans-v17-latin-300.woff2',
   '/fonts/dm-sans-v17-latin-regular.woff2',
   '/fonts/dm-sans-v17-latin-500.woff2',
