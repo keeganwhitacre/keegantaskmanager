@@ -196,23 +196,24 @@ body.theme-aurora {
   /* --- AURORA — Dark Halcyon (replaces Neon) --- */
   --bg-body: rgba(17, 20, 24, 0.01);
   --bg-solid: #111418;
-  --bg-surface: rgba(24, 30, 38, 0.92);
-  --bg-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.07);
+  --bg-surface: rgba(24, 28, 34, 0.92);
+  --bg-input: rgba(255, 255, 255, 0.04);
   --bg-overlay: rgba(6, 10, 16, 0.55);
   --bg-tab-active: var(--accent);
-  --bg-toast: #1A2028;
+  --bg-toast: #1C2026;
 
-  --text-main: #E6EDF4;
-  --text-muted: #5A8CA8;
-  --text-date: #E6EDF4;
+  --text-main: #E4E6EB;
+  --text-muted: #6E7480;
+  --text-date: #E4E6EB;
   --text-inverse: #111418;
 
   --tab-active-text: #111418;
   --tab-active-border: var(--accent);
 
-  --border-main: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
-  --border-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
-  --border-divider: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08);
+  /* Neutral borders — no accent tint */
+  --border-main: rgba(255, 255, 255, 0.06);
+  --border-input: rgba(255, 255, 255, 0.08);
+  --border-divider: rgba(255, 255, 255, 0.06);
 
   /* Accent defaults — overridden by JS when user picks a custom color */
   --accent-r: 74;
@@ -245,9 +246,9 @@ body.theme-aurora {
   --glass-filter: none;
   --overlay-filter: blur(6px);
 
-  /* Halcyon-style ring shadow adapted for dark */
-  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
-  --shadow-toast: 0 4px 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
+  /* Neutral ring shadows */
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-toast: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
 
   /* Gradient FAB like Halcyon */
   --fab-bg: var(--accent);
@@ -257,23 +258,22 @@ body.theme-aurora {
 
   --task-hi: #D95B5B;
   --task-md: var(--accent);
-  --task-lo: rgba(90, 140, 168, 0.40);
+  --task-lo: rgba(110, 116, 128, 0.35);
   --task-cb-bg: transparent;
-  --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
+  --task-cb-border: rgba(255, 255, 255, 0.14);
 }
 
-/* Aurora background gradient */
+/* Aurora background gradient — subtle neutral, no accent tint */
 body.theme-aurora::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08) 0%, transparent 55%),
-    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(200,165,90,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.02) 0%, transparent 65%);
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(140, 160, 200, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(160, 150, 140, 0.03) 0%, transparent 50%);
 }
 
 /* ── Aurora: contained tab bar (Halcyon pattern) ── */
 body.theme-aurora .tab-bar {
-  background: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 99px;
   margin: 0 20px 14px;
   padding: 3px;
@@ -284,7 +284,7 @@ body.theme-aurora .tab-btn {
   background: transparent;
   border: none;
   box-shadow: none;
-  color: #5A8CA8;
+  color: #6E7480;
   border-radius: 96px;
   font-family: 'Manrope', sans-serif;
   font-weight: 600;
@@ -303,7 +303,7 @@ body.theme-aurora .tab-btn.active {
 
 /* ── Aurora: contained filter chips (Halcyon pattern) ── */
 body.theme-aurora .chip {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   font-family: 'Manrope', sans-serif;
   font-weight: 600;
   backdrop-filter: none;
@@ -328,8 +328,8 @@ body.theme-aurora .search-trigger {
 
 /* ── Aurora: focus strip elevated shadow (Halcyon pattern) ── */
 body.theme-aurora .focus-strip {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
-  background: rgba(30, 38, 48, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 8px 24px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(28, 32, 40, 0.95);
 }
 body.theme-aurora .focus-dot {
   box-shadow: 0 0 10px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.4);
@@ -381,15 +381,15 @@ body.theme-aurora .bottom-fade {
 body.theme-aurora .greeting {
   font-family: 'Manrope', sans-serif;
   font-size: 11px;
-  color: #5A8CA8;
+  color: #6E7480;
 }
 body.theme-aurora .date-sub {
-  color: #5A8CA8;
+  color: #6E7480;
 }
 
 /* ── Aurora: reflect segmented control (Halcyon pattern) ── */
 body.theme-aurora .reflect-seg {
-  background: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
+  background: rgba(255, 255, 255, 0.05);
   border: none;
   border-radius: 99px;
   box-shadow: none;
@@ -402,8 +402,8 @@ body.theme-aurora .reflect-seg-btn {
 }
 body.theme-aurora .reflect-seg-btn.active {
   background: rgba(255, 255, 255, 0.08);
-  color: #E6EDF4;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
+  color: #E4E6EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 body.theme-halcyon {
@@ -473,19 +473,18 @@ body.theme-halcyon {
   --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
 }
 
-/* Halcyon background gradient — warm-to-cool with visible golden undertone */
+/* Halcyon background gradient — soft neutral cool, no warm amber */
 body.theme-halcyon::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(16,96,160,0.13) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(180,145,80,0.11) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(200,170,110,0.04) 0%, transparent 70%),
-    linear-gradient(175deg, #d4e4f6 0%, #dde6f0 40%, #e8e4de 100%);
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(160, 155, 170, 0.07) 0%, transparent 50%),
+    linear-gradient(175deg, #d8e2f0 0%, #dde4ee 40%, #e4e2e0 100%);
 }
 
 /* ── Halcyon: contained tab bar ── */
 body.theme-halcyon .tab-bar {
-  background: rgba(140, 175, 210, 0.20);
+  background: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
   border-radius: 99px;
   margin: 0 20px 14px;
   padding: 3px;
@@ -2402,17 +2401,17 @@ body.deep-focus-mode #pomoDisplay {
 
 /* ── Aurora theme overrides (timeline) ── */
 body.theme-aurora .tl-day-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
-  background: rgba(24, 30, 38, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(24, 28, 34, 0.92);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 body.theme-aurora .tl-summary {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
-  background: rgba(24, 30, 38, 0.92);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  background: rgba(24, 28, 34, 0.92);
 }
 body.theme-aurora .tl-week-chip {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 body.theme-aurora .tl-day-card.today {
   border-color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.25);
