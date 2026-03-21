@@ -248,65 +248,191 @@ body.theme-neon {
   --task-cb-border: #6d558d;
 }
 
-body.theme-newsprint {
-  /* --- NEWSPRINT --- */
-  --bg-body: #f8f6f0;
-  --bg-solid: #f8f6f0;
-  --bg-surface: #f0ede6;
-  --bg-input: #fff;
-  --bg-overlay: rgba(26, 26, 26, 0.75);
-  --bg-tab-active: #1a1a1a;
-  --bg-toast: #f0ede6;
+body.theme-halcyon {
+  /* --- HALCYON DEEP --- */
+  --bg-body: #dce8f4;
+  --bg-solid: #dce8f4;
+  --bg-surface: rgba(255, 255, 255, 0.65);
+  --bg-input: rgba(140, 175, 210, 0.20);
+  --bg-overlay: rgba(10, 34, 64, 0.35);
+  --bg-tab-active: #1060a0;
+  --bg-toast: #eef3f9;
 
-  --text-main: #1a1a1a;
-  --text-muted: #888;
-  --text-date: #1a1a1a;
-  --text-inverse: #f8f6f0;
+  --text-main: #081e36;
+  --text-muted: #4878a0;
+  --text-date: #081e36;
+  --text-inverse: #ffffff;
 
-  --tab-active-text: #f8f6f0;
-  --tab-active-border: #1a1a1a;
+  --tab-active-text: #ffffff;
+  --tab-active-border: #1060a0;
 
-  --border-main: #ddd;
-  --border-input: #ddd;
-  --border-divider: #ddd;
+  --border-main: rgba(140, 180, 220, 0.12);
+  --border-input: rgba(140, 180, 220, 0.20);
+  --border-divider: rgba(140, 180, 220, 0.22);
 
-  --accent: #1a1a1a;
-  --accent-faded: rgba(26, 26, 26, 0.1);
-  --accent-text: #f8f6f0;
-  --danger: #b91c1c;
-  --warning: #92400e;
-  --success: #065f46;
-  --bel-accent: #9d174d;
+  --accent: #1060a0;
+  --accent-faded: rgba(16, 96, 160, 0.12);
+  --accent-text: #ffffff;
+  --danger: #b83838;
+  --warning: #9a7014;
+  --success: #1a7a52;
+  --bel-accent: #1a7a52;
 
-  --font-main: 'IBM Plex Mono', monospace;
-  --font-display: 'Bebas Neue', sans-serif;
-  
-  --display-weight: 400;
-  --display-tracking: 0.04em;
-  --clock-size: 52px;
-  --date-size: 36px;
+  --font-main: 'Manrope', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-display: 'Nunito', sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
 
-  --radius-pill: 4px;
-  --radius-circle: 6px;
-  --radius-card: 4px;
-  --radius-input: 4px;
+  --display-weight: 800;
+  --display-tracking: -0.03em;
+  --clock-size: 38px;
+  --date-size: 30px;
 
-  --glass-filter: none;
-  --overlay-filter: none;
+  --radius-pill: 20px;
+  --radius-circle: 50%;
+  --radius-card: 14px;
+  --radius-input: 10px;
 
-  --shadow-base: none;
-  --shadow-toast: none;
-  
-  --fab-bg: #1a1a1a;
+  --glass-filter: blur(8px);
+  --overlay-filter: blur(6px);
+
+  --shadow-base: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
+  --shadow-toast: 0 4px 20px rgba(16, 96, 160, 0.12), 0 0 0 1px rgba(140, 180, 220, 0.12);
+
+  --fab-bg: linear-gradient(135deg, #1060a0, #2884c4);
   --fab-border: none;
-  --fab-color: #f8f6f0;
-  --fab-shadow: none;
+  --fab-color: #ffffff;
+  --fab-shadow: 0 4px 12px rgba(16, 96, 160, 0.3), 0 8px 30px rgba(16, 96, 160, 0.15);
 
-  --task-hi: #b91c1c;
-  --task-md: #8a7355;
-  --task-lo: #ddd;
+  --task-hi: #b83838;
+  --task-md: #1060a0;
+  --task-lo: rgba(120, 160, 200, 0.50);
   --task-cb-bg: transparent;
-  --task-cb-border: #ccc;
+  --task-cb-border: rgba(120, 165, 210, 0.40);
+}
+
+/* Halcyon background gradient */
+body.theme-halcyon::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(16,96,160,0.11) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 35% at 95% 105%, rgba(140,120,80,0.045) 0%, transparent 50%),
+    linear-gradient(175deg, #d8e6f6 0%, #e0e8f2 45%, #e6e6ec 100%);
+}
+
+/* ── Halcyon: contained tab bar ── */
+body.theme-halcyon .tab-bar {
+  background: rgba(140, 175, 210, 0.20);
+  border-radius: 22px;
+  margin: 0 20px 14px;
+  padding: 3px;
+  gap: 3px;
+  box-shadow: none;
+}
+body.theme-halcyon .tab-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #7a9cb8;
+  border-radius: 19px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  flex: 1;
+  text-align: center;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.theme-halcyon .tab-btn.active {
+  background: #1060a0;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 96, 160, 0.25);
+}
+
+/* ── Halcyon: contained filter chips ── */
+body.theme-halcyon .chip {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+}
+body.theme-halcyon .chip.active {
+  background: #1060a0;
+  color: #ffffff;
+  border-color: #1060a0;
+  box-shadow: 0 2px 8px rgba(16, 96, 160, 0.20);
+}
+
+/* ── Halcyon: search bar recessed ── */
+body.theme-halcyon .search-trigger {
+  background: rgba(140, 175, 210, 0.20);
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ── Halcyon: focus strip glow ── */
+body.theme-halcyon .focus-strip {
+  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 8px 24px rgba(16, 96, 160, 0.07), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  background: rgba(255, 255, 255, 0.78);
+}
+body.theme-halcyon .focus-dot {
+  box-shadow: 0 0 10px rgba(16, 96, 160, 0.4);
+}
+
+/* ── Halcyon: serif accent for user content ── */
+body.theme-halcyon .note {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.6;
+}
+body.theme-halcyon .d-intention-input {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15px;
+}
+body.theme-halcyon .cn-scratch-textarea:not(.mono) {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.75;
+}
+body.theme-halcyon .cn-note-card .cn-card-preview {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+body.theme-halcyon .cn-detail-body-input:not(.mono) {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15.5px;
+  line-height: 1.9;
+}
+body.theme-halcyon .cn-md-preview {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15.5px;
+  line-height: 1.9;
+}
+
+/* ── Halcyon: note cards slightly more translucent ── */
+body.theme-halcyon .cn-note-card {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Halcyon: bottom fade ── */
+body.theme-halcyon .bottom-fade {
+  background: linear-gradient(to bottom, transparent 0%, rgba(228, 230, 236, 0.6) 40%, #e5e6eb 100%);
+}
+
+/* ── Halcyon: greeting boost ── */
+body.theme-halcyon .greeting {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  color: #4878a0;
+}
+body.theme-halcyon .date-sub {
+  color: #7a9cb8;
 }
 
 body.theme-bel-bel {
@@ -2124,23 +2250,24 @@ body.theme-neon .tl-habit-chip.bad {
 }
 
 /* ── Newsprint theme overrides ── */
-body.theme-newsprint .tl-day-card {
-  box-shadow: none;
-  border-color: #ddd;
+body.theme-halcyon .tl-day-card {
+  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
-body.theme-newsprint .tl-summary {
-  box-shadow: none;
-  border-color: #ddd;
+body.theme-halcyon .tl-summary {
+  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
+  background: rgba(255, 255, 255, 0.65);
 }
-body.theme-newsprint .tl-week-chip {
-  box-shadow: none;
-  border-color: #ddd;
+body.theme-halcyon .tl-week-chip {
+  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
 }
-body.theme-newsprint .tl-day-card.today {
-  border-color: #1a1a1a;
+body.theme-halcyon .tl-day-card.today {
+  border-color: rgba(16, 96, 160, 0.3);
 }
-body.theme-newsprint .tl-reflection {
-  border-left-color: #1a1a1a;
+body.theme-halcyon .tl-reflection {
+  border-left-color: #1060a0;
 }
 
 /* ══════════════════════════════════════════════════════════════════

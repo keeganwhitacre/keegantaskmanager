@@ -13,13 +13,16 @@
 
 <script>
   (function(){
-    var bg={neon:'#0d0810',newsprint:'#f8f6f0',ios26:'#e8eaf0','bel-bel':'#111113','ios-dark':'#000000'};
+    var bg={neon:'#0d0810',halcyon:'#dce8f4',ios26:'#e8eaf0','bel-bel':'#111113','ios-dark':'#000000'};
     try{var t=localStorage.getItem('kw_theme_v2')||'ios26'; document.documentElement.style.background=bg[t];}catch(e){}
   })();
   </script>
 
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="confnotes-styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&display=swap">
   
    <link rel="modulepreload" href="state.js">
   <link rel="modulepreload" href="sync.js">
@@ -544,8 +547,8 @@
     <div class="theme-swatch" data-theme="ios-dark" title="iOS Dark" style="background:linear-gradient(135deg,#1c1c1e,#000000);border:2px solid rgba(255,255,255,0.2);">
   <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#0a84ff;margin-top:auto;">DARK</div>
 </div>
-<div class="theme-swatch" data-theme="newsprint" title="Newsprint" style="background:#f8f6f0;border:2px solid #ddd;">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#888;margin-top:auto;">NEWS</div>
+<div class="theme-swatch" data-theme="halcyon" title="Halcyon" style="background:linear-gradient(175deg,#d8e6f6,#e0e8f2,#e6e6ec);border:2px solid rgba(16,96,160,0.2);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#1060a0;margin-top:auto;">DEEP</div>
 </div>
 
   </div>
