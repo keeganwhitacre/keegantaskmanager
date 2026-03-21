@@ -897,6 +897,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -974,12 +980,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -1110,11 +1110,11 @@
         }
       ]
     },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!"
-    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities."
+    },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!"
     }
   },
   "cnNotes": [
@@ -1131,7 +1131,7 @@
       "bodyIsMono": true,
       "pinned": false,
       "createdAt": "2026-03-17T21:57:36.067Z",
-      "updatedAt": "2026-03-21T20:05:42.313Z",
+      "updatedAt": "2026-03-21T23:32:25.452Z",
       "locked": false
     },
     {
@@ -1276,5 +1276,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-21T22:14:45.783Z"
+  "updated": "2026-03-21T23:32:27.954Z"
 }
