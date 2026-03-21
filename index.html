@@ -13,8 +13,8 @@
 
 <script>
   (function(){
-    var bg={neon:'#0d0810',halcyon:'#dce8f4',ios26:'#e8eaf0','bel-bel':'#111113','ios-dark':'#000000'};
-    try{var t=localStorage.getItem('kw_theme_v2')||'ios26'; document.documentElement.style.background=bg[t];}catch(e){}
+    var bg={aurora:'#111418',halcyon:'#dce8f4',ios26:'#e8eaf0','bel-bel':'#111113','ios-dark':'#000000'};
+    try{var t=localStorage.getItem('kw_theme_v2')||'ios26'; if(t==='neon')t='aurora'; document.documentElement.style.background=bg[t];}catch(e){}
   })();
   </script>
 
@@ -538,8 +538,8 @@
 <div class="theme-swatch" data-theme="ios26" title="iOS 26" style="background:linear-gradient(135deg,#e8eaf0,#dde2f0);border:2px solid rgba(255,255,255,0.8);">
   <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#007aff;margin-top:auto;">iOS</div>
 </div>
-<div class="theme-swatch" data-theme="neon" title="Neon Noir" style="background:#0d0810;border:2px solid #ff2d7840;">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#ff2d78;margin-top:auto;">NEON</div>
+<div class="theme-swatch" data-theme="aurora" title="Aurora" style="background:linear-gradient(135deg,#111418,#161A1F);border:2px solid rgba(74,188,224,0.3);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#4ABCE0;margin-top:auto;">AURORA</div>
 </div>
 <div class="theme-swatch" data-theme="bel-bel" title="Bel Bel" style="background:linear-gradient(to bottom left, #FB5A27, #8115E6);border:2px solid rgba(255,255,255,0.4);">
   <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#fff;margin-top:auto;text-shadow:0 1px 2px rgba(0,0,0,0.5);">BEL</div>

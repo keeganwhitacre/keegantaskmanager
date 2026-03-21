@@ -192,60 +192,214 @@
   --task-cb-border: rgba(180, 180, 210, 0.7);
 }
 
-body.theme-neon {
-  /* --- NEON NOIR --- */
-  --bg-body: #0d0810;
-  --bg-solid: #0d0810;
-  --bg-surface: #100818;
-  --bg-input: #130a1a;
-  --bg-overlay: rgba(5, 2, 8, 0.88);
-  --bg-tab-active: rgba(255, 45, 120, 0.08);
-  --bg-toast: #130a1a;
+body.theme-aurora {
+  /* --- AURORA — Dark Halcyon (replaces Neon) --- */
+  --bg-body: #111418;
+  --bg-solid: #111418;
+  --bg-surface: rgba(24, 30, 38, 0.92);
+  --bg-input: rgba(74, 130, 170, 0.10);
+  --bg-overlay: rgba(6, 10, 16, 0.55);
+  --bg-tab-active: #4ABCE0;
+  --bg-toast: #1A2028;
 
-  --text-main: #f0e8ff;
-  --text-muted: #8b7ba1;
-  --text-date: #f0e8ff;
-  --text-inverse: #ffffff;
+  --text-main: #E6EDF4;
+  --text-muted: #5A8CA8;
+  --text-date: #E6EDF4;
+  --text-inverse: #111418;
 
-  --tab-active-text: #ff2d78;
-  --tab-active-border: rgba(255, 45, 120, 0.3);
+  --tab-active-text: #111418;
+  --tab-active-border: #4ABCE0;
 
-  --border-main: #2d1f3d;
-  --border-input: #6d558d;
-  --border-divider: #1e1028;
+  --border-main: rgba(74, 188, 224, 0.06);
+  --border-input: rgba(74, 160, 200, 0.12);
+  --border-divider: rgba(74, 160, 200, 0.08);
 
-  --accent: #ff2d78;
-  --accent-faded: rgba(255, 45, 120, 0.1);
-  --accent-text: #ffffff;
-  --danger: #ff2d78;
-  --warning: #ffb800;
-  --success: #39ff14;
-  --bel-accent: #ffb800; 
+  --accent: #4ABCE0;
+  --accent-faded: rgba(74, 188, 224, 0.10);
+  --accent-text: #111418;
+  --danger: #D95B5B;
+  --warning: #D4A64A;
+  --success: #3AAA72;
+  --bel-accent: #3AAA72;
 
-  --font-main: 'Syne', sans-serif;
-  --font-display: 'Syne', sans-serif;
-  
+  /* Halcyon three-font system */
+  --font-main: 'Manrope', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-display: 'Nunito', sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+
   --display-weight: 800;
-  --display-tracking: normal;
+  --display-tracking: -0.03em;
   --clock-size: 38px;
-  --date-size: 24px; /* Scaled down for Syne font width */
+  --date-size: 30px;
+
+  --radius-pill: 99px;
+  --radius-circle: 50%;
+  --radius-card: 14px;
+  --radius-input: 10px;
 
   --glass-filter: none;
-  --overlay-filter: none;
+  --overlay-filter: blur(6px);
 
-  --shadow-base: 0 2px 12px rgba(168, 85, 255, 0.08);
-  --shadow-toast: 0 2px 12px rgba(168, 85, 255, 0.08);
-  
-  --fab-bg: #ff2d78;
+  /* Halcyon-style ring shadow adapted for dark */
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  --shadow-toast: 0 4px 20px rgba(74, 188, 224, 0.08), 0 0 0 1px rgba(74, 188, 224, 0.06);
+
+  /* Gradient FAB like Halcyon */
+  --fab-bg: linear-gradient(135deg, #4ABCE0, #3AAAC8);
   --fab-border: none;
-  --fab-color: #ffffff;
-  --fab-shadow: 0 0 24px rgba(255, 45, 120, 0.35);
+  --fab-color: #111418;
+  --fab-shadow: 0 4px 12px rgba(74, 188, 224, 0.30), 0 8px 30px rgba(74, 188, 224, 0.15);
 
-  --task-hi: #ff2d78;
-  --task-md: #a855ff;
-  --task-lo: #2d1545;
+  --task-hi: #D95B5B;
+  --task-md: #4ABCE0;
+  --task-lo: rgba(90, 140, 168, 0.40);
   --task-cb-bg: transparent;
-  --task-cb-border: #6d558d;
+  --task-cb-border: rgba(74, 160, 200, 0.30);
+}
+
+/* Aurora background gradient — Halcyon composition inverted: cool teal top-left, warm amber bottom-right */
+body.theme-aurora::before {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(74,188,224,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(200,165,90,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(74,188,224,0.02) 0%, transparent 65%);
+}
+
+/* ── Aurora: contained tab bar (Halcyon pattern) ── */
+body.theme-aurora .tab-bar {
+  background: rgba(74, 130, 170, 0.12);
+  border-radius: 99px;
+  margin: 0 20px 14px;
+  padding: 3px;
+  gap: 3px;
+  box-shadow: none;
+}
+body.theme-aurora .tab-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #5A8CA8;
+  border-radius: 96px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  flex: 1;
+  text-align: center;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.theme-aurora .tab-btn.active {
+  background: #4ABCE0;
+  color: #111418;
+  box-shadow: 0 2px 8px rgba(74, 188, 224, 0.25);
+}
+
+/* ── Aurora: contained filter chips (Halcyon pattern) ── */
+body.theme-aurora .chip {
+  background: rgba(255, 255, 255, 0.06);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.theme-aurora .chip.active {
+  background: #4ABCE0;
+  color: #111418;
+  border-color: #4ABCE0;
+  box-shadow: 0 2px 8px rgba(74, 188, 224, 0.20);
+}
+
+/* ── Aurora: search bar — no background (Halcyon pattern) ── */
+body.theme-aurora .search-trigger {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  width: fit-content;
+}
+
+/* ── Aurora: focus strip elevated shadow (Halcyon pattern) ── */
+body.theme-aurora .focus-strip {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(74, 188, 224, 0.06), 0 0 0 1px rgba(74, 188, 224, 0.06);
+  background: rgba(30, 38, 48, 0.95);
+}
+body.theme-aurora .focus-dot {
+  box-shadow: 0 0 10px rgba(74, 188, 224, 0.4);
+}
+
+/* ── Aurora: serif accent for user content (Halcyon pattern) ── */
+body.theme-aurora .note {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.6;
+}
+body.theme-aurora .d-intention-input {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15px;
+}
+body.theme-aurora .cn-scratch-textarea:not(.mono) {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.75;
+}
+body.theme-aurora .cn-note-card .cn-card-preview {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+body.theme-aurora .cn-detail-body-input:not(.mono) {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15.5px;
+  line-height: 1.9;
+}
+body.theme-aurora .cn-md-preview {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15.5px;
+  line-height: 1.9;
+}
+
+/* ── Aurora: note cards — high-alpha dark (Halcyon pattern) ── */
+body.theme-aurora .cn-note-card {
+  background: rgba(24, 30, 38, 0.92);
+}
+
+/* ── Aurora: bottom fade ── */
+body.theme-aurora .bottom-fade {
+  background: linear-gradient(to bottom, transparent 0%, rgba(17, 20, 24, 0.6) 40%, #111418 100%);
+}
+
+/* ── Aurora: greeting & subtitle (Halcyon pattern) ── */
+body.theme-aurora .greeting {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  color: #5A8CA8;
+}
+body.theme-aurora .date-sub {
+  color: #5A8CA8;
+}
+
+/* ── Aurora: reflect segmented control (Halcyon pattern) ── */
+body.theme-aurora .reflect-seg {
+  background: rgba(74, 130, 170, 0.12);
+  border: none;
+  border-radius: 99px;
+  box-shadow: none;
+}
+body.theme-aurora .reflect-seg-btn {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 96px;
+}
+body.theme-aurora .reflect-seg-btn.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #E6EDF4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(74, 188, 224, 0.05);
 }
 
 body.theme-halcyon {
@@ -2238,17 +2392,33 @@ body.deep-focus-mode #pomoDisplay {
   font-style: italic;
 }
 
-/* ── Neon theme overrides ── */
-body.theme-neon .tl-day-card.today {
-  border-color: rgba(255, 45, 120, 0.25);
+/* ── Aurora theme overrides (timeline) ── */
+body.theme-aurora .tl-day-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  background: rgba(24, 30, 38, 0.92);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
-body.theme-neon .tl-habit-chip {
-  background: rgba(57, 255, 20, 0.1);
-  color: #39ff14;
+body.theme-aurora .tl-summary {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  background: rgba(24, 30, 38, 0.92);
 }
-body.theme-neon .tl-habit-chip.bad {
-  background: rgba(255, 45, 120, 0.1);
-  color: #ff2d78;
+body.theme-aurora .tl-week-chip {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+}
+body.theme-aurora .tl-day-card.today {
+  border-color: rgba(74, 188, 224, 0.25);
+}
+body.theme-aurora .tl-habit-chip {
+  background: rgba(58, 170, 114, 0.1);
+  color: #3AAA72;
+}
+body.theme-aurora .tl-habit-chip.bad {
+  background: rgba(217, 91, 91, 0.1);
+  color: #D95B5B;
+}
+body.theme-aurora .tl-reflection {
+  border-left-color: #4ABCE0;
 }
 
 /* ── Newsprint theme overrides ── */
