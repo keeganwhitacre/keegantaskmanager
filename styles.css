@@ -197,9 +197,9 @@ body.theme-aurora {
   --bg-body: rgba(17, 20, 24, 0.01);
   --bg-solid: #111418;
   --bg-surface: rgba(24, 30, 38, 0.92);
-  --bg-input: rgba(74, 130, 170, 0.10);
+  --bg-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.07);
   --bg-overlay: rgba(6, 10, 16, 0.55);
-  --bg-tab-active: #4ABCE0;
+  --bg-tab-active: var(--accent);
   --bg-toast: #1A2028;
 
   --text-main: #E6EDF4;
@@ -208,14 +208,18 @@ body.theme-aurora {
   --text-inverse: #111418;
 
   --tab-active-text: #111418;
-  --tab-active-border: #4ABCE0;
+  --tab-active-border: var(--accent);
 
-  --border-main: rgba(74, 188, 224, 0.06);
-  --border-input: rgba(74, 160, 200, 0.12);
-  --border-divider: rgba(74, 160, 200, 0.08);
+  --border-main: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
+  --border-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
+  --border-divider: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08);
 
-  --accent: #4ABCE0;
-  --accent-faded: rgba(74, 188, 224, 0.10);
+  /* Accent defaults — overridden by JS when user picks a custom color */
+  --accent-r: 74;
+  --accent-g: 188;
+  --accent-b: 224;
+  --accent: rgb(var(--accent-r), var(--accent-g), var(--accent-b));
+  --accent-faded: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
   --accent-text: #111418;
   --danger: #D95B5B;
   --warning: #D4A64A;
@@ -242,34 +246,34 @@ body.theme-aurora {
   --overlay-filter: blur(6px);
 
   /* Halcyon-style ring shadow adapted for dark */
-  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
-  --shadow-toast: 0 4px 20px rgba(74, 188, 224, 0.08), 0 0 0 1px rgba(74, 188, 224, 0.06);
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
+  --shadow-toast: 0 4px 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
 
   /* Gradient FAB like Halcyon */
-  --fab-bg: linear-gradient(135deg, #4ABCE0, #3AAAC8);
+  --fab-bg: var(--accent);
   --fab-border: none;
   --fab-color: #111418;
-  --fab-shadow: 0 4px 12px rgba(74, 188, 224, 0.30), 0 8px 30px rgba(74, 188, 224, 0.15);
+  --fab-shadow: 0 4px 12px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30), 0 8px 30px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.15);
 
   --task-hi: #D95B5B;
-  --task-md: #4ABCE0;
+  --task-md: var(--accent);
   --task-lo: rgba(90, 140, 168, 0.40);
   --task-cb-bg: transparent;
-  --task-cb-border: rgba(74, 160, 200, 0.30);
+  --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
 }
 
-/* Aurora background gradient — Halcyon composition inverted: cool teal top-left, warm amber bottom-right */
+/* Aurora background gradient */
 body.theme-aurora::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(74,188,224,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.08) 0%, transparent 55%),
     radial-gradient(ellipse 100% 50% at 90% 100%, rgba(200,165,90,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(74,188,224,0.02) 0%, transparent 65%);
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.02) 0%, transparent 65%);
 }
 
 /* ── Aurora: contained tab bar (Halcyon pattern) ── */
 body.theme-aurora .tab-bar {
-  background: rgba(74, 130, 170, 0.12);
+  background: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
   border-radius: 99px;
   margin: 0 20px 14px;
   padding: 3px;
@@ -292,9 +296,9 @@ body.theme-aurora .tab-btn {
   -webkit-backdrop-filter: none;
 }
 body.theme-aurora .tab-btn.active {
-  background: #4ABCE0;
-  color: #111418;
-  box-shadow: 0 2px 8px rgba(74, 188, 224, 0.25);
+  background: var(--accent);
+  color: var(--accent-text);
+  box-shadow: 0 2px 8px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.25);
 }
 
 /* ── Aurora: contained filter chips (Halcyon pattern) ── */
@@ -306,10 +310,10 @@ body.theme-aurora .chip {
   -webkit-backdrop-filter: none;
 }
 body.theme-aurora .chip.active {
-  background: #4ABCE0;
-  color: #111418;
-  border-color: #4ABCE0;
-  box-shadow: 0 2px 8px rgba(74, 188, 224, 0.20);
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.20);
 }
 
 /* ── Aurora: search bar — no background (Halcyon pattern) ── */
@@ -324,11 +328,11 @@ body.theme-aurora .search-trigger {
 
 /* ── Aurora: focus strip elevated shadow (Halcyon pattern) ── */
 body.theme-aurora .focus-strip {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(74, 188, 224, 0.06), 0 0 0 1px rgba(74, 188, 224, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.06);
   background: rgba(30, 38, 48, 0.95);
 }
 body.theme-aurora .focus-dot {
-  box-shadow: 0 0 10px rgba(74, 188, 224, 0.4);
+  box-shadow: 0 0 10px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.4);
 }
 
 /* ── Aurora: serif accent for user content (Halcyon pattern) ── */
@@ -385,7 +389,7 @@ body.theme-aurora .date-sub {
 
 /* ── Aurora: reflect segmented control (Halcyon pattern) ── */
 body.theme-aurora .reflect-seg {
-  background: rgba(74, 130, 170, 0.12);
+  background: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
   border: none;
   border-radius: 99px;
   box-shadow: none;
@@ -399,7 +403,7 @@ body.theme-aurora .reflect-seg-btn {
 body.theme-aurora .reflect-seg-btn.active {
   background: rgba(255, 255, 255, 0.08);
   color: #E6EDF4;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
 }
 
 body.theme-halcyon {
@@ -407,9 +411,9 @@ body.theme-halcyon {
   --bg-body: rgba(220, 232, 244, 0.01);
   --bg-solid: #dce8f4;
   --bg-surface: rgba(255, 255, 255, 0.82);
-  --bg-input: rgba(140, 175, 210, 0.18);
+  --bg-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
   --bg-overlay: rgba(10, 34, 64, 0.40);
-  --bg-tab-active: #1060a0;
+  --bg-tab-active: var(--accent);
   --bg-toast: #eef3f9;
 
   --text-main: #081e36;
@@ -418,14 +422,18 @@ body.theme-halcyon {
   --text-inverse: #ffffff;
 
   --tab-active-text: #ffffff;
-  --tab-active-border: #1060a0;
+  --tab-active-border: var(--accent);
 
   --border-main: rgba(140, 180, 220, 0.15);
   --border-input: rgba(140, 180, 220, 0.22);
   --border-divider: rgba(140, 180, 220, 0.22);
 
-  --accent: #1060a0;
-  --accent-faded: rgba(16, 96, 160, 0.12);
+  /* Accent defaults — overridden by JS when user picks a custom color */
+  --accent-r: 16;
+  --accent-g: 96;
+  --accent-b: 160;
+  --accent: rgb(var(--accent-r), var(--accent-g), var(--accent-b));
+  --accent-faded: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
   --accent-text: #ffffff;
   --danger: #b83838;
   --warning: #c4941a;
@@ -451,18 +459,18 @@ body.theme-halcyon {
   --overlay-filter: blur(6px);
 
   --shadow-base: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
-  --shadow-toast: 0 4px 20px rgba(16, 96, 160, 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  --shadow-toast: 0 4px 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10);
 
-  --fab-bg: linear-gradient(135deg, #1060a0, #2884c4);
+  --fab-bg: var(--accent);
   --fab-border: none;
   --fab-color: #ffffff;
-  --fab-shadow: 0 4px 12px rgba(16, 96, 160, 0.3), 0 8px 30px rgba(16, 96, 160, 0.15);
+  --fab-shadow: 0 4px 12px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.3), 0 8px 30px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.15);
 
   --task-hi: #b83838;
-  --task-md: #1060a0;
+  --task-md: var(--accent);
   --task-lo: rgba(120, 160, 200, 0.50);
   --task-cb-bg: transparent;
-  --task-cb-border: rgba(120, 165, 210, 0.40);
+  --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
 }
 
 /* Halcyon background gradient — warm-to-cool with visible golden undertone */
@@ -500,9 +508,9 @@ body.theme-halcyon .tab-btn {
   -webkit-backdrop-filter: none;
 }
 body.theme-halcyon .tab-btn.active {
-  background: #1060a0;
+  background: var(--accent);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(16, 96, 160, 0.25);
+  box-shadow: 0 2px 8px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.25);
 }
 
 /* ── Halcyon: contained filter chips ── */
@@ -514,10 +522,10 @@ body.theme-halcyon .chip {
   font-weight: 600;
 }
 body.theme-halcyon .chip.active {
-  background: #1060a0;
+  background: var(--accent);
   color: #ffffff;
-  border-color: #1060a0;
-  box-shadow: 0 2px 8px rgba(16, 96, 160, 0.20);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.20);
 }
 
 /* ── Halcyon: search bar — no background bar ── */
@@ -532,11 +540,11 @@ body.theme-halcyon .search-trigger {
 
 /* ── Halcyon: focus strip glow ── */
 body.theme-halcyon .focus-strip {
-  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 8px 24px rgba(16, 96, 160, 0.07), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 8px 24px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.07), 0 0 0 1px rgba(140, 180, 220, 0.10);
   background: rgba(255, 255, 255, 0.88);
 }
 body.theme-halcyon .focus-dot {
-  box-shadow: 0 0 10px rgba(16, 96, 160, 0.4);
+  box-shadow: 0 0 10px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.4);
 }
 
 /* ── Halcyon: serif accent for user content ── */
@@ -2394,20 +2402,20 @@ body.deep-focus-mode #pomoDisplay {
 
 /* ── Aurora theme overrides (timeline) ── */
 body.theme-aurora .tl-day-card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
   background: rgba(24, 30, 38, 0.92);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 body.theme-aurora .tl-summary {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
   background: rgba(24, 30, 38, 0.92);
 }
 body.theme-aurora .tl-week-chip {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(74, 188, 224, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.05);
 }
 body.theme-aurora .tl-day-card.today {
-  border-color: rgba(74, 188, 224, 0.25);
+  border-color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.25);
 }
 body.theme-aurora .tl-habit-chip {
   background: rgba(58, 170, 114, 0.1);
@@ -2418,7 +2426,7 @@ body.theme-aurora .tl-habit-chip.bad {
   color: #D95B5B;
 }
 body.theme-aurora .tl-reflection {
-  border-left-color: #4ABCE0;
+  border-left-color: var(--accent);
 }
 
 /* ── Newsprint theme overrides ── */
@@ -2436,10 +2444,10 @@ body.theme-halcyon .tl-week-chip {
   box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
 }
 body.theme-halcyon .tl-day-card.today {
-  border-color: rgba(16, 96, 160, 0.3);
+  border-color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.3);
 }
 body.theme-halcyon .tl-reflection {
-  border-left-color: #1060a0;
+  border-left-color: var(--accent);
 }
 
 /* ══════════════════════════════════════════════════════════════════

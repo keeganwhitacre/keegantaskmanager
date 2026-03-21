@@ -1155,7 +1155,201 @@ function applyTheme(name) {
 }
 
 function loadTheme() { let saved = 'ios26'; try { saved = localStorage.getItem(KEYS.theme) || 'ios26'; } catch (e) {} if (saved === 'newsprint') saved = 'halcyon'; if (saved === 'neon') saved = 'aurora'; applyTheme(saved); }
-document.getElementById('settingsSheet').addEventListener('click', function(e) { const sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); render(); });
+document.getElementById('settingsSheet').addEventListener('click', function(e) { const sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); updateAccentUI(); render(); });
+
+// ══════════════════════════════════════════════════════════════════
+// ACCENT COLOR CUSTOMIZER (Halcyon + Aurora)
+// ══════════════════════════════════════════════════════════════════
+
+const ACCENT_KEY = 'kw_accent_v1';
+const ACCENT_THEMES = ['halcyon', 'aurora']; // themes that support accent customization
+const ACCENT_DEFAULTS = { halcyon: { r: 16, g: 96, b: 160 }, aurora: { r: 74, g: 188, b: 224 } };
+
+const ACCENT_PRESETS = [
+  { hex: '#1060a0', label: 'Ocean' },     // Halcyon default
+  { hex: '#4ABCE0', label: 'Teal' },      // Aurora default
+  { hex: '#7C5CFC', label: 'Violet' },
+  { hex: '#E85D8A', label: 'Rose' },
+  { hex: '#E8743A', label: 'Ember' },
+  { hex: '#2BAA6E', label: 'Forest' },
+  { hex: '#D4A64A', label: 'Amber' },
+  { hex: '#3B82F6', label: 'Blue' },
+];
+
+function hexToRgb(hex) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  var n = parseInt(hex, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function rgbToHex(r, g, b) {
+  return '#' + [r, g, b].map(function(v) { return v.toString(16).padStart(2, '0'); }).join('');
+}
+
+function isLightColor(r, g, b) {
+  // Relative luminance — determines if accent-text should be dark or light
+  return (0.299 * r + 0.587 * g + 0.114 * b) > 160;
+}
+
+function getCurrentThemeName() {
+  for (var i = 0; i < THEMES.length; i++) {
+    if (document.body.classList.contains('theme-' + THEMES[i])) return THEMES[i];
+  }
+  return 'ios26';
+}
+
+function applyAccentColor(hex) {
+  var rgb = hexToRgb(hex);
+  var root = document.body;
+  root.style.setProperty('--accent-r', rgb.r);
+  root.style.setProperty('--accent-g', rgb.g);
+  root.style.setProperty('--accent-b', rgb.b);
+
+  var theme = getCurrentThemeName();
+  // For dark themes, accent-text should be dark on light accents, white on dark accents
+  if (theme === 'aurora') {
+    root.style.setProperty('--accent-text', isLightColor(rgb.r, rgb.g, rgb.b) ? '#111418' : '#ffffff');
+    root.style.setProperty('--fab-color', isLightColor(rgb.r, rgb.g, rgb.b) ? '#111418' : '#ffffff');
+  } else {
+    root.style.setProperty('--accent-text', isLightColor(rgb.r, rgb.g, rgb.b) ? '#081e36' : '#ffffff');
+    root.style.setProperty('--fab-color', isLightColor(rgb.r, rgb.g, rgb.b) ? '#081e36' : '#ffffff');
+  }
+}
+
+function clearAccentColor() {
+  var props = ['--accent-r', '--accent-g', '--accent-b', '--accent-text', '--fab-color'];
+  props.forEach(function(p) { document.body.style.removeProperty(p); });
+}
+
+function saveAccent(hex) {
+  var theme = getCurrentThemeName();
+  try {
+    var stored = JSON.parse(localStorage.getItem(ACCENT_KEY) || '{}');
+    stored[theme] = hex;
+    localStorage.setItem(ACCENT_KEY, JSON.stringify(stored));
+  } catch (e) {}
+}
+
+function loadAccent() {
+  var theme = getCurrentThemeName();
+  if (ACCENT_THEMES.indexOf(theme) === -1) { clearAccentColor(); return; }
+  try {
+    var stored = JSON.parse(localStorage.getItem(ACCENT_KEY) || '{}');
+    if (stored[theme]) {
+      applyAccentColor(stored[theme]);
+    } else {
+      clearAccentColor();
+    }
+  } catch (e) { clearAccentColor(); }
+}
+
+function getSavedAccent() {
+  var theme = getCurrentThemeName();
+  try {
+    var stored = JSON.parse(localStorage.getItem(ACCENT_KEY) || '{}');
+    return stored[theme] || null;
+  } catch (e) { return null; }
+}
+
+function removeSavedAccent() {
+  var theme = getCurrentThemeName();
+  try {
+    var stored = JSON.parse(localStorage.getItem(ACCENT_KEY) || '{}');
+    delete stored[theme];
+    localStorage.setItem(ACCENT_KEY, JSON.stringify(stored));
+  } catch (e) {}
+}
+
+// Build the preset swatches
+function buildAccentPresets() {
+  var container = document.getElementById('accentPresets');
+  if (!container) return;
+  container.innerHTML = '';
+  var saved = getSavedAccent();
+  ACCENT_PRESETS.forEach(function(p) {
+    var el = document.createElement('div');
+    el.style.cssText = 'width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all 0.12s;';
+    el.style.background = p.hex;
+    el.title = p.label;
+    if (saved && saved.toLowerCase() === p.hex.toLowerCase()) {
+      el.style.borderColor = 'var(--text-main)';
+      el.style.outline = '2px solid var(--text-main)';
+      el.style.outlineOffset = '2px';
+    }
+    el.addEventListener('click', function() {
+      applyAccentColor(p.hex);
+      saveAccent(p.hex);
+      document.getElementById('accentHexInput').value = p.hex;
+      document.getElementById('accentPreview').style.background = p.hex;
+      buildAccentPresets();
+      render();
+    });
+    container.appendChild(el);
+  });
+}
+
+function updateAccentUI() {
+  var theme = getCurrentThemeName();
+  var section = document.getElementById('accentPickerSection');
+  if (!section) return;
+  var show = ACCENT_THEMES.indexOf(theme) !== -1;
+  section.style.display = show ? 'block' : 'none';
+  if (!show) return;
+
+  loadAccent();
+  var saved = getSavedAccent();
+  var def = ACCENT_DEFAULTS[theme];
+  var currentHex = saved || rgbToHex(def.r, def.g, def.b);
+  document.getElementById('accentHexInput').value = currentHex;
+  document.getElementById('accentPreview').style.background = currentHex;
+  buildAccentPresets();
+}
+
+// Apply button
+document.getElementById('accentApplyBtn').addEventListener('click', function() {
+  var val = document.getElementById('accentHexInput').value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(val) && !/^#[0-9a-fA-F]{3}$/.test(val)) {
+    showToast('Invalid hex — use format #RRGGBB');
+    return;
+  }
+  applyAccentColor(val);
+  saveAccent(val);
+  document.getElementById('accentPreview').style.background = val;
+  buildAccentPresets();
+  render();
+  showToast('Accent color updated');
+});
+
+// Hex input live preview
+document.getElementById('accentHexInput').addEventListener('input', function() {
+  var val = this.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(val) || /^#[0-9a-fA-F]{3}$/.test(val)) {
+    document.getElementById('accentPreview').style.background = val;
+  }
+});
+
+// Reset button
+document.getElementById('accentResetBtn').addEventListener('click', function() {
+  removeSavedAccent();
+  clearAccentColor();
+  var theme = getCurrentThemeName();
+  var def = ACCENT_DEFAULTS[theme];
+  var hex = rgbToHex(def.r, def.g, def.b);
+  document.getElementById('accentHexInput').value = hex;
+  document.getElementById('accentPreview').style.background = hex;
+  buildAccentPresets();
+  render();
+  showToast('Accent reset to default');
+});
+
+// Hook into applyTheme so accent loads whenever theme changes
+var _origApplyTheme = applyTheme;
+applyTheme = function(name) {
+  _origApplyTheme(name);
+  // Small delay so body class is set before we check theme
+  setTimeout(function() { loadAccent(); }, 0);
+};
 
 // ══════════════════════════════════════════════════════════════════
 // DRAG TO REORDER
@@ -1253,4 +1447,5 @@ if (_segReview) _segReview.addEventListener('click', function() { onTimelineEnte
 
 render();
 loadSettingsUI();
+updateAccentUI();
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);

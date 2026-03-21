@@ -552,6 +552,18 @@
 </div>
 
   </div>
+
+  <div id="accentPickerSection" style="display:none;">
+    <div class="sheet-label">Accent Color</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="accentPresets"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+      <div id="accentPreview" style="width:32px;height:32px;border-radius:8px;border:2px solid var(--border-divider);flex-shrink:0;"></div>
+      <input class="input" id="accentHexInput" type="text" placeholder="#4ABCE0" maxlength="7" style="margin-bottom:0;flex:1;font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;">
+      <button class="sheet-btn primary" id="accentApplyBtn" style="width:auto;padding:10px 16px;margin-top:0;font-size:12px;">Apply</button>
+    </div>
+    <button class="sheet-btn" id="accentResetBtn" style="font-size:12px;padding:8px 16px;">Reset to Default</button>
+  </div>
+
   <div class="divider"></div>
   <div class="sheet-label">GitHub Sync</div>
   <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
