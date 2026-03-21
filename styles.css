@@ -250,11 +250,11 @@ body.theme-neon {
 
 body.theme-halcyon {
   /* --- HALCYON DEEP --- */
-  --bg-body: rgba(255, 255, 255, 0.01);
+  --bg-body: #dce8f4;
   --bg-solid: #dce8f4;
-  --bg-surface: rgba(255, 255, 255, 0.65);
-  --bg-input: rgba(140, 175, 210, 0.20);
-  --bg-overlay: rgba(10, 34, 64, 0.35);
+  --bg-surface: rgba(255, 255, 255, 0.82);
+  --bg-input: rgba(140, 175, 210, 0.18);
+  --bg-overlay: rgba(10, 34, 64, 0.40);
   --bg-tab-active: #1060a0;
   --bg-toast: #eef3f9;
 
@@ -266,15 +266,15 @@ body.theme-halcyon {
   --tab-active-text: #ffffff;
   --tab-active-border: #1060a0;
 
-  --border-main: rgba(140, 180, 220, 0.12);
-  --border-input: rgba(140, 180, 220, 0.20);
+  --border-main: rgba(140, 180, 220, 0.15);
+  --border-input: rgba(140, 180, 220, 0.22);
   --border-divider: rgba(140, 180, 220, 0.22);
 
   --accent: #1060a0;
   --accent-faded: rgba(16, 96, 160, 0.12);
   --accent-text: #ffffff;
   --danger: #b83838;
-  --warning: #9a7014;
+  --warning: #c4941a;
   --success: #1a7a52;
   --bel-accent: #1a7a52;
 
@@ -288,16 +288,16 @@ body.theme-halcyon {
   --clock-size: 38px;
   --date-size: 30px;
 
-  --radius-pill: 20px;
+  --radius-pill: 99px;
   --radius-circle: 50%;
   --radius-card: 14px;
   --radius-input: 10px;
 
-  --glass-filter: blur(8px);
+  --glass-filter: none;
   --overlay-filter: blur(6px);
 
-  --shadow-base: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
-  --shadow-toast: 0 4px 20px rgba(16, 96, 160, 0.12), 0 0 0 1px rgba(140, 180, 220, 0.12);
+  --shadow-base: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  --shadow-toast: 0 4px 20px rgba(16, 96, 160, 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10);
 
   --fab-bg: linear-gradient(135deg, #1060a0, #2884c4);
   --fab-border: none;
@@ -311,19 +311,20 @@ body.theme-halcyon {
   --task-cb-border: rgba(120, 165, 210, 0.40);
 }
 
-/* Halcyon background gradient */
+/* Halcyon background gradient — warm-to-cool with visible golden undertone */
 body.theme-halcyon::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(16,96,160,0.11) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 35% at 95% 105%, rgba(140,120,80,0.045) 0%, transparent 50%),
-    linear-gradient(175deg, #d8e6f6 0%, #e0e8f2 45%, #e6e6ec 100%);
+    radial-gradient(ellipse 130% 45% at 10% -5%, rgba(16,96,160,0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 50% at 90% 100%, rgba(180,145,80,0.11) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 50%, rgba(200,170,110,0.04) 0%, transparent 70%),
+    linear-gradient(175deg, #d4e4f6 0%, #dde6f0 40%, #e8e4de 100%);
 }
 
 /* ── Halcyon: contained tab bar ── */
 body.theme-halcyon .tab-bar {
   background: rgba(140, 175, 210, 0.20);
-  border-radius: 22px;
+  border-radius: 99px;
   margin: 0 20px 14px;
   padding: 3px;
   gap: 3px;
@@ -334,7 +335,7 @@ body.theme-halcyon .tab-btn {
   border: none;
   box-shadow: none;
   color: #7a9cb8;
-  border-radius: 19px;
+  border-radius: 96px;
   font-family: 'Manrope', sans-serif;
   font-weight: 600;
   font-size: 12px;
@@ -365,19 +366,20 @@ body.theme-halcyon .chip.active {
   box-shadow: 0 2px 8px rgba(16, 96, 160, 0.20);
 }
 
-/* ── Halcyon: search bar recessed ── */
+/* ── Halcyon: search bar — no background bar ── */
 body.theme-halcyon .search-trigger {
-  background: rgba(140, 175, 210, 0.20);
+  background: transparent;
   border: none;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  width: fit-content;
 }
 
 /* ── Halcyon: focus strip glow ── */
 body.theme-halcyon .focus-strip {
   box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 8px 24px rgba(16, 96, 160, 0.07), 0 0 0 1px rgba(140, 180, 220, 0.10);
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.88);
 }
 body.theme-halcyon .focus-dot {
   box-shadow: 0 0 10px rgba(16, 96, 160, 0.4);
@@ -415,14 +417,14 @@ body.theme-halcyon .cn-md-preview {
   line-height: 1.9;
 }
 
-/* ── Halcyon: note cards slightly more translucent ── */
+/* ── Halcyon: note cards — opaque paper feel ── */
 body.theme-halcyon .cn-note-card {
-  background: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.72);
 }
 
 /* ── Halcyon: bottom fade ── */
 body.theme-halcyon .bottom-fade {
-  background: linear-gradient(to bottom, transparent 0%, rgba(228, 230, 236, 0.6) 40%, #e5e6eb 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(224, 228, 228, 0.6) 40%, #e2e2dd 100%);
 }
 
 /* ── Halcyon: greeting boost ── */
@@ -2251,17 +2253,17 @@ body.theme-neon .tl-habit-chip.bad {
 
 /* ── Newsprint theme overrides ── */
 body.theme-halcyon .tl-day-card {
-  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 body.theme-halcyon .tl-summary {
-  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
-  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  background: rgba(255, 255, 255, 0.82);
 }
 body.theme-halcyon .tl-week-chip {
-  box-shadow: 0 1px 3px rgba(8, 30, 54, 0.04), 0 0 0 1px rgba(140, 180, 220, 0.12);
+  box-shadow: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
 }
 body.theme-halcyon .tl-day-card.today {
   border-color: rgba(16, 96, 160, 0.3);
