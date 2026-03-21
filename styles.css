@@ -194,7 +194,7 @@
 
 body.theme-aurora {
   /* --- AURORA — Dark Halcyon (replaces Neon) --- */
-  --bg-body: #111418;
+  --bg-body: rgba(17, 20, 24, 0.01);
   --bg-solid: #111418;
   --bg-surface: rgba(24, 30, 38, 0.92);
   --bg-input: rgba(74, 130, 170, 0.10);
@@ -404,7 +404,7 @@ body.theme-aurora .reflect-seg-btn.active {
 
 body.theme-halcyon {
   /* --- HALCYON DEEP --- */
-  --bg-body: #dce8f4;
+  --bg-body: rgba(220, 232, 244, 0.01);
   --bg-solid: #dce8f4;
   --bg-surface: rgba(255, 255, 255, 0.82);
   --bg-input: rgba(140, 175, 210, 0.18);
