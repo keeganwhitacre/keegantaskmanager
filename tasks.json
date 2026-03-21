@@ -240,13 +240,14 @@
       "note": "FMRI question\nTheory vs application\nFuture undecided",
       "due": "2026-03-23",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pinnedToday": false,
       "categories": [
         "phd"
       ],
       "projectId": "",
-      "pomodoros": 0
+      "pomodoros": 0,
+      "completedAt": "2026-03-21T19:13:54.760Z"
     },
     {
       "id": "1772567258866",
@@ -1264,5 +1265,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-21T19:13:53.187Z"
+  "updated": "2026-03-21T19:13:57.264Z"
 }
