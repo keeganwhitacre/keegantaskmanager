@@ -440,11 +440,22 @@ function toggleDone(id) {
   for (let i = 0; i < state.tasks.length; i++) {
     if (state.tasks[i].id === id) {
       state.tasks[i].done = !state.tasks[i].done;
-      if (state.tasks[i].done) { state.tasks[i].completedAt = new Date().toISOString(); } else { delete state.tasks[i].completedAt; }
+      if (state.tasks[i].done) {
+        state.tasks[i].completedAt = new Date().toISOString();
+        // Log to project history
+        if (state.tasks[i].projectId) {
+          const p = state.projects.find(x => x.id === state.tasks[i].projectId);
+          if (p) addProjectHistory(p, 'task', '✓ ' + state.tasks[i].title);
+        }
+      } else { delete state.tasks[i].completedAt; }
       break;
     }
   }
-  saveLocal(); if (document.body.classList.contains('projects-detail-mode')) renderProjectTasks(); else render(); ghPush();
+  saveLocal();
+  if (document.body.classList.contains('projects-detail-mode')) {
+    renderProjectTasks(); renderPdCompleted(); renderPdProgress(); renderPdNextUp(); renderPdActivity();
+  } else { render(); }
+  ghPush();
 }
 
 let undoBuffer = null; let undoTimer = null; const UNDO_MS = 4000;
@@ -495,6 +506,8 @@ function openEdit(id) {
   document.getElementById('focusPinBtn').textContent = state.focus === id ? 'Unpin Focus' : 'Set as Focus';
   document.getElementById('taskTitleInput').value = t.title || '';
   const projInp = document.getElementById('taskProjectInput'); if (projInp) projInp.value = t.projectId || '';
+  populateTaskMilestoneSelect(t.projectId || '');
+  const msInp = document.getElementById('taskMilestoneInput'); if (msInp) msInp.value = t.milestoneId || '';
 
   const pomoEl = document.getElementById('pomoCountDisplay');
   if (pomoEl) { if (t.pomodoros && t.pomodoros > 0) { pomoEl.style.display = 'block'; pomoEl.textContent = '🍅 ' + t.pomodoros + ' focus session' + (t.pomodoros > 1 ? 's' : '') + ' completed'; } else { pomoEl.style.display = 'none'; } }
@@ -517,21 +530,26 @@ function saveTask() {
   const pinnedToday = !!(document.getElementById('pinTodayChip') && document.getElementById('pinTodayChip').classList.contains('active'));
   const note = document.getElementById('taskNoteInput').value.trim(); const due = document.getElementById('taskDueInput').value;
   const projInp = document.getElementById('taskProjectInput'); const projectId = projInp ? projInp.value : '';
+  const msInp = document.getElementById('taskMilestoneInput'); const milestoneId = (msInp && projectId) ? msInp.value : '';
   const noteIsMono = document.getElementById('taskNoteInput').style.fontFamily.indexOf('Mono') !== -1;
 
   if (state.editingId) {
     for (let i = 0; i < state.tasks.length; i++) {
       if (state.tasks[i].id === state.editingId) {
         const currentPomo = state.tasks[i].pomodoros || 0;
-        Object.assign(state.tasks[i], { title, categories, status, priority, pinnedToday, note, due, projectId, noteIsMono, pomodoros: currentPomo }); break;
+        Object.assign(state.tasks[i], { title, categories, status, priority, pinnedToday, note, due, projectId, milestoneId, noteIsMono, pomodoros: currentPomo }); break;
       }
     }
     showToast('Task updated');
   } else {
-    state.tasks.push({ id: uid(), title, categories, status, priority, pinnedToday, note, due, projectId, noteIsMono, done: false, pomodoros: 0 });
+    state.tasks.push({ id: uid(), title, categories, status, priority, pinnedToday, note, due, projectId, milestoneId, noteIsMono, done: false, pomodoros: 0 });
     showToast('Task added');
   }
-  closeSheets(); saveLocal(); if (document.body.classList.contains('projects-detail-mode')) renderProjectTasks(); else render(); ghPush();
+  closeSheets(); saveLocal();
+  if (document.body.classList.contains('projects-detail-mode')) {
+    renderProjectTasks(); renderPdCompleted(); renderPdProgress(); renderPdNextUp();
+  } else { render(); }
+  ghPush();
 }
 
 document.getElementById('focusPinBtn').addEventListener('click', function() {
@@ -570,6 +588,8 @@ function closeSheets() {
   const mtog = document.getElementById('monoToggle'); if (mtog) mtog.textContent = 'mono off';
   const tdInput = document.getElementById('taskDueInput'); if (tdInput) tdInput.value = '';
   const tpInput = document.getElementById('taskProjectInput'); if (tpInput) tpInput.value = '';
+  const tmWrap = document.getElementById('taskMilestoneWrap'); if (tmWrap) tmWrap.style.display = 'none';
+  const tmInput = document.getElementById('taskMilestoneInput'); if (tmInput) tmInput.value = '';
   const pomoEl = document.getElementById('pomoCountDisplay'); if (pomoEl) pomoEl.style.display = 'none';
   document.querySelectorAll('#catRow .s-chip').forEach(c => { c.classList.remove('active'); });
   setChip('statusRow', 'active'); setChip('priRow', 'md');
@@ -578,6 +598,7 @@ function closeSheets() {
   const savePBtn = document.getElementById('saveProjBtn'); if (savePBtn) savePBtn.textContent = 'Save Project';
   const delPBtn = document.getElementById('deleteProjBtn'); if (delPBtn) delPBtn.style.display = 'none';
   const ptInput = document.getElementById('projTitleInput'); if (ptInput) ptInput.value = '';
+  const pdescInput = document.getElementById('projDescInput'); if (pdescInput) pdescInput.value = '';
   const pdInput = document.getElementById('projDueInput'); if (pdInput) pdInput.value = '';
   const pnInput = document.getElementById('projNoteInput'); if (pnInput) pnInput.value = '';
   setChip('projStageRow', 'Planning');
@@ -607,6 +628,39 @@ document.getElementById('catRow').addEventListener('click', function(e) { const 
 // PROJECTS LOGIC
 // ══════════════════════════════════════════════════════════════════
 
+// ── Helpers ──
+
+function projProgress(p) {
+  const milestones = p.milestones || [];
+  const pTasks = state.tasks.filter(t => t.projectId === p.id);
+  const total = milestones.length + pTasks.length;
+  if (total === 0) return { done: 0, total: 0, pct: 0 };
+  const done = milestones.filter(m => m.done).length + pTasks.filter(t => t.done).length;
+  return { done, total, pct: Math.round((done / total) * 100) };
+}
+
+function addProjectHistory(p, type, label) {
+  if (!p.history) p.history = [];
+  p.history.push({ type: type, label: label, date: new Date().toISOString() });
+  // Keep last 50 entries
+  if (p.history.length > 50) p.history = p.history.slice(-50);
+}
+
+function projTimeAgo(iso) {
+  if (!iso) return '';
+  const now = new Date(), then = new Date(iso);
+  const diffMin = Math.floor((now - then) / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return diffMin + 'm ago';
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return diffHr + 'h ago';
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 7) return diffDay + 'd ago';
+  return fmtShort(then);
+}
+
+// ── Project list view ──
+
 function renderProjects() {
   const list = document.getElementById('projectsList'); if (!list) return; list.innerHTML = '';
   if (!state.projects || state.projects.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📁</div><div>No active projects yet</div></div>'; return; }
@@ -623,21 +677,74 @@ function renderProjects() {
   sorted.forEach(function(p, idx) {
     const card = document.createElement('div'); card.className = 'project-card stagger-ready'; card.dataset.id = p.id;
     card.style.setProperty('--si', idx);
-    const dStr = p.due ? '<span style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>' : '';
-    let tHTML = ''; const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
+    const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
+    const prog = projProgress(p);
+
+    // Deadline with proximity coloring
+    let dStr = '';
+    if (p.due) {
+      const dc = dueClass(p.due);
+      const cls = dc === 'overdue' ? ' due-warn' : dc === 'soon' || dc === 'today' ? ' due-soon' : '';
+      dStr = '<span class="' + cls + '" style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>';
+    }
+
+    // Description
+    let descHTML = '';
+    if (p.description) {
+      descHTML = '<div class="project-description">' + esc(p.description) + '</div>';
+    }
+
+    // Progress bar for card
+    let progHTML = '';
+    if (prog.total > 0) {
+      progHTML = '<div class="pd-progress-wrap pd-card-progress"><div class="pd-progress-bar"><div class="pd-progress-fill' + (prog.pct >= 100 ? ' complete' : '') + '" style="width:' + prog.pct + '%;"></div></div><div class="pd-progress-label">' + prog.done + '/' + prog.total + '</div></div>';
+    }
+
+    // Next milestone
+    const nextMs = (p.milestones || []).filter(m => !m.done).sort((a, b) => {
+      if (!a.due && !b.due) return 0; if (!a.due) return 1; if (!b.due) return -1;
+      return new Date(a.due) - new Date(b.due);
+    })[0];
+    let msHTML = '';
+    if (nextMs) {
+      const msDue = nextMs.due ? ' · ' + fmtDue(nextMs.due) : '';
+      msHTML = '<div class="project-next-ms">⬦ ' + esc(nextMs.title) + msDue + '</div>';
+    }
+
+    // Stale detection — no activity in 7+ days for Active projects
+    let staleHTML = '';
+    if (p.stage === 'Active' && p.history && p.history.length > 0) {
+      const lastEvent = p.history[p.history.length - 1];
+      if (lastEvent && lastEvent.date) {
+        const daysSince = Math.floor((new Date() - new Date(lastEvent.date)) / 86400000);
+        if (daysSince >= 7) {
+          staleHTML = '<div class="project-stale">⏸ no activity in ' + daysSince + 'd</div>';
+        }
+      }
+    } else if (p.stage === 'Active' && (!p.history || p.history.length === 0)) {
+      // No history at all — might be a pre-existing project
+      staleHTML = '';
+    }
+
+    // Task preview
+    let tHTML = '';
     if (pTasks.length > 0) {
       tHTML += '<div class="project-tasks">';
       pTasks.slice(0, 3).forEach(pt => { tHTML += '<div class="project-task-item"><div class="project-task-dot"></div>' + esc(pt.title) + '</div>'; });
       if (pTasks.length > 3) tHTML += '<div class="project-task-item" style="opacity:0.5; font-style:italic;">+ ' + (pTasks.length - 3) + ' more</div>';
       tHTML += '</div>';
     }
-    card.innerHTML = '<div class="project-header"><div class="project-title">' + esc(p.title) + '</div><div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div></div><div class="project-meta" style="margin-bottom:0;">' + pTasks.length + ' active task' + (pTasks.length !== 1 ? 's' : '') + dStr + '</div>' + tHTML;
+
+    card.innerHTML = '<div class="project-header"><div class="project-title">' + esc(p.title) + '</div><div class="project-stage ' + esc(p.stage) + '">' + esc(p.stage) + '</div></div>' +
+      descHTML +
+      '<div class="project-meta">' + pTasks.length + ' active task' + (pTasks.length !== 1 ? 's' : '') + dStr + '</div>' +
+      progHTML + msHTML + staleHTML + tHTML;
+
     card.addEventListener('click', function() { openProjectDetail(p.id); });
     list.appendChild(card);
     cards.push(card);
   });
 
-  // Defer stagger animation until Safari has committed display:block
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
       cards.forEach(function(c) { c.classList.add('stagger-child'); });
@@ -652,16 +759,40 @@ const saveProjBtn = document.getElementById('saveProjBtn');
 if (saveProjBtn) {
   saveProjBtn.addEventListener('click', function() {
     const title = document.getElementById('projTitleInput').value.trim(); if (!title) { showToast('Enter project title'); return; }
+    const desc = document.getElementById('projDescInput').value.trim();
     const stage = getChip('projStageRow') || 'Planning'; const due = document.getElementById('projDueInput').value; const note = document.getElementById('projNoteInput').value.trim();
-    state.projects.push({ id: uid(), title, stage, due, note }); showToast('Project created');
+    const p = { id: uid(), title, description: desc, stage, due, note, milestones: [], history: [] };
+    addProjectHistory(p, 'created', 'Project created');
+    state.projects.push(p); showToast('Project created');
     closeSheets(); saveLocal(); renderProjects(); ghPush();
   });
 }
 
+// ── Project detail view ──
+
 function openProjectDetail(id) {
   const p = state.projects.find(x => x.id === id); if (!p) return;
   state.activeProjectId = id;
-  document.getElementById('pdTitleInput').value = p.title || ''; document.getElementById('pdDueInput').value = p.due || ''; document.getElementById('pdNotesInput').innerHTML = p.note || ''; setChip('pdStageRow', p.stage || 'Planning');
+  // Normalize
+  if (!p.milestones) p.milestones = [];
+  if (!p.history) p.history = [];
+
+  document.getElementById('pdTitleInput').value = p.title || '';
+  document.getElementById('pdDescInput').value = p.description || '';
+  document.getElementById('pdDueInput').value = p.due || '';
+  document.getElementById('pdNotesInput').innerHTML = p.note || '';
+  setChip('pdStageRow', p.stage || 'Planning');
+
+  renderPdProgress();
+  renderPdNextUp();
+  renderPdMilestones();
+  renderProjectTasks();
+  renderPdCompleted();
+  renderPdActivity();
+
+  // Hide milestone add row
+  document.getElementById('pdMilestoneAddRow').style.display = 'none';
+
   switchView('projects-detail');
 }
 
@@ -669,33 +800,293 @@ function saveProjectDetail() {
   if (!state.activeProjectId) return;
   const p = state.projects.find(x => x.id === state.activeProjectId);
   if (p) {
-    p.title = document.getElementById('pdTitleInput').value.trim() || 'Untitled Project'; p.stage = getChip('pdStageRow') || 'Planning'; p.due = document.getElementById('pdDueInput').value; p.note = document.getElementById('pdNotesInput').innerHTML;
+    const oldStage = p.stage;
+    p.title = document.getElementById('pdTitleInput').value.trim() || 'Untitled Project';
+    p.description = document.getElementById('pdDescInput').value.trim();
+    p.stage = getChip('pdStageRow') || 'Planning';
+    p.due = document.getElementById('pdDueInput').value;
+    p.note = document.getElementById('pdNotesInput').innerHTML;
+    if (p.stage !== oldStage) {
+      addProjectHistory(p, 'stage', 'Stage → ' + p.stage);
+    }
     saveLocal(); ghPush();
+    renderPdProgress();
+    renderPdNextUp();
   }
 }
 
 let pdTimer = null;
 function queuePdSave() { if (pdTimer) clearTimeout(pdTimer); pdTimer = setTimeout(saveProjectDetail, 800); }
 const pdTitle = document.getElementById('pdTitleInput'); if (pdTitle) pdTitle.addEventListener('input', queuePdSave);
+const pdDesc = document.getElementById('pdDescInput'); if (pdDesc) pdDesc.addEventListener('input', queuePdSave);
 const pdDue = document.getElementById('pdDueInput'); if (pdDue) pdDue.addEventListener('change', saveProjectDetail);
 const pdNotes = document.getElementById('pdNotesInput'); if (pdNotes) pdNotes.addEventListener('input', queuePdSave);
 
 const pdStageRow = document.getElementById('pdStageRow');
 if (pdStageRow) { pdStageRow.addEventListener('click', function(e) { const chip = e.target.closest('.s-chip'); if (!chip) return; document.querySelectorAll('#pdStageRow .s-chip').forEach(c => { c.classList.remove('active'); }); chip.classList.add('active'); saveProjectDetail(); }); }
 
+// ── Progress bar ──
+
+function renderPdProgress() {
+  const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
+  const prog = projProgress(p);
+  const fill = document.getElementById('pdProgressFill');
+  const label = document.getElementById('pdProgressLabel');
+  const wrap = document.getElementById('pdProgressWrap');
+  if (prog.total === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  fill.style.width = prog.pct + '%';
+  fill.classList.toggle('complete', prog.pct >= 100);
+  label.textContent = prog.done + ' / ' + prog.total + ' done (' + prog.pct + '%)';
+}
+
+// ── Next Up card ──
+
+function renderPdNextUp() {
+  const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
+  const card = document.getElementById('pdNextCard');
+  const content = document.getElementById('pdNextContent');
+  if (!card || !content) return;
+
+  const items = [];
+
+  // Highest priority incomplete task
+  const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
+  const prioOrder = { hi: 0, md: 1, lo: 2 };
+  const sorted = pTasks.slice().sort((a, b) => {
+    const pa = prioOrder[a.priority || 'md'] || 1;
+    const pb = prioOrder[b.priority || 'md'] || 1;
+    if (pa !== pb) return pa - pb;
+    const da = a.due ? new Date(a.due + 'T00:00:00').getTime() : Infinity;
+    const db = b.due ? new Date(b.due + 'T00:00:00').getTime() : Infinity;
+    return da - db;
+  });
+  if (sorted.length > 0) {
+    const t = sorted[0];
+    const dueStr = t.due ? fmtDue(t.due) : '';
+    items.push({ icon: '◉', text: t.title, due: dueStr, dueClass: t.due ? dueClass(t.due) : '' });
+  }
+
+  // Nearest-due incomplete milestone
+  const nextMs = (p.milestones || []).filter(m => !m.done).sort((a, b) => {
+    if (!a.due && !b.due) return 0; if (!a.due) return 1; if (!b.due) return -1;
+    return new Date(a.due) - new Date(b.due);
+  })[0];
+  if (nextMs) {
+    const msDue = nextMs.due ? fmtDue(nextMs.due) : '';
+    items.push({ icon: '⬦', text: nextMs.title, due: msDue, dueClass: nextMs.due ? dueClass(nextMs.due) : '' });
+  }
+
+  if (items.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  content.innerHTML = items.map(function(item) {
+    return '<div class="pd-next-row"><span class="pd-next-icon">' + item.icon + '</span><span class="pd-next-text">' + esc(item.text) + '</span>' +
+      (item.due ? '<span class="pd-next-due ' + item.dueClass + '">' + esc(item.due) + '</span>' : '') + '</div>';
+  }).join('');
+}
+
+// ── Milestones ──
+
+function renderPdMilestones() {
+  const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
+  const list = document.getElementById('pdMilestonesList'); if (!list) return;
+  list.innerHTML = '';
+  const milestones = p.milestones || [];
+  const active = milestones.filter(m => !m.done);
+  const done = milestones.filter(m => m.done);
+
+  if (milestones.length === 0) {
+    list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); font-style:italic; padding:6px 0;">No milestones yet. Add one to track progress.</div>';
+    return;
+  }
+
+  // Show active first, then done
+  active.concat(done).forEach(function(m) {
+    const row = document.createElement('div');
+    row.className = 'pd-ms-row' + (m.done ? ' done' : '');
+    row.dataset.id = m.id;
+
+    const cb = document.createElement('div');
+    cb.className = 'pd-ms-cb' + (m.done ? ' checked' : '');
+    cb.innerHTML = m.done ? '✓' : '⬦';
+
+    const body = document.createElement('div');
+    body.className = 'pd-ms-body';
+    let bodyHtml = '<div class="pd-ms-title">' + esc(m.title) + '</div>';
+    if (m.due) {
+      const dc = dueClass(m.due);
+      bodyHtml += '<span class="due ' + dc + '" style="font-size:10px;">' + esc(fmtDue(m.due)) + '</span>';
+    }
+    if (m.done && m.completedAt) {
+      bodyHtml += '<span style="font-size:10px; color:var(--text-muted); margin-left:6px;">done ' + projTimeAgo(m.completedAt) + '</span>';
+    }
+    // Count tasks linked to this milestone
+    const msTasksDone = state.tasks.filter(t => t.projectId === p.id && t.milestoneId === m.id && t.done).length;
+    const msTasksTotal = state.tasks.filter(t => t.projectId === p.id && t.milestoneId === m.id).length;
+    if (msTasksTotal > 0) {
+      bodyHtml += '<span style="font-size:10px; color:var(--text-muted); margin-left:6px;">' + msTasksDone + '/' + msTasksTotal + ' tasks</span>';
+    }
+    body.innerHTML = bodyHtml;
+
+    const del = document.createElement('div');
+    del.className = 'pd-ms-del';
+    del.textContent = '✕';
+    del.addEventListener('click', function(e) {
+      e.stopPropagation();
+      p.milestones = p.milestones.filter(x => x.id !== m.id);
+      // Unlink tasks from this milestone
+      state.tasks.forEach(t => { if (t.milestoneId === m.id) delete t.milestoneId; });
+      addProjectHistory(p, 'milestone-del', 'Removed: ' + m.title);
+      saveLocal(); ghPush(); renderPdMilestones(); renderPdProgress(); renderPdNextUp(); renderPdActivity();
+    });
+
+    cb.addEventListener('click', function(e) {
+      e.stopPropagation();
+      m.done = !m.done;
+      if (m.done) {
+        m.completedAt = new Date().toISOString();
+        addProjectHistory(p, 'milestone', '✓ ' + m.title);
+        showToast('Milestone completed!');
+      } else {
+        delete m.completedAt;
+      }
+      saveLocal(); ghPush(); renderPdMilestones(); renderPdProgress(); renderPdNextUp(); renderPdActivity(); renderPdCompleted();
+    });
+
+    row.appendChild(cb);
+    row.appendChild(body);
+    row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+// Milestone add UI
+const pdAddMsBtn = document.getElementById('pdAddMilestoneBtn');
+if (pdAddMsBtn) {
+  pdAddMsBtn.addEventListener('click', function() {
+    const row = document.getElementById('pdMilestoneAddRow');
+    row.style.display = row.style.display === 'flex' ? 'none' : 'flex';
+    if (row.style.display === 'flex') document.getElementById('pdMilestoneInput').focus();
+  });
+}
+
+const pdMsSaveBtn = document.getElementById('pdMilestoneSaveBtn');
+if (pdMsSaveBtn) {
+  pdMsSaveBtn.addEventListener('click', function() {
+    const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
+    const title = document.getElementById('pdMilestoneInput').value.trim();
+    if (!title) { showToast('Enter milestone title'); return; }
+    const due = document.getElementById('pdMilestoneDueInput').value;
+    if (!p.milestones) p.milestones = [];
+    p.milestones.push({ id: uid(), title: title, due: due || '', done: false });
+    addProjectHistory(p, 'milestone-add', 'Added: ' + title);
+    document.getElementById('pdMilestoneInput').value = '';
+    document.getElementById('pdMilestoneDueInput').value = '';
+    saveLocal(); ghPush(); renderPdMilestones(); renderPdProgress(); renderPdNextUp(); renderPdActivity();
+    showToast('Milestone added');
+  });
+}
+
+const pdMsInput = document.getElementById('pdMilestoneInput');
+if (pdMsInput) {
+  pdMsInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('pdMilestoneSaveBtn').click();
+  });
+}
+
+// ── Active tasks ──
+
 function renderProjectTasks() {
   const list = document.getElementById('pdTasksList'); if (!list) return; list.innerHTML = '';
+  const p = state.projects.find(x => x.id === state.activeProjectId);
   const pTasks = state.tasks.filter(t => t.projectId === state.activeProjectId && !t.done);
   if (pTasks.length === 0) { list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); font-style:italic; padding: 12px 0;">No active tasks linked.</div>'; return; }
 
+  // Group by milestone
+  const milestones = (p && p.milestones) ? p.milestones.filter(m => !m.done) : [];
+  const msIds = milestones.map(m => m.id);
+  const grouped = {};
+  const ungrouped = [];
+
   pTasks.forEach(t => {
-    const el = document.createElement('div'); el.className = 'task ' + (t.priority || 'md');
-    const catHtml = (t.categories || []).map(c => '<span class="cat ' + catCls(c) + '">' + esc(CAT_LABEL[c] || c) + '</span>').join('');
-    const dc = dueClass(t.due); const dueHtml = t.due ? '<span class="due ' + dc + '">' + esc(fmtDue(t.due)) + '</span>' : '';
-    el.innerHTML = '<div class="cb"></div><div class="task-body"><div class="task-title">' + esc(t.title) + '</div><div class="task-row">' + catHtml + dueHtml + '</div></div>';
-    el.querySelector('.cb').addEventListener('click', function(e) { e.stopPropagation(); toggleDone(t.id); });
-    el.addEventListener('click', function() { openEdit(t.id); });
+    if (t.milestoneId && msIds.indexOf(t.milestoneId) !== -1) {
+      if (!grouped[t.milestoneId]) grouped[t.milestoneId] = [];
+      grouped[t.milestoneId].push(t);
+    } else {
+      ungrouped.push(t);
+    }
+  });
+
+  // Render milestone-grouped tasks
+  milestones.forEach(ms => {
+    const tasks = grouped[ms.id];
+    if (!tasks || tasks.length === 0) return;
+    const msLabel = document.createElement('div');
+    msLabel.className = 'pd-task-ms-label';
+    msLabel.textContent = '⬦ ' + ms.title;
+    list.appendChild(msLabel);
+    tasks.forEach(t => list.appendChild(makeProjectTaskEl(t)));
+  });
+
+  // Render ungrouped
+  ungrouped.forEach(t => list.appendChild(makeProjectTaskEl(t)));
+
+  renderPdProgress();
+  renderPdNextUp();
+}
+
+function makeProjectTaskEl(t) {
+  const el = document.createElement('div'); el.className = 'task ' + (t.priority || 'md');
+  const catHtml = (t.categories || []).map(c => '<span class="cat ' + catCls(c) + '">' + esc(CAT_LABEL[c] || c) + '</span>').join('');
+  const dc = dueClass(t.due); const dueHtml = t.due ? '<span class="due ' + dc + '">' + esc(fmtDue(t.due)) + '</span>' : '';
+  el.innerHTML = '<div class="cb"></div><div class="task-body"><div class="task-title">' + esc(t.title) + '</div><div class="task-row">' + catHtml + dueHtml + '</div></div>';
+  el.querySelector('.cb').addEventListener('click', function(e) { e.stopPropagation(); toggleDone(t.id); });
+  el.addEventListener('click', function() { openEdit(t.id); });
+  return el;
+}
+
+// ── Completed tasks ──
+
+function renderPdCompleted() {
+  const section = document.getElementById('pdCompletedSection'); if (!section) return;
+  const list = document.getElementById('pdCompletedList'); if (!list) return;
+  const countEl = document.getElementById('pdCompletedCount');
+  const completed = state.tasks.filter(t => t.projectId === state.activeProjectId && t.done);
+  if (completed.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  countEl.textContent = completed.length;
+  list.innerHTML = '';
+
+  completed.sort((a, b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1);
+  completed.forEach(function(t) {
+    const el = document.createElement('div');
+    el.className = 'pd-completed-task';
+    let completedStr = '';
+    if (t.completedAt) completedStr = projTimeAgo(t.completedAt);
+    el.innerHTML = '<div class="pd-completed-cb">✓</div><div class="pd-completed-body"><div class="pd-completed-title">' + esc(t.title) + '</div>' +
+      (completedStr ? '<div class="pd-completed-meta">' + completedStr + '</div>' : '') + '</div>';
     list.appendChild(el);
+  });
+}
+
+// ── Activity log ──
+
+function renderPdActivity() {
+  const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
+  const card = document.getElementById('pdActivityCard');
+  const list = document.getElementById('pdActivityList');
+  if (!card || !list) return;
+  const history = (p.history || []).slice().reverse();
+  if (history.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  list.innerHTML = '';
+  history.slice(0, 20).forEach(function(h) {
+    const row = document.createElement('div');
+    row.className = 'pd-activity-row';
+    const icons = { created:'◉', stage:'↻', milestone:'✓', 'milestone-add':'⬦', 'milestone-del':'✕', task:'✓' };
+    const icon = icons[h.type] || '·';
+    row.innerHTML = '<span class="pd-activity-icon ' + (h.type || '') + '">' + icon + '</span><span class="pd-activity-label">' + esc(h.label) + '</span><span class="pd-activity-time">' + projTimeAgo(h.date) + '</span>';
+    list.appendChild(row);
   });
 }
 
@@ -707,9 +1098,35 @@ if (pdDel) {
     if (!state.activeProjectId) return;
     if (confirm('Delete this project? Tasks inside will NOT be deleted, just unlinked.')) {
       state.projects = state.projects.filter(p => p.id !== state.activeProjectId);
-      state.tasks.forEach(t => { if (t.projectId === state.activeProjectId) delete t.projectId; });
+      state.tasks.forEach(t => { if (t.projectId === state.activeProjectId) { delete t.projectId; delete t.milestoneId; } });
       saveLocal(); ghPush(); switchView('projects'); showToast('Project deleted');
     }
+  });
+}
+
+// ── Milestone select in task sheet ──
+
+function populateTaskMilestoneSelect(projectId) {
+  const wrap = document.getElementById('taskMilestoneWrap');
+  const sel = document.getElementById('taskMilestoneInput');
+  if (!wrap || !sel) return;
+  if (!projectId) { wrap.style.display = 'none'; return; }
+  const p = state.projects.find(x => x.id === projectId);
+  if (!p || !p.milestones || p.milestones.filter(m => !m.done).length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  sel.innerHTML = '<option value="">None</option>';
+  p.milestones.filter(m => !m.done).forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id; opt.textContent = '⬦ ' + m.title;
+    sel.appendChild(opt);
+  });
+}
+
+// Wire project select to update milestone select
+const taskProjInput = document.getElementById('taskProjectInput');
+if (taskProjInput) {
+  taskProjInput.addEventListener('change', function() {
+    populateTaskMilestoneSelect(this.value);
   });
 }
 
@@ -1422,7 +1839,7 @@ on('data-pulled', () => {
     else renderTimeline();
   }
   else if (view === 'projects') renderProjects();
-  else if (view === 'projects-detail') renderProjectTasks();
+  else if (view === 'projects-detail') { renderPdProgress(); renderPdNextUp(); renderPdMilestones(); renderProjectTasks(); renderPdCompleted(); renderPdActivity(); }
   else if (view === 'bel') renderBel();
   else if (view === 'notes') renderCNList();
   else render();

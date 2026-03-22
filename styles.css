@@ -1488,10 +1488,97 @@ input[type="date"].input { width: 100%; max-width: 100%; min-width: 0; box-sizin
 .project-stage.Active { background: rgba(52,199,89,0.15); color: var(--success); }
 .project-stage.Planning { background: var(--accent-faded); color: var(--accent); }
 .project-stage.Waiting { background: rgba(255,149,0,0.15); color: var(--warning); }
+.project-stage.Review { background: rgba(175,82,222,0.12); color: #af52de; }
+.project-stage.Done { background: rgba(142,142,147,0.12); color: #8e8e93; }
 .project-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
 .project-tasks { border-top: 1px solid var(--border-divider); padding-top: 8px; margin-top: 8px; }
 .project-task-item { font-size: 12px; color: var(--text-main); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; opacity: 0.8; }
 .project-task-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); }
+
+/* ── Project card progress bar ── */
+.pd-progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pd-card-progress { margin-top: 8px; margin-bottom: 4px; }
+.pd-progress-bar { flex: 1; height: 4px; background: var(--border-divider); border-radius: 4px; overflow: hidden; }
+.pd-progress-fill { height: 100%; background: var(--accent, #007aff); border-radius: 4px; transition: width 0.4s cubic-bezier(0.2, 0.9, 0.3, 1); min-width: 0; }
+.pd-progress-fill.complete { background: var(--success); }
+.pd-progress-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); white-space: nowrap; letter-spacing: 0.02em; }
+
+/* ── Project card extras ── */
+.project-next-ms { font-family: var(--font-mono); font-size: 11px; color: var(--accent, #007aff); margin-top: 6px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.project-description { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.project-stale { font-family: var(--font-mono); font-size: 10px; color: var(--warning); margin-top: 6px; opacity: 0.8; }
+.project-meta .due-warn { color: var(--danger); font-weight: 500; }
+.project-meta .due-soon { color: var(--warning); }
+
+/* ── Project detail: next up card ── */
+.pd-next-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 14px 16px; margin-bottom: 16px; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); }
+.pd-next-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
+.pd-next-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.pd-next-row:last-child { margin-bottom: 0; }
+.pd-next-icon { font-size: 12px; width: 18px; text-align: center; flex-shrink: 0; }
+.pd-next-text { font-size: 13px; color: var(--text-main); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-next-due { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
+
+/* ── Project detail: milestones ── */
+.pd-milestones-section { margin-bottom: 16px; }
+.pd-ms-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-divider); }
+.pd-ms-row:last-child { border-bottom: none; }
+.pd-ms-row.done { opacity: 0.5; }
+.pd-ms-cb { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-divider); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 11px; color: var(--text-muted); -webkit-user-select: none; user-select: none; transition: all 0.2s ease; margin-top: 1px; }
+.pd-ms-cb:active { transform: scale(0.9); }
+.pd-ms-cb.checked { background: var(--accent, #007aff); border-color: var(--accent, #007aff); color: #fff; }
+.pd-ms-body { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.pd-ms-title { font-size: 13px; color: var(--text-main); font-weight: 500; }
+.pd-ms-row.done .pd-ms-title { text-decoration: line-through; }
+.pd-ms-del { font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 0 4px; opacity: 0; transition: opacity 0.15s ease; -webkit-user-select: none; user-select: none; flex-shrink: 0; }
+.pd-ms-row:hover .pd-ms-del { opacity: 0.6; }
+@media (hover: none) { .pd-ms-del { opacity: 0.4; } }
+
+.pd-milestone-add-row { display: flex; gap: 8px; align-items: center; padding-top: 8px; flex-wrap: wrap; }
+.pd-ms-input { font-size: 13px !important; }
+.pd-ms-date-input { font-size: 12px !important; max-width: 140px; }
+.pd-ms-save-btn { background: var(--accent, #007aff); color: #fff; border: none; border-radius: var(--radius-pill); padding: 8px 16px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.pd-ms-save-btn:active { opacity: 0.8; }
+
+/* ── Task milestone grouping label ── */
+.pd-task-ms-label { font-family: var(--font-mono); font-size: 11px; color: var(--accent, #007aff); padding: 8px 0 4px; opacity: 0.8; }
+
+/* ── Project detail: activity log ── */
+.pd-activity-card { background: var(--bg-surface); border: 1px solid var(--border-main); border-radius: var(--radius-card); padding: 0; margin-bottom: 16px; backdrop-filter: var(--glass-filter); -webkit-backdrop-filter: var(--glass-filter); box-shadow: var(--shadow-base); overflow: hidden; }
+.pd-activity-card[open] { padding-bottom: 4px; }
+.pd-activity-toggle { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; list-style: none; -webkit-user-select: none; user-select: none; }
+.pd-activity-toggle::-webkit-details-marker { display: none; }
+.pd-activity-chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s ease; }
+.pd-activity-card[open] .pd-activity-chevron { transform: rotate(90deg); }
+.pd-activity-list { padding: 0 16px 10px; }
+.pd-activity-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px; }
+.pd-activity-icon { width: 16px; text-align: center; font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+.pd-activity-icon.milestone { color: var(--success); }
+.pd-activity-icon.task { color: var(--success); }
+.pd-activity-icon.stage { color: var(--accent, #007aff); }
+.pd-activity-icon.created { color: var(--accent, #007aff); }
+.pd-activity-icon.milestone-add { color: var(--accent, #007aff); }
+.pd-activity-icon.milestone-del { color: var(--danger); }
+.pd-activity-label { flex: 1; color: var(--text-main); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pd-activity-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
+
+/* ── Project detail: completed tasks ── */
+.pd-completed-section { margin-top: 16px; border-top: 1px solid var(--border-divider); padding-top: 8px; }
+.pd-completed-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; list-style: none; -webkit-user-select: none; user-select: none; }
+.pd-completed-toggle::-webkit-details-marker { display: none; }
+.pd-completed-count { font-family: var(--font-mono); font-size: 10px; background: var(--border-divider); color: var(--text-muted); padding: 2px 7px; border-radius: var(--radius-pill); }
+.pd-completed-section[open] .pd-activity-chevron { transform: rotate(90deg); }
+.pd-completed-task { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-divider); }
+.pd-completed-task:last-child { border-bottom: none; }
+.pd-completed-cb { width: 18px; height: 18px; border-radius: 50%; background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; opacity: 0.6; margin-top: 1px; }
+.pd-completed-body { flex: 1; min-width: 0; }
+.pd-completed-title { font-size: 13px; color: var(--text-main); opacity: 0.5; text-decoration: line-through; }
+.pd-completed-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── Project detail: description ── */
+.pd-description-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-divider); color: var(--text-muted); font-size: 13px; font-family: var(--font-main); padding: 4px 0 8px; margin-bottom: 12px; outline: none; resize: none; line-height: 1.4; }
+.pd-description-input::placeholder { color: var(--text-muted); opacity: 0.5; }
+.pd-description-input:focus { border-bottom-color: var(--accent, #007aff); }
 
 
 /* ══════════════════════════════════════════════════════════════════
