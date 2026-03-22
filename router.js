@@ -42,6 +42,9 @@ function switchView(viewName) {
   const tabId = tabMap[viewName];
   if (tabId) { const btn = document.getElementById(tabId); if (btn) btn.classList.add('active'); }
 
+  // Slide tab pill indicator (Aurora / Halcyon only)
+  _updatePill('.tab-bar', '.tab-btn.active');
+
   if (view.onEnter) view.onEnter();
 
   // Animate views that don't self-animate
@@ -63,4 +66,45 @@ function switchView(viewName) {
 
 function currentViewName() { return currentView; }
 
-export { register, switchView, currentViewName };
+// ── Sliding pill indicator ──
+// Measures the active button and positions a pseudo-element pill behind it.
+// Only animates on themes that have .has-sliding-pill on the container (Aurora, Halcyon).
+
+function _updatePill(containerSel, activeSel) {
+  var container = document.querySelector(containerSel);
+  if (!container || !container.classList.contains('has-sliding-pill')) return;
+  var active = container.querySelector(activeSel);
+  if (!active) return;
+
+  var pill = container.querySelector('.sliding-pill');
+  if (!pill) {
+    pill = document.createElement('div');
+    pill.className = 'sliding-pill';
+    container.insertBefore(pill, container.firstChild);
+  }
+
+  // Measure relative to container padding box
+  var cRect = container.getBoundingClientRect();
+  var aRect = active.getBoundingClientRect();
+  var left = aRect.left - cRect.left;
+  var width = aRect.width;
+
+  pill.style.transform = 'translateX(' + left + 'px)';
+  pill.style.width = width + 'px';
+}
+
+function updateReflectPill() {
+  _updatePill('.reflect-seg', '.reflect-seg-btn.active');
+}
+
+// Re-measure pill on resize (handles orientation changes on iOS)
+var _resizeTimer = null;
+window.addEventListener('resize', function() {
+  if (_resizeTimer) clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(function() {
+    _updatePill('.tab-bar', '.tab-btn.active');
+    _updatePill('.reflect-seg', '.reflect-seg-btn.active');
+  }, 100);
+});
+
+export { register, switchView, currentViewName, updateReflectPill };

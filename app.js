@@ -16,7 +16,7 @@ import {
 } from './state.js';
 
 import { ghFetch, ghPush, testGhConnection, showSync } from './sync.js';
-import { register, switchView, currentViewName } from './router.js';
+import { register, switchView, currentViewName, updateReflectPill } from './router.js';
 import { initPomo, updatePomoUI } from './pomo.js';
 import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
@@ -1348,7 +1348,7 @@ var _origApplyTheme = applyTheme;
 applyTheme = function(name) {
   _origApplyTheme(name);
   // Small delay so body class is set before we check theme
-  setTimeout(function() { loadAccent(); }, 0);
+  setTimeout(function() { loadAccent(); _initSlidingPills(); }, 0);
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1444,9 +1444,53 @@ initDashboard({ isActuallyDueToday, dueClass, fmtDue });
 
 // Wire review segmented control to trigger timeline rendering
 var _segReview = document.getElementById('reflectSegReview');
-if (_segReview) _segReview.addEventListener('click', function() { onTimelineEnter(); });
+if (_segReview) _segReview.addEventListener('click', function() { onTimelineEnter(); updateReflectPill(); });
+var _segToday = document.getElementById('reflectSegToday');
+if (_segToday) _segToday.addEventListener('click', function() { updateReflectPill(); });
 
 render();
 loadSettingsUI();
 updateAccentUI();
+
+// Initialize sliding pill position after first paint
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    // Add .has-sliding-pill class based on current theme
+    _initSlidingPills();
+  });
+});
+
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
+
+// ── Sliding pill theme detection ──
+function _initSlidingPills() {
+  var theme = document.body.className;
+  var enabled = theme.indexOf('theme-aurora') !== -1 || theme.indexOf('theme-halcyon') !== -1;
+  var tabBar = document.querySelector('.tab-bar');
+  var reflectSeg = document.querySelector('.reflect-seg');
+  if (tabBar) tabBar.classList.toggle('has-sliding-pill', enabled);
+  if (reflectSeg) reflectSeg.classList.toggle('has-sliding-pill', enabled);
+
+  if (enabled) {
+    // Use router's internal function via import
+    updateReflectPill();
+    // Tab pill — manually trigger for current active tab
+    var activeTab = tabBar && tabBar.querySelector('.tab-btn.active');
+    if (activeTab && tabBar) {
+      var pill = tabBar.querySelector('.sliding-pill');
+      if (!pill) {
+        pill = document.createElement('div');
+        pill.className = 'sliding-pill';
+        tabBar.insertBefore(pill, tabBar.firstChild);
+      }
+      var cRect = tabBar.getBoundingClientRect();
+      var aRect = activeTab.getBoundingClientRect();
+      // Set initial position without transition
+      pill.style.transition = 'none';
+      pill.style.transform = 'translateX(' + (aRect.left - cRect.left) + 'px)';
+      pill.style.width = aRect.width + 'px';
+      // Re-enable transition on next frame
+      requestAnimationFrame(function() { pill.style.transition = ''; });
+    }
+  }
+}
