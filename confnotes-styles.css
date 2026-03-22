@@ -98,10 +98,6 @@
 .cn-note-card .cn-card-time {
   font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); margin-left: auto;
 }
-.cn-note-card .cn-card-edited {
-  margin-left: 0;
-  opacity: 0.6;
-}
 
 .cn-card-pin {
   font-size: 11px; margin-right: 4px;

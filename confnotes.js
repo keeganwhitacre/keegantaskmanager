@@ -187,13 +187,8 @@ function renderCNList() {
     const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
     const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
 
-    var timeHtml = '';
-    if (n.createdAt) {
-      timeHtml += '<span class="cn-card-time">' + fmtShort(new Date(n.createdAt)) + '</span>';
-    }
-    if (n.updatedAt && n.updatedAt !== n.createdAt) {
-      timeHtml += '<span class="cn-card-time cn-card-edited">edited ' + cnTimeAgo(n.updatedAt) + '</span>';
-    }
+    var displayDate = n.updatedAt || n.createdAt;
+    var timeHtml = displayDate ? '<span class="cn-card-time">' + cnTimeAgo(displayDate) + '</span>' : '';
 
     card.innerHTML =
       '<div class="cn-card-title">' + lockHtml + pinHtml + esc(n.title || 'Untitled') + '</div>' +
