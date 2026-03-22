@@ -306,6 +306,12 @@ function openCNDetail(id) {
   document.getElementById('cnListView').style.display = 'none';
   var detailEl = document.getElementById('cnDetailView');
   detailEl.style.display = 'flex';
+  detailEl.classList.remove('cn-detail-exit');
+  detailEl.classList.add('cn-detail-enter');
+  detailEl.addEventListener('animationend', function handler() {
+    detailEl.classList.remove('cn-detail-enter');
+    detailEl.removeEventListener('animationend', handler);
+  });
 
   // Default to preview if note has content, edit if empty
   toggleMdPreview((n.body || '').trim() ? 'on' : 'off');
@@ -315,10 +321,23 @@ function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
   _cnOpenSnapshot = null;
-  document.getElementById('cnDetailView').style.display = 'none';
-  var listEl = document.getElementById('cnListView');
-  listEl.style.display = 'block';
-  renderCNList();
+
+  var detailEl = document.getElementById('cnDetailView');
+  detailEl.classList.remove('cn-detail-enter');
+  detailEl.classList.add('cn-detail-exit');
+  detailEl.addEventListener('animationend', function handler() {
+    detailEl.classList.remove('cn-detail-exit');
+    detailEl.style.display = 'none';
+    detailEl.removeEventListener('animationend', handler);
+    var listEl = document.getElementById('cnListView');
+    listEl.style.display = 'block';
+    listEl.classList.add('cn-list-enter');
+    listEl.addEventListener('animationend', function lh() {
+      listEl.classList.remove('cn-list-enter');
+      listEl.removeEventListener('animationend', lh);
+    });
+    renderCNList();
+  });
 }
 
 function saveCNDetailNow() {
