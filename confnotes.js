@@ -15,6 +15,7 @@ let cnFilter = 'all';
 let cnSaveTimer = null;
 let scratchSyncTimer = null;
 let cnMdPreview = false;
+let _cnOpenSnapshot = null; // snapshot of note state on open, for dirty detection
 
 // ── LOCK SYSTEM ──
 let _pinUnlocked = false; // session-only, resets on reload
@@ -186,12 +187,19 @@ function renderCNList() {
     const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
     const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
 
+    var timeHtml = '';
+    if (n.createdAt) {
+      timeHtml += '<span class="cn-card-time">' + fmtShort(new Date(n.createdAt)) + '</span>';
+    }
+    if (n.updatedAt && n.updatedAt !== n.createdAt) {
+      timeHtml += '<span class="cn-card-time cn-card-edited">edited ' + cnTimeAgo(n.updatedAt) + '</span>';
+    }
+
     card.innerHTML =
       '<div class="cn-card-title">' + lockHtml + pinHtml + esc(n.title || 'Untitled') + '</div>' +
       (n.speaker ? '<div class="cn-card-speaker">' + esc(n.speaker) + '</div>' : '') +
       (n.body ? '<div class="cn-card-preview">' + esc(n.body) + '</div>' : '') +
-      '<div class="cn-card-meta">' + tagsHtml + projHtml +
-      '<span class="cn-card-time">' + cnTimeAgo(n.updatedAt || n.createdAt) + '</span></div>';
+      '<div class="cn-card-meta">' + tagsHtml + projHtml + timeHtml + '</div>';
 
     card.addEventListener('click', function() {
       if (n.locked && !_pinUnlocked) {
@@ -249,6 +257,16 @@ function openCNDetail(id) {
   cnActiveId = id;
   populateCNProjectSelect();
 
+  // Snapshot current state so we can detect actual edits on save
+  _cnOpenSnapshot = {
+    title: n.title || '',
+    speaker: n.speaker || '',
+    body: n.body || '',
+    projectId: n.projectId || '',
+    bodyIsMono: !!(n.bodyIsMono),
+    tags: (n.tags || []).slice().sort().join(','),
+  };
+
   document.getElementById('cnTitleInput').value = n.title || '';
   document.getElementById('cnSpeakerInput').value = n.speaker || '';
   document.getElementById('cnBodyInput').value = n.body || '';
@@ -301,6 +319,7 @@ function openCNDetail(id) {
 function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
+  _cnOpenSnapshot = null;
   document.getElementById('cnDetailView').style.display = 'none';
   var listEl = document.getElementById('cnListView');
   listEl.style.display = 'block';
@@ -328,7 +347,28 @@ function saveCNDetailNow() {
     tags.push(c.dataset.val);
   });
   n.tags = tags;
-  n.updatedAt = new Date().toISOString();
+
+  // Only stamp updatedAt if something actually changed
+  var currentState = {
+    title: n.title,
+    speaker: n.speaker,
+    body: n.body,
+    projectId: n.projectId,
+    bodyIsMono: n.bodyIsMono,
+    tags: tags.slice().sort().join(','),
+  };
+  var dirty = !_cnOpenSnapshot
+    || currentState.title !== _cnOpenSnapshot.title
+    || currentState.speaker !== _cnOpenSnapshot.speaker
+    || currentState.body !== _cnOpenSnapshot.body
+    || currentState.projectId !== _cnOpenSnapshot.projectId
+    || currentState.bodyIsMono !== _cnOpenSnapshot.bodyIsMono
+    || currentState.tags !== _cnOpenSnapshot.tags;
+
+  if (dirty) {
+    n.updatedAt = new Date().toISOString();
+    _cnOpenSnapshot = currentState; // update snapshot so subsequent saves during same session don't re-dirty
+  }
 
   saveCN(true);
 }
