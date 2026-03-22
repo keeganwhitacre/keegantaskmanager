@@ -21,7 +21,7 @@ import { initPomo, updatePomoUI } from './pomo.js';
 import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode } from './dashboard.js';
-import { initTimeline, renderTimeline, onTimelineEnter } from './timeline.js';
+import { initTimeline, renderTimeline, onTimelineEnter, invalidateCache } from './timeline.js';
 import { renderCNList, createNewNote, rebuildCNChips } from './confnotes.js';
 
 // ══════════════════════════════════════════════════════════════════
@@ -1413,6 +1413,7 @@ function onDragEnd(e) {
 // ══════════════════════════════════════════════════════════════════
 
 on('data-pulled', () => {
+  invalidateCache();
   rebuildCategoryUI();
   refreshDynamicCatColors();
   const view = currentViewName();

@@ -1,3 +1,4 @@
+
 var CACHE_VERSION = 'kw-v7';
 var STATIC_ASSETS = [
   '/',
@@ -15,6 +16,10 @@ var STATIC_ASSETS = [
   '/state.js',
   '/sync.js',
   '/timeline.js',
+
+  // ── Self-hosted: marked (move from cdnjs to local) ──
+  // Download https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js
+  // and place it at /lib/marked.min.js, then update the <script> in index.html
   '/lib/marked.min.js',
 
   // ── Self-hosted fonts: existing ──

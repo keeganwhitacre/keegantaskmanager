@@ -12,6 +12,7 @@ import { switchView } from './router.js';
 const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const GRID_SIZE = 5;
+const LOAD_INCREMENT = 4;
 
 const CTX_COLORS = {
   work: '#ff9500', writing: '#af52de', social: '#ff2d55',
@@ -22,6 +23,42 @@ const CAT_COLORS = {
   manuscript: '#af52de', lab: '#007aff', phd: '#ff9500',
   conf: '#ff2d55', bel: '#ff6b9d', personal: '#30d158', hobby: '#5ac8fa',
 };
+
+// ── Week data cache ──
+// Key: ISO week string (e.g. "2025-W12"), Value: computed week data object.
+// Past weeks are immutable once computed — only the current week gets recomputed.
+const _weekCache = new Map();
+
+function _currentISOWeek() {
+  return getISOWeek(new Date());
+}
+
+function _getWeekData(weekStart) {
+  var isoWeek = getISOWeek(weekStart);
+  var currentWeek = _currentISOWeek();
+
+  // Always recompute the current week (data is still accumulating)
+  if (isoWeek === currentWeek) {
+    var data = buildWeekData(weekStart);
+    _weekCache.set(isoWeek, data);
+    return data;
+  }
+
+  // Past weeks: return cached if available
+  if (_weekCache.has(isoWeek)) {
+    return _weekCache.get(isoWeek);
+  }
+
+  // Compute and cache
+  var data = buildWeekData(weekStart);
+  _weekCache.set(isoWeek, data);
+  return data;
+}
+
+// Invalidate cache (called on data-pulled from sync to pick up remote changes)
+function invalidateCache() {
+  _weekCache.clear();
+}
 
 // ── Time helpers ──
 
@@ -92,10 +129,12 @@ function buildWeekData(weekStart) {
 
     const dStr = dateStr(date);
 
-    // Affect
+    // Affect — keep both latest entry and total count
     let affect = null;
+    let affectCount = 0;
     if (ds.affect && ds.affect[dStr]) {
       const entries = Array.isArray(ds.affect[dStr]) ? ds.affect[dStr] : [ds.affect[dStr]];
+      affectCount = entries.length;
       if (entries.length > 0) affect = entries[entries.length - 1]; // latest
     }
 
@@ -127,6 +166,7 @@ function buildWeekData(weekStart) {
       dateObj: date,
       dow: d,
       affect: affect,
+      affectCount: affectCount,
       tasks: tasksCompleted,
       habits: habits,
       reflection: reflection,
@@ -148,7 +188,7 @@ function buildWeeks(count) {
   for (let i = 0; i < count; i++) {
     const start = new Date(thisMonday);
     start.setDate(thisMonday.getDate() - i * 7);
-    weeks.push(buildWeekData(start));
+    weeks.push(_getWeekData(start));
   }
   return weeks;
 }
@@ -159,7 +199,6 @@ let _weeks = [];
 let _activeWeekIdx = 0;
 let _expandedDay = null;
 let _weekCount = 4;
-const MAX_WEEKS = 12;
 
 function renderTimeline(navOnly) {
   _weeks = buildWeeks(_weekCount);
@@ -196,12 +235,10 @@ function renderTimelineNav() {
   });
   html += '</div>';
 
-  // Load more button
-  if (_weekCount < MAX_WEEKS) {
-    html += '<div style="text-align:center; margin-bottom:12px;">';
-    html += '<button class="tl-load-more" id="tlLoadMore">Load more weeks</button>';
-    html += '</div>';
-  }
+  // Always show Load more — no cap
+  html += '<div style="text-align:center; margin-bottom:12px;">';
+  html += '<button class="tl-load-more" id="tlLoadMore">Load more weeks</button>';
+  html += '</div>';
 
   nav.innerHTML = html;
 
@@ -235,7 +272,7 @@ function renderTimelineNav() {
   if (loadMore) {
     loadMore.addEventListener('click', function(e) {
       e.stopPropagation();
-      _weekCount = Math.min(MAX_WEEKS, _weekCount + 4);
+      _weekCount += LOAD_INCREMENT;
       renderTimeline();
     });
   }
@@ -371,6 +408,11 @@ function renderDayCard(day, idx) {
   const totalGood = getHabits().filter(function(h) { return !h.bad; }).length;
   const badHabits = getHabits().filter(function(h) { return h.bad && day.habits[h.id]; });
 
+  // Density signals
+  const hasReflection = !!day.reflection;
+  const hasMultiAffect = day.affectCount > 1;
+  const habitRatio = totalGood > 0 ? goodHabits / totalGood : 0;
+
   let html = '<div class="tl-day-card' + (isToday ? ' today' : '') + (isExpanded ? ' expanded' : '') + '" data-date="' + day.date + '" style="animation-delay:' + (idx * 40) + 'ms;">';
 
   // Collapsed row
@@ -382,11 +424,16 @@ function renderDayCard(day, idx) {
   html += '<div class="tl-day-num' + (isToday ? ' today' : '') + '">' + dayNum + '</div>';
   html += '</div>';
 
-  // Affect orb
+  // Affect orb — with multi-log ring
   if (day.affect) {
     const color = affectToColor(day.affect.v, day.affect.a);
     const ctxColor = day.affect.ctx ? CTX_COLORS[day.affect.ctx] || '' : '';
-    html += '<div class="tl-orb" style="background:radial-gradient(circle at 35% 35%, ' + color + 'ee, ' + color + '88);box-shadow:0 0 12px ' + color + '44;' + (ctxColor ? 'border-color:' + ctxColor + '88;' : '') + '"></div>';
+    var multiRing = hasMultiAffect ? 'box-shadow:0 0 12px ' + color + '44, inset 0 0 0 2px rgba(255,255,255,0.35);' : 'box-shadow:0 0 12px ' + color + '44;';
+    html += '<div class="tl-orb" style="background:radial-gradient(circle at 35% 35%, ' + color + 'ee, ' + color + '88);' + multiRing + (ctxColor ? 'border-color:' + ctxColor + '88;' : '') + '">';
+    if (hasMultiAffect) {
+      html += '<span class="tl-orb-count">' + day.affectCount + '</span>';
+    }
+    html += '</div>';
   } else {
     html += '<div class="tl-orb empty"></div>';
   }
@@ -402,6 +449,8 @@ function renderDayCard(day, idx) {
   } else {
     html += '<div class="tl-day-affect-label muted">no affect logged</div>';
   }
+
+  // Meta line with density indicators
   html += '<div class="tl-day-meta">';
   html += (tasksDone > 0 ? tasksDone + ' done' : 'no tasks');
   html += ' · ' + goodHabits + '/' + totalGood + ' habits';
@@ -410,6 +459,18 @@ function renderDayCard(day, idx) {
     html += ' · <span class="tl-bad">' + badHabits.map(function(h) { return h.label.toLowerCase(); }).join(', ') + '</span>';
   }
   html += '</div>';
+
+  // Density icons row
+  var icons = [];
+  if (hasReflection) icons.push('<span class="tl-density-icon" title="Has reflection">✎</span>');
+  if (tasksDone >= 5) icons.push('<span class="tl-density-icon productive" title="' + tasksDone + ' tasks completed">▪▪▪</span>');
+  else if (tasksDone >= 3) icons.push('<span class="tl-density-icon" title="' + tasksDone + ' tasks completed">▪▪</span>');
+  if (habitRatio >= 1 && totalGood > 0) icons.push('<span class="tl-density-icon perfect" title="All habits hit">★</span>');
+
+  if (icons.length > 0) {
+    html += '<div class="tl-density-row">' + icons.join('') + '</div>';
+  }
+
   html += '</div>'; // summary
 
   // Expand arrow
@@ -487,7 +548,9 @@ function onTimelineEnter() {
   _activeWeekIdx = 0;
   _expandedDay = null;
   _weekCount = 4;
+  // Invalidate current week so it's recomputed fresh on entry
+  _weekCache.delete(_currentISOWeek());
   renderTimeline();
 }
 
-export { initTimeline, renderTimeline, onTimelineEnter };
+export { initTimeline, renderTimeline, onTimelineEnter, invalidateCache };
