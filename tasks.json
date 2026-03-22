@@ -839,52 +839,37 @@
     {
       "id": 1772723159518.5393,
       "text": "Tofu",
-      "done": true
+      "done": false
     },
     {
       "id": 1772723162391.1802,
       "text": "Sweet potatoes",
-      "done": true
+      "done": false
     },
     {
       "id": 1772723169560.764,
       "text": "chicken thighs",
-      "done": true
+      "done": false
     },
     {
       "id": 1772723175070.2598,
       "text": "turkey",
-      "done": true
+      "done": false
     },
     {
       "id": 1772723177255.0535,
       "text": "bagels?",
-      "done": true
+      "done": false
     },
     {
       "id": 1772723182454.5166,
       "text": "snacks",
-      "done": true
-    },
-    {
-      "id": 1773852838521.8267,
-      "text": "Glizzys",
-      "done": true
-    },
-    {
-      "id": 1773852841603.9365,
-      "text": "Buns",
-      "done": true
-    },
-    {
-      "id": 1773852844165.3357,
-      "text": "Mustard",
-      "done": true
+      "done": false
     },
     {
       "id": 1773852866877.056,
       "text": "Chips",
-      "done": true
+      "done": false
     }
   ],
   "dash": {
@@ -1276,5 +1261,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-22T13:46:12.552Z"
+  "updated": "2026-03-22T13:51:31.040Z"
 }
