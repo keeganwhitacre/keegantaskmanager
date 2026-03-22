@@ -47,8 +47,15 @@ function switchView(viewName) {
 
   if (view.onEnter) view.onEnter();
 
-  // Animate views that don't self-animate
-  const viewElMap = { bel: 'belView' };
+  // Animate incoming view content
+  const viewElMap = {
+    tasks: 'taskList',
+    reflect: 'reflectView',
+    projects: 'projectsView',
+    'projects-detail': 'projectDetailView',
+    notes: 'confNotesView',
+    bel: 'belView',
+  };
   const elId = viewElMap[viewName];
   if (elId) {
     const el = document.getElementById(elId);
