@@ -1469,7 +1469,36 @@ if (fabEl) {
     }, 150);
   });
 
+  // Long press vs Tap logic for Tasks view
+  let longPressTriggered = false;
+  let fabTimer;
+  
+  const startFabTimer = () => {
+    longPressTriggered = false;
+    fabTimer = setTimeout(() => {
+      const view = currentViewName();
+      if (view === 'tasks') {
+        longPressTriggered = true;
+        openAddSheet();
+      }
+    }, 550); // Standard long-press duration
+  };
+
+  const clearFabTimer = () => {
+    clearTimeout(fabTimer);
+  };
+
+  fabEl.addEventListener('touchstart', startFabTimer, { passive: true });
+  fabEl.addEventListener('touchend', clearFabTimer, { passive: true });
+  fabEl.addEventListener('mousedown', startFabTimer);
+  fabEl.addEventListener('mouseup', clearFabTimer);
+  fabEl.addEventListener('contextmenu', e => e.preventDefault());
+
   fabEl.addEventListener('click', function(e) {
+    if (longPressTriggered) {
+      longPressTriggered = false;
+      return;
+    }
     const view = currentViewName();
     if (view === 'notes') {
       createNewNote();
