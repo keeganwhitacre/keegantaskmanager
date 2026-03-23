@@ -12,7 +12,7 @@ jobs:
 
       - name: Inject Note into tasks.json
         run: |
-          node -e "
+          node << 'EOF'
             const fs = require('fs');
             const title = process.env.NOTE_TITLE;
             const body = process.env.NOTE_BODY;
@@ -42,15 +42,15 @@ jobs:
 
             data.cnNotes.unshift(newNote);
             fs.writeFileSync(file, JSON.stringify(data, null, 2));
-          "
+          EOF
         env:
-          NOTE_TITLE: \${{ github.event.client_payload.title }}
-          NOTE_BODY: \${{ github.event.client_payload.body }}
+          NOTE_TITLE: ${{ github.event.client_payload.title }}
+          NOTE_BODY: ${{ github.event.client_payload.body }}
 
       - name: Commit and Push
         run: |
           git config user.name "Siri Bot"
           git config user.email "siri@taskmanager.local"
           git add tasks.json
-          git commit -m "Siri Added Note: \${{ github.event.client_payload.title }}"
+          git commit -m "Siri Added Note: ${{ github.event.client_payload.title }}"
           git push
