@@ -788,6 +788,21 @@
       "pomodoros": 0
     },
     {
+      "id": "1774298963979",
+      "title": "Play around with Gemini canvas",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-23",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "mn33elw7qygu",
       "title": "Update Stremio upstairs",
       "categories": [
@@ -836,21 +851,6 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
-      "id": "1774298963979",
-      "title": "Play around with Gemini canvas",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-23",
-      "noteIsMono": false,
-      "pinnedToday": true,
       "done": false,
       "pomodoros": 0
     },
@@ -1482,5 +1482,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T21:13:43.509Z"
+  "updated": "2026-03-23T21:13:50.920Z"
 }
