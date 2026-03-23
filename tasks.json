@@ -1259,7 +1259,7 @@
       "id": "mn3ech72ikdb",
       "title": "Lab Management Meeting",
       "speaker": "3/23",
-      "body": "# Storage\n- ",
+      "body": "# Storage\n- \n# Reimbursement\n- \n# Upcoming Projects\n- ",
       "tags": [
         "lab"
       ],
@@ -1267,7 +1267,7 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-23T16:24:59.150Z",
-      "updatedAt": "2026-03-23T16:25:39.838Z"
+      "updatedAt": "2026-03-23T16:25:53.646Z"
     },
     {
       "id": "mmv5l41vrf1o",
@@ -1427,5 +1427,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T16:25:42.338Z"
+  "updated": "2026-03-23T16:25:58.385Z"
 }
