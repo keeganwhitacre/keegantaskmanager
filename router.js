@@ -47,7 +47,7 @@ function switchView(viewName) {
 
   if (view.onEnter) view.onEnter();
 
-  // Animate incoming view content
+  // Animate incoming view content smoothly using transform/opacity
   const viewElMap = {
     tasks: 'taskList',
     reflect: 'reflectView',
@@ -60,11 +60,14 @@ function switchView(viewName) {
   if (elId) {
     const el = document.getElementById(elId);
     if (el) {
-      el.classList.remove('view-enter'); el.style.opacity = '0';
-      requestAnimationFrame(function() { requestAnimationFrame(function() {
-        el.style.opacity = ''; el.classList.add('view-enter');
-        el.addEventListener('animationend', function handler() { el.classList.remove('view-enter'); el.removeEventListener('animationend', handler); });
-      }); });
+      el.classList.remove('view-enter'); 
+      // Force reflow to restart animation reliably
+      void el.offsetWidth;
+      el.classList.add('view-enter');
+      el.addEventListener('animationend', function handler() { 
+          el.classList.remove('view-enter'); 
+          el.removeEventListener('animationend', handler); 
+      });
     }
   }
 
@@ -75,8 +78,6 @@ function currentViewName() { return currentView; }
 
 // ── Sliding pill indicator ──
 // Measures the active button and positions a pseudo-element pill behind it.
-// Only animates on themes that have .has-sliding-pill on the container (Aurora, Halcyon).
-
 function _updatePill(containerSel, activeSel) {
   var container = document.querySelector(containerSel);
   if (!container || !container.classList.contains('has-sliding-pill')) return;
@@ -84,10 +85,12 @@ function _updatePill(containerSel, activeSel) {
   if (!active) return;
 
   var pill = container.querySelector('.sliding-pill');
+  var isNew = false;
   if (!pill) {
     pill = document.createElement('div');
     pill.className = 'sliding-pill';
     container.insertBefore(pill, container.firstChild);
+    isNew = true;
   }
 
   // Measure relative to container padding box
@@ -96,22 +99,38 @@ function _updatePill(containerSel, activeSel) {
   var left = aRect.left - cRect.left;
   var width = aRect.width;
 
-  pill.style.transform = 'translateX(' + left + 'px)';
-  pill.style.width = width + 'px';
+  if (isNew) {
+    // Snap to position without transition to avoid fly-in bug
+    pill.style.transition = 'none';
+    pill.style.transform = 'translateX(' + left + 'px)';
+    pill.style.width = width + 'px';
+    void pill.offsetWidth; // Force reflow
+    // Apple-style smooth spring cubic-bezier
+    pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
+  } else {
+    // Apply standard smooth transition
+    pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
+    pill.style.transform = 'translateX(' + left + 'px)';
+    pill.style.width = width + 'px';
+  }
 }
 
 function updateReflectPill() {
   _updatePill('.reflect-seg', '.reflect-seg-btn.active');
 }
 
-// Re-measure pill on resize (handles orientation changes on iOS)
+// Re-measure pill on resize (handles orientation changes cleanly on iOS)
 var _resizeTimer = null;
 window.addEventListener('resize', function() {
   if (_resizeTimer) clearTimeout(_resizeTimer);
+  
+  // Instantly disable transitions during active resize to avoid ghosting
+  document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
+  
   _resizeTimer = setTimeout(function() {
     _updatePill('.tab-bar', '.tab-btn.active');
     _updatePill('.reflect-seg', '.reflect-seg-btn.active');
-  }, 100);
+  }, 60);
 });
 
 export { register, switchView, currentViewName, updateReflectPill };
