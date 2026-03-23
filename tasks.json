@@ -915,7 +915,7 @@
       }
     ]
   },
-  "scratchpad": "Light and dark mode detection automatic\nColor matching wallpaper\nWeird reflect switch",
+  "scratchpad": "Light and dark mode detection automatic",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -1413,5 +1413,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T15:12:26.541Z"
+  "updated": "2026-03-23T16:06:09.885Z"
 }
