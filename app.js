@@ -1515,12 +1515,16 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
 
 // Reusable helper to cleanly snap the view transition on any element
 function triggerViewAnim(selectors) {
-  const els = document.querySelectorAll(selectors);
-  els.forEach(el => {
-    el.classList.remove('view-enter');
-    void el.offsetWidth; // Force a layout reflow
-    el.classList.add('view-enter');
-  });
+  // Use a slight delay so Safari properly paints the display:block from the tab change
+  // before attempting to run the animation. This prevents instant/glitchy load.
+  setTimeout(function() {
+    const els = document.querySelectorAll(selectors);
+    els.forEach(el => {
+      el.classList.remove('view-enter');
+      void el.offsetWidth; // Force a layout reflow
+      el.classList.add('view-enter');
+    });
+  }, 15);
 }
 
 register('tasks', {
@@ -1536,8 +1540,8 @@ register('reflect', {
     if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
-    // Targets common dashboard wraps to ensure the slide triggers gracefully
-    triggerViewAnim('#reflectView, .dashboard, #dashboardContainer');
+    // Targets only the root view so it slides in as one smooth block
+    triggerViewAnim('#reflectView');
   },
   onExit: function() {
     onReflectExit();
@@ -1547,19 +1551,19 @@ register('reflect', {
 register('projects', {
   onEnter: function() {
     renderProjects();
-    triggerViewAnim('#projectsList, #projectsView');
+    triggerViewAnim('#projectsView');
   }
 });
 register('projects-detail', {
   onEnter: function() {
     renderProjectTasks();
-    triggerViewAnim('#pdTasksList, #projectDetailView');
+    triggerViewAnim('#projectDetailView');
   }
 });
 register('notes', {
   onEnter: function() {
     renderCNList();
-    triggerViewAnim('#cnList, #confNotesView');
+    triggerViewAnim('#confNotesView');
   },
 });
 
