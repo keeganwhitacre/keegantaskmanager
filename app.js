@@ -1423,7 +1423,7 @@ document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd
 // CONTEXT AWARE FAB & SMOOTH ANIMATIONS
 // ══════════════════════════════════════════════════════════════════
 
-// Inject smooth animations overriding older transitions
+// Inject styles for the FAB morphing (removed the view-enter overrides to restore original smoothness)
 const animStyle = document.createElement('style');
 animStyle.textContent = `
   #fab {
@@ -1432,12 +1432,10 @@ animStyle.textContent = `
   }
   #fab svg { width: 24px; height: 24px; }
   #fab:active { transform: scale(0.9) !important; }
-  .sheet { will-change: transform; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
-  .view-enter { animation: viewFadeSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important; }
-  @keyframes viewFadeSlide {
-    0% { opacity: 0; transform: translateY(8px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
+  
+  /* Force FAB to appear on Projects tab overriding original CSS */
+  body.projects-mode #fab { display: flex !important; }
+  body.projects-detail-mode #fab { display: none !important; }
 `;
 document.head.appendChild(animStyle);
 
