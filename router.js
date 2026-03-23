@@ -105,17 +105,22 @@ function _updatePill(containerSel, activeSel) {
     pill.style.transform = 'translateX(' + left + 'px)';
     pill.style.width = width + 'px';
     void pill.offsetWidth; // Force reflow
-    // Apple-style smooth spring cubic-bezier
-    pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
+    // Smoother, standard easing without the excessive bounce
+    pill.style.transition = 'transform 0.25s cubic-bezier(0.33, 1, 0.68, 1), width 0.25s cubic-bezier(0.33, 1, 0.68, 1)';
   } else {
     // Apply standard smooth transition
-    pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
+    pill.style.transition = 'transform 0.25s cubic-bezier(0.33, 1, 0.68, 1), width 0.25s cubic-bezier(0.33, 1, 0.68, 1)';
     pill.style.transform = 'translateX(' + left + 'px)';
     pill.style.width = width + 'px';
   }
 }
 
 function updateReflectPill() {
+  _updatePill('.reflect-seg', '.reflect-seg-btn.active');
+}
+
+function updateAllPills() {
+  _updatePill('.tab-bar', '.tab-btn.active');
   _updatePill('.reflect-seg', '.reflect-seg-btn.active');
 }
 
@@ -127,10 +132,7 @@ window.addEventListener('resize', function() {
   // Instantly disable transitions during active resize to avoid ghosting
   document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
   
-  _resizeTimer = setTimeout(function() {
-    _updatePill('.tab-bar', '.tab-btn.active');
-    _updatePill('.reflect-seg', '.reflect-seg-btn.active');
-  }, 60);
+  _resizeTimer = setTimeout(updateAllPills, 60);
 });
 
-export { register, switchView, currentViewName, updateReflectPill };
+export { register, switchView, currentViewName, updateReflectPill, updateAllPills };
