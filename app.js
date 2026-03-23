@@ -1531,6 +1531,9 @@ register('reflect', {
     if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
+    // Position the sliding pill now that the view is visible (getBoundingClientRect
+    // returns zeroes when measured at boot while reflectView has display:none)
+    requestAnimationFrame(function() { updateReflectPill(); });
   },
   onExit: function() {
     onReflectExit();
