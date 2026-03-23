@@ -86,8 +86,6 @@ function fmtDue(due) {
 }
 
 // ── DYNAMIC CATEGORY COLORS ──
-// Built-in categories have CSS classes in styles.css.
-// Custom categories get auto-assigned from a palette and injected as CSS rules.
 const BUILTIN_CAT_CLS = { manuscript:'cat-manuscript', lab:'cat-lab', phd:'cat-phd', conf:'cat-conf', bel:'cat-bel', personal:'cat-personal', hobby:'cat-hobby' };
 
 const CAT_PALETTE = [
@@ -104,7 +102,7 @@ const CAT_PALETTE = [
 ];
 
 let _catStyleEl = null;
-const _catColorCache = {};  // key → palette index
+const _catColorCache = {};
 
 function _ensureCatStyleEl() {
   if (!_catStyleEl) {
@@ -117,7 +115,6 @@ function _ensureCatStyleEl() {
 
 function _assignCatColor(key) {
   if (_catColorCache[key] !== undefined) return _catColorCache[key];
-  // Assign the next unused palette index
   const usedIndices = Object.values(_catColorCache);
   let idx = 0;
   while (usedIndices.indexOf(idx) !== -1 && idx < CAT_PALETTE.length) idx++;
@@ -130,7 +127,7 @@ function refreshDynamicCatColors() {
   const styleEl = _ensureCatStyleEl();
   let css = '';
   Object.keys(CAT_LABEL).forEach(key => {
-    if (BUILTIN_CAT_CLS[key]) return; // handled by styles.css
+    if (BUILTIN_CAT_CLS[key]) return;
     const idx = _assignCatColor(key);
     const rgb = CAT_PALETTE[idx];
     const cls = 'cat-' + key.replace(/[^a-z0-9_-]/g, '_');
@@ -141,7 +138,6 @@ function refreshDynamicCatColors() {
 
 export function catCls(cat) {
   if (BUILTIN_CAT_CLS[cat]) return BUILTIN_CAT_CLS[cat];
-  // Dynamic category — ensure it has a color assigned
   _assignCatColor(cat);
   return 'cat-' + cat.replace(/[^a-z0-9_-]/g, '_');
 }
@@ -443,7 +439,6 @@ function toggleDone(id) {
       state.tasks[i].done = !state.tasks[i].done;
       if (state.tasks[i].done) {
         state.tasks[i].completedAt = new Date().toISOString();
-        // Log to project history
         if (state.tasks[i].projectId) {
           const p = state.projects.find(x => x.id === state.tasks[i].projectId);
           if (p) addProjectHistory(p, 'task', '✓ ' + state.tasks[i].title);
@@ -629,8 +624,6 @@ document.getElementById('catRow').addEventListener('click', function(e) { const 
 // PROJECTS LOGIC
 // ══════════════════════════════════════════════════════════════════
 
-// ── Helpers ──
-
 function projProgress(p) {
   const milestones = p.milestones || [];
   const pTasks = state.tasks.filter(t => t.projectId === p.id);
@@ -643,7 +636,6 @@ function projProgress(p) {
 function addProjectHistory(p, type, label) {
   if (!p.history) p.history = [];
   p.history.push({ type: type, label: label, date: new Date().toISOString() });
-  // Keep last 50 entries
   if (p.history.length > 50) p.history = p.history.slice(-50);
 }
 
@@ -659,8 +651,6 @@ function projTimeAgo(iso) {
   if (diffDay < 7) return diffDay + 'd ago';
   return fmtShort(then);
 }
-
-// ── Project list view ──
 
 function renderProjects() {
   const list = document.getElementById('projectsList'); if (!list) return; list.innerHTML = '';
@@ -681,7 +671,6 @@ function renderProjects() {
     const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
     const prog = projProgress(p);
 
-    // Deadline with proximity coloring
     let dStr = '';
     if (p.due) {
       const dc = dueClass(p.due);
@@ -689,19 +678,16 @@ function renderProjects() {
       dStr = '<span class="' + cls + '" style="font-family:var(--font-mono); margin-left:8px;">📅 ' + fmtDue(p.due) + '</span>';
     }
 
-    // Description
     let descHTML = '';
     if (p.description) {
       descHTML = '<div class="project-description">' + esc(p.description) + '</div>';
     }
 
-    // Progress bar for card
     let progHTML = '';
     if (prog.total > 0) {
       progHTML = '<div class="pd-progress-wrap pd-card-progress"><div class="pd-progress-bar"><div class="pd-progress-fill' + (prog.pct >= 100 ? ' complete' : '') + '" style="width:' + prog.pct + '%;"></div></div><div class="pd-progress-label">' + prog.done + '/' + prog.total + '</div></div>';
     }
 
-    // Next milestone
     const nextMs = (p.milestones || []).filter(m => !m.done).sort((a, b) => {
       if (!a.due && !b.due) return 0; if (!a.due) return 1; if (!b.due) return -1;
       return new Date(a.due) - new Date(b.due);
@@ -712,7 +698,6 @@ function renderProjects() {
       msHTML = '<div class="project-next-ms">⬦ ' + esc(nextMs.title) + msDue + '</div>';
     }
 
-    // Stale detection — no activity in 7+ days for Active projects
     let staleHTML = '';
     if (p.stage === 'Active' && p.history && p.history.length > 0) {
       const lastEvent = p.history[p.history.length - 1];
@@ -722,12 +707,8 @@ function renderProjects() {
           staleHTML = '<div class="project-stale">⏸ no activity in ' + daysSince + 'd</div>';
         }
       }
-    } else if (p.stage === 'Active' && (!p.history || p.history.length === 0)) {
-      // No history at all — might be a pre-existing project
-      staleHTML = '';
     }
 
-    // Task preview
     let tHTML = '';
     if (pTasks.length > 0) {
       tHTML += '<div class="project-tasks">';
@@ -769,12 +750,9 @@ if (saveProjBtn) {
   });
 }
 
-// ── Project detail view ──
-
 function openProjectDetail(id) {
   const p = state.projects.find(x => x.id === id); if (!p) return;
   state.activeProjectId = id;
-  // Normalize
   if (!p.milestones) p.milestones = [];
   if (!p.history) p.history = [];
 
@@ -791,9 +769,7 @@ function openProjectDetail(id) {
   renderPdCompleted();
   renderPdActivity();
 
-  // Hide milestone add row
   document.getElementById('pdMilestoneAddRow').style.display = 'none';
-
   switchView('projects-detail');
 }
 
@@ -826,8 +802,6 @@ const pdNotes = document.getElementById('pdNotesInput'); if (pdNotes) pdNotes.ad
 const pdStageRow = document.getElementById('pdStageRow');
 if (pdStageRow) { pdStageRow.addEventListener('click', function(e) { const chip = e.target.closest('.s-chip'); if (!chip) return; document.querySelectorAll('#pdStageRow .s-chip').forEach(c => { c.classList.remove('active'); }); chip.classList.add('active'); saveProjectDetail(); }); }
 
-// ── Progress bar ──
-
 function renderPdProgress() {
   const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
   const prog = projProgress(p);
@@ -841,8 +815,6 @@ function renderPdProgress() {
   label.textContent = prog.done + ' / ' + prog.total + ' done (' + prog.pct + '%)';
 }
 
-// ── Next Up card ──
-
 function renderPdNextUp() {
   const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
   const card = document.getElementById('pdNextCard');
@@ -850,8 +822,6 @@ function renderPdNextUp() {
   if (!card || !content) return;
 
   const items = [];
-
-  // Highest priority incomplete task
   const pTasks = state.tasks.filter(t => t.projectId === p.id && !t.done);
   const prioOrder = { hi: 0, md: 1, lo: 2 };
   const sorted = pTasks.slice().sort((a, b) => {
@@ -868,7 +838,6 @@ function renderPdNextUp() {
     items.push({ icon: '◉', text: t.title, due: dueStr, dueClass: t.due ? dueClass(t.due) : '' });
   }
 
-  // Nearest-due incomplete milestone
   const nextMs = (p.milestones || []).filter(m => !m.done).sort((a, b) => {
     if (!a.due && !b.due) return 0; if (!a.due) return 1; if (!b.due) return -1;
     return new Date(a.due) - new Date(b.due);
@@ -886,8 +855,6 @@ function renderPdNextUp() {
   }).join('');
 }
 
-// ── Milestones ──
-
 function renderPdMilestones() {
   const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
   const list = document.getElementById('pdMilestonesList'); if (!list) return;
@@ -901,7 +868,6 @@ function renderPdMilestones() {
     return;
   }
 
-  // Show active first, then done
   active.concat(done).forEach(function(m) {
     const row = document.createElement('div');
     row.className = 'pd-ms-row' + (m.done ? ' done' : '');
@@ -921,7 +887,6 @@ function renderPdMilestones() {
     if (m.done && m.completedAt) {
       bodyHtml += '<span style="font-size:10px; color:var(--text-muted); margin-left:6px;">done ' + projTimeAgo(m.completedAt) + '</span>';
     }
-    // Count tasks linked to this milestone
     const msTasksDone = state.tasks.filter(t => t.projectId === p.id && t.milestoneId === m.id && t.done).length;
     const msTasksTotal = state.tasks.filter(t => t.projectId === p.id && t.milestoneId === m.id).length;
     if (msTasksTotal > 0) {
@@ -935,7 +900,6 @@ function renderPdMilestones() {
     del.addEventListener('click', function(e) {
       e.stopPropagation();
       p.milestones = p.milestones.filter(x => x.id !== m.id);
-      // Unlink tasks from this milestone
       state.tasks.forEach(t => { if (t.milestoneId === m.id) delete t.milestoneId; });
       addProjectHistory(p, 'milestone-del', 'Removed: ' + m.title);
       saveLocal(); ghPush(); renderPdMilestones(); renderPdProgress(); renderPdNextUp(); renderPdActivity();
@@ -961,7 +925,6 @@ function renderPdMilestones() {
   });
 }
 
-// Milestone add UI
 const pdAddMsBtn = document.getElementById('pdAddMilestoneBtn');
 if (pdAddMsBtn) {
   pdAddMsBtn.addEventListener('click', function() {
@@ -995,15 +958,12 @@ if (pdMsInput) {
   });
 }
 
-// ── Active tasks ──
-
 function renderProjectTasks() {
   const list = document.getElementById('pdTasksList'); if (!list) return; list.innerHTML = '';
   const p = state.projects.find(x => x.id === state.activeProjectId);
   const pTasks = state.tasks.filter(t => t.projectId === state.activeProjectId && !t.done);
   if (pTasks.length === 0) { list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); font-style:italic; padding: 12px 0;">No active tasks linked.</div>'; return; }
 
-  // Group by milestone
   const milestones = (p && p.milestones) ? p.milestones.filter(m => !m.done) : [];
   const msIds = milestones.map(m => m.id);
   const grouped = {};
@@ -1018,7 +978,6 @@ function renderProjectTasks() {
     }
   });
 
-  // Render milestone-grouped tasks
   milestones.forEach(ms => {
     const tasks = grouped[ms.id];
     if (!tasks || tasks.length === 0) return;
@@ -1029,7 +988,6 @@ function renderProjectTasks() {
     tasks.forEach(t => list.appendChild(makeProjectTaskEl(t)));
   });
 
-  // Render ungrouped
   ungrouped.forEach(t => list.appendChild(makeProjectTaskEl(t)));
 
   renderPdProgress();
@@ -1045,8 +1003,6 @@ function makeProjectTaskEl(t) {
   el.addEventListener('click', function() { openEdit(t.id); });
   return el;
 }
-
-// ── Completed tasks ──
 
 function renderPdCompleted() {
   const section = document.getElementById('pdCompletedSection'); if (!section) return;
@@ -1069,8 +1025,6 @@ function renderPdCompleted() {
     list.appendChild(el);
   });
 }
-
-// ── Activity log ──
 
 function renderPdActivity() {
   const p = state.projects.find(x => x.id === state.activeProjectId); if (!p) return;
@@ -1105,8 +1059,6 @@ if (pdDel) {
   });
 }
 
-// ── Milestone select in task sheet ──
-
 function populateTaskMilestoneSelect(projectId) {
   const wrap = document.getElementById('taskMilestoneWrap');
   const sel = document.getElementById('taskMilestoneInput');
@@ -1123,7 +1075,6 @@ function populateTaskMilestoneSelect(projectId) {
   });
 }
 
-// Wire project select to update milestone select
 const taskProjInput = document.getElementById('taskProjectInput');
 if (taskProjInput) {
   taskProjInput.addEventListener('change', function() {
@@ -1234,8 +1185,6 @@ document.getElementById('settingsSheet').addEventListener('click', function(e) {
   if (hdel) { const row = hdel.closest('.habit-settings-row'); if (row) row.remove(); }
 });
 
-// ── HABIT SETTINGS UI ──
-
 const DAY_LABELS = ['M','T','W','T','F','S','S'];
 
 function loadHabitsUI() {
@@ -1334,10 +1283,7 @@ if (addHabitBtn) addHabitBtn.addEventListener('click', function() {
   row.querySelector('input').focus();
 });
 
-// ── NOTES PIN MANAGEMENT ──
-
 function _hashPinSync(pin) {
-  // Returns a promise
   var encoded = new TextEncoder().encode(pin);
   return crypto.subtle.digest('SHA-256', encoded).then(function(hash) {
     return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
@@ -1357,7 +1303,6 @@ function updatePinUI() {
 document.getElementById('setPinBtn').addEventListener('click', function() {
   var existingHash = localStorage.getItem('kw_notes_pin_hash');
   if (existingHash) {
-    // Verify current PIN first
     var overlay = document.getElementById('pinModalOverlay');
     var input = document.getElementById('pinModalInput');
     var error = document.getElementById('pinModalError');
@@ -1440,7 +1385,6 @@ document.getElementById('clearPinBtn').addEventListener('click', function() {
   newConfirm.addEventListener('click', function() {
     _hashPinSync(input.value).then(function(h) {
       if (h !== localStorage.getItem('kw_notes_pin_hash')) { error.textContent = 'Wrong PIN'; return; }
-      // Unlock all locked notes
       var cnNotes = getCnNotes();
       cnNotes.forEach(function(n) { n.locked = false; });
       saveCN(true);
@@ -1452,10 +1396,6 @@ document.getElementById('clearPinBtn').addEventListener('click', function() {
   });
   input.addEventListener('keydown', function(e) { if (e.key === 'Enter') newConfirm.click(); if (e.key === 'Escape') { overlay.style.display = 'none'; } });
 });
-
-// ══════════════════════════════════════════════════════════════════
-// SEARCH & FILTERS
-// ══════════════════════════════════════════════════════════════════
 
 document.getElementById('searchTrigger').addEventListener('click', function() { const wrap = document.getElementById('searchWrap'); wrap.classList.toggle('open'); if (wrap.classList.contains('open')) document.getElementById('searchInput').focus(); else { document.getElementById('searchInput').value = ''; render(); } });
 document.getElementById('searchInput').addEventListener('input', render);
@@ -1471,37 +1411,94 @@ document.querySelectorAll('.sheet').forEach(sheet => {
   let startY = 0, dragging = false;
   sheet.addEventListener('touchstart', function(e) { if (sheet.scrollTop > 0) return; startY = e.touches[0].clientY; dragging = true; }, { passive: true });
   sheet.addEventListener('touchmove', function(e) { if (!dragging) return; const dy = e.touches[0].clientY - startY; if (dy > 0) { sheet.style.transform = 'translate3d(0,' + dy + 'px,0)'; sheet.style.transition = 'none'; } }, { passive: true });
-  sheet.addEventListener('touchend', function(e) { if (!dragging) return; dragging = false; const dy = e.changedTouches[0].clientY - startY; if (dy > 80) { sheet.style.transition = ''; closeSheets(); } else { sheet.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1)'; sheet.style.transform = ''; setTimeout(function() { sheet.style.transition = ''; }, 300); } }, { passive: true });
+  sheet.addEventListener('touchend', function(e) { if (!dragging) return; dragging = false; const dy = e.changedTouches[0].clientY - startY; if (dy > 80) { sheet.style.transition = ''; closeSheets(); } else { sheet.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)'; sheet.style.transform = ''; setTimeout(function() { sheet.style.transition = ''; }, 350); } }, { passive: true });
 });
-
-// ══════════════════════════════════════════════════════════════════
-// QUICK ADD
-// ══════════════════════════════════════════════════════════════════
 
 function toggleQuickAdd() { const wrap = document.getElementById('quickAddWrap'); const inp = document.getElementById('quickAddInput'); wrap.classList.toggle('open'); if (wrap.classList.contains('open')) { inp.focus(); } else { inp.value = ''; } }
 function submitQuickAdd() { const inp = document.getElementById('quickAddInput'); const title = inp.value.trim(); if (!title) return; const newTask = { id: Date.now().toString(), title, categories: ['personal'], status: 'active', priority: 'md', note: '', due: new Date().toISOString().split('T')[0], noteIsMono: false, pinnedToday: true, done: false, pomodoros: 0 }; state.tasks.push(newTask); saveLocal(); if (document.body.classList.contains('projects-mode')) renderProjects(); else render(); ghPush(); showToast('Pinned to Today'); inp.value = ''; document.getElementById('quickAddWrap').classList.remove('open'); }
 document.getElementById('quickAddInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); submitQuickAdd(); } if (e.key === 'Escape') { toggleQuickAdd(); } });
 document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd);
 
-// FAB
-document.getElementById('fab').addEventListener('click', function() {
-  if (document.body.classList.contains('notes-mode')) {
-    createNewNote();
-  } else {
-    toggleQuickAdd();
-  }
-});
-(function() { let pressTimer; document.getElementById('fab').addEventListener('touchstart', function(e) { pressTimer = setTimeout(function() { if (document.body.classList.contains('notes-mode')) { createNewNote(); } else { toggleQuickAdd(); openAddSheet(); } }, 600); }, { passive: true }); document.getElementById('fab').addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true }); document.getElementById('fab').addEventListener('contextmenu', function(e) { e.preventDefault(); }); })();
+// ══════════════════════════════════════════════════════════════════
+// CONTEXT AWARE FAB & SMOOTH ANIMATIONS
+// ══════════════════════════════════════════════════════════════════
 
+// Inject smooth animations overriding older transitions
+const animStyle = document.createElement('style');
+animStyle.textContent = `
+  #fab {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #fab svg { width: 24px; height: 24px; }
+  #fab:active { transform: scale(0.9) !important; }
+  .sheet { will-change: transform; transition: transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1) !important; }
+  .view-enter { animation: viewFadeSlide 0.35s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important; }
+  @keyframes viewFadeSlide {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+`;
+document.head.appendChild(animStyle);
+
+const FAB_ICONS = {
+  tasks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
+  notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+};
+
+const fabEl = document.getElementById('fab');
+if (fabEl) {
+  fabEl.innerHTML = FAB_ICONS.tasks; 
+
+  // Swap icons with a smooth pop animation on route change
+  on('view-changed', function(data) {
+    let targetIcon = FAB_ICONS[data.to] || FAB_ICONS.tasks;
+    if (fabEl.dataset.currentIcon === data.to) return;
+    
+    // Scale down and fade out
+    fabEl.style.transform = 'scale(0.5) rotate(-15deg)';
+    fabEl.style.opacity = '0';
+
+    setTimeout(function() {
+      fabEl.innerHTML = targetIcon;
+      fabEl.dataset.currentIcon = data.to;
+      // Spring back up
+      fabEl.style.transform = 'scale(1) rotate(0deg)';
+      fabEl.style.opacity = '1';
+    }, 150);
+  });
+
+  // Event Listeners for FAB Actions
+  let pressTimer;
+  fabEl.addEventListener('touchstart', function(e) {
+    pressTimer = setTimeout(function() { 
+      if (currentViewName() === 'tasks') openAddSheet(); 
+    }, 600);
+  }, { passive: true });
+  fabEl.addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true });
+  fabEl.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  fabEl.addEventListener('click', function() {
+    const view = currentViewName();
+    if (view === 'notes') {
+      createNewNote();
+    } else if (view === 'projects') {
+      state.editingProjId = null;
+      closeSheets();
+      setTimeout(function() { openSheet('projectSheet'); }, 10);
+    } else {
+      toggleQuickAdd();
+    }
+  });
+}
+
+// Global hotkeys & sheet dismiss
 document.getElementById('overlay').addEventListener('click', closeSheets);
 document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
 document.getElementById('deleteTaskBtn').addEventListener('click', function() { if (state.editingId) deleteTask(state.editingId); closeSheets(); });
 document.getElementById('settingsBtn').addEventListener('click', function() { loadSettingsUI(); openSheet('settingsSheet'); });
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSheets(); return; } const tag = (document.activeElement || {}).tagName || ''; const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable; if (inInput) return; if (document.body.classList.contains('notes-mode')) return; if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); } if (e.key === '/') { e.preventDefault(); const wrap = document.getElementById('searchWrap'); wrap.classList.add('open'); document.getElementById('searchInput').focus(); } });
-
-// ══════════════════════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════════════════════
 
 // ══════════════════════════════════════════════════════════════════
 // ROUTER REGISTRATION
@@ -1512,14 +1509,9 @@ register('tasks', {
     render();
     var tl = document.getElementById('taskList');
     if (tl) {
-      tl.classList.remove('view-animate');
-      tl.style.opacity = '0';
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          tl.style.opacity = '';
-          tl.classList.add('view-animate');
-        });
-      });
+      tl.classList.remove('view-enter');
+      void tl.offsetWidth;
+      tl.classList.add('view-enter');
     }
   },
 });
@@ -1527,7 +1519,6 @@ register('reflect', {
   onEnter: function() {
     onReflectEnter();
     renderPromptCard();
-    // If entering review mode, also trigger timeline (unless weekly review is active)
     if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
@@ -1550,13 +1541,11 @@ register('bel', {
   onEnter: renderBel,
 });
 
-// Tab buttons
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
 document.getElementById('tabReflect').addEventListener('click', function() { switchView('reflect'); });
 const tpBtn = document.getElementById('tabProjects'); if (tpBtn) tpBtn.addEventListener('click', function() { switchView('projects'); });
 document.getElementById('tabNotes').addEventListener('click', function() { switchView('notes'); });
 
-// Secret routing buttons
 const sbt = document.getElementById('secretBelTrigger'); if (sbt) sbt.addEventListener('click', function() { switchView('bel'); });
 const cbb = document.getElementById('closeBelBtn'); if (cbb) cbb.addEventListener('click', function() { switchView('tasks'); });
 const cpd = document.getElementById('closeProjectDetailBtn'); if (cpd) cpd.addEventListener('click', function() { switchView('projects'); });
@@ -1579,17 +1568,13 @@ function applyTheme(name) {
 function loadTheme() { let saved = 'halcyon'; try { saved = localStorage.getItem(KEYS.theme) || 'halcyon'; } catch (e) {} if (saved === 'newsprint' || saved === 'ios26' || saved === 'bel-bel') saved = 'halcyon'; if (saved === 'neon' || saved === 'ios-dark') saved = 'aurora'; applyTheme(saved); }
 document.getElementById('settingsSheet').addEventListener('click', function(e) { const sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); updateAccentUI(); render(); });
 
-// ══════════════════════════════════════════════════════════════════
-// ACCENT COLOR CUSTOMIZER (Halcyon + Aurora)
-// ══════════════════════════════════════════════════════════════════
-
 const ACCENT_KEY = 'kw_accent_v1';
-const ACCENT_THEMES = ['halcyon', 'aurora']; // themes that support accent customization
+const ACCENT_THEMES = ['halcyon', 'aurora'];
 const ACCENT_DEFAULTS = { halcyon: { r: 16, g: 96, b: 160 }, aurora: { r: 74, g: 188, b: 224 } };
 
 const ACCENT_PRESETS = [
-  { hex: '#1060a0', label: 'Ocean' },     // Halcyon default
-  { hex: '#4ABCE0', label: 'Teal' },      // Aurora default
+  { hex: '#1060a0', label: 'Ocean' },
+  { hex: '#4ABCE0', label: 'Teal' },
   { hex: '#7C5CFC', label: 'Violet' },
   { hex: '#E85D8A', label: 'Rose' },
   { hex: '#E8743A', label: 'Ember' },
@@ -1610,7 +1595,6 @@ function rgbToHex(r, g, b) {
 }
 
 function isLightColor(r, g, b) {
-  // Relative luminance — determines if accent-text should be dark or light
   return (0.299 * r + 0.587 * g + 0.114 * b) > 160;
 }
 
@@ -1628,7 +1612,6 @@ function applyAccentColor(hex) {
   root.style.setProperty('--accent-g', rgb.g);
   root.style.setProperty('--accent-b', rgb.b);
 
-  // Must also set computed vars — :root won't recompute them from body's overridden --accent-r/g/b
   root.style.setProperty('--accent', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
   root.style.setProperty('--accent-faded', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.12)');
   root.style.setProperty('--task-md', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
@@ -1641,7 +1624,6 @@ function applyAccentColor(hex) {
   root.style.setProperty('--shadow-toast', '0 4px 20px rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10)');
 
   var theme = getCurrentThemeName();
-  // For dark themes, accent-text should be dark on light accents, white on dark accents
   if (theme === 'aurora') {
     root.style.setProperty('--accent-text', isLightColor(rgb.r, rgb.g, rgb.b) ? '#111418' : '#ffffff');
     root.style.setProperty('--fab-color', isLightColor(rgb.r, rgb.g, rgb.b) ? '#111418' : '#ffffff');
@@ -1697,7 +1679,6 @@ function removeSavedAccent() {
   } catch (e) {}
 }
 
-// Build the preset swatches
 function buildAccentPresets() {
   var container = document.getElementById('accentPresets');
   if (!container) return;
@@ -1742,7 +1723,6 @@ function updateAccentUI() {
   buildAccentPresets();
 }
 
-// Apply button
 document.getElementById('accentApplyBtn').addEventListener('click', function() {
   var val = document.getElementById('accentHexInput').value.trim();
   if (!/^#[0-9a-fA-F]{6}$/.test(val) && !/^#[0-9a-fA-F]{3}$/.test(val)) {
@@ -1757,7 +1737,6 @@ document.getElementById('accentApplyBtn').addEventListener('click', function() {
   showToast('Accent color updated');
 });
 
-// Hex input live preview
 document.getElementById('accentHexInput').addEventListener('input', function() {
   var val = this.value.trim();
   if (/^#[0-9a-fA-F]{6}$/.test(val) || /^#[0-9a-fA-F]{3}$/.test(val)) {
@@ -1765,7 +1744,6 @@ document.getElementById('accentHexInput').addEventListener('input', function() {
   }
 });
 
-// Reset button
 document.getElementById('accentResetBtn').addEventListener('click', function() {
   removeSavedAccent();
   clearAccentColor();
@@ -1779,11 +1757,9 @@ document.getElementById('accentResetBtn').addEventListener('click', function() {
   showToast('Accent reset to default');
 });
 
-// Hook into applyTheme so accent loads whenever theme changes
 var _origApplyTheme = applyTheme;
 applyTheme = function(name) {
   _origApplyTheme(name);
-  // Small delay so body class is set before we check theme
   setTimeout(function() { loadAccent(); _initSlidingPills(); }, 0);
 };
 
@@ -1805,7 +1781,7 @@ function addDragHandles(wrap, taskId) {
 }
 
 function startDrag(e, wrap, taskId) {
-  if (dragState) return; if (navigator.vibrate) navigator.vibrate(30);
+  if (dragState) return; 
   const list = wrap.parentNode; const rect = wrap.getBoundingClientRect(); const offsetY = e.clientY - rect.top;
   const ghost = wrap.cloneNode(true); ghost.style.cssText = 'position:fixed;left:' + rect.left + 'px;top:' + rect.top + 'px;width:' + rect.width + 'px;opacity:0.9;pointer-events:none;z-index:9999;transition:none;will-change:transform;-webkit-transform:scale(1.03);transform:scale(1.03);box-shadow:0 8px 24px rgba(0,0,0,0.25);border-radius:14px;';
   document.body.appendChild(ghost); wrap.style.opacity = '0.3';
@@ -1844,10 +1820,6 @@ function onDragEnd(e) {
   dragState = null;
 }
 
-// ══════════════════════════════════════════════════════════════════
-// SYNC EVENT: re-render active view when data pulled from GitHub
-// ══════════════════════════════════════════════════════════════════
-
 on('data-pulled', () => {
   invalidateCache();
   rebuildCategoryUI();
@@ -1885,7 +1857,6 @@ initWeeklyReview({
   }
 });
 
-// Wire review segmented control to trigger timeline rendering
 var _segReview = document.getElementById('reflectSegReview');
 if (_segReview) _segReview.addEventListener('click', function() { if (isReviewActive()) closeReview(); onTimelineEnter(); updateReflectPill(); });
 var _segToday = document.getElementById('reflectSegToday');
@@ -1895,17 +1866,14 @@ render();
 loadSettingsUI();
 updateAccentUI();
 
-// Initialize sliding pill position after first paint
 requestAnimationFrame(function() {
   requestAnimationFrame(function() {
-    // Add .has-sliding-pill class based on current theme
     _initSlidingPills();
   });
 });
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
 
-// ── Sliding pill theme detection ──
 function _initSlidingPills() {
   var theme = document.body.className;
   var enabled = theme.indexOf('theme-aurora') !== -1 || theme.indexOf('theme-halcyon') !== -1;
@@ -1915,9 +1883,10 @@ function _initSlidingPills() {
   if (reflectSeg) reflectSeg.classList.toggle('has-sliding-pill', enabled);
 
   if (enabled) {
-    // Use router's internal function via import
-    updateReflectPill();
-    // Tab pill — manually trigger for current active tab
+    import('./router.js').then(({ updateReflectPill }) => {
+        updateReflectPill();
+    });
+
     var activeTab = tabBar && tabBar.querySelector('.tab-btn.active');
     if (activeTab && tabBar) {
       var pill = tabBar.querySelector('.sliding-pill');
@@ -1928,12 +1897,12 @@ function _initSlidingPills() {
       }
       var cRect = tabBar.getBoundingClientRect();
       var aRect = activeTab.getBoundingClientRect();
-      // Set initial position without transition
       pill.style.transition = 'none';
       pill.style.transform = 'translateX(' + (aRect.left - cRect.left) + 'px)';
       pill.style.width = aRect.width + 'px';
-      // Re-enable transition on next frame
-      requestAnimationFrame(function() { pill.style.transition = ''; });
+      
+      void pill.offsetWidth;
+      pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
     }
   }
 }
