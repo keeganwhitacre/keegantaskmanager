@@ -105,11 +105,12 @@ function _updatePill(containerSel, activeSel) {
     pill.style.transform = 'translateX(' + left + 'px)';
     pill.style.width = width + 'px';
     void pill.offsetWidth; // Force reflow
-    // Smoother, standard easing without the excessive bounce
-    pill.style.transition = 'transform 0.25s cubic-bezier(0.33, 1, 0.68, 1), width 0.25s cubic-bezier(0.33, 1, 0.68, 1)';
+    
+    // Clear inline transition so the CSS stylesheet handles the smooth easing
+    pill.style.transition = '';
   } else {
-    // Apply standard smooth transition
-    pill.style.transition = 'transform 0.25s cubic-bezier(0.33, 1, 0.68, 1), width 0.25s cubic-bezier(0.33, 1, 0.68, 1)';
+    // Clear any inline transition and apply standard transform
+    pill.style.transition = '';
     pill.style.transform = 'translateX(' + left + 'px)';
     pill.style.width = width + 'px';
   }
@@ -124,15 +125,31 @@ function updateAllPills() {
   _updatePill('.reflect-seg', '.reflect-seg-btn.active');
 }
 
-// Re-measure pill on resize (handles orientation changes cleanly on iOS)
-var _resizeTimer = null;
-window.addEventListener('resize', function() {
-  if (_resizeTimer) clearTimeout(_resizeTimer);
+// Use ResizeObserver for perfect pill sizing on font-loads and orientation changes
+if (typeof ResizeObserver !== 'undefined') {
+  const ro = new ResizeObserver(() => {
+    document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
+    updateAllPills();
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = '');
+    });
+  });
   
-  // Instantly disable transitions during active resize to avoid ghosting
-  document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
-  
-  _resizeTimer = setTimeout(updateAllPills, 60);
-});
+  // Delay observation slightly to ensure elements exist
+  setTimeout(() => {
+    const tb = document.querySelector('.tab-bar');
+    const rs = document.querySelector('.reflect-seg');
+    if (tb) ro.observe(tb);
+    if (rs) ro.observe(rs);
+  }, 0);
+} else {
+  // Fallback for older browsers
+  var _resizeTimer = null;
+  window.addEventListener('resize', function() {
+    if (_resizeTimer) clearTimeout(_resizeTimer);
+    document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
+    _resizeTimer = setTimeout(updateAllPills, 60);
+  });
+}
 
 export { register, switchView, currentViewName, updateReflectPill, updateAllPills };
