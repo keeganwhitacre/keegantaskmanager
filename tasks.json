@@ -769,6 +769,23 @@
       "pomodoros": 0,
       "projectId": "",
       "completedAt": "2026-03-19T14:46:32.527Z"
+    },
+    {
+      "id": "mn321vryuyfv",
+      "title": "AFSP Update",
+      "categories": [
+        "afsp"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-25",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1329,5 +1346,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T10:39:49.416Z"
+  "updated": "2026-03-23T10:40:51.944Z"
 }
