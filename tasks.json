@@ -819,6 +819,24 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mn3bqu2rd92i",
+      "title": "Pick up negatives",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1395,5 +1413,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T15:01:39.060Z"
+  "updated": "2026-03-23T15:12:12.684Z"
 }
