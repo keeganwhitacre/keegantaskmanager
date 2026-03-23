@@ -274,66 +274,70 @@
    THEME SYSTEM & VARIABLES - 
 ══════════════════════════════════════════════════════════════════ */
 :root {
-  /* --- iOS 26 LIQUID GLASS (DEFAULT) --- */
-  --bg-body: rgba(231, 233, 240, 0.01);
-  --bg-solid: #e8eaf0;
-  --bg-surface: rgba(255, 255, 255, 0.48);
-  --bg-input: rgba(255, 255, 255, 0.55);
-  --bg-overlay: rgba(180, 185, 210, 0.45);
-  --bg-tab-active: rgba(255, 255, 255, 0.6);
-  --bg-toast: rgba(235, 237, 245, 0.85);
+  /* --- HALCYON (DEFAULT — light mode) --- */
+  --bg-body: rgba(220, 232, 244, 0.01);
+  --bg-solid: #dce8f4;
+  --bg-surface: rgba(255, 255, 255, 0.82);
+  --bg-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
+  --bg-overlay: rgba(10, 34, 64, 0.40);
+  --bg-tab-active: var(--accent);
+  --bg-toast: #eef3f9;
 
-  --text-main: #1a1a2e;
-  --text-muted: rgba(60, 60, 90, 0.55);
-  --text-date: #1a1a2e;
+  --text-main: #081e36;
+  --text-muted: #4878a0;
+  --text-date: #081e36;
   --text-inverse: #ffffff;
 
-  --tab-active-text: #1a1a2e;
-  --tab-active-border: rgba(255, 255, 255, 0.8);
+  --tab-active-text: #ffffff;
+  --tab-active-border: var(--accent);
 
-  --border-main: rgba(255, 255, 255, 0.68);
-  --border-input: rgba(255, 255, 255, 0.7);
-  --border-divider: rgba(0, 0, 40, 0.08);
+  --border-main: rgba(140, 180, 220, 0.15);
+  --border-input: rgba(140, 180, 220, 0.22);
+  --border-divider: rgba(140, 180, 220, 0.22);
 
---accent: #007aff;
-  --accent-faded: rgba(0, 122, 255, 0.15);
+  /* Accent defaults — overridden by JS when user picks a custom color */
+  --accent-r: 16;
+  --accent-g: 96;
+  --accent-b: 160;
+  --accent: rgb(var(--accent-r), var(--accent-g), var(--accent-b));
+  --accent-faded: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
   --accent-text: #ffffff;
-  --danger: #ff5c62;   /* Softened coral-red, matching your high-priority tasks */
-  --warning: #ffac33;  /* Smooth golden-amber, perfect for 'today' without screaming at you */
-  --success: #52d9a0;  /* Optional: a slightly softer, minty green to match the glass vibe */
-  --bel-accent: #34c759;
+  --danger: #b83838;
+  --warning: #c4941a;
+  --success: #1a7a52;
+  --bel-accent: #1a7a52;
 
-  --font-main: 'DM Sans', sans-serif;
+  --font-main: 'Manrope', sans-serif;
   --font-mono: 'DM Mono', monospace;
-  --font-display: 'DM Sans', sans-serif;
-  
-  --display-weight: 700;
+  --font-display: 'Nunito', sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+
+  --display-weight: 800;
   --display-tracking: -0.03em;
   --clock-size: 38px;
-  --date-size: 28px;
+  --date-size: 30px;
 
   --radius-pill: 99px;
   --radius-circle: 50%;
-  --radius-card: 16px;
-  --radius-input: 12px;
+  --radius-card: 14px;
+  --radius-input: 10px;
 
-  --glass-filter: blur(24px) saturate(170%);
-  --overlay-filter: blur(4px);
+  --glass-filter: none;
+  --overlay-filter: blur(6px);
 
-  --shadow-base: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 14px rgba(0, 0, 40, 0.06);
-  --shadow-toast: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 4px 20px rgba(0, 0, 40, 0.1);
-  
-  --fab-bg: rgba(255, 255, 255, 0.4);
-  --fab-border: 1px solid rgba(255, 255, 255, 0.6);
-  --fab-color: #007aff;
-  --fab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 16px rgba(0, 0, 30, 0.1);
+  --shadow-base: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
+  --shadow-toast: 0 4px 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10);
 
-   /* Updated Liquid Glass Task Colors */
-  --task-hi: #ff5c62; /* A softer, vibrant coral-red instead of alarm-bell red */
-  --task-md: #4da6ff; /* A light bluish */
-  --task-lo: rgba(150, 160, 190, 0.4); /* A clean, cool frosted-blue-grey */
-  --task-cb-bg: rgba(255, 255, 255, 0.4);
-  --task-cb-border: rgba(180, 180, 210, 0.7);
+  --fab-bg: var(--accent);
+  --fab-border: none;
+  --fab-color: #ffffff;
+  --fab-shadow: 0 4px 12px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.3), 0 8px 30px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.15);
+
+  --task-hi: #b83838;
+  --task-md: var(--accent);
+  --task-lo: rgba(120, 160, 200, 0.50);
+  --task-cb-bg: transparent;
+  --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
 }
 
 body.theme-aurora {
@@ -576,73 +580,6 @@ body.theme-aurora .reflect-seg .sliding-pill {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
-body.theme-halcyon {
-  /* --- HALCYON DEEP --- */
-  --bg-body: rgba(220, 232, 244, 0.01);
-  --bg-solid: #dce8f4;
-  --bg-surface: rgba(255, 255, 255, 0.82);
-  --bg-input: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.10);
-  --bg-overlay: rgba(10, 34, 64, 0.40);
-  --bg-tab-active: var(--accent);
-  --bg-toast: #eef3f9;
-
-  --text-main: #081e36;
-  --text-muted: #4878a0;
-  --text-date: #081e36;
-  --text-inverse: #ffffff;
-
-  --tab-active-text: #ffffff;
-  --tab-active-border: var(--accent);
-
-  --border-main: rgba(140, 180, 220, 0.15);
-  --border-input: rgba(140, 180, 220, 0.22);
-  --border-divider: rgba(140, 180, 220, 0.22);
-
-  /* Accent defaults — overridden by JS when user picks a custom color */
-  --accent-r: 16;
-  --accent-g: 96;
-  --accent-b: 160;
-  --accent: rgb(var(--accent-r), var(--accent-g), var(--accent-b));
-  --accent-faded: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12);
-  --accent-text: #ffffff;
-  --danger: #b83838;
-  --warning: #c4941a;
-  --success: #1a7a52;
-  --bel-accent: #1a7a52;
-
-  --font-main: 'Manrope', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-  --font-display: 'Nunito', sans-serif;
-  --font-serif: 'Source Serif 4', Georgia, serif;
-
-  --display-weight: 800;
-  --display-tracking: -0.03em;
-  --clock-size: 38px;
-  --date-size: 30px;
-
-  --radius-pill: 99px;
-  --radius-circle: 50%;
-  --radius-card: 14px;
-  --radius-input: 10px;
-
-  --glass-filter: none;
-  --overlay-filter: blur(6px);
-
-  --shadow-base: 0 2px 8px rgba(8, 30, 54, 0.06), 0 0 0 1px rgba(140, 180, 220, 0.10);
-  --shadow-toast: 0 4px 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10);
-
-  --fab-bg: var(--accent);
-  --fab-border: none;
-  --fab-color: #ffffff;
-  --fab-shadow: 0 4px 12px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.3), 0 8px 30px rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.15);
-
-  --task-hi: #b83838;
-  --task-md: var(--accent);
-  --task-lo: rgba(120, 160, 200, 0.50);
-  --task-cb-bg: transparent;
-  --task-cb-border: rgba(var(--accent-r), var(--accent-g), var(--accent-b), 0.30);
-}
-
 /* Halcyon background gradient — soft neutral cool, no warm amber */
 body.theme-halcyon::before {
   content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
@@ -773,230 +710,7 @@ body.theme-halcyon .date-sub {
   color: #7a9cb8;
 }
 
-body.theme-bel-bel {
-  /* Exact Offline Background */
-  --bg-body: #1E1E1E; 
-  --bg-solid: #1E1E1E; 
-  
-  /* Exact Offline Unselected Container Color */
-  --bg-surface: #3C3C3C; 
-  --bg-input: #3C3C3C;
-  --bg-overlay: rgba(0, 0, 0, 0.75);
-  
-  --text-main: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.5);
-  --text-date: #ffffff;
-  --text-inverse: #ffffff;
 
-  /* Removing standard borders to rely strictly on the inner glow */
-  --border-main: transparent;
-  --border-input: transparent;
-  --border-divider: rgba(255, 255, 255, 0.06);
-
-  --accent: #FB5A27; 
-  --accent-text: #ffffff;
-  
-    /* Solid colors picked from along the gradient spectrum */
-  --task-hi: #FB5A27; /* Orange */
-  --task-md: #BE3786; /* Magenta midpoint */
-  --task-lo: rgba(129, 21, 230, 0.6); /* Faded Purple */
-
-  /* Reduced the external drop shadow from 0.3/0.4 down to 0.1 for a flatter look */
-  --shadow-base: inset 0 0 15px rgba(195, 195, 255, 0.20), inset 0 0 0 1px rgba(195, 195, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
-
-  /* FAB uses the solid gradient */
-  --fab-bg: linear-gradient(to bottom left, #FB5A27 25%, #8115E6 75%);
-  --fab-border: none;
-  --fab-color: #ffffff;
-  --fab-shadow: var(--shadow-base);
-}
-
-/* ─────────────────────────────────────────────────────────
-   INLINE SEGMENTED CONTROLS (Screenshot Match)
-───────────────────────────────────────────────────────── */
-/* Turn the Tab Bar and Filter Row into the wrapper pill */
-body.theme-bel-bel .tab-bar,
-body.theme-bel-bel .filter-scroll {
-  background: var(--bg-surface);
-  border-radius: 99px;
-  margin: 0 20px 14px;
-  gap: 0;
-  box-shadow: none; /* ← remove shadow from container, move to ::after */
-  width: calc(100% - 40px);
-  box-sizing: border-box;
-  position: relative; /* ← add this */
-}
-
-/* Zero padding for the main tab bar so active tabs fill top to bottom */
-body.theme-bel-bel .tab-bar {
-  padding: 0;
-  overflow: visible; /* This clips the active tab so it matches the outer curve perfectly on the left/right edges */
-}
-
-/* Let the filter row keep a tiny bit of padding and scroll naturally */
-body.theme-bel-bel .filter-scroll {
-  padding: 4px;
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  width: auto;
-  max-width: calc(100% - 40px);
-}
-
-body.theme-bel-bel .tab-btn,
-body.theme-bel-bel .chip,
-body.theme-bel-bel .s-chip {
-  background: transparent; /* was rgba(255,255,255,0.01) — change this */
-  border: none;
-  box-shadow: none;
-  color: #ffffff;
-  text-align: center;
-  margin: 0;
-  border-radius: 99px;
-}
-
-/* Adjusting button padding to compensate for the removed wrapper padding */
-body.theme-bel-bel .tab-btn { flex: 1; padding: 12px; }
-body.theme-bel-bel .chip { flex: 0 0 auto; padding: 8px 16px; }
-
-body.theme-bel-bel .tab-bar::after,
-body.theme-bel-bel .filter-scroll::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 99px;
-  box-shadow: var(--shadow-base);
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* ─────────────────────────────────────────────────────────
-   ACTIVE GRADIENTS & GLASS FIXES
-───────────────────────────────────────────────────────── */
-/* Apply the sweeping gradient + icy glass inset to selected elements */
-body.theme-bel-bel .tab-btn.active,
-body.theme-bel-bel .chip.active,
-body.theme-bel-bel .s-chip.active,
-body.theme-bel-bel .sheet-btn.primary,
-body.theme-bel-bel .pomo-btn,
-body.theme-bel-bel .quick-add-send,
-body.theme-bel-bel .shop-add-btn {
-  background: linear-gradient(to bottom left, #FB5A27 20%, #8115E6 80%);
-  border: none;
-  color: #ffffff;
-  /* Added the icy inset glow and softened the drop shadow */
-  box-shadow: inset 0 0 20px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Force all cards, sheets, and inputs to use the shadow glow instead of borders */
-body.theme-bel-bel .task,
-body.theme-bel-bel .d-card,
-body.theme-bel-bel .sheet,
-body.theme-bel-bel .icon-btn,
-body.theme-bel-bel .input,
-body.theme-bel-bel .focus-strip {
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-base);
-  border: none;
-}
-
-/* Checkbox specific fixes */
-body.theme-bel-bel .cb,
-body.theme-bel-bel .bel-cb,
-body.theme-bel-bel .shop-cb {
-  background: var(--bg-surface);
-  box-shadow: inset 0 0 6px rgba(195, 195, 255, 0.1), inset 0 0 0 1px rgba(195, 195, 255, 0.25);
-  border: none;
-}
-
-/* Checked state gets the full gradient */
-body.theme-bel-bel .task.done .cb,
-body.theme-bel-bel .bel-cb.checked,
-body.theme-bel-bel .shop-cb.checked {
-  background: linear-gradient(to bottom left, #FB5A27, #8115E6);
-  box-shadow: none;
-}
-
-/* ─────────────────────────────────────────────────────────
-   RESTORE NATIVE PRIORITY STRIPES
-───────────────────────────────────────────────────────── */
-body.theme-bel-bel .task.hi { border-left: 3px solid var(--task-hi) !important; }
-body.theme-bel-bel .task.md { border-left: 3px solid var(--task-md) !important; }
-body.theme-bel-bel .task.lo { border-left: 3px solid var(--task-lo) !important; }
-body.theme-bel-bel .task { border-left: 3px solid transparent; }
-
-
-/* new body theme for dark mode ios 26 ish whatever */
-body.theme-ios-dark {
-  /* --- iOS 26 DARK GLASS --- */
-  --bg-body: rgba(0, 0, 0, 0.001);
-  --bg-solid: #000000;
-  --bg-surface: rgba(28, 28, 30, 0.65);
-  --bg-input: rgba(44, 44, 46, 0.65);
-  --bg-overlay: rgba(0, 0, 0, 0.65);
-  --bg-tab-active: rgba(255, 255, 255, 0.15);
-  --bg-toast: rgba(28, 28, 30, 0.85);
-
-  --text-main: #ffffff;
-  --text-muted: rgba(235, 235, 245, 0.6);
-  --text-date: #ffffff;
-  --text-inverse: #000000;
-
-  --tab-active-text: #ffffff;
-  --tab-active-border: rgba(255, 255, 255, 0.2);
-
-  --border-main: rgba(255, 255, 255, 0.15);
-  --border-input: rgba(255, 255, 255, 0.15);
-  --border-divider: rgba(255, 255, 255, 0.1);
-
-  --accent: #0a84ff;
-  --accent-faded: rgba(10, 132, 255, 0.15);
-  --accent-text: #ffffff;
-  --danger: #ff453a;
-  --warning: #ff9f0a;
-  --success: #32d74b;
-  --bel-accent: #32d74b;
-
-  --font-main: 'DM Sans', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-  --font-display: 'DM Sans', sans-serif;
-  
-  --display-weight: 700;
-  --display-tracking: -0.03em;
-  --clock-size: 38px;
-  --date-size: 28px;
-
-  --radius-pill: 99px;
-  --radius-circle: 50%;
-  --radius-card: 16px;
-  --radius-input: 12px;
-
-  --glass-filter: blur(24px) saturate(170%);
-  --overlay-filter: blur(4px);
-
-  --shadow-base: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 14px rgba(0, 0, 0, 0.4);
-  --shadow-toast: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.5);
-  
-  --fab-bg: rgba(44, 44, 46, 0.65);
-  --fab-border: 1px solid rgba(255, 255, 255, 0.15);
-  --fab-color: #0a84ff;
-  --fab-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 16px rgba(0, 0, 0, 0.4);
-
-  --task-hi: #ff453a;
-  --task-md: #64d2ff;
-  --task-lo: rgba(235, 235, 245, 0.3);
-  --task-cb-bg: rgba(255, 255, 255, 0.05);
-  --task-cb-border: rgba(235, 235, 245, 0.3);
-}
-
-/* iOS Dark Background Gradient */
-body.theme-ios-dark::before {
-  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse at 20% 15%, rgba(10,132,255,0.15) 0%, transparent 50%), 
-              radial-gradient(ellipse at 82% 55%, rgba(191,90,242,0.12) 0%, transparent 45%), 
-              radial-gradient(ellipse at 48% 92%, rgba(50,215,75,0.1) 0%, transparent 40%);
-}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1026,14 +740,6 @@ html, body {
 body:has(.overlay.open), 
 body:has(.sheet.open) { 
   overflow: hidden; 
-}
-
-/* iOS 26 Liquid Glass Background Gradient */
-body.theme-ios26::before {
-  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse at 20% 15%, rgba(100,160,255,0.22) 0%, transparent 50%), 
-              radial-gradient(ellipse at 82% 55%, rgba(180,120,255,0.16) 0%, transparent 45%), 
-              radial-gradient(ellipse at 48% 92%, rgba(80,210,160,0.12) 0%, transparent 40%);
 }
 
 /* ── DESKTOP LAYOUT ── */
@@ -2823,22 +2529,4 @@ body.theme-halcyon .reflect-seg .sliding-pill {
   background: transparent;
 }
 
-/* ── Bel-bel: gradient active state matching tabs ── */
-body.theme-bel-bel .reflect-seg {
-  background: var(--bg-surface);
-  border: none;
-  border-radius: 99px;
-  box-shadow: var(--shadow-base);
-}
-body.theme-bel-bel .reflect-seg-btn {
-  font-family: var(--font-main);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border-radius: 99px;
-  padding: 10px 0;
-}
-body.theme-bel-bel .reflect-seg-btn.active {
-  background: linear-gradient(to bottom left, #FB5A27 20%, #8115E6 80%);
-  color: #ffffff;
-  box-shadow: inset 0 0 20px rgba(195, 195, 255, 0.25), inset 0 0 0 1px rgba(195, 195, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
-}
+

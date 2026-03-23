@@ -1531,9 +1531,6 @@ register('reflect', {
     if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
-    // Position the sliding pill now that the view is visible (getBoundingClientRect
-    // returns zeroes when measured at boot while reflectView has display:none)
-    requestAnimationFrame(function() { updateReflectPill(); });
   },
   onExit: function() {
     onReflectExit();
@@ -1568,18 +1565,18 @@ const cpd = document.getElementById('closeProjectDetailBtn'); if (cpd) cpd.addEv
 // THEME SYSTEM
 // ══════════════════════════════════════════════════════════════════
 
-const THEMES = ['aurora', 'halcyon', 'ios26', 'bel-bel', 'ios-dark'];
+const THEMES = ['aurora', 'halcyon'];
 
 function applyTheme(name) {
   THEMES.forEach(t => { document.body.classList.remove('theme-' + t); });
   if (name) document.body.classList.add('theme-' + name);
-  const htmlBg = { aurora:'#111418', halcyon:'#dce8f4', ios26:'#e8eaf0', 'bel-bel':'#1E1E1E', 'ios-dark':'#000000' };
-  document.documentElement.style.background = htmlBg[name] || '#e8eaf0';
-  document.querySelectorAll('.theme-swatch').forEach(sw => { sw.classList.toggle('active', sw.dataset.theme === (name || 'ios26')); });
-  try { localStorage.setItem(KEYS.theme, name || 'ios26'); } catch (e) {}
+  const htmlBg = { aurora:'#111418', halcyon:'#dce8f4' };
+  document.documentElement.style.background = htmlBg[name] || '#dce8f4';
+  document.querySelectorAll('.theme-swatch').forEach(sw => { sw.classList.toggle('active', sw.dataset.theme === (name || 'halcyon')); });
+  try { localStorage.setItem(KEYS.theme, name || 'halcyon'); } catch (e) {}
 }
 
-function loadTheme() { let saved = 'ios26'; try { saved = localStorage.getItem(KEYS.theme) || 'ios26'; } catch (e) {} if (saved === 'newsprint') saved = 'halcyon'; if (saved === 'neon') saved = 'aurora'; applyTheme(saved); }
+function loadTheme() { let saved = 'halcyon'; try { saved = localStorage.getItem(KEYS.theme) || 'halcyon'; } catch (e) {} if (saved === 'newsprint' || saved === 'ios26' || saved === 'bel-bel') saved = 'halcyon'; if (saved === 'neon' || saved === 'ios-dark') saved = 'aurora'; applyTheme(saved); }
 document.getElementById('settingsSheet').addEventListener('click', function(e) { const sw = e.target.closest('.theme-swatch'); if (!sw) return; applyTheme(sw.dataset.theme); updateAccentUI(); render(); });
 
 // ══════════════════════════════════════════════════════════════════
@@ -1621,7 +1618,7 @@ function getCurrentThemeName() {
   for (var i = 0; i < THEMES.length; i++) {
     if (document.body.classList.contains('theme-' + THEMES[i])) return THEMES[i];
   }
-  return 'ios26';
+  return 'halcyon';
 }
 
 function applyAccentColor(hex) {

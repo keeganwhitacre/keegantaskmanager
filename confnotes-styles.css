@@ -263,14 +263,6 @@
 /* Toggle button active state */
 .cn-scratch-mono.md-active { color: var(--accent); border-color: var(--accent-faded); }
 
-/* ── THEME OVERRIDES ── */
-body.theme-bel-bel .cn-note-card,
-body.theme-bel-bel .cn-scratch-card {
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-base);
-  border: none;
-}
-
 /* Desktop padding */
 @media (min-width: 768px) {
   #confNotesView { padding: 0 32px 14px; }
