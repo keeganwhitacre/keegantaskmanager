@@ -16,6 +16,8 @@ var STATIC_ASSETS = [
   '/state.js',
   '/sync.js',
   '/timeline.js',
+  '/weekly-review.js',
+  '/weekly-review.css',
 
   // ── Self-hosted: marked (move from cdnjs to local) ──
   // Download https://cdnjs.cloudflare.com/ajax/libs/marked/15.0.7/marked.min.js
