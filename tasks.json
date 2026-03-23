@@ -1257,7 +1257,7 @@
   "cnNotes": [
     {
       "id": "mn3ech72ikdb",
-      "title": "Lab",
+      "title": "Lab Management Meeting",
       "speaker": "",
       "body": "",
       "tags": [],
@@ -1265,7 +1265,7 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-23T16:24:59.150Z",
-      "updatedAt": "2026-03-23T16:25:07.451Z"
+      "updatedAt": "2026-03-23T16:25:13.362Z"
     },
     {
       "id": "mmv5l41vrf1o",
@@ -1425,5 +1425,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T16:25:09.952Z"
+  "updated": "2026-03-23T16:25:15.864Z"
 }
