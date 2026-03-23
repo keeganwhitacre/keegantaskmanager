@@ -20,6 +20,7 @@
 
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="confnotes-styles.css">
+  <link rel="stylesheet" href="weekly-review.css">
 
    <link rel="modulepreload" href="state.js">
   <link rel="modulepreload" href="sync.js">
@@ -371,6 +372,7 @@
 
   <!-- TODAY MODE -->
   <div id="reflectToday" style="padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+    <div class="wr-prompt-card" id="wrPromptCard" style="display:none;"></div>
     <div class="d-card">
       <div class="d-week-meta" id="dWeekMeta"></div>
       <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
@@ -451,6 +453,7 @@
 
   <!-- REVIEW MODE -->
   <div id="reflectReview" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+    <div id="wrContainer"></div>
     <div id="timelineNav"></div>
     <div id="timelineBody"></div>
   </div>

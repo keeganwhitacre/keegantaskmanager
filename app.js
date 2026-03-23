@@ -23,6 +23,7 @@ import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode } from './dashboard.js';
 import { initTimeline, renderTimeline, onTimelineEnter, invalidateCache } from './timeline.js';
 import { renderCNList, createNewNote, rebuildCNChips } from './confnotes.js';
+import { initWeeklyReview, renderPromptCard, isReviewActive, closeReview } from './weekly-review.js';
 
 // ══════════════════════════════════════════════════════════════════
 // RENDER & TIME LOGIC
@@ -1525,12 +1526,16 @@ register('tasks', {
 register('reflect', {
   onEnter: function() {
     onReflectEnter();
-    // If entering review mode, also trigger timeline
-    if (getReflectMode() === 'review') {
+    renderPromptCard();
+    // If entering review mode, also trigger timeline (unless weekly review is active)
+    if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
   },
-  onExit: onReflectExit,
+  onExit: function() {
+    onReflectExit();
+    if (isReviewActive()) closeReview();
+  },
 });
 register('projects', {
   onEnter: renderProjects,
@@ -1835,7 +1840,7 @@ on('data-pulled', () => {
   refreshDynamicCatColors();
   const view = currentViewName();
   if (view === 'reflect') {
-    if (getReflectMode() === 'today') renderReflectToday();
+    if (getReflectMode() === 'today') { renderReflectToday(); renderPromptCard(); }
     else renderTimeline();
   }
   else if (view === 'projects') renderProjects();
@@ -1858,10 +1863,17 @@ initShopping(openSheet);
 initBel();
 initTimeline();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
+initWeeklyReview({
+  onFinish: function() {
+    renderPromptCard();
+    render();
+    if (getReflectMode() === 'today') renderReflectToday();
+  }
+});
 
 // Wire review segmented control to trigger timeline rendering
 var _segReview = document.getElementById('reflectSegReview');
-if (_segReview) _segReview.addEventListener('click', function() { onTimelineEnter(); updateReflectPill(); });
+if (_segReview) _segReview.addEventListener('click', function() { if (isReviewActive()) closeReview(); onTimelineEnter(); updateReflectPill(); });
 var _segToday = document.getElementById('reflectSegToday');
 if (_segToday) _segToday.addEventListener('click', function() { updateReflectPill(); });
 

@@ -1,0 +1,695 @@
+/* ══════════════════════════════════════════════════════════════════
+   WEEKLY REVIEW — styles
+   Uses existing CSS variables for full theme compatibility.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Prompt card (sits at top of Today mode, Sat–Mon) ── */
+
+.wr-prompt-card {
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wr-prompt-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--shadow-base);
+  border-left: 3px solid var(--accent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wr-prompt-inner:active {
+  transform: scale(0.98);
+}
+
+.wr-prompt-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.wr-prompt-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.wr-prompt-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.wr-prompt-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.wr-prompt-action {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── Container (replaces timeline in Review mode) ── */
+
+#wrContainer {
+  display: none;
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+
+/* ── Header ── */
+
+.wr-header {
+  padding: 0 0 4px;
+  margin-bottom: 8px;
+}
+
+.wr-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.wr-header-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.wr-header-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.wr-header-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wr-step-icon {
+  font-size: 18px;
+}
+
+/* ── Progress bar ── */
+
+.wr-progress {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.wr-progress-seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border-divider);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.wr-progress-seg.filled {
+  background: var(--accent);
+}
+
+/* ── Step content ── */
+
+.wr-step-content {
+  min-height: 360px;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.wr-step-exit {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.wr-step-enter {
+  animation: wrFadeIn 0.2s ease forwards;
+}
+
+@keyframes wrFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Typography ── */
+
+.wr-question {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.wr-label-mono {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.wr-muted {
+  color: var(--text-muted);
+}
+
+/* ── Intention step ── */
+
+.wr-intention-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  border-left: 3px solid var(--accent);
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--shadow-base);
+}
+
+.wr-intention-card.wr-empty {
+  border-left-color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.wr-intention-text {
+  font-size: 14px;
+  color: var(--text-main);
+  font-style: italic;
+  font-family: 'Source Serif 4', Georgia, serif;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+.wr-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.wr-rating-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-base);
+}
+
+.wr-rating-chip.active {
+  background: var(--accent-faded);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Affect step ── */
+
+.wr-affect-ribbon {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.wr-ribbon-day {
+  flex: 1;
+  text-align: center;
+}
+
+.wr-ribbon-bar {
+  height: 32px;
+  border-radius: 6px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wr-ribbon-ctx-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.wr-day-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.wr-stat-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.wr-stat {
+  flex: 1;
+}
+
+.wr-stat-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.wr-mini-orb {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wr-insight {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: var(--accent-faded);
+  border: 1px solid rgba(var(--accent-r, 0), var(--accent-g, 122), var(--accent-b, 255), 0.1);
+  border-radius: 10px;
+  margin-top: 14px;
+}
+
+/* Aurora/Halcyon accent-faded fallback */
+body:not(.theme-aurora):not(.theme-halcyon) .wr-insight {
+  border-color: var(--border-main);
+}
+
+/* ── Tasks step ── */
+
+.wr-cat-chips {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.wr-cat-chip {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  border: 1px solid;
+}
+
+.wr-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.wr-task-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+}
+
+.wr-task-row.bordered {
+  border-bottom: 1px solid var(--border-divider);
+}
+
+.wr-task-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.wr-task-title {
+  font-size: 13px;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.wr-empty-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 12px 0;
+}
+
+/* ── Habits step ── */
+
+.wr-habits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wr-habit-item {
+  /* each habit */
+}
+
+.wr-habit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.wr-habit-name {
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.wr-habit-pct {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.wr-habit-checks {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.wr-habit-cb {
+  width: 28px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  background: var(--border-divider);
+  color: var(--text-muted);
+  border: 1px solid transparent;
+}
+
+.wr-habit-cb.checked {
+  background: rgba(58, 170, 114, 0.15);
+  color: var(--success);
+}
+
+.wr-habit-cb.checked-bad {
+  background: rgba(217, 91, 91, 0.15);
+  color: var(--danger);
+}
+
+.wr-habit-cb.off {
+  background: transparent;
+  border: 1px dashed var(--border-divider);
+  color: transparent;
+}
+
+.wr-habit-days-label {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  align-items: center;
+}
+
+.wr-habit-days-label span {
+  width: 28px;
+  text-align: center;
+  display: none; /* hidden by default — shown if needed */
+}
+
+/* ── Carry-over step ── */
+
+.wr-carry-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.wr-carry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wr-carry-row {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  border-radius: var(--radius-card);
+  padding: 12px 14px;
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--shadow-base);
+}
+
+.wr-carry-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wr-carry-info .wr-task-title {
+  flex: 1;
+}
+
+.wr-carry-due {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+}
+
+.wr-carry-due.overdue {
+  color: var(--danger);
+}
+
+.wr-carry-due.soon {
+  color: #ff9500;
+}
+
+.wr-carry-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.wr-carry-action {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border: none;
+  background: var(--border-divider);
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wr-carry-action.keep.active {
+  background: var(--accent-faded);
+  color: var(--accent);
+}
+
+.wr-carry-action.defer.active {
+  background: rgba(255, 149, 0, 0.15);
+  color: #ff9500;
+}
+
+.wr-carry-action.drop.active {
+  background: rgba(217, 91, 91, 0.15);
+  color: var(--danger);
+}
+
+/* ── Reflect step ── */
+
+.wr-reflect-prompt {
+  font-size: 13px;
+  color: var(--text-main);
+  opacity: 0.7;
+  font-style: italic;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.wr-daily-ref {
+  font-size: 12px;
+  color: var(--text-main);
+  opacity: 0.7;
+  line-height: 1.5;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  background: var(--border-divider);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+
+.wr-daily-ref-day {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 10px;
+}
+
+.wr-textarea {
+  width: 100%;
+  min-height: 100px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-input);
+  padding: 12px;
+  color: var(--text-main);
+  -webkit-text-fill-color: var(--text-main);
+  font-family: var(--font-main);
+  font-size: 14px;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  margin-top: 12px;
+}
+
+.wr-textarea:focus {
+  border-color: var(--accent);
+}
+
+.wr-textarea-intention {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  min-height: 80px;
+}
+
+/* ── Plan step ── */
+
+.wr-signals-box {
+  background: var(--accent-faded);
+  border: 1px solid rgba(var(--accent-r, 0), var(--accent-g, 122), var(--accent-b, 255), 0.15);
+  border-radius: var(--radius-card);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+body:not(.theme-aurora):not(.theme-halcyon) .wr-signals-box {
+  border-color: var(--border-main);
+}
+
+.wr-signals-text {
+  font-size: 12px;
+  color: var(--text-main);
+  opacity: 0.7;
+  line-height: 1.6;
+}
+
+.wr-finish-summary {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--accent-faded);
+  border: 1px solid rgba(var(--accent-r, 0), var(--accent-g, 122), var(--accent-b, 255), 0.12);
+  text-align: center;
+}
+
+body:not(.theme-aurora):not(.theme-halcyon) .wr-finish-summary {
+  border-color: var(--border-main);
+}
+
+.wr-finish-title {
+  font-size: 14px;
+  color: var(--text-main);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.wr-finish-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── Navigation buttons ── */
+
+.wr-nav {
+  display: flex;
+  gap: 10px;
+  padding: 20px 0 24px;
+}
+
+.wr-btn {
+  border: none;
+  border-radius: 99px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+  padding: 12px 0;
+}
+
+.wr-btn:active {
+  transform: scale(0.97);
+}
+
+.wr-btn-back {
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-main);
+  color: var(--text-muted);
+}
+
+.wr-btn-next {
+  flex: 2;
+  background: var(--accent);
+  color: var(--accent-text);
+  box-shadow: 0 2px 8px rgba(var(--accent-r, 0), var(--accent-g, 122), var(--accent-b, 255), 0.25);
+}
+
+.wr-btn-finish {
+  flex: 2;
+  background: linear-gradient(135deg, var(--accent), var(--success));
+  color: var(--accent-text);
+  box-shadow: 0 2px 8px rgba(var(--accent-r, 0), var(--accent-g, 122), var(--accent-b, 255), 0.25);
+}
+
+/* Fallback for themes without accent-r/g/b */
+body:not(.theme-aurora):not(.theme-halcyon) .wr-btn-next {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+body:not(.theme-aurora):not(.theme-halcyon) .wr-btn-finish {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
