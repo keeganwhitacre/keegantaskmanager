@@ -1628,6 +1628,18 @@ function applyAccentColor(hex) {
   root.style.setProperty('--accent-g', rgb.g);
   root.style.setProperty('--accent-b', rgb.b);
 
+  // Must also set computed vars — :root won't recompute them from body's overridden --accent-r/g/b
+  root.style.setProperty('--accent', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
+  root.style.setProperty('--accent-faded', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.12)');
+  root.style.setProperty('--task-md', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
+  root.style.setProperty('--task-cb-border', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.30)');
+  root.style.setProperty('--bg-input', 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.10)');
+  root.style.setProperty('--bg-tab-active', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
+  root.style.setProperty('--tab-active-border', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
+  root.style.setProperty('--fab-bg', 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')');
+  root.style.setProperty('--fab-shadow', '0 4px 12px rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.3), 0 8px 30px rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.15)');
+  root.style.setProperty('--shadow-toast', '0 4px 20px rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', 0.12), 0 0 0 1px rgba(140, 180, 220, 0.10)');
+
   var theme = getCurrentThemeName();
   // For dark themes, accent-text should be dark on light accents, white on dark accents
   if (theme === 'aurora') {
@@ -1640,7 +1652,9 @@ function applyAccentColor(hex) {
 }
 
 function clearAccentColor() {
-  var props = ['--accent-r', '--accent-g', '--accent-b', '--accent-text', '--fab-color'];
+  var props = ['--accent-r', '--accent-g', '--accent-b', '--accent', '--accent-faded',
+    '--accent-text', '--fab-color', '--fab-bg', '--fab-shadow', '--shadow-toast',
+    '--task-md', '--task-cb-border', '--bg-input', '--bg-tab-active', '--tab-active-border'];
   props.forEach(function(p) { document.body.style.removeProperty(p); });
 }
 
