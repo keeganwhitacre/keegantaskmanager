@@ -1427,15 +1427,22 @@ document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd
 const animStyle = document.createElement('style');
 animStyle.textContent = `
   #fab {
-    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out !important;
     display: flex; align-items: center; justify-content: center;
+    z-index: 999;
   }
-  #fab svg { width: 24px; height: 24px; }
+  #fab svg { width: 24px; height: 24px; pointer-events: none; } /* Prevents SVG from stealing the click */
   #fab:active { transform: scale(0.9) !important; }
   
   /* Force FAB to appear on Projects tab overriding original CSS */
   body.projects-mode #fab { display: flex !important; }
-  body.projects-detail-mode #fab { display: none !important; }
+
+  .sheet { will-change: transform; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
+  .view-enter { animation: viewFadeSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important; }
+  @keyframes viewFadeSlide {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
 `;
 document.head.appendChild(animStyle);
 
@@ -1448,6 +1455,7 @@ const FAB_ICONS = {
 const fabEl = document.getElementById('fab');
 if (fabEl) {
   fabEl.innerHTML = FAB_ICONS.tasks; 
+  fabEl.dataset.currentIcon = 'tasks';
 
   // Swap icons with a smooth pop animation on route change
   on('view-changed', function(data) {
@@ -1478,11 +1486,13 @@ if (fabEl) {
   fabEl.addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true });
   fabEl.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
-  fabEl.addEventListener('click', function() {
+  fabEl.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     const view = currentViewName();
     if (view === 'notes') {
       createNewNote();
-    } else if (view === 'projects' || view === 'projects-detail') {
+    } else if (view.startsWith('projects')) {
       state.editingProjId = null;
       closeSheets();
       setTimeout(function() { openSheet('projectSheet'); }, 10);
@@ -1503,15 +1513,20 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clo
 // ROUTER REGISTRATION
 // ══════════════════════════════════════════════════════════════════
 
+// Reusable helper to cleanly snap the view transition on any element
+function triggerViewAnim(selectors) {
+  const els = document.querySelectorAll(selectors);
+  els.forEach(el => {
+    el.classList.remove('view-enter');
+    void el.offsetWidth; // Force a layout reflow
+    el.classList.add('view-enter');
+  });
+}
+
 register('tasks', {
   onEnter: function() {
     render();
-    var tl = document.getElementById('taskList');
-    if (tl) {
-      tl.classList.remove('view-enter');
-      void tl.offsetWidth;
-      tl.classList.add('view-enter');
-    }
+    triggerViewAnim('#taskList');
   },
 });
 register('reflect', {
@@ -1521,6 +1536,8 @@ register('reflect', {
     if (getReflectMode() === 'review' && !isReviewActive()) {
       onTimelineEnter();
     }
+    // Targets common dashboard wraps to ensure the slide triggers gracefully
+    triggerViewAnim('#reflectView, .dashboard, #dashboardContainer');
   },
   onExit: function() {
     onReflectExit();
@@ -1528,16 +1545,22 @@ register('reflect', {
   },
 });
 register('projects', {
-  onEnter: renderProjects,
+  onEnter: function() {
+    renderProjects();
+    triggerViewAnim('#projectsList, #projectsView');
+  }
 });
 register('projects-detail', {
-  onEnter: renderProjectTasks,
+  onEnter: function() {
+    renderProjectTasks();
+    triggerViewAnim('#pdTasksList, #projectDetailView');
+  }
 });
 register('notes', {
-  onEnter: function() { renderCNList(); },
-});
-register('bel', {
-  onEnter: renderBel,
+  onEnter: function() {
+    renderCNList();
+    triggerViewAnim('#cnList, #confNotesView');
+  },
 });
 
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
