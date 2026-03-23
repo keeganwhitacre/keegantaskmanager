@@ -967,7 +967,7 @@
       },
       "2026-W13": {
         "sleep": [
-          false,
+          true,
           false,
           false,
           false,
@@ -985,7 +985,7 @@
           false
         ],
         "lift": [
-          false,
+          true,
           false,
           false,
           false,
@@ -1329,5 +1329,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T10:12:36.416Z"
+  "updated": "2026-03-23T10:12:44.126Z"
 }
