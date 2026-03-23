@@ -853,6 +853,21 @@
       "pinnedToday": true,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1774300420992",
+      "title": "Grocery",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-23",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1467,5 +1482,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-23T21:07:00.736Z"
+  "updated": "2026-03-23T21:13:43.509Z"
 }
