@@ -47,37 +47,12 @@ function switchView(viewName) {
 
   if (view.onEnter) view.onEnter();
 
-  // Animate incoming view content smoothly using transform/opacity
-  const viewElMap = {
-    tasks: 'taskList',
-    reflect: 'reflectView',
-    projects: 'projectsView',
-    'projects-detail': 'projectDetailView',
-    notes: 'confNotesView',
-    bel: 'belView',
-  };
-  const elId = viewElMap[viewName];
-  if (elId) {
-    const el = document.getElementById(elId);
-    if (el) {
-      el.classList.remove('view-enter'); 
-      // Force reflow to restart animation reliably
-      void el.offsetWidth;
-      el.classList.add('view-enter');
-      el.addEventListener('animationend', function handler() { 
-          el.classList.remove('view-enter'); 
-          el.removeEventListener('animationend', handler); 
-      });
-    }
-  }
-
   emit('view-changed', { from: prev, to: viewName });
 }
 
 function currentViewName() { return currentView; }
 
-// ── Sliding pill indicator ──
-// Measures the active button and positions a pseudo-element pill behind it.
+// ── Sliding pill indicator (REVERTED TO ORIGINAL) ──
 function _updatePill(containerSel, activeSel) {
   var container = document.querySelector(containerSel);
   if (!container || !container.classList.contains('has-sliding-pill')) return;
@@ -85,71 +60,26 @@ function _updatePill(containerSel, activeSel) {
   if (!active) return;
 
   var pill = container.querySelector('.sliding-pill');
-  var isNew = false;
   if (!pill) {
     pill = document.createElement('div');
     pill.className = 'sliding-pill';
     container.insertBefore(pill, container.firstChild);
-    isNew = true;
   }
 
   // Measure relative to container padding box
   var cRect = container.getBoundingClientRect();
   var aRect = active.getBoundingClientRect();
-  var left = aRect.left - cRect.left;
-  var width = aRect.width;
-
-  if (isNew) {
-    // Snap to position without transition to avoid fly-in bug
-    pill.style.transition = 'none';
-    pill.style.transform = 'translateX(' + left + 'px)';
-    pill.style.width = width + 'px';
-    void pill.offsetWidth; // Force reflow
-    
-    // Clear inline transition so the CSS stylesheet handles the smooth easing
-    pill.style.transition = '';
-  } else {
-    // Clear any inline transition and apply standard transform
-    pill.style.transition = '';
-    pill.style.transform = 'translateX(' + left + 'px)';
-    pill.style.width = width + 'px';
-  }
+  pill.style.transform = 'translateX(' + (aRect.left - cRect.left) + 'px)';
+  pill.style.width = aRect.width + 'px';
 }
 
 function updateReflectPill() {
   _updatePill('.reflect-seg', '.reflect-seg-btn.active');
 }
 
-function updateAllPills() {
+window.addEventListener('resize', function() {
   _updatePill('.tab-bar', '.tab-btn.active');
   _updatePill('.reflect-seg', '.reflect-seg-btn.active');
-}
+});
 
-// Use ResizeObserver for perfect pill sizing on font-loads and orientation changes
-if (typeof ResizeObserver !== 'undefined') {
-  const ro = new ResizeObserver(() => {
-    document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
-    updateAllPills();
-    requestAnimationFrame(() => {
-      document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = '');
-    });
-  });
-  
-  // Delay observation slightly to ensure elements exist
-  setTimeout(() => {
-    const tb = document.querySelector('.tab-bar');
-    const rs = document.querySelector('.reflect-seg');
-    if (tb) ro.observe(tb);
-    if (rs) ro.observe(rs);
-  }, 0);
-} else {
-  // Fallback for older browsers
-  var _resizeTimer = null;
-  window.addEventListener('resize', function() {
-    if (_resizeTimer) clearTimeout(_resizeTimer);
-    document.querySelectorAll('.sliding-pill').forEach(p => p.style.transition = 'none');
-    _resizeTimer = setTimeout(updateAllPills, 60);
-  });
-}
-
-export { register, switchView, currentViewName, updateReflectPill, updateAllPills };
+export { register, switchView, currentViewName, updateReflectPill };
