@@ -183,7 +183,7 @@ function makeTaskWrap(t, delay) {
   }
 
   el.innerHTML =
-    '<div class="cb">' + (t.done ? '' : '') + '</div>' +
+    '<div class="cb"></div>' +
     '<div class="task-body">' +
     '<div class="task-title">' + esc(t.title) + '</div>' +
     '<div class="task-row">' + catHtml + statusHtml + projHtml + dueHtml + '</div>' +
@@ -255,7 +255,13 @@ function deferTask(id) {
       const t = state.tasks[i];
       const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
       const tStr = tomorrow.toISOString().split('T')[0];
-      if (t.due) { const d = new Date(t.due + 'T00:00:00'); d.setDate(d.getDate() + 1); t.due = d.toISOString().split('T')[0]; } else { t.due = tStr; }
+      if (t.due) {
+        const d = new Date(t.due + 'T00:00:00');
+        d.setDate(d.getDate() + 1);
+        t.due = d.toISOString().split('T')[0];
+      } else {
+        t.due = tStr;
+      }
       t.pinnedToday = false;
       break;
     }
@@ -1420,10 +1426,15 @@ document.getElementById('quickAddInput').addEventListener('keydown', function(e)
 document.getElementById('quickAddSend').addEventListener('click', submitQuickAdd);
 
 // ══════════════════════════════════════════════════════════════════
-// CONTEXT AWARE FAB & SMOOTH ANIMATIONS
+// CONTEXT AWARE FAB
 // ══════════════════════════════════════════════════════════════════
 
-// Inject styles for the FAB morphing (removed the view-enter overrides to restore original smoothness)
+const FAB_ICONS = {
+  tasks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
+  notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+};
+
 const animStyle = document.createElement('style');
 animStyle.textContent = `
   #fab {
@@ -1431,64 +1442,34 @@ animStyle.textContent = `
     display: flex; align-items: center; justify-content: center;
     z-index: 999;
   }
-  #fab svg { width: 24px; height: 24px; pointer-events: none; } /* Prevents SVG from stealing the click */
+  #fab svg { width: 24px; height: 24px; pointer-events: none; }
   #fab:active { transform: scale(0.9) !important; }
-  
-  /* Force FAB to appear on Projects tab overriding original CSS */
   body.projects-mode #fab { display: flex !important; }
-
-  .sheet { will-change: transform; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
-  .view-enter { animation: viewFadeSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important; }
-  @keyframes viewFadeSlide {
-    0% { opacity: 0; transform: translateY(8px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
 `;
 document.head.appendChild(animStyle);
-
-const FAB_ICONS = {
-  tasks: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
-  projects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
-  notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
-};
 
 const fabEl = document.getElementById('fab');
 if (fabEl) {
   fabEl.innerHTML = FAB_ICONS.tasks; 
   fabEl.dataset.currentIcon = 'tasks';
 
-  // Swap icons with a smooth pop animation on route change
   on('view-changed', function(data) {
-    let baseView = data.to.split('-')[0]; // Map 'projects-detail' to 'projects'
+    let baseView = data.to.split('-')[0];
     let targetIcon = FAB_ICONS[baseView] || FAB_ICONS.tasks;
     if (fabEl.dataset.currentIcon === baseView) return;
     
-    // Scale down and fade out
     fabEl.style.transform = 'scale(0.5) rotate(-15deg)';
     fabEl.style.opacity = '0';
 
     setTimeout(function() {
       fabEl.innerHTML = targetIcon;
       fabEl.dataset.currentIcon = baseView;
-      // Spring back up
       fabEl.style.transform = 'scale(1) rotate(0deg)';
       fabEl.style.opacity = '1';
     }, 150);
   });
 
-  // Event Listeners for FAB Actions
-  let pressTimer;
-  fabEl.addEventListener('touchstart', function(e) {
-    pressTimer = setTimeout(function() { 
-      if (currentViewName() === 'tasks') openAddSheet(); 
-    }, 600);
-  }, { passive: true });
-  fabEl.addEventListener('touchend', function() { clearTimeout(pressTimer); }, { passive: true });
-  fabEl.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-
   fabEl.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
     const view = currentViewName();
     if (view === 'notes') {
       createNewNote();
@@ -1502,70 +1483,26 @@ if (fabEl) {
   });
 }
 
-// Global hotkeys & sheet dismiss
-document.getElementById('overlay').addEventListener('click', closeSheets);
-document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
-document.getElementById('deleteTaskBtn').addEventListener('click', function() { if (state.editingId) deleteTask(state.editingId); closeSheets(); });
-document.getElementById('settingsBtn').addEventListener('click', function() { loadSettingsUI(); openSheet('settingsSheet'); });
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeSheets(); return; } const tag = (document.activeElement || {}).tagName || ''; const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable; if (inInput) return; if (document.body.classList.contains('notes-mode')) return; if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); } if (e.key === '/') { e.preventDefault(); const wrap = document.getElementById('searchWrap'); wrap.classList.add('open'); document.getElementById('searchInput').focus(); } });
-
 // ══════════════════════════════════════════════════════════════════
 // ROUTER REGISTRATION
 // ══════════════════════════════════════════════════════════════════
 
-// Reusable helper to cleanly snap the view transition on any element
-function triggerViewAnim(selectors) {
-  // Use a slight delay so Safari properly paints the display:block from the tab change
-  // before attempting to run the animation. This prevents instant/glitchy load.
-  setTimeout(function() {
-    const els = document.querySelectorAll(selectors);
-    els.forEach(el => {
-      el.classList.remove('view-enter');
-      void el.offsetWidth; // Force a layout reflow
-      el.classList.add('view-enter');
-    });
-  }, 15);
-}
-
-register('tasks', {
-  onEnter: function() {
-    render();
-    triggerViewAnim('#taskList');
-  },
-});
+register('tasks', { onEnter: render });
 register('reflect', {
   onEnter: function() {
     onReflectEnter();
     renderPromptCard();
-    if (getReflectMode() === 'review' && !isReviewActive()) {
-      onTimelineEnter();
-    }
-    // Targets only the root view so it slides in as one smooth block
-    triggerViewAnim('#reflectView');
+    if (getReflectMode() === 'review' && !isReviewActive()) onTimelineEnter();
   },
   onExit: function() {
     onReflectExit();
     if (isReviewActive()) closeReview();
   },
 });
-register('projects', {
-  onEnter: function() {
-    renderProjects();
-    triggerViewAnim('#projectsView');
-  }
-});
-register('projects-detail', {
-  onEnter: function() {
-    renderProjectTasks();
-    triggerViewAnim('#projectDetailView');
-  }
-});
-register('notes', {
-  onEnter: function() {
-    renderCNList();
-    triggerViewAnim('#confNotesView');
-  },
-});
+register('projects', { onEnter: renderProjects });
+register('projects-detail', { onEnter: renderProjectTasks });
+register('notes', { onEnter: renderCNList });
+register('bel', { onEnter: renderBel });
 
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
 document.getElementById('tabReflect').addEventListener('click', function() { switchView('reflect'); });
@@ -1866,6 +1803,37 @@ on('data-pulled', () => {
 // INIT
 // ══════════════════════════════════════════════════════════════════
 
+function _initSlidingPills() {
+  var theme = document.body.className;
+  var enabled = theme.indexOf('theme-aurora') !== -1 || theme.indexOf('theme-halcyon') !== -1;
+  var tabBar = document.querySelector('.tab-bar');
+  var reflectSeg = document.querySelector('.reflect-seg');
+  if (tabBar) tabBar.classList.toggle('has-sliding-pill', enabled);
+  if (reflectSeg) reflectSeg.classList.toggle('has-sliding-pill', enabled);
+
+  if (enabled) {
+    import('./router.js').then(({ updateReflectPill }) => {
+        updateReflectPill();
+        const activeTab = document.querySelector('.tab-btn.active');
+        if (activeTab) {
+          const container = document.querySelector('.tab-bar');
+          const pill = container.querySelector('.sliding-pill') || document.createElement('div');
+          if (!pill.parentNode) { pill.className = 'sliding-pill'; container.insertBefore(pill, container.firstChild); }
+          const cRect = container.getBoundingClientRect();
+          const aRect = activeTab.getBoundingClientRect();
+          pill.style.transform = 'translateX(' + (aRect.left - cRect.left) + 'px)';
+          pill.style.width = aRect.width + 'px';
+        }
+    });
+  }
+}
+
+// Global UI Listeners
+document.getElementById('overlay').addEventListener('click', closeSheets);
+document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
+document.getElementById('deleteTaskBtn').addEventListener('click', function() { if (state.editingId) deleteTask(state.editingId); closeSheets(); });
+document.getElementById('settingsBtn').addEventListener('click', function() { loadSettingsUI(); openSheet('settingsSheet'); });
+
 loadTheme();
 loadLocal();
 rebuildCategoryUI();
@@ -1875,13 +1843,7 @@ initShopping(openSheet);
 initBel();
 initTimeline();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
-initWeeklyReview({
-  onFinish: function() {
-    renderPromptCard();
-    render();
-    if (getReflectMode() === 'today') renderReflectToday();
-  }
-});
+initWeeklyReview({ onFinish: function() { renderPromptCard(); render(); if (getReflectMode() === 'today') renderReflectToday(); } });
 
 var _segReview = document.getElementById('reflectSegReview');
 if (_segReview) _segReview.addEventListener('click', function() { if (isReviewActive()) closeReview(); onTimelineEnter(); updateReflectPill(); });
@@ -1899,25 +1861,3 @@ requestAnimationFrame(function() {
 });
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
-
-function _initSlidingPills() {
-  var theme = document.body.className;
-  var enabled = theme.indexOf('theme-aurora') !== -1 || theme.indexOf('theme-halcyon') !== -1;
-  var tabBar = document.querySelector('.tab-bar');
-  var reflectSeg = document.querySelector('.reflect-seg');
-  if (tabBar) tabBar.classList.toggle('has-sliding-pill', enabled);
-  if (reflectSeg) reflectSeg.classList.toggle('has-sliding-pill', enabled);
-
-  if (enabled) {
-    import('./router.js').then(({ updateAllPills }) => {
-        // Run immediately
-        updateAllPills();
-        // Run again after custom web fonts load to fix initial desktop sizing issues
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(updateAllPills);
-        } else {
-          setTimeout(updateAllPills, 150);
-        }
-    });
-  }
-}
