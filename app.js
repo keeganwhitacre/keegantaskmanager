@@ -1432,10 +1432,10 @@ animStyle.textContent = `
   }
   #fab svg { width: 24px; height: 24px; }
   #fab:active { transform: scale(0.9) !important; }
-  .sheet { will-change: transform; transition: transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1) !important; }
-  .view-enter { animation: viewFadeSlide 0.35s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important; }
+  .sheet { will-change: transform; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; }
+  .view-enter { animation: viewFadeSlide 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important; }
   @keyframes viewFadeSlide {
-    0% { opacity: 0; transform: translateY(12px); }
+    0% { opacity: 0; transform: translateY(8px); }
     100% { opacity: 1; transform: translateY(0); }
   }
 `;
@@ -1453,8 +1453,9 @@ if (fabEl) {
 
   // Swap icons with a smooth pop animation on route change
   on('view-changed', function(data) {
-    let targetIcon = FAB_ICONS[data.to] || FAB_ICONS.tasks;
-    if (fabEl.dataset.currentIcon === data.to) return;
+    let baseView = data.to.split('-')[0]; // Map 'projects-detail' to 'projects'
+    let targetIcon = FAB_ICONS[baseView] || FAB_ICONS.tasks;
+    if (fabEl.dataset.currentIcon === baseView) return;
     
     // Scale down and fade out
     fabEl.style.transform = 'scale(0.5) rotate(-15deg)';
@@ -1462,7 +1463,7 @@ if (fabEl) {
 
     setTimeout(function() {
       fabEl.innerHTML = targetIcon;
-      fabEl.dataset.currentIcon = data.to;
+      fabEl.dataset.currentIcon = baseView;
       // Spring back up
       fabEl.style.transform = 'scale(1) rotate(0deg)';
       fabEl.style.opacity = '1';
@@ -1483,7 +1484,7 @@ if (fabEl) {
     const view = currentViewName();
     if (view === 'notes') {
       createNewNote();
-    } else if (view === 'projects') {
+    } else if (view === 'projects' || view === 'projects-detail') {
       state.editingProjId = null;
       closeSheets();
       setTimeout(function() { openSheet('projectSheet'); }, 10);
@@ -1883,26 +1884,15 @@ function _initSlidingPills() {
   if (reflectSeg) reflectSeg.classList.toggle('has-sliding-pill', enabled);
 
   if (enabled) {
-    import('./router.js').then(({ updateReflectPill }) => {
-        updateReflectPill();
+    import('./router.js').then(({ updateAllPills }) => {
+        // Run immediately
+        updateAllPills();
+        // Run again after custom web fonts load to fix initial desktop sizing issues
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(updateAllPills);
+        } else {
+          setTimeout(updateAllPills, 150);
+        }
     });
-
-    var activeTab = tabBar && tabBar.querySelector('.tab-btn.active');
-    if (activeTab && tabBar) {
-      var pill = tabBar.querySelector('.sliding-pill');
-      if (!pill) {
-        pill = document.createElement('div');
-        pill.className = 'sliding-pill';
-        tabBar.insertBefore(pill, tabBar.firstChild);
-      }
-      var cRect = tabBar.getBoundingClientRect();
-      var aRect = activeTab.getBoundingClientRect();
-      pill.style.transition = 'none';
-      pill.style.transform = 'translateX(' + (aRect.left - cRect.left) + 'px)';
-      pill.style.width = aRect.width + 'px';
-      
-      void pill.offsetWidth;
-      pill.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.85, 0.3, 1), width 0.35s cubic-bezier(0.2, 0.85, 0.3, 1)';
-    }
   }
 }
