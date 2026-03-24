@@ -1551,7 +1551,9 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-13T16:41:04.028Z",
-      "updatedAt": "2026-03-15T20:40:25.713Z"
+      "updatedAt": "2026-03-24T18:47:34.494Z",
+      "type": "memo",
+      "ideaStatus": "raw"
     },
     {
       "id": "mmp3te0kmbek",
@@ -1593,5 +1595,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:47:18.901Z"
+  "updated": "2026-03-24T18:47:38.889Z"
 }
