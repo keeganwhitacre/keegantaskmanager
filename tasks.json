@@ -220,7 +220,7 @@
       "priority": "lo",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-24",
+      "due": "2026-03-25",
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false,
@@ -460,7 +460,7 @@
       "priority": "lo",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-24",
+      "due": "2026-03-25",
       "projectId": "",
       "noteIsMono": false,
       "done": false,
@@ -1592,5 +1592,5 @@
     }
   ],
   "settings": {},
-  "updated": "2026-03-24T19:19:39.162Z"
+  "updated": "2026-03-24T21:46:26.914Z"
 }
