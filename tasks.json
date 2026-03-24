@@ -949,12 +949,24 @@
       "stage": "Active",
       "due": "",
       "note": "",
-      "milestones": [],
+      "milestones": [
+        {
+          "id": "mn4zp18cltx1",
+          "title": "Import sleep data",
+          "due": "",
+          "done": false
+        }
+      ],
       "history": [
         {
           "type": "created",
           "label": "Project created",
           "date": "2026-03-24T18:32:38.408Z"
+        },
+        {
+          "type": "milestone-add",
+          "label": "Added: Import sleep data",
+          "date": "2026-03-24T19:10:23.100Z"
         }
       ]
     }
@@ -1579,5 +1591,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T19:06:19.528Z"
+  "updated": "2026-03-24T19:10:25.602Z"
 }
