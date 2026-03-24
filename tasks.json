@@ -936,11 +936,17 @@
     {
       "id": "mmdklg8dgrze",
       "title": "AFSP Research Outreach",
-      "stage": "Planning",
+      "stage": "Active",
       "due": "",
       "note": "",
       "milestones": [],
-      "history": [],
+      "history": [
+        {
+          "type": "stage",
+          "label": "Stage → Active",
+          "date": "2026-03-24T18:32:04.174Z"
+        }
+      ],
       "description": "Host a researcher for AFSP"
     },
     {
@@ -1565,5 +1571,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:31:53.485Z"
+  "updated": "2026-03-24T18:32:06.675Z"
 }
