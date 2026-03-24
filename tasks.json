@@ -910,11 +910,28 @@
     {
       "id": "mmc9gxu8tdgk",
       "title": "Applied Cognitive Psychology Paper",
-      "stage": "Review",
+      "stage": "Waiting",
       "due": "2026-03-31",
       "note": "<p style=\"font-size: 16px; cursor: text; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; caret-color: rgb(227, 227, 227); color: rgb(227, 227, 227); font-family: &quot;Google Sans Flex&quot;, &quot;Google Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif;\"><br></p>",
       "milestones": [],
-      "history": []
+      "history": [
+        {
+          "type": "stage",
+          "label": "Stage → Done",
+          "date": "2026-03-24T18:31:49.304Z"
+        },
+        {
+          "type": "stage",
+          "label": "Stage → Review",
+          "date": "2026-03-24T18:31:49.975Z"
+        },
+        {
+          "type": "stage",
+          "label": "Stage → Waiting",
+          "date": "2026-03-24T18:31:50.983Z"
+        }
+      ],
+      "description": ""
     },
     {
       "id": "mmdklg8dgrze",
@@ -1548,5 +1565,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:15:48.006Z"
+  "updated": "2026-03-24T18:31:53.485Z"
 }
