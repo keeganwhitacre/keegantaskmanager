@@ -6,7 +6,7 @@
 // ══════════════════════════════════════════════════════════════════
 
 import { state, esc, saveDash, getDState, getHabits, showToast } from './state.js';
-import { switchView } from './router.js';
+import { switchView, updateReflectPill } from './router.js';
 
 // ── Dependencies injected from app.js via init ──
 let _isActuallyDueToday = () => false;
@@ -1026,6 +1026,13 @@ function setReflectMode(mode) {
 function onReflectEnter() {
   setReflectMode(_reflectMode);
 
+  // Update the reflect segmented pill after the view is visible and laid out
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      updateReflectPill();
+    });
+  });
+
   // Stagger animate the Today cards
   var container = document.getElementById('reflectToday');
   if (!container || _reflectMode !== 'today') return;
@@ -1128,4 +1135,3 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
 }
 
 export { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode };
-
