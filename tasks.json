@@ -1318,21 +1318,6 @@
   },
   "cnNotes": [
     {
-      "id": "mn4tgzg9un9e",
-      "title": "",
-      "speaker": "",
-      "body": "",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "idea",
-      "url": "",
-      "ideaStatus": "raw",
-      "createdAt": "2026-03-24T16:16:09.849Z",
-      "updatedAt": "2026-03-24T16:16:09.849Z"
-    },
-    {
       "id": "mn4l9ytr9wxw",
       "title": "Research ideas",
       "speaker": "",
@@ -1528,5 +1513,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T16:16:14.244Z"
+  "updated": "2026-03-24T16:16:18.507Z"
 }
