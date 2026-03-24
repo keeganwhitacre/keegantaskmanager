@@ -957,6 +957,22 @@
       "note": "EMA app?<div><br></div><div>Need to start thinking about personal research projects integrating SAS information, talking with Kristen, and future interests <br></div>",
       "milestones": [],
       "history": []
+    },
+    {
+      "id": "mn4ychs8u3os",
+      "title": "EPIC Data",
+      "description": "Finalize and organize EPIC data + work on own ideas",
+      "stage": "Active",
+      "due": "",
+      "note": "",
+      "milestones": [],
+      "history": [
+        {
+          "type": "created",
+          "label": "Project created",
+          "date": "2026-03-24T18:32:38.408Z"
+        }
+      ]
     }
   ],
   "bel": {
@@ -1571,5 +1587,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:32:06.675Z"
+  "updated": "2026-03-24T18:32:40.912Z"
 }
