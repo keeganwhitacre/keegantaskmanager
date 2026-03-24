@@ -543,9 +543,9 @@ body.theme-aurora .cn-note-card {
 }
 
 /* ── Aurora: bottom fade ── */
-body.theme-aurora .bottom-fade {
-  background: linear-gradient(to bottom, transparent 0%, rgba(17, 20, 24, 0.6) 40%, #111418 100%);
-}
+/* body.theme-aurora .bottom-fade { */
+  /*background: linear-gradient(to bottom, transparent 0%, rgba(17, 20, 24, 0.6) 40%, #111418 100%);*/
+/*}*/
 
 /* ── Aurora: greeting & subtitle (Halcyon pattern) ── */
 body.theme-aurora .greeting {
@@ -696,9 +696,7 @@ body.theme-halcyon .cn-note-card {
 }
 
 /* ── Halcyon: bottom fade ── */
-body.theme-halcyon .bottom-fade {
-  background: linear-gradient(to bottom, transparent 0%, rgba(224, 228, 228, 0.6) 40%, #e2e2dd 100%);
-}
+/* body.theme-halcyon .bottom-fade { background: linear-gradient(to bottom, transparent 0%, rgba(224, 228, 228, 0.6) 40%, #e2e2dd 100%); } */
 
 /* ── Halcyon: greeting boost ── */
 body.theme-halcyon .greeting {
