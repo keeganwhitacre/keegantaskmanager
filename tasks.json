@@ -220,7 +220,7 @@
       "priority": "lo",
       "section": "upcoming",
       "note": "",
-      "due": "2026-03-25",
+      "due": "",
       "noteIsMono": false,
       "done": false,
       "pinnedToday": false,
@@ -228,7 +228,8 @@
         "lab"
       ],
       "pomodoros": 0,
-      "projectId": ""
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "1772563867886",
@@ -1593,5 +1594,5 @@
     }
   ],
   "settings": {},
-  "updated": "2026-03-24T21:47:24.524Z"
+  "updated": "2026-03-24T21:47:34.377Z"
 }
