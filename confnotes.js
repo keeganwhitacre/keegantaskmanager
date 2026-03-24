@@ -466,17 +466,24 @@ function saveCNDetailNow() {
   n.projectId = projInp ? projInp.value : '';
   n.bodyIsMono = document.getElementById('cnBodyInput').classList.contains('mono');
 
-  // Type
+  // Type — only set if changed from existing
   var activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
-  n.type = activeType ? activeType.dataset.type : (n.type || 'memo');
+  var newType = activeType ? activeType.dataset.type : (n.type || 'memo');
+  if (n.type !== newType) n.type = newType;
 
-  // URL (papers)
+  // URL (papers) — only set if changed
   var urlInput = document.getElementById('cnUrlInput');
-  if (urlInput) n.url = urlInput.value.trim();
+  if (urlInput) {
+    var newUrl = urlInput.value.trim();
+    if ((n.url || '') !== newUrl) n.url = newUrl;
+  }
 
-  // Idea status
+  // Idea status — only set if changed
   var activeStatus = document.querySelector('#cnIdeaStatusRow .cn-status-chip.active');
-  if (activeStatus) n.ideaStatus = activeStatus.dataset.status;
+  if (activeStatus) {
+    var newStatus = activeStatus.dataset.status;
+    if ((n.ideaStatus || '') !== newStatus) n.ideaStatus = newStatus;
+  }
 
   const tags = [];
   document.querySelectorAll('#cnTagRow .s-chip.active').forEach(function(c) {
@@ -492,7 +499,7 @@ function saveCNDetailNow() {
     projectId: n.projectId,
     bodyIsMono: n.bodyIsMono,
     tags: tags.slice().sort().join(','),
-    type: n.type,
+    type: n.type || 'memo',
     url: n.url || '',
     ideaStatus: n.ideaStatus || '',
   };
