@@ -460,11 +460,12 @@
       "priority": "lo",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-25",
+      "due": "",
       "projectId": "",
       "noteIsMono": false,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "milestoneId": ""
     },
     {
       "id": "mmf4yre869qg",
@@ -1592,5 +1593,5 @@
     }
   ],
   "settings": {},
-  "updated": "2026-03-24T21:46:26.914Z"
+  "updated": "2026-03-24T21:47:24.524Z"
 }
