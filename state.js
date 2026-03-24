@@ -249,6 +249,7 @@ function saveCN(sync) {
 
 function saveSettings() {
   localStorage.setItem(KEYS.settings, JSON.stringify(state.settings));
+  emit('request-sync');
 }
 
 function savePending(v) {
@@ -292,6 +293,7 @@ function buildSyncPayload() {
     shop:       shopItems,
     dash:       dState,
     cnNotes:    cnNotes,
+    settings:   { customCats: state.settings.customCats, customHabits: state.settings.customHabits },
     updated:    new Date().toISOString(),
   };
   return payload;
@@ -309,6 +311,23 @@ function applySyncPayload(dec) {
   if (dec.shop !== undefined) shopItems = dec.shop;
   if (dec.dash !== undefined) Object.assign(dState, dec.dash);
   if (dec.cnNotes !== undefined) cnNotes = dec.cnNotes;
+
+  // Restore custom categories and habits from sync
+  if (dec.settings) {
+    if (dec.settings.customCats) {
+      Object.keys(CAT_LABEL).forEach(k => delete CAT_LABEL[k]);
+      Object.assign(CAT_LABEL, dec.settings.customCats);
+      state.settings.customCats = Object.assign({}, dec.settings.customCats);
+    }
+    if (dec.settings.customHabits) {
+      HABITS = dec.settings.customHabits.map(function(h) {
+        return Object.assign({}, h, { days: (h.days || [0,1,2,3,4,5,6]).slice() });
+      });
+      state.settings.customHabits = dec.settings.customHabits;
+    }
+    // Save settings locally only — don't trigger sync (we're already inside a sync pull)
+    localStorage.setItem(KEYS.settings, JSON.stringify(state.settings));
+  }
 
   // Normalize old category field
   state.tasks.forEach(t => {
