@@ -1424,7 +1424,10 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-23T16:24:59.150Z",
-      "updatedAt": "2026-03-23T18:14:43.967Z"
+      "updatedAt": "2026-03-24T18:34:49.630Z",
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "raw"
     },
     {
       "id": "mmv5l41vrf1o",
@@ -1584,5 +1587,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:34:47.305Z"
+  "updated": "2026-03-24T18:34:53.523Z"
 }
