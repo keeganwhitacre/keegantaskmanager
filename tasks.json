@@ -1391,14 +1391,14 @@
       "tags": [
         "lab"
       ],
-      "projectId": "",
+      "projectId": "mn4ychs8u3os",
       "bodyIsMono": false,
       "pinned": false,
       "type": "memo",
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-24T17:52:12.890Z",
-      "updatedAt": "2026-03-24T18:14:49.990Z"
+      "updatedAt": "2026-03-24T18:34:20.069Z"
     },
     {
       "id": "mn4l9ytr9wxw",
@@ -1596,5 +1596,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:34:19.771Z"
+  "updated": "2026-03-24T18:34:24.250Z"
 }
