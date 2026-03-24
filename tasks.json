@@ -799,8 +799,9 @@
       "due": "2026-03-23",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-24T15:41:01.839Z"
     },
     {
       "id": "mn33elw7qygu",
@@ -1512,5 +1513,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T13:27:22.726Z"
+  "updated": "2026-03-24T15:41:04.346Z"
 }
