@@ -22,7 +22,7 @@ import { initShopping, renderShop } from './shopping.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode } from './dashboard.js';
 import { initTimeline, renderTimeline, onTimelineEnter, invalidateCache } from './timeline.js';
-import { renderCNList, createNewNote, rebuildCNChips } from './confnotes.js';
+import { renderCNList, createNewNote, rebuildCNChips, getIdeasForReview, NOTE_TYPES, noteTypeOf } from './confnotes.js';
 import { initWeeklyReview, renderPromptCard, isReviewActive, closeReview } from './weekly-review.js';
 
 // ══════════════════════════════════════════════════════════════════
@@ -1480,6 +1480,22 @@ if (fabEl) {
       if (view === 'tasks') {
         longPressTriggered = true;
         openAddSheet();
+      } else if (view === 'notes') {
+        longPressTriggered = true;
+        // Show the type picker menu on long press
+        var menu = document.getElementById('cnNewMenu');
+        if (menu) {
+          menu.style.display = 'block';
+          setTimeout(function() {
+            function closeMenu(ev) {
+              if (!menu.contains(ev.target) && ev.target !== fabEl && !fabEl.contains(ev.target)) {
+                menu.style.display = 'none';
+                document.removeEventListener('click', closeMenu, true);
+              }
+            }
+            document.addEventListener('click', closeMenu, true);
+          }, 10);
+        }
       }
     }, 550); // Standard long-press duration
   };
@@ -1501,7 +1517,8 @@ if (fabEl) {
     }
     const view = currentViewName();
     if (view === 'notes') {
-      createNewNote();
+      // Tap = instant memo note
+      createNewNote('memo');
     } else if (view.startsWith('projects')) {
       state.editingProjId = null;
       closeSheets();
@@ -1509,6 +1526,18 @@ if (fabEl) {
     } else {
       toggleQuickAdd();
     }
+  });
+}
+
+// Wire the new note type menu items
+var cnNewMenuEl = document.getElementById('cnNewMenu');
+if (cnNewMenuEl) {
+  cnNewMenuEl.addEventListener('click', function(e) {
+    var item = e.target.closest('.cn-new-menu-item');
+    if (!item) return;
+    var type = item.dataset.newtype || 'memo';
+    cnNewMenuEl.style.display = 'none';
+    createNewNote(type);
   });
 }
 

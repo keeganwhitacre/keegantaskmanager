@@ -66,6 +66,24 @@ const WEEKLY_PROMPTS = [
   "What category would you give the dominant feeling-tone of this week?",
 ];
 
+const RESEARCH_PROMPTS = [
+  "What's a finding in your subfield you disagree with, and why?",
+  "If you had unlimited funding and participants, what study would you run tomorrow?",
+  "What's the weakest link in your current study's design?",
+  "What would a skeptical reviewer say about your methods section right now?",
+  "Name one researcher whose approach you want to emulate — what specifically?",
+  "What's a construct in your field that's poorly measured? How would you fix it?",
+  "What's a question you keep coming back to but haven't formalized into a study?",
+  "If you could only publish one more paper, what would it be about?",
+  "What's something you learned at a recent conference that changed how you think?",
+  "What methodological skill would make your next study significantly better?",
+  "What's an assumption in your theoretical framework you haven't tested?",
+  "If you had to explain your research to a curious stranger in 60 seconds, what would you say?",
+  "What's a dataset that exists somewhere that could answer a question you care about?",
+  "What's a paper you keep citing without having fully engaged with its limitations?",
+  "What would your research program look like in 5 years if everything went well?",
+];
+
 // Affect grid constants
 const GRID_SIZE = 5; // 5x5 grid, values 0-4
 const CTX_COLORS = {
@@ -127,11 +145,21 @@ function migrateReflections() {
 function renderReflection() {
   const ds = getDState();
   if (!ds.reflections) ds.reflections = {};
+  if (!ds.researchReflections) ds.researchReflections = {};
   const today = getTodayStr();
   const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   const prompt = PROMPTS[doy % PROMPTS.length];
   document.getElementById('dPrompt').textContent = prompt;
   document.getElementById('dReflect').value = ds.reflections[today] || '';
+
+  // Research prompt
+  var resPromptEl = document.getElementById('dResearchPrompt');
+  var resReflectEl = document.getElementById('dResearchReflect');
+  if (resPromptEl && resReflectEl) {
+    var resPrompt = RESEARCH_PROMPTS[doy % RESEARCH_PROMPTS.length];
+    resPromptEl.textContent = resPrompt;
+    resReflectEl.value = ds.researchReflections[today] || '';
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1043,6 +1071,18 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
     if (reflectTimer) clearTimeout(reflectTimer);
     reflectTimer = setTimeout(function() { saveDash(true); }, 800);
   });
+
+  // Research reflection
+  var resReflectEl = document.getElementById('dResearchReflect');
+  if (resReflectEl) {
+    resReflectEl.addEventListener('input', function() {
+      var ds = getDState();
+      if (!ds.researchReflections) ds.researchReflections = {};
+      ds.researchReflections[getTodayStr()] = this.value;
+      if (reflectTimer) clearTimeout(reflectTimer);
+      reflectTimer = setTimeout(function() { saveDash(true); }, 800);
+    });
+  }
 
   // ── AFFECT GRID ──
   var grid = document.getElementById('dAffectGrid');

@@ -351,3 +351,227 @@ body.deep-focus-mode #confNotesView { display: none !important; }
   margin-bottom: 12px;
   font-family: var(--font-mono);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   NOTE TYPES — paper, idea, memo
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Type filter row (list view) ── */
+.cn-type-filter-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cn-type-filter-row::-webkit-scrollbar { display: none; }
+
+/* ── Type badges on cards ── */
+.cn-type-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.cn-type-badge-memo {
+  background: rgba(128,128,128,0.1);
+  color: var(--text-muted);
+}
+.cn-type-badge-paper {
+  background: rgba(175, 82, 222, 0.12);
+  color: #af52de;
+}
+.cn-type-badge-idea {
+  background: rgba(255, 149, 0, 0.12);
+  color: #ff9500;
+}
+
+/* ── Card left-border accent by type ── */
+.cn-note-card.cn-type-paper {
+  border-left: 3px solid rgba(175, 82, 222, 0.5);
+}
+.cn-note-card.cn-type-idea {
+  border-left: 3px solid rgba(255, 149, 0, 0.5);
+}
+
+/* ── Idea status badges ── */
+.cn-idea-status {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.cn-idea-status-raw {
+  background: rgba(255, 149, 0, 0.1);
+  color: #ff9500;
+}
+.cn-idea-status-developing {
+  background: rgba(48, 209, 88, 0.1);
+  color: #30d158;
+}
+.cn-idea-status-ready-to-pitch {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007aff;
+}
+
+/* ── Stale / cooling indicators ── */
+.cn-idea-stale {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 58, 48, 0.1);
+  color: #ff3a30;
+  white-space: nowrap;
+}
+.cn-idea-cooling {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 159, 10, 0.1);
+  color: #ff9f0a;
+  white-space: nowrap;
+}
+
+/* ── Paper URL badge ── */
+.cn-paper-url-badge {
+  font-size: 10px;
+  margin-right: 3px;
+  opacity: 0.7;
+}
+
+/* ── Type selector in editor ── */
+.cn-type-selector {
+  display: flex;
+  gap: 6px;
+  padding: 0 20px 10px;
+}
+.cn-type-chip {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-divider, rgba(255,255,255,0.08));
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.cn-type-chip.active {
+  background: var(--accent-faded, rgba(0,122,255,0.1));
+  border-color: var(--accent, #007aff);
+  color: var(--accent, #007aff);
+}
+.cn-type-chip[data-type="paper"].active {
+  background: rgba(175, 82, 222, 0.12);
+  border-color: #af52de;
+  color: #af52de;
+}
+.cn-type-chip[data-type="idea"].active {
+  background: rgba(255, 149, 0, 0.12);
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+/* ── URL row (papers) ── */
+.cn-url-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 20px 8px;
+}
+.cn-url-label {
+  font-size: 13px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── Idea status row ── */
+.cn-idea-status-row {
+  display: flex;
+  gap: 6px;
+  padding: 0 20px 10px;
+}
+.cn-status-chip {
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-divider, rgba(255,255,255,0.08));
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.cn-status-chip.active {
+  color: #ff9500;
+  border-color: rgba(255, 149, 0, 0.4);
+  background: rgba(255, 149, 0, 0.1);
+}
+.cn-status-chip[data-status="developing"].active {
+  color: #30d158;
+  border-color: rgba(48, 209, 88, 0.4);
+  background: rgba(48, 209, 88, 0.1);
+}
+.cn-status-chip[data-status="ready to pitch"].active {
+  color: #007aff;
+  border-color: rgba(0, 122, 255, 0.4);
+  background: rgba(0, 122, 255, 0.1);
+}
+
+/* ── New note type menu ── */
+.cn-new-menu {
+  position: fixed;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  right: 20px;
+  background: var(--bg-surface, #1c1c1e);
+  border: 1px solid var(--border-main, rgba(255,255,255,0.08));
+  border-radius: 14px;
+  padding: 6px 0;
+  z-index: 200;
+  min-width: 160px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  backdrop-filter: var(--glass-filter, blur(24px));
+  -webkit-backdrop-filter: var(--glass-filter, blur(24px));
+  animation: cn-menu-in 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes cn-menu-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cn-new-menu-item {
+  padding: 10px 18px;
+  font-size: 14px;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+.cn-new-menu-item:active {
+  background: var(--accent-faded, rgba(0,122,255,0.1));
+}
+.cn-new-icon {
+  font-size: 15px;
+  width: 22px;
+  text-align: center;
+}
+
+/* Desktop max-width for new menu */
+@media (min-width: 769px) {
+  .cn-new-menu { right: calc(50% - 360px + 24px); }
+}
+@media (min-width: 1100px) {
+  .cn-new-menu { right: calc(50% - 430px + 24px); }
+}

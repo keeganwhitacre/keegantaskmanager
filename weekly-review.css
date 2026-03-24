@@ -693,3 +693,57 @@ body:not(.theme-aurora):not(.theme-halcyon) .wr-btn-next {
 body:not(.theme-aurora):not(.theme-halcyon) .wr-btn-finish {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
+
+/* ── Idea incubator in plan step ── */
+.wr-ideas-box {
+  background: rgba(255, 149, 0, 0.06);
+  border: 1px solid rgba(255, 149, 0, 0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.wr-idea-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 149, 0, 0.08);
+}
+.wr-idea-row:last-child { border-bottom: none; }
+.wr-idea-row.wr-idea-dormant { opacity: 0.6; }
+.wr-idea-row.wr-idea-cooling { opacity: 0.8; }
+.wr-idea-title {
+  font-size: 13px;
+  color: var(--text-main);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wr-idea-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.wr-idea-status {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 149, 0, 0.1);
+  color: #ff9500;
+}
+.wr-idea-age {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Research card accent */
+.cn-research-card {
+  border-left: 3px solid rgba(255, 149, 0, 0.4);
+}

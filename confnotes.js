@@ -12,10 +12,36 @@ import { catCls } from './app.js';
 
 let cnActiveId = null;
 let cnFilter = 'all';
+let cnTypeFilter = 'all'; // 'all' | 'paper' | 'idea' | 'memo'
 let cnSaveTimer = null;
 let scratchSyncTimer = null;
 let cnMdPreview = false;
 let _cnOpenSnapshot = null; // snapshot of note state on open, for dirty detection
+
+// ── NOTE TYPES ──
+const NOTE_TYPES = {
+  memo:  { label: 'Note',  icon: '✎', color: 'var(--text-muted)' },
+  paper: { label: 'Paper', icon: '📄', color: '#af52de' },
+  idea:  { label: 'Idea',  icon: '💡', color: '#ff9500' },
+};
+
+const PAPER_TEMPLATE = '**One-line summary:**\n\n\n**What I\'d challenge:**\n\n\n**What I\'d steal for my own work:**\n\n';
+
+const IDEA_STATUSES = ['raw', 'developing', 'ready to pitch'];
+
+function noteTypeOf(n) { return n.type || 'memo'; }
+
+function ideaDaysSinceUpdate(n) {
+  var ref = n.updatedAt || n.createdAt;
+  if (!ref) return 0;
+  return Math.floor((Date.now() - new Date(ref).getTime()) / 86400000);
+}
+
+function getIdeasForReview() {
+  return getCnNotes().filter(function(n) {
+    return noteTypeOf(n) === 'idea' && !n.archived;
+  });
+}
 
 // ── LOCK SYSTEM ──
 let _pinUnlocked = false; // session-only, resets on reload
@@ -142,12 +168,17 @@ function renderCNList() {
   if (searchEl) searchQ = searchEl.value.trim().toLowerCase();
 
   const filtered = cnNotes.filter(function(n) {
+    // Type filter
+    if (cnTypeFilter !== 'all') {
+      if (noteTypeOf(n) !== cnTypeFilter) return false;
+    }
+    // Category filter
     if (cnFilter !== 'all') {
       const tags = n.tags || [];
       if (tags.indexOf(cnFilter) === -1) return false;
     }
     if (searchQ) {
-      const haystack = ((n.title||'') + ' ' + (n.speaker||'') + ' ' + (n.body||'')).toLowerCase();
+      const haystack = ((n.title||'') + ' ' + (n.speaker||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
       if (haystack.indexOf(searchQ) === -1) return false;
     }
     return true;
@@ -169,8 +200,10 @@ function renderCNList() {
 
   var cards = [];
   filtered.forEach(function(n, i) {
+    const nType = noteTypeOf(n);
+    const typeInfo = NOTE_TYPES[nType] || NOTE_TYPES.memo;
     const card = document.createElement('div');
-    card.className = 'cn-note-card' + (n.locked ? ' locked-card' : '');
+    card.className = 'cn-note-card cn-type-' + nType + (n.locked ? ' locked-card' : '');
     card.style.animationDelay = (i * 30) + 'ms';
     card.dataset.id = n.id;
 
@@ -187,14 +220,44 @@ function renderCNList() {
     const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
     const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
 
+    // Type badge
+    const typeBadge = '<span class="cn-type-badge cn-type-badge-' + nType + '">' + typeInfo.icon + ' ' + typeInfo.label + '</span>';
+
+    // Stale indicator for ideas
+    let staleHtml = '';
+    if (nType === 'idea') {
+      const staleDays = ideaDaysSinceUpdate(n);
+      if (staleDays >= 30) {
+        staleHtml = '<span class="cn-idea-stale">dormant ' + staleDays + 'd</span>';
+      } else if (staleDays >= 14) {
+        staleHtml = '<span class="cn-idea-cooling">cooling ' + staleDays + 'd</span>';
+      }
+    }
+
+    // Idea status badge
+    let statusHtml = '';
+    if (nType === 'idea' && n.ideaStatus) {
+      statusHtml = '<span class="cn-idea-status cn-idea-status-' + n.ideaStatus.replace(/\s+/g, '-') + '">' + esc(n.ideaStatus) + '</span>';
+    }
+
+    // Paper URL indicator
+    let urlHtml = '';
+    if (nType === 'paper' && n.url) {
+      urlHtml = '<span class="cn-paper-url-badge">🔗</span>';
+    }
+
     var displayDate = n.updatedAt || n.createdAt;
     var timeHtml = displayDate ? '<span class="cn-card-time">' + cnTimeAgo(displayDate) + '</span>' : '';
 
+    // Speaker label changes by type
+    var speakerDisplay = n.speaker || '';
+    var speakerHtml = speakerDisplay ? '<div class="cn-card-speaker">' + esc(speakerDisplay) + '</div>' : '';
+
     card.innerHTML =
-      '<div class="cn-card-title">' + lockHtml + pinHtml + esc(n.title || 'Untitled') + '</div>' +
-      (n.speaker ? '<div class="cn-card-speaker">' + esc(n.speaker) + '</div>' : '') +
+      '<div class="cn-card-title">' + lockHtml + pinHtml + urlHtml + esc(n.title || 'Untitled') + '</div>' +
+      speakerHtml +
       (n.body ? '<div class="cn-card-preview">' + esc(n.body) + '</div>' : '') +
-      '<div class="cn-card-meta">' + tagsHtml + projHtml + timeHtml + '</div>';
+      '<div class="cn-card-meta">' + typeBadge + statusHtml + staleHtml + tagsHtml + projHtml + timeHtml + '</div>';
 
     card.addEventListener('click', function() {
       if (n.locked && !_pinUnlocked) {
@@ -252,6 +315,8 @@ function openCNDetail(id) {
   cnActiveId = id;
   populateCNProjectSelect();
 
+  var nType = noteTypeOf(n);
+
   // Snapshot current state so we can detect actual edits on save
   _cnOpenSnapshot = {
     title: n.title || '',
@@ -260,6 +325,9 @@ function openCNDetail(id) {
     projectId: n.projectId || '',
     bodyIsMono: !!(n.bodyIsMono),
     tags: (n.tags || []).slice().sort().join(','),
+    type: nType,
+    url: n.url || '',
+    ideaStatus: n.ideaStatus || '',
   };
 
   document.getElementById('cnTitleInput').value = n.title || '';
@@ -267,6 +335,48 @@ function openCNDetail(id) {
   document.getElementById('cnBodyInput').value = n.body || '';
   const projInp = document.getElementById('cnProjectInput');
   if (projInp) projInp.value = n.projectId || '';
+
+  // Type-specific UI
+  var titleInput = document.getElementById('cnTitleInput');
+  var speakerInput = document.getElementById('cnSpeakerInput');
+  var bodyInput = document.getElementById('cnBodyInput');
+  var urlRow = document.getElementById('cnUrlRow');
+  var urlInput = document.getElementById('cnUrlInput');
+  var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
+  var topbarTitle = document.getElementById('cnDetailTitle');
+
+  // Type selector chips
+  document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.type === nType);
+  });
+
+  if (nType === 'paper') {
+    titleInput.placeholder = 'Paper title...';
+    speakerInput.placeholder = 'Authors (e.g., Barrett & Simmons, 2015)...';
+    bodyInput.placeholder = PAPER_TEMPLATE;
+    topbarTitle.textContent = '📄 Paper';
+    if (urlRow) { urlRow.style.display = 'flex'; urlInput.value = n.url || ''; }
+    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
+  } else if (nType === 'idea') {
+    titleInput.placeholder = 'Research question or study concept...';
+    speakerInput.placeholder = 'Related area, method, or population...';
+    bodyInput.placeholder = 'Flesh out the idea... what would the study look like? What\'s the hypothesis?';
+    topbarTitle.textContent = '💡 Idea';
+    if (urlRow) urlRow.style.display = 'none';
+    if (ideaStatusRow) {
+      ideaStatusRow.style.display = 'flex';
+      document.querySelectorAll('#cnIdeaStatusRow .cn-status-chip').forEach(function(c) {
+        c.classList.toggle('active', c.dataset.status === (n.ideaStatus || 'raw'));
+      });
+    }
+  } else {
+    titleInput.placeholder = 'Title...';
+    speakerInput.placeholder = 'Source, speaker, context...';
+    bodyInput.placeholder = 'Write anything...';
+    topbarTitle.textContent = 'Note';
+    if (urlRow) urlRow.style.display = 'none';
+    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
+  }
 
   const bodyEl = document.getElementById('cnBodyInput');
   const isMono = !!(n.bodyIsMono);
@@ -356,6 +466,18 @@ function saveCNDetailNow() {
   n.projectId = projInp ? projInp.value : '';
   n.bodyIsMono = document.getElementById('cnBodyInput').classList.contains('mono');
 
+  // Type
+  var activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+  n.type = activeType ? activeType.dataset.type : (n.type || 'memo');
+
+  // URL (papers)
+  var urlInput = document.getElementById('cnUrlInput');
+  if (urlInput) n.url = urlInput.value.trim();
+
+  // Idea status
+  var activeStatus = document.querySelector('#cnIdeaStatusRow .cn-status-chip.active');
+  if (activeStatus) n.ideaStatus = activeStatus.dataset.status;
+
   const tags = [];
   document.querySelectorAll('#cnTagRow .s-chip.active').forEach(function(c) {
     tags.push(c.dataset.val);
@@ -370,6 +492,9 @@ function saveCNDetailNow() {
     projectId: n.projectId,
     bodyIsMono: n.bodyIsMono,
     tags: tags.slice().sort().join(','),
+    type: n.type,
+    url: n.url || '',
+    ideaStatus: n.ideaStatus || '',
   };
   var dirty = !_cnOpenSnapshot
     || currentState.title !== _cnOpenSnapshot.title
@@ -377,11 +502,14 @@ function saveCNDetailNow() {
     || currentState.body !== _cnOpenSnapshot.body
     || currentState.projectId !== _cnOpenSnapshot.projectId
     || currentState.bodyIsMono !== _cnOpenSnapshot.bodyIsMono
-    || currentState.tags !== _cnOpenSnapshot.tags;
+    || currentState.tags !== _cnOpenSnapshot.tags
+    || currentState.type !== _cnOpenSnapshot.type
+    || currentState.url !== _cnOpenSnapshot.url
+    || currentState.ideaStatus !== _cnOpenSnapshot.ideaStatus;
 
   if (dirty) {
     n.updatedAt = new Date().toISOString();
-    _cnOpenSnapshot = currentState; // update snapshot so subsequent saves during same session don't re-dirty
+    _cnOpenSnapshot = currentState;
   }
 
   saveCN(true);
@@ -429,17 +557,21 @@ function toggleMdPreview(mode) {
   }
 }
 
-function createNewNote() {
+function createNewNote(type) {
+  type = type || 'memo';
   const cnNotes = getCnNotes();
   const n = {
     id: uid(),
     title: '',
     speaker: '',
-    body: '',
+    body: type === 'paper' ? PAPER_TEMPLATE : '',
     tags: [],
     projectId: '',
     bodyIsMono: false,
     pinned: false,
+    type: type,
+    url: '',
+    ideaStatus: type === 'idea' ? 'raw' : '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -447,7 +579,8 @@ function createNewNote() {
   saveCN(false);
   openCNDetail(n.id);
   setTimeout(function() { document.getElementById('cnTitleInput').focus(); }, 100);
-  showToast('New note created');
+  var labels = { memo: 'New note', paper: 'New paper note', idea: 'New idea' };
+  showToast(labels[type] || 'New note created');
 }
 
 function deleteCNNote(id) {
@@ -545,6 +678,78 @@ document.getElementById('cnTagRow').addEventListener('click', function(e) {
   queueCNSave();
 });
 
+// Type selector in editor
+document.getElementById('cnTypeRow').addEventListener('click', function(e) {
+  var chip = e.target.closest('.cn-type-chip');
+  if (!chip) return;
+  document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(function(c) { c.classList.remove('active'); });
+  chip.classList.add('active');
+  var newType = chip.dataset.type;
+
+  // Update UI for new type
+  var titleInput = document.getElementById('cnTitleInput');
+  var speakerInput = document.getElementById('cnSpeakerInput');
+  var bodyInput = document.getElementById('cnBodyInput');
+  var urlRow = document.getElementById('cnUrlRow');
+  var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
+  var topbarTitle = document.getElementById('cnDetailTitle');
+
+  if (newType === 'paper') {
+    titleInput.placeholder = 'Paper title...';
+    speakerInput.placeholder = 'Authors (e.g., Barrett & Simmons, 2015)...';
+    bodyInput.placeholder = PAPER_TEMPLATE;
+    topbarTitle.textContent = '📄 Paper';
+    if (urlRow) urlRow.style.display = 'flex';
+    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
+    // Pre-fill template if body is empty
+    if (!bodyInput.value.trim()) bodyInput.value = PAPER_TEMPLATE;
+  } else if (newType === 'idea') {
+    titleInput.placeholder = 'Research question or study concept...';
+    speakerInput.placeholder = 'Related area, method, or population...';
+    bodyInput.placeholder = 'Flesh out the idea...';
+    topbarTitle.textContent = '💡 Idea';
+    if (urlRow) urlRow.style.display = 'none';
+    if (ideaStatusRow) ideaStatusRow.style.display = 'flex';
+  } else {
+    titleInput.placeholder = 'Title...';
+    speakerInput.placeholder = 'Source, speaker, context...';
+    bodyInput.placeholder = 'Write anything...';
+    topbarTitle.textContent = 'Note';
+    if (urlRow) urlRow.style.display = 'none';
+    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
+  }
+  queueCNSave();
+});
+
+// Idea status chips
+var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
+if (ideaStatusRow) {
+  ideaStatusRow.addEventListener('click', function(e) {
+    var chip = e.target.closest('.cn-status-chip');
+    if (!chip) return;
+    document.querySelectorAll('#cnIdeaStatusRow .cn-status-chip').forEach(function(c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    queueCNSave();
+  });
+}
+
+// URL input
+var urlInput = document.getElementById('cnUrlInput');
+if (urlInput) urlInput.addEventListener('input', queueCNSave);
+
+// Type filter chips in list view
+var typeFilterRow = document.getElementById('cnTypeFilterRow');
+if (typeFilterRow) {
+  typeFilterRow.addEventListener('click', function(e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#cnTypeFilterRow .chip').forEach(function(c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    cnTypeFilter = chip.dataset.typefilter;
+    renderCNList();
+  });
+}
+
 ['cnTitleInput', 'cnSpeakerInput', 'cnBodyInput'].forEach(function(id) {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', queueCNSave);
@@ -600,9 +805,17 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'n' || e.key === 'N') {
     e.preventDefault();
     e.stopPropagation();
-    createNewNote();
+    createNewNote('memo');
+  } else if (e.key === 'p' || e.key === 'P') {
+    e.preventDefault();
+    e.stopPropagation();
+    createNewNote('paper');
+  } else if (e.key === 'i' || e.key === 'I') {
+    e.preventDefault();
+    e.stopPropagation();
+    createNewNote('idea');
   }
 });
 
 // ── EXPORTS ──
-export { renderCNList, createNewNote, rebuildCNChips };
+export { renderCNList, createNewNote, rebuildCNChips, getIdeasForReview, NOTE_TYPES, noteTypeOf };

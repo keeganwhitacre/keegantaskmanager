@@ -250,6 +250,14 @@
       </div>
     </div>
 
+    <!-- Type filter row -->
+    <div class="cn-type-filter-row" id="cnTypeFilterRow">
+      <div class="chip active" data-typefilter="all">All</div>
+      <div class="chip" data-typefilter="paper">📄 Papers</div>
+      <div class="chip" data-typefilter="idea">💡 Ideas</div>
+      <div class="chip" data-typefilter="memo">✎ Notes</div>
+    </div>
+
     <!-- Scratchpad area -->
     <div class="cn-scratch-card">
       <div class="cn-scratch-header">
@@ -267,6 +275,13 @@
     </div>
     <div class="cn-filter-row" id="cnFilterRow"></div>
     <div id="cnNotesList"></div>
+
+    <!-- New note type menu (shown when FAB is tapped in notes mode) -->
+    <div id="cnNewMenu" class="cn-new-menu" style="display:none;">
+      <div class="cn-new-menu-item" data-newtype="memo"><span class="cn-new-icon">✎</span> Note</div>
+      <div class="cn-new-menu-item" data-newtype="paper"><span class="cn-new-icon">📄</span> Paper</div>
+      <div class="cn-new-menu-item" data-newtype="idea"><span class="cn-new-icon">💡</span> Idea</div>
+    </div>
   </div>
 
   <!-- Distraction-free note editor -->
@@ -289,8 +304,28 @@
       </div>
     </div>
 
+    <!-- Type selector -->
+    <div class="cn-type-selector" id="cnTypeRow">
+      <div class="cn-type-chip active" data-type="memo">✎ Note</div>
+      <div class="cn-type-chip" data-type="paper">📄 Paper</div>
+      <div class="cn-type-chip" data-type="idea">💡 Idea</div>
+    </div>
+
     <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
     <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
+
+    <!-- URL input (papers only) -->
+    <div class="cn-url-row" id="cnUrlRow" style="display:none;">
+      <span class="cn-url-label">🔗</span>
+      <input class="cn-detail-source-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
+    </div>
+
+    <!-- Idea status (ideas only) -->
+    <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none;">
+      <div class="cn-status-chip active" data-status="raw">raw</div>
+      <div class="cn-status-chip" data-status="developing">developing</div>
+      <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
+    </div>
 
     <!-- Collapsible metadata -->
     <details class="cn-detail-meta-drawer" id="cnMetaDrawer">
@@ -433,6 +468,12 @@
       <div class="d-card-label">Daily Reflection</div>
       <div class="d-prompt" id="dPrompt"></div>
       <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
+    </div>
+
+    <div class="d-card cn-research-card">
+      <div class="d-card-label">Research Prompt <span style="font-weight:400;opacity:0.5;font-size:9px;letter-spacing:0.04em;">💡</span></div>
+      <div class="d-prompt" id="dResearchPrompt"></div>
+      <textarea class="d-reflect-input" id="dResearchReflect" rows="3" placeholder="Think like a researcher…" autocorrect="off" autocapitalize="sentences"></textarea>
     </div>
 
     <div class="d-card ins-card" id="dWeeklyReflectCard" style="display:none;">

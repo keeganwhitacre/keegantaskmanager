@@ -9,6 +9,7 @@ import { state, esc, getDState, getHabits, saveDash, saveLocal, showToast, uid }
 import { ghPush } from './sync.js';
 import { setReflectMode } from './dashboard.js';
 import { updateReflectPill } from './router.js';
+import { getIdeasForReview, noteTypeOf } from './confnotes.js';
 
 // ── Constants ──
 
@@ -753,6 +754,40 @@ function renderPlanStep() {
     html += '<div class="wr-signals-box">';
     html += '<div class="wr-label-mono" style="color:var(--accent);margin-bottom:8px;">Signals from this week</div>';
     html += '<div class="wr-signals-text">' + signals.map(function(s) { return esc(s); }).join('. ') + '.</div>';
+    html += '</div>';
+  }
+
+  // ── Research idea incubator ──
+  var ideas = [];
+  try { ideas = getIdeasForReview(); } catch(e) { /* confnotes not loaded yet */ }
+  if (ideas.length > 0) {
+    html += '<div class="wr-ideas-box">';
+    html += '<div class="wr-label-mono" style="color:#ff9500;margin-bottom:8px;">💡 Incubating Ideas (' + ideas.length + ')</div>';
+    html += '<div class="wr-carry-desc" style="margin-bottom:10px;">Any of these worth developing or promoting to a project?</div>';
+
+    // Sort: stale first (most neglected), then by date
+    ideas.sort(function(a, b) {
+      var aDays = Math.floor((Date.now() - new Date(a.updatedAt || a.createdAt).getTime()) / 86400000);
+      var bDays = Math.floor((Date.now() - new Date(b.updatedAt || b.createdAt).getTime()) / 86400000);
+      return bDays - aDays;
+    });
+
+    // Show up to 5
+    ideas.slice(0, 5).forEach(function(idea) {
+      var staleDays = Math.floor((Date.now() - new Date(idea.updatedAt || idea.createdAt).getTime()) / 86400000);
+      var staleClass = staleDays >= 30 ? 'wr-idea-dormant' : staleDays >= 14 ? 'wr-idea-cooling' : '';
+      var statusLabel = idea.ideaStatus || 'raw';
+      html += '<div class="wr-idea-row ' + staleClass + '">';
+      html += '<div class="wr-idea-title">' + esc(idea.title || 'Untitled idea') + '</div>';
+      html += '<div class="wr-idea-meta">';
+      html += '<span class="wr-idea-status">' + esc(statusLabel) + '</span>';
+      if (staleDays > 0) html += '<span class="wr-idea-age">' + staleDays + 'd ago</span>';
+      html += '</div>';
+      html += '</div>';
+    });
+    if (ideas.length > 5) {
+      html += '<div style="font-size:11px;color:var(--text-muted);font-style:italic;margin-top:6px;">+ ' + (ideas.length - 5) + ' more in Notes → Ideas</div>';
+    }
     html += '</div>';
   }
 
