@@ -1322,7 +1322,7 @@
       "id": "mn4wwi8qfjcn",
       "title": "Meeting with Mal",
       "speaker": "",
-      "body": "### Hypothesis 1 - what needs analyzed\n- ",
+      "body": "### Hypothesis 1 - what needs analyzed + found\n- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1331,7 +1331,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-24T17:52:12.890Z",
-      "updatedAt": "2026-03-24T17:52:49.193Z"
+      "updatedAt": "2026-03-24T17:52:57.612Z"
     },
     {
       "id": "mn4l9ytr9wxw",
@@ -1529,5 +1529,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T17:52:51.694Z"
+  "updated": "2026-03-24T17:53:00.113Z"
 }
