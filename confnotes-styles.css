@@ -361,6 +361,9 @@ body.deep-focus-mode #confNotesView { display: none !important; }
   display: flex;
   gap: 6px;
   margin-bottom: 14px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding: 4px 20px;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;

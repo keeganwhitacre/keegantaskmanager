@@ -617,16 +617,40 @@ function rebuildCNChips() {
   }
   const filterRow = document.getElementById('cnFilterRow');
   if (filterRow) {
-    const currentFilter = cnFilter;
+    var currentFilter = cnFilter;
+    var currentTypeFilter = cnTypeFilter;
+    // Determine which chip should be active
+    var activeKey = 'all';
+    if (currentTypeFilter !== 'all') activeKey = '_type_' + currentTypeFilter;
+    else if (currentFilter !== 'all') activeKey = currentFilter;
+
     filterRow.innerHTML = '';
-    const allChip = document.createElement('div');
-    allChip.className = 'chip' + (currentFilter === 'all' ? ' active' : '');
+
+    // "All" chip
+    var allChip = document.createElement('div');
+    allChip.className = 'chip' + (activeKey === 'all' ? ' active' : '');
     allChip.dataset.cnfilter = 'all';
     allChip.textContent = 'All';
     filterRow.appendChild(allChip);
+
+    // Type chips
+    var types = [
+      { key: 'paper', label: '📄 Papers' },
+      { key: 'idea',  label: '💡 Ideas' },
+      { key: 'memo',  label: '✎ Notes' },
+    ];
+    types.forEach(function(t) {
+      var c = document.createElement('div');
+      c.className = 'chip' + (activeKey === '_type_' + t.key ? ' active' : '');
+      c.dataset.cnfilter = '_type_' + t.key;
+      c.textContent = t.label;
+      filterRow.appendChild(c);
+    });
+
+    // Category chips
     Object.keys(CAT_LABEL).forEach(function(key) {
-      const c = document.createElement('div');
-      c.className = 'chip' + (currentFilter === key ? ' active' : '');
+      var c = document.createElement('div');
+      c.className = 'chip' + (activeKey === key ? ' active' : '');
       c.dataset.cnfilter = key;
       c.textContent = CAT_LABEL[key];
       filterRow.appendChild(c);
@@ -744,19 +768,6 @@ if (ideaStatusRow) {
 var urlInput = document.getElementById('cnUrlInput');
 if (urlInput) urlInput.addEventListener('input', queueCNSave);
 
-// Type filter chips in list view
-var typeFilterRow = document.getElementById('cnTypeFilterRow');
-if (typeFilterRow) {
-  typeFilterRow.addEventListener('click', function(e) {
-    var chip = e.target.closest('.chip');
-    if (!chip) return;
-    document.querySelectorAll('#cnTypeFilterRow .chip').forEach(function(c) { c.classList.remove('active'); });
-    chip.classList.add('active');
-    cnTypeFilter = chip.dataset.typefilter;
-    renderCNList();
-  });
-}
-
 ['cnTitleInput', 'cnSpeakerInput', 'cnBodyInput'].forEach(function(id) {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', queueCNSave);
@@ -800,7 +811,17 @@ document.getElementById('cnFilterRow').addEventListener('click', function(e) {
   if (!chip) return;
   document.querySelectorAll('#cnFilterRow .chip').forEach(function(c) { c.classList.remove('active'); });
   chip.classList.add('active');
-  cnFilter = chip.dataset.cnfilter;
+  var val = chip.dataset.cnfilter;
+  if (val === 'all') {
+    cnFilter = 'all';
+    cnTypeFilter = 'all';
+  } else if (val.indexOf('_type_') === 0) {
+    cnTypeFilter = val.replace('_type_', '');
+    cnFilter = 'all';
+  } else {
+    cnFilter = val;
+    cnTypeFilter = 'all';
+  }
   renderCNList();
 });
 
