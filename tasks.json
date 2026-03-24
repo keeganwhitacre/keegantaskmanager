@@ -1369,21 +1369,6 @@
   },
   "cnNotes": [
     {
-      "id": "mn4zjf5pi5ca",
-      "title": "",
-      "speaker": "",
-      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "paper",
-      "url": "",
-      "ideaStatus": "raw",
-      "createdAt": "2026-03-24T19:06:01.213Z",
-      "updatedAt": "2026-03-24T19:06:01.214Z"
-    },
-    {
       "id": "mn4wwi8qfjcn",
       "title": "Meeting with Mal",
       "speaker": "",
@@ -1594,5 +1579,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T19:06:13.895Z"
+  "updated": "2026-03-24T19:06:19.528Z"
 }
