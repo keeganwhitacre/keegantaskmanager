@@ -870,6 +870,21 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-03-24T00:14:18.370Z"
+    },
+    {
+      "id": "mn4mh0pe21kz",
+      "title": "Make stupid graphic for scooter",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-24",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
