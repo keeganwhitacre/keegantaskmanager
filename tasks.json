@@ -670,23 +670,6 @@
       "pomodoros": 0
     },
     {
-      "id": "mmpi911g2fb5",
-      "title": "Consider possible options w/ EPIC data",
-      "categories": [
-        "lab",
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-03-24",
-      "projectId": "mmgcg8sqamq9",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mmr6gmo19n9q",
       "title": "Pack for San Diego",
       "categories": [
@@ -835,8 +818,9 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-24T19:05:45.459Z"
     },
     {
       "id": "mn3bqu2rd92i",
@@ -1595,5 +1579,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:47:48.787Z"
+  "updated": "2026-03-24T19:05:49.738Z"
 }
