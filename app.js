@@ -1541,6 +1541,21 @@ if (cnNewMenuEl) {
   });
 }
 
+// ── Desktop keyboard shortcut: N in tasks view opens full add-task sheet ──
+document.addEventListener('keydown', function(e) {
+  if (document.body.classList.contains('notes-mode')) return; // handled by confnotes.js
+  var view = typeof currentViewName === 'function' ? currentViewName() : '';
+  if (view !== 'tasks' && view !== 'projects-detail') return;
+  var tag = (document.activeElement || {}).tagName || '';
+  var inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
+  if (inInput) return;
+  if (e.key === 'n' || e.key === 'N') {
+    e.preventDefault();
+    e.stopPropagation();
+    openAddSheet();
+  }
+});
+
 // ══════════════════════════════════════════════════════════════════
 // ROUTER REGISTRATION
 // ══════════════════════════════════════════════════════════════════
