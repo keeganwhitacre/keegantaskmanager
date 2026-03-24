@@ -1322,7 +1322,7 @@
       "id": "mn4wwi8qfjcn",
       "title": "Meeting with Mal",
       "speaker": "",
-      "body": "### Need to figure out for analyses\n- 5 minute HRV or *daily HRV*\n- figure out sleep discrepancies, stages vs other count\n- \n",
+      "body": "### Need to figure out for analyses\n- 5 minute HRV or *daily HRV*\n- RMSSD daily\n- figure out sleep discrepancies, stages vs other count\n- \n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1331,7 +1331,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-24T17:52:12.890Z",
-      "updatedAt": "2026-03-24T18:04:32.372Z"
+      "updatedAt": "2026-03-24T18:04:47.710Z"
     },
     {
       "id": "mn4l9ytr9wxw",
@@ -1529,5 +1529,5 @@
       "updatedAt": "2026-03-13T16:18:28.519Z"
     }
   ],
-  "updated": "2026-03-24T18:04:34.972Z"
+  "updated": "2026-03-24T18:04:50.211Z"
 }
