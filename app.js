@@ -1582,7 +1582,21 @@ document.getElementById('tabReflect').addEventListener('click', function() { swi
 const tpBtn = document.getElementById('tabProjects'); if (tpBtn) tpBtn.addEventListener('click', function() { switchView('projects'); });
 document.getElementById('tabNotes').addEventListener('click', function() { switchView('notes'); });
 
-const sbt = document.getElementById('secretBelTrigger'); if (sbt) sbt.addEventListener('click', function() { switchView('bel'); });
+const sbt = document.getElementById('secretBelTrigger');
+if (sbt) {
+  let _belTaps = 0;
+  let _belTapTimer = null;
+  sbt.addEventListener('click', function() {
+    _belTaps++;
+    if (_belTapTimer) clearTimeout(_belTapTimer);
+    if (_belTaps >= 5) {
+      _belTaps = 0;
+      switchView('bel');
+    } else {
+      _belTapTimer = setTimeout(function() { _belTaps = 0; }, 1200);
+    }
+  });
+}
 const cbb = document.getElementById('closeBelBtn'); if (cbb) cbb.addEventListener('click', function() { switchView('tasks'); });
 const cpd = document.getElementById('closeProjectDetailBtn'); if (cpd) cpd.addEventListener('click', function() { switchView('projects'); });
 
