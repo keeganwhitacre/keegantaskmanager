@@ -1954,24 +1954,53 @@ setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
 // ══════════════════════════════════════════════════════════════════
 
 const ANCHOR_PROMPTS = {
-  under: [ // Bored
-    "You have one frame of UltraMax left. Look around. Describe the interplay of light and geometry you are looking at.",
-    "Where in your body do you physically feel the urge to scroll right now? Describe the exact sensation.",
-    "Name three textures you can see from where you are sitting right now.",
-    "What is one sound your brain was filtering out until this exact second?"
+  under: [ // Bored (Under-stimulated, seeking cheap dopamine)
+    "If you had CineStill 800T loaded right now, where is the most interesting halation or light source coming from in this room?",
+    "Breathe in through your nose. Can you isolate any scent of warm spice, musk, or cinnamon, or is the air entirely neutral?",
+    "Imagine you just time-traveled from 10 years in the future to this exact boring moment. What mundane detail are you thrilled to see again?",
+    "Name three physical textures you can see from where you are sitting right now.",
+    "Where in your body do you physically feel the urge to scroll right now? Describe the exact temperature and tension of that sensation.",
+    "If you had to describe the exact weather outside right now to someone not in Columbus, what precise words would you use?",
+    "Flex the muscle group you worked out most recently. Focus entirely on the sensation of that tension for 5 seconds.",
+    "Imagine you are looking through the viewfinder of your Olympus XA2. Frame a shot using only the objects within arm's reach.",
+    "Close your eyes. Identify the furthest sound you can hear right now, and then the closest.",
+    "Look around. What object in this room would make the most absurd, improvised weapon in the Everything Everywhere All At Once multiverse?"
   ],
-  over: [ // Stuck (Friction Escape)
-    "The concept of this task is too big. Strip it down to raw physics. What is the exact next verb? (e.g., 'Open the laptop lid')."
+  over: [ // Stuck (Overwhelmed, Friction Escape)
+    "You know exactly how to brace your core for a heavy lift. What is the cognitive equivalent of bracing for this exact task?",
+    "The concept of this task is too big. Strip it down to raw physics. What is the exact next verb? (e.g., 'Open the laptop lid').",
+    "You understand slow, methodical pacing from sprawling, epic books. What is the absolute smallest, most mundane micro-action you can take in the next 30 seconds?",
+    "Drop the abstract anxiety. What is the literal, physical next step required right now?",
+    "Treat this task like a retro game level. You don't need to beat the boss right now; just take the first two steps forward.",
+    "Even The Count of Monte Cristo happened one day at a time. What is the next 5-minute increment of effort for this project?",
+    "If you had the power from About Time, but could only go back to 10 minutes ago, how would you start this task differently?",
+    "Look at this task like a researcher in the lab. What is the independent variable you can manipulate right now to make progress?",
+    "Imagine the docking scene in Interstellar. It requires absolute, singular focus on aligning one thing. What is the one thing you need to align right now?",
+    "Stand up, physically take one step back from your workspace, take a deep breath, and step forward again. Now name the first button you need to click."
   ],
-  disconnected: [ // Lonely
-    "What is one incredibly specific, tiny detail about Bel right now that proves she is a complex, living human?",
+  disconnected: [ // Lonely (Predicting isolation)
+    "What is a highly specific, idiosyncratic way Bel laughs or smiles that a stranger would never notice?",
+    "Construct a mental image of Bel's exact coffee order or favorite snack. What is the exact sequence of steps to make or get it for her?",
     "What is a specific phrase or reaction Bel had in the last 48 hours that you want to remember in ten years?",
-    "Look at Bel's posture or expression. What is a testable hypothesis about how she is feeling right now?"
+    "Look at Bel's posture or expression right now (or picture her last text). What is a testable hypothesis about how she is feeling?",
+    "Think of the ending of Eternal Sunshine of the Spotless Mind. What is one flawed, annoying, but deeply lovable thing about someone close to you?",
+    "Your sister is navigating her own intense challenges in ROTC. Send her a quick, 5-word text just to break the silence.",
+    "Scroll back in your mind to the last time you took a photo of Bel. What was the exact lighting like?",
+    "Can you play back the exact cadence of Bel's voice saying your name in your head?",
+    "Think of a sprawling cast of characters from a book like Lonesome Dove. Who is your most reliable 'crew' right now?",
+    "Write down one incredibly mundane detail about a recent conversation that proves you are known and understood."
   ],
-  depleted: [ // Drained
-    "Scrolling costs metabolic energy but provides no rest. Lock the phone. Close your eyes for exactly 60 seconds.",
-    "You are depleted. Go read 5 pages of your epic book.",
-    "Junk food dopamine won't fix a negative body budget. Go play exactly one level of a retro game."
+  depleted: [ // Drained (Negative Body Budget)
+    "Scrolling is an allostatic tax. It costs metabolic energy but provides no rest. Lock the phone and close your eyes for exactly 60 seconds.",
+    "Your body budget is negative. Junk dopamine won't fix it. Go read exactly 5 pages of a massive sci-fi or historical fiction book.",
+    "You are physically depleted. Go play exactly one level of a retro game to provide a bounded, structured dopamine release, then stop.",
+    "Do not consume. Lie flat on the floor for two minutes and actively map the tension in your back and shoulders.",
+    "You have the discipline to go to the gym 5 days a week. Apply that exact same discipline right now to doing absolutely nothing for 5 minutes.",
+    "Pick up your Olympus XA2. Don't take a picture. Just feel the mechanics of the camera in your hands. Feel the weight and the dials.",
+    "Think of the stillness in The Secret Life of Walter Mitty when he's just looking through the lens. Find that stillness right now.",
+    "Stand up, walk to the sink, and drink one full glass of water. Focus entirely on the temperature of the water hitting your throat.",
+    "You read things like The Stand. You know how to endure a long journey. Give yourself permission to rest at this current camp.",
+    "Go find your warm spice and musk beard oil or deodorant. Smell it. Let the familiar, grounding scent anchor you back into your physical body."
   ]
 };
 
