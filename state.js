@@ -61,6 +61,8 @@ const state = {
   scratchpad:     '',
   collapsed:      {},
   _shaLoaded:     true,
+  anchorLogs:     [],       // <-- DYNAMIC ANCHOR SILO
+  anchorTimestamps: [],     // <-- DYNAMIC ANCHOR SILO
 };
 
 // Bel (relationship) state
@@ -172,6 +174,9 @@ function loadLocal() {
 
   try { const f = localStorage.getItem(KEYS.focus); if (f) state.focus = f; } catch (e) { /* */ }
   try { const n = localStorage.getItem(KEYS.notes); if (n !== null) state.scratchpad = n; } catch (e) { /* */ }
+
+  state.anchorLogs = _tryParse('kw_anchorLogs', []);
+  state.anchorTimestamps = _tryParse('kw_anchorTime', []);
 
   if (!state.tasks) state.tasks = [];
   if (!state.projects) state.projects = [];
@@ -294,6 +299,7 @@ function buildSyncPayload() {
     dash:       dState,
     cnNotes:    cnNotes,
     settings:   { customCats: state.settings.customCats, customHabits: state.settings.customHabits },
+    anchorLogs: state.anchorLogs, // <-- SAVES ANCHOR DATA
     updated:    new Date().toISOString(),
   };
   return payload;
@@ -311,6 +317,7 @@ function applySyncPayload(dec) {
   if (dec.shop !== undefined) shopItems = dec.shop;
   if (dec.dash !== undefined) Object.assign(dState, dec.dash);
   if (dec.cnNotes !== undefined) cnNotes = dec.cnNotes;
+  if (dec.anchorLogs !== undefined) state.anchorLogs = dec.anchorLogs;
 
   // Restore custom categories and habits from sync
   if (dec.settings) {
