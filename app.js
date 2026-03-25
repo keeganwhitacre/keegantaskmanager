@@ -1948,3 +1948,199 @@ requestAnimationFrame(function() {
 });
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
+
+// ══════════════════════════════════════════════════════════════════
+// THE DYNAMIC ANCHOR v2.0 — Kinematic Grounding
+// ══════════════════════════════════════════════════════════════════
+
+const ANCHOR_PROMPTS = {
+  under: [ // Bored
+    "You have one frame of UltraMax left. Look around. Describe the interplay of light and geometry you are looking at.",
+    "Where in your body do you physically feel the urge to scroll right now? Describe the exact sensation.",
+    "Name three textures you can see from where you are sitting right now.",
+    "What is one sound your brain was filtering out until this exact second?"
+  ],
+  over: [ // Stuck (Friction Escape)
+    "The concept of this task is too big. Strip it down to raw physics. What is the exact next verb? (e.g., 'Open the laptop lid')."
+  ],
+  disconnected: [ // Lonely
+    "What is one incredibly specific, tiny detail about Bel right now that proves she is a complex, living human?",
+    "What is a specific phrase or reaction Bel had in the last 48 hours that you want to remember in ten years?",
+    "Look at Bel's posture or expression. What is a testable hypothesis about how she is feeling right now?"
+  ],
+  depleted: [ // Drained
+    "Scrolling costs metabolic energy but provides no rest. Lock the phone. Close your eyes for exactly 60 seconds.",
+    "You are depleted. Go read 5 pages of your epic book.",
+    "Junk food dopamine won't fix a negative body budget. Go play exactly one level of a retro game."
+  ]
+};
+
+let currentAnchorState = '';
+const anchorOverlay = document.getElementById('anchorOverlay');
+
+document.getElementById('anchorBtn').addEventListener('click', function() {
+  anchorOverlay.style.display = 'flex';
+  
+  // Loop Check (3 times in 15 mins)
+  const now = Date.now();
+  if (!state.anchorTimestamps) state.anchorTimestamps = [];
+  
+  // Clear old timestamps
+  state.anchorTimestamps = state.anchorTimestamps.filter(t => (now - t) < (15 * 60 * 1000));
+  
+  if (state.anchorTimestamps.length >= 3) {
+    document.getElementById('anchorHoldView').innerHTML = "<div style='font-size:20px; color:var(--accent); text-align:center;'>You're looping.<br><br>Just breathe for 15 seconds.</div>";
+    setTimeout(() => { anchorOverlay.style.display = 'none'; }, 15000);
+    return;
+  }
+
+  // Reset UI
+  document.getElementById('anchorHoldView').style.display = 'flex';
+  document.getElementById('anchorTriage').style.display = 'none';
+  document.getElementById('anchorPromptView').style.display = 'none';
+  resetSlider();
+});
+
+// --- Slider Kinematics ---
+const track = document.getElementById('anchorSliderTrack');
+const thumb = document.getElementById('anchorSliderThumb');
+let isDragging = false;
+let startX = 0;
+
+function handleDragStart(e) {
+  isDragging = true;
+  startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+  thumb.style.transition = 'none';
+  thumb.style.cursor = 'grabbing';
+}
+
+function handleDragMove(e) {
+  if (!isDragging) return;
+  e.preventDefault(); 
+  const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+  const maxTravel = track.clientWidth - thumb.clientWidth - 8; 
+  let deltaX = currentX - startX;
+  
+  if (deltaX > 0) {
+    const progress = Math.min(deltaX / maxTravel, 1);
+    const resistedX = deltaX * (1 - (progress * 0.2)); 
+    const finalX = Math.min(resistedX, maxTravel);
+    
+    thumb.style.transform = `translateX(${finalX}px)`;
+    
+    if (finalX >= maxTravel - 2) {
+      isDragging = false;
+      completeSlider();
+    }
+  }
+}
+
+function handleDragEnd() {
+  if (!isDragging) return;
+  isDragging = false;
+  resetSlider();
+}
+
+function resetSlider() {
+  thumb.style.transition = 'transform 0.4s cubic-bezier(0.2, 0.85, 0.3, 1)';
+  thumb.style.transform = 'translateX(0px)';
+  thumb.style.cursor = 'grab';
+}
+
+function completeSlider() {
+  state.anchorTimestamps.push(Date.now());
+  localStorage.setItem('kw_anchorTime', JSON.stringify(state.anchorTimestamps));
+  if (navigator.vibrate) navigator.vibrate(40);
+  
+  document.getElementById('anchorHoldView').style.display = 'none';
+  document.getElementById('anchorTriage').style.display = 'flex';
+}
+
+thumb.addEventListener('mousedown', handleDragStart);
+document.addEventListener('mousemove', handleDragMove, { passive: false });
+document.addEventListener('mouseup', handleDragEnd);
+
+thumb.addEventListener('touchstart', handleDragStart, { passive: false });
+document.addEventListener('touchmove', handleDragMove, { passive: false });
+document.addEventListener('touchend', handleDragEnd);
+document.addEventListener('touchcancel', handleDragEnd);
+
+// --- Triage Routing ---
+document.querySelectorAll('.anchor-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    currentAnchorState = e.target.dataset.state;
+    document.getElementById('anchorTriage').style.display = 'none';
+    document.getElementById('anchorPromptView').style.display = 'flex';
+    
+    const prompts = ANCHOR_PROMPTS[currentAnchorState];
+    document.getElementById('anchorPromptText').textContent = prompts[Math.floor(Math.random() * prompts.length)];
+    
+    const inputEl = document.getElementById('anchorInput');
+    const depletedBtn = document.getElementById('anchorDepletedBtn');
+    const stuckBtn = document.getElementById('anchorStuckBtn');
+    
+    inputEl.style.display = 'none';
+    depletedBtn.style.display = 'none';
+    stuckBtn.style.display = 'none';
+    
+    if (currentAnchorState === 'depleted') {
+      depletedBtn.style.display = 'block';
+    } else if (currentAnchorState === 'over') { 
+      stuckBtn.style.display = 'block';
+    } else {
+      inputEl.style.display = 'block';
+      setTimeout(() => inputEl.focus(), 100);
+    }
+  });
+});
+
+// --- Resolution Handlers ---
+document.getElementById('anchorInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim() !== '') {
+    saveAnchorLog(this.value.trim());
+    this.value = '';
+    closeAnchor();
+    showToast("Grounded."); 
+  }
+});
+
+document.getElementById('anchorDepletedBtn').addEventListener('click', function() {
+  saveAnchorLog("[Deep Leisure Executed]");
+  closeAnchor();
+  showToast("Recharging.");
+});
+
+document.getElementById('anchorStuckBtn').addEventListener('click', function() {
+  saveAnchorLog("[Task Avoidance Broken]");
+  closeAnchor();
+  
+  // Trigger Focus Mode automatically
+  const topTask = state.tasks.find(t => !t.done && t.priority === 'hi') || state.tasks.find(t => !t.done && t.pinnedToday);
+  if (topTask) {
+    state.focus = topTask.id;
+    state.focusMode = true;
+    document.body.classList.add('focus-mode');
+    saveLocal();
+    if (typeof render === 'function') render(); // Re-render task view
+    showToast("Locked in.");
+  } else {
+    showToast("No active tasks found.");
+  }
+});
+
+function saveAnchorLog(text) {
+  if (!state.anchorLogs) state.anchorLogs = [];
+  state.anchorLogs.push({
+    id: uid(),
+    date: new Date().toISOString(),
+    state: currentAnchorState,
+    text: text
+  });
+  localStorage.setItem('kw_anchorLogs', JSON.stringify(state.anchorLogs));
+  
+  emit('request-sync'); 
+}
+
+function closeAnchor() {
+  anchorOverlay.style.display = 'none';
+}
