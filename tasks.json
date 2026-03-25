@@ -890,6 +890,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mn5f87dgwjqm",
+      "title": "Text Mikel",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-28",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1600,5 +1617,5 @@
     }
   ],
   "settings": {},
-  "updated": "2026-03-24T21:54:17.594Z"
+  "updated": "2026-03-25T02:25:14.270Z"
 }
