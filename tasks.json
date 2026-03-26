@@ -1449,16 +1449,16 @@
       "id": "mn7s2pbj3r14",
       "title": "Thing I want to do",
       "speaker": "",
-      "body": "- learn to sew clothes\n- learn to hem clothes\n- buy more clothes in my style\n- make my fashion more distinct\n- move away from black to blue, brown, olive",
+      "body": "- learn to sew clothes\n- learn to hem clothes\n- buy more clothes in my style\n- make my fashion more distinct\n- move away from black to blue, brown, olive, charcoal\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
-      "pinned": false,
+      "pinned": true,
       "type": "memo",
       "url": "",
       "ideaStatus": "ready to pitch",
       "createdAt": "2026-03-26T18:00:22.447Z",
-      "updatedAt": "2026-03-26T18:00:50.352Z"
+      "updatedAt": "2026-03-26T18:01:03.989Z"
     },
     {
       "id": "mn4wwi8qfjcn",
@@ -1715,5 +1715,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T18:00:52.947Z"
+  "updated": "2026-03-26T18:01:10.350Z"
 }
