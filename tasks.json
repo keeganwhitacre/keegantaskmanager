@@ -1446,6 +1446,21 @@
   },
   "cnNotes": [
     {
+      "id": "mn7s2pbj3r14",
+      "title": "Thing I want to do",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "ready to pitch",
+      "createdAt": "2026-03-26T18:00:22.447Z",
+      "updatedAt": "2026-03-26T18:00:27.876Z"
+    },
+    {
       "id": "mn4wwi8qfjcn",
       "title": "Meeting with Mal",
       "speaker": "",
@@ -1700,5 +1715,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T16:58:22.134Z"
+  "updated": "2026-03-26T18:00:30.378Z"
 }
