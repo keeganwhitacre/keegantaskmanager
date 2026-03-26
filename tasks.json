@@ -1067,12 +1067,17 @@
     {
       "id": 1772723182454.5166,
       "text": "snacks",
-      "done": true
+      "done": false
     },
     {
       "id": 1773852866877.056,
       "text": "Chips",
-      "done": true
+      "done": false
+    },
+    {
+      "id": 1774538024619.1235,
+      "text": "cheese",
+      "done": false
     }
   ],
   "dash": {
@@ -1665,5 +1670,5 @@
       "text": "I feel it in my fingers, theyre opening apps before I can even think about it."
     }
   ],
-  "updated": "2026-03-26T15:13:43.810Z"
+  "updated": "2026-03-26T15:13:50.008Z"
 }
