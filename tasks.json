@@ -1004,6 +1004,22 @@
           "date": "2026-03-24T19:10:23.100Z"
         }
       ]
+    },
+    {
+      "id": "mn7s464o3vwp",
+      "title": "Learning to Sew Clothes",
+      "description": "I want to learn how to buy clothes and sew them to fit me perfectly",
+      "stage": "Waiting",
+      "due": "",
+      "note": "",
+      "milestones": [],
+      "history": [
+        {
+          "type": "created",
+          "label": "Project created",
+          "date": "2026-03-26T18:01:30.888Z"
+        }
+      ]
     }
   ],
   "bel": {
@@ -1715,5 +1731,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T18:01:10.350Z"
+  "updated": "2026-03-26T18:01:33.392Z"
 }
