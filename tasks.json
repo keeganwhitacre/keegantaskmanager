@@ -1192,7 +1192,7 @@
         "doom": [
           false,
           false,
-          false,
+          true,
           false,
           false,
           false,
@@ -1658,5 +1658,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T01:54:15.095Z"
+  "updated": "2026-03-26T02:55:24.867Z"
 }
