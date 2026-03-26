@@ -665,11 +665,12 @@
       "priority": "lo",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-26",
+      "due": "2026-03-31",
       "projectId": "",
       "noteIsMono": false,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "milestoneId": ""
     },
     {
       "id": "mmr6gmo19n9q",
@@ -1658,5 +1659,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T12:50:16.784Z"
+  "updated": "2026-03-26T13:55:43.945Z"
 }
