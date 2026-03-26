@@ -917,12 +917,14 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "+ getting clothes figured out\n+ vacuuming",
       "due": "2026-03-26",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "mn7ub3ji9z5w",
@@ -1136,6 +1138,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -1251,12 +1259,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -1456,14 +1458,14 @@
         }
       ]
     },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!"
-    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
       "2026-03-23": "Cluttering my mental space is my lack of nothing time, the need for a talk, and getting back to work.",
       "2026-03-24": "If I had to invent a new word for how I feel right now, it would be Apprehenxious\n\nI hope I am not getting sick.",
       "2026-03-25": "In the best version of today, i am suddenly miraculously cured and feel better and go to the gym and work. But that’s not happening. So i guess the best version of today is one where i relax and make the most of my day off."
+    },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!"
     },
     "weeklyReviews": {
       "2026-W12": {
@@ -1746,5 +1748,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-26T19:02:55.867Z"
+  "updated": "2026-03-26T19:32:19.014Z"
 }
