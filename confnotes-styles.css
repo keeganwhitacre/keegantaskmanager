@@ -597,24 +597,28 @@ body.deep-focus-mode #confNotesView { display: none !important; }
   text-decoration: none;
 }
 
-/* ── Auto-Injected Markdown Paper Link ── */
+/* ── Auto-Injected Markdown Paper Link (Redesigned) ── */
 .cn-md-paper-link {
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    background: rgba(175, 82, 222, 0.12); /* Matches paper theme */
-    color: #af52de !important;
-    padding: 6px 12px;
-    border-radius: 8px;
+    gap: 8px;
+    font-family: var(--font-main, 'DM Sans', sans-serif);
+    font-size: 13px;
+    color: var(--text-main, #fff) !important;
+    background: transparent;
+    border: 1px solid var(--border-divider, rgba(255,255,255,0.15));
+    padding: 8px 14px;
+    border-radius: 10px;
     text-decoration: none !important;
-    font-weight: 700;
+    font-weight: 500;
     transition: all 0.2s ease;
 }
 
 .cn-md-paper-link:hover {
-    background: rgba(175, 82, 222, 0.25);
-    transform: translateY(-1px);
+    border-color: rgba(175, 82, 222, 0.4);
+    background: rgba(175, 82, 222, 0.05);
+}
+
+.cn-md-paper-link:active {
+    transform: scale(0.98);
 }
