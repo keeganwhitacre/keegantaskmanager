@@ -543,7 +543,17 @@ function toggleMdPreview(mode) {
     cnMdPreview = true;
     // Flush any pending edits before rendering
     saveCNDetailNow();
-    previewEl.innerHTML = marked.parse(bodyEl.value || '', { breaks: true, gfm: true });
+    
+    // 1. Process [[Internal Links]] FIRST
+    const rawContent = bodyEl.value || '';
+    const processedContent = rawContent.replace(
+      /\[\[(.*?)\]\]/g, 
+      '<a href="#" class="internal-note-link" data-notetitle="$1">[[ $1 ]]</a>'
+    );
+
+    // 2. THEN parse markdown
+    previewEl.innerHTML = marked.parse(processedContent, { breaks: true, gfm: true });
+    
     // Open links in new tab
     previewEl.querySelectorAll('a').forEach(function(a) {
       a.setAttribute('target', '_blank');
@@ -842,6 +852,51 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     e.stopPropagation();
     createNewNote('idea');
+  }
+});
+// ── ZETTELKASTEN LINKED NOTES LISTENER ──
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('.internal-note-link');
+  if (!link) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const targetTitle = link.getAttribute('data-notetitle');
+  if (!targetTitle) return;
+
+  const cnNotes = getCnNotes();
+  const targetNote = cnNotes.find(n => (n.title || '').toLowerCase() === targetTitle.toLowerCase());
+
+  if (targetNote) {
+    // Note exists -> Save current work and open it
+    saveCNDetailNow();
+    openCNDetail(targetNote.id);
+  } else {
+    // Note doesn't exist -> Prompt to create it
+    if (confirm(`The note "${targetTitle}" doesn't exist yet. Create it?`)) {
+      saveCNDetailNow();
+      
+      const newNote = {
+        id: uid(),
+        title: targetTitle,
+        speaker: '',
+        body: PAPER_TEMPLATE, // Uses your exact template from the top of the file!
+        tags: [],
+        projectId: '',
+        bodyIsMono: false,
+        pinned: false,
+        type: 'paper', 
+        url: '',
+        ideaStatus: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      cnNotes.unshift(newNote);
+      saveCN(false);
+      openCNDetail(newNote.id);
+    }
   }
 });
 
