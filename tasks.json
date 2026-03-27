@@ -1544,7 +1544,7 @@
       "id": "mn99xkpecl3l",
       "title": "idea x",
       "speaker": "",
-      "body": "It’s something I might do related to ",
+      "body": "It’s something I might do related to [[paper y]]",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1553,7 +1553,7 @@
       "url": "https://doi.org/10.1037/emo0001664",
       "ideaStatus": "developing",
       "createdAt": "2026-03-27T19:08:02.450Z",
-      "updatedAt": "2026-03-27T19:08:13.030Z"
+      "updatedAt": "2026-03-27T19:08:17.649Z"
     },
     {
       "id": "mn99x9cbt88r",
@@ -1913,5 +1913,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:08:15.532Z"
+  "updated": "2026-03-27T19:08:20.150Z"
 }
