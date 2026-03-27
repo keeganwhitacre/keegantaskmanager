@@ -355,7 +355,17 @@ function openCNDetail(id) {
     speakerInput.placeholder = 'Authors (e.g., Barrett & Simmons, 2015)...';
     bodyInput.placeholder = PAPER_TEMPLATE;
     topbarTitle.textContent = '📄 Paper';
-    if (urlRow) { urlRow.style.display = 'flex'; urlInput.value = n.url || ''; }
+    
+    if (urlRow) { 
+      urlRow.style.display = 'flex'; 
+      urlInput.value = n.url || ''; 
+      const launchBtn = document.getElementById('cnUrlLaunchBtn');
+      if (launchBtn) {
+          launchBtn.style.display = n.url ? 'block' : 'none';
+          launchBtn.href = n.url && !n.url.startsWith('http') ? 'https://doi.org/' + n.url : n.url;
+      }
+    }
+    
     if (ideaStatusRow) ideaStatusRow.style.display = 'none';
   } else if (nType === 'idea') {
     titleInput.placeholder = 'Research question or study concept...';
@@ -553,6 +563,19 @@ function toggleMdPreview(mode) {
 
     // 2. THEN parse markdown
     previewEl.innerHTML = marked.parse(processedContent, { breaks: true, gfm: true });
+
+    // 3. Auto-inject the Paper URL into the preview!
+    const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+    const isPaper = activeType && activeType.dataset.type === 'paper';
+    const urlVal = document.getElementById('cnUrlInput').value.trim();
+    
+    if (isPaper && urlVal) {
+        // Automatically handle DOIs vs full links
+        const linkHref = urlVal.startsWith('http') ? urlVal : 'https://doi.org/' + urlVal;
+        finalHtml = `<div style="margin-bottom: 16px;"><a href="${linkHref}" target="_blank" class="cn-md-paper-link">🔗 Open Source Document</a></div>` + finalHtml;
+    }
+
+    previewEl.innerHTML = finalHtml;
     
     // Open links in new tab
     previewEl.querySelectorAll('a').forEach(function(a) {
@@ -774,9 +797,19 @@ if (ideaStatusRow) {
   });
 }
 
-// URL input
+// URL input with live-updating Launch Button
 var urlInput = document.getElementById('cnUrlInput');
-if (urlInput) urlInput.addEventListener('input', queueCNSave);
+if (urlInput) {
+  urlInput.addEventListener('input', function() {
+    queueCNSave();
+    const launchBtn = document.getElementById('cnUrlLaunchBtn');
+    if(launchBtn) {
+      const val = this.value.trim();
+      launchBtn.style.display = val ? 'block' : 'none';
+      launchBtn.href = val && !val.startsWith('http') ? 'https://doi.org/' + val : val;
+    }
+  });
+}
 
 ['cnTitleInput', 'cnSpeakerInput', 'cnBodyInput'].forEach(function(id) {
   const el = document.getElementById(id);
