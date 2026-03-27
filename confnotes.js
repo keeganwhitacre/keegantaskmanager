@@ -943,5 +943,34 @@ document.addEventListener('click', function(e) {
   }
 });
 
+// ── GRID / LIST VIEW TOGGLE ──
+const notesListEl = document.getElementById('cnNotesList');
+const viewToggleBtn = document.getElementById('cnViewToggle');
+let isGridView = localStorage.getItem('kw_notes_grid_v1') === 'true';
+
+function updateViewToggleUI() {
+  if (!viewToggleBtn || !notesListEl) return;
+  
+  if (isGridView) {
+    notesListEl.classList.add('cn-grid-view');
+    // Change icon to List (horizontal lines)
+    viewToggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>';
+  } else {
+    notesListEl.classList.remove('cn-grid-view');
+    // Change icon to Grid (boxes)
+    viewToggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
+  }
+}
+
+// Initialize on load
+if (viewToggleBtn) {
+  updateViewToggleUI();
+  viewToggleBtn.addEventListener('click', function() {
+    isGridView = !isGridView;
+    localStorage.setItem('kw_notes_grid_v1', isGridView);
+    updateViewToggleUI();
+  });
+}
+
 // ── EXPORTS ──
 export { renderCNList, createNewNote, rebuildCNChips, getIdeasForReview, NOTE_TYPES, noteTypeOf };
