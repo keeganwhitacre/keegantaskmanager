@@ -596,3 +596,25 @@ body.deep-focus-mode #confNotesView { display: none !important; }
   background-color: rgba(0, 122, 255, 0.25);
   text-decoration: none;
 }
+
+/* ── Auto-Injected Markdown Paper Link ── */
+.cn-md-paper-link {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: rgba(175, 82, 222, 0.12); /* Matches paper theme */
+    color: #af52de !important;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none !important;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.cn-md-paper-link:hover {
+    background: rgba(175, 82, 222, 0.25);
+    transform: translateY(-1px);
+}
