@@ -1490,7 +1490,10 @@
       "title": "Stuff",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "personal",
+        "hobby"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
@@ -1498,7 +1501,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-27T03:07:01.391Z",
-      "updatedAt": "2026-03-27T03:07:07.483Z"
+      "updatedAt": "2026-03-27T03:07:11.875Z"
     },
     {
       "id": "mn7s2pbj3r14",
@@ -1776,5 +1779,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T03:07:09.985Z"
+  "updated": "2026-03-27T03:07:14.375Z"
 }
