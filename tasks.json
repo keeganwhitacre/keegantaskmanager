@@ -1804,8 +1804,64 @@
       "personal": "personal",
       "hobby": "hobby",
       "apps": "apps"
-    }
+    },
+    "customHabits": [
+      {
+        "id": "sleep",
+        "label": "Slept 7h+",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "read",
+        "label": "Read",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "lift",
+        "label": "Lifted",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "doom",
+        "label": "Doom scrolled",
+        "bad": true,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T17:09:14.131Z"
+  "updated": "2026-03-27T17:10:31.421Z"
 }
