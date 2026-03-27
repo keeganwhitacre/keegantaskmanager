@@ -973,31 +973,12 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-30",
+      "due": "2026-03-27",
       "projectId": "mn4ychs8u3os",
       "milestoneId": "",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
-    },
-    {
-      "id": "mn9bgsvndjh4",
-      "title": "Constructionist Journal Club Paper",
-      "categories": [
-        "lab",
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-02",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": true,
-      "pomodoros": 0,
-      "completedAt": "2026-03-27T19:51:00.874Z"
     }
   ],
   "projects": [
@@ -1201,12 +1182,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -1322,6 +1297,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -1563,7 +1544,7 @@
       "id": "mn973jnbm58j",
       "title": "Emotion-specific verbal fluency relates to the intensity and variety of emotional experiences but not their specificity",
       "speaker": "Wormwood et al.",
-      "body": "**One-line summary:**\n- Emotion fluency was not associated with emotion granularity, but was associated with greater negative affective intensity and variety.\n\n**What I'd challenge:**\n- The validity of the emotion fluency task, with an only 0.52 test-retest reliability\n\n**What I'd steal for my own work:**\n- Participants choose which 5 days they would like to receive the survey, with the caveat of one day having to be weekend.",
+      "body": "**One-line summary:**\n- \n\n**What I'd challenge:**\n- \n\n**What I'd steal for my own work:**\n- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": true,
@@ -1572,7 +1553,7 @@
       "url": "https://doi.org/10.1037/emo0001664",
       "ideaStatus": "",
       "createdAt": "2026-03-27T17:48:42.167Z",
-      "updatedAt": "2026-03-27T19:47:03.567Z"
+      "updatedAt": "2026-03-27T19:21:19.377Z"
     },
     {
       "id": "mn8wb0hen41g",
@@ -1903,6 +1884,13 @@
       }
     ]
   },
-  "anchorLogs": [],
-  "updated": "2026-03-27T19:54:19.648Z"
+  "anchorLogs": [
+    {
+      "id": "mn9bzzrx5ry3",
+      "date": "2026-03-27T20:05:54.533Z",
+      "state": "under",
+      "text": "I think it’s in my hands like they need something to do. Feels warm?"
+    }
+  ],
+  "updated": "2026-03-27T20:05:57.037Z"
 }
