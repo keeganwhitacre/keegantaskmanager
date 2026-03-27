@@ -1544,16 +1544,16 @@
       "id": "mn99xzvb5s9y",
       "title": "paper y",
       "speaker": "",
-      "body": "",
+      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
+      "type": "paper",
+      "url": "https://doi.org/10.1037/emo0001664",
+      "ideaStatus": "developing",
       "createdAt": "2026-03-27T19:08:22.103Z",
-      "updatedAt": "2026-03-27T19:08:22.103Z"
+      "updatedAt": "2026-03-27T19:08:24.616Z"
     },
     {
       "id": "mn99xkpecl3l",
@@ -1928,5 +1928,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:08:24.604Z"
+  "updated": "2026-03-27T19:08:27.139Z"
 }
