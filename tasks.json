@@ -941,6 +941,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1774580903704",
+      "title": "Get Bel flowers!",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-27",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1779,5 +1794,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T03:07:57.405Z"
+  "updated": "2026-03-27T03:08:26.209Z"
 }
