@@ -1541,6 +1541,21 @@
   },
   "cnNotes": [
     {
+      "id": "mn973jnbm58j",
+      "title": "",
+      "speaker": "",
+      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "paper",
+      "url": "",
+      "ideaStatus": "raw",
+      "createdAt": "2026-03-27T17:48:42.167Z",
+      "updatedAt": "2026-03-27T17:48:42.170Z"
+    },
+    {
       "id": "mn8wb0hen41g",
       "title": "Dreams",
       "speaker": "",
@@ -1812,5 +1827,5 @@
     }
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T17:29:18.431Z"
+  "updated": "2026-03-27T17:48:44.672Z"
 }
