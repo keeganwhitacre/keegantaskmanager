@@ -1611,9 +1611,9 @@
       "pinned": false,
       "type": "memo",
       "url": "https://doi.org/10.1037/emo0001664",
-      "ideaStatus": "raw",
+      "ideaStatus": "developing",
       "createdAt": "2026-03-27T12:46:34.802Z",
-      "updatedAt": "2026-03-27T18:28:22.583Z"
+      "updatedAt": "2026-03-27T19:08:54.514Z"
     },
     {
       "id": "mn8blp5bfyve",
@@ -1928,5 +1928,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:08:52.093Z"
+  "updated": "2026-03-27T19:08:59.019Z"
 }
