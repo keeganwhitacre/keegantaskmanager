@@ -668,9 +668,10 @@
       "due": "2026-03-31",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-03-27T15:13:59.530Z"
     },
     {
       "id": "mmr6gmo19n9q",
@@ -1802,5 +1803,6 @@
       "apps": "apps"
     }
   },
-  "updated": "2026-03-27T15:09:11.178Z"
+  "anchorLogs": [],
+  "updated": "2026-03-27T15:14:02.034Z"
 }
