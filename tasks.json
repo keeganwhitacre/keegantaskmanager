@@ -1597,11 +1597,11 @@
       "projectId": "",
       "bodyIsMono": false,
       "pinned": true,
-      "type": "paper",
+      "type": "memo",
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-03-26T18:00:22.447Z",
-      "updatedAt": "2026-03-27T19:26:11.992Z"
+      "updatedAt": "2026-03-27T19:26:16.479Z"
     },
     {
       "id": "mn4wwi8qfjcn",
@@ -1885,5 +1885,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:26:14.493Z"
+  "updated": "2026-03-27T19:26:20.428Z"
 }
