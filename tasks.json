@@ -1513,13 +1513,13 @@
         "hobby"
       ],
       "projectId": "",
-      "bodyIsMono": false,
+      "bodyIsMono": true,
       "pinned": false,
       "type": "memo",
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-27T03:07:01.391Z",
-      "updatedAt": "2026-03-27T03:07:54.904Z"
+      "updatedAt": "2026-03-27T03:09:25.645Z"
     },
     {
       "id": "mn7s2pbj3r14",
@@ -1797,5 +1797,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T03:09:12.251Z"
+  "updated": "2026-03-27T03:09:28.146Z"
 }
