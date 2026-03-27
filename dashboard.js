@@ -386,6 +386,9 @@ function renderHabits() {
   const ds = getDState();
   const now = new Date(); const week = getISOWeek(now); const todayDow = getDayOfWeek();
   const dayLabels = ['M','T','W','T','F','S','S'];
+
+  if (!ds.habits) { ds.habits = {}; }
+  
   if (!ds.habits[week]) { ds.habits[week] = {}; }
   let habitsDirty = false;
   getHabits().forEach(h => { if (!ds.habits[week][h.id]) { ds.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; } });
