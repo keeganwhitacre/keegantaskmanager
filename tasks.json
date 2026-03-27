@@ -1541,6 +1541,21 @@
   },
   "cnNotes": [
     {
+      "id": "mn99xzvb5s9y",
+      "title": "paper y",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-03-27T19:08:22.103Z",
+      "updatedAt": "2026-03-27T19:08:22.103Z"
+    },
+    {
       "id": "mn99xkpecl3l",
       "title": "idea x",
       "speaker": "",
@@ -1913,5 +1928,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:08:20.150Z"
+  "updated": "2026-03-27T19:08:24.604Z"
 }
