@@ -29,8 +29,9 @@ const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const GRID_SIZE = 5;
 
 const CTX_COLORS = {
-  work: '#ff9500', writing: '#af52de', social: '#ff2d55',
-  rest: '#5ac8fa', exercise: '#30d158', lab: '#007aff',
+  work: '#ff9500', writing: '#af52de', reading: '#5856d6',
+  lab: '#007aff', exercise: '#30d158', rest: '#5ac8fa',
+  chores: '#8e8e93', commute: '#ff3b30', leisure: '#ffcc00',
 };
 
 const CAT_COLORS = {
@@ -479,7 +480,9 @@ function renderAffectStep() {
   html += '<div class="wr-affect-ribbon">';
   days.forEach(function(d) {
     var color = d.affect ? affectToColor(d.affect.v, d.affect.a) : 'var(--border-divider)';
-    var ctxColor = d.affect && d.affect.ctx ? (CTX_COLORS[d.affect.ctx] || '#888') : '';
+    var ctxArr = d.affect ? (Array.isArray(d.affect.ctx) ? d.affect.ctx : (d.affect.ctx ? [d.affect.ctx] : [])) : [];
+    var primaryCtx = ctxArr.length > 0 ? ctxArr[0] : null;
+    var ctxColor = primaryCtx ? (CTX_COLORS[primaryCtx] || '#888') : '';
     html += '<div class="wr-ribbon-day">';
     html += '<div class="wr-ribbon-bar" style="background:' + color + ';">';
     if (ctxColor) {
@@ -514,8 +517,10 @@ function renderAffectStep() {
   // Factual summary
   var signals = [];
   if (_weekData.bestDay && _weekData.worstDay && _weekData.bestDay.date !== _weekData.worstDay.date) {
-    signals.push('Best: ' + DAY_NAMES[_weekData.bestDay.dow] + ' (' + VLABELS[_weekData.bestDay.affect.v] + (_weekData.bestDay.affect.ctx ? ', ' + _weekData.bestDay.affect.ctx : '') + ')');
-    signals.push('Lowest: ' + DAY_NAMES[_weekData.worstDay.dow] + ' (' + VLABELS[_weekData.worstDay.affect.v] + (_weekData.worstDay.affect.ctx ? ', ' + _weekData.worstDay.affect.ctx : '') + ')');
+    var bestCtx = Array.isArray(_weekData.bestDay.affect.ctx) ? _weekData.bestDay.affect.ctx : [];
+    var worstCtx = Array.isArray(_weekData.worstDay.affect.ctx) ? _weekData.worstDay.affect.ctx : [];
+    signals.push('Best: ' + DAY_NAMES[_weekData.bestDay.dow] + ' (' + VLABELS[_weekData.bestDay.affect.v] + (bestCtx.length ? ', ' + bestCtx.join('+') : '') + (_weekData.bestDay.affect.social ? ' w/' + _weekData.bestDay.affect.social : '') + ')');
+    signals.push('Lowest: ' + DAY_NAMES[_weekData.worstDay.dow] + ' (' + VLABELS[_weekData.worstDay.affect.v] + (worstCtx.length ? ', ' + worstCtx.join('+') : '') + (_weekData.worstDay.affect.social ? ' w/' + _weekData.worstDay.affect.social : '') + ')');
   }
   // Valence trend
   var affectDays = days.filter(function(d) { return d.affect; });
@@ -727,7 +732,8 @@ function renderPlanStep() {
   // Signals summary
   var signals = [];
   if (_weekData.worstDay && _weekData.worstDay.affect) {
-    signals.push('Lowest valence: ' + DAY_NAMES[_weekData.worstDay.dow] + ' (' + _weekData.worstDay.affect.v.toFixed(1) + (_weekData.worstDay.affect.ctx ? ', ' + _weekData.worstDay.affect.ctx : '') + ')');
+    var planCtx = Array.isArray(_weekData.worstDay.affect.ctx) ? _weekData.worstDay.affect.ctx : [];
+    signals.push('Lowest valence: ' + DAY_NAMES[_weekData.worstDay.dow] + ' (' + _weekData.worstDay.affect.v.toFixed(1) + (planCtx.length ? ', ' + planCtx.join('+') : '') + (_weekData.worstDay.affect.social ? ' w/' + _weekData.worstDay.affect.social : '') + ')');
   }
   if (_weekData.carryOver.length > 0) {
     signals.push(_weekData.carryOver.length + ' task' + (_weekData.carryOver.length !== 1 ? 's' : '') + ' carried over');

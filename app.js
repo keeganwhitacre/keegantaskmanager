@@ -2007,6 +2007,11 @@ const ANCHOR_PROMPTS = {
 let currentAnchorState = '';
 const anchorOverlay = document.getElementById('anchorOverlay');
 
+// --- Dismiss ---
+document.getElementById('anchorDismiss').addEventListener('click', function() {
+  closeAnchor();
+});
+
 document.getElementById('anchorBtn').addEventListener('click', function() {
   anchorOverlay.style.display = 'flex';
   
@@ -2105,15 +2110,16 @@ document.querySelectorAll('.anchor-btn').forEach(btn => {
     document.getElementById('anchorPromptText').textContent = prompts[Math.floor(Math.random() * prompts.length)];
     
     const inputEl = document.getElementById('anchorInput');
-    const depletedBtn = document.getElementById('anchorDepletedBtn');
+    const depletedInput = document.getElementById('anchorDepletedInput');
     const stuckBtn = document.getElementById('anchorStuckBtn');
     
     inputEl.style.display = 'none';
-    depletedBtn.style.display = 'none';
+    depletedInput.style.display = 'none';
     stuckBtn.style.display = 'none';
     
     if (currentAnchorState === 'depleted') {
-      depletedBtn.style.display = 'block';
+      depletedInput.style.display = 'block';
+      setTimeout(() => depletedInput.focus(), 100);
     } else if (currentAnchorState === 'over') { 
       stuckBtn.style.display = 'block';
     } else {
@@ -2133,10 +2139,13 @@ document.getElementById('anchorInput').addEventListener('keydown', function(e) {
   }
 });
 
-document.getElementById('anchorDepletedBtn').addEventListener('click', function() {
-  saveAnchorLog("[Deep Leisure Executed]");
-  closeAnchor();
-  showToast("Recharging.");
+document.getElementById('anchorDepletedInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim() !== '') {
+    saveAnchorLog(this.value.trim());
+    this.value = '';
+    closeAnchor();
+    showToast("Noted. Rest.");
+  }
 });
 
 document.getElementById('anchorStuckBtn').addEventListener('click', function() {
@@ -2172,4 +2181,8 @@ function saveAnchorLog(text) {
 
 function closeAnchor() {
   anchorOverlay.style.display = 'none';
+  var inputEl = document.getElementById('anchorInput');
+  var depletedInput = document.getElementById('anchorDepletedInput');
+  if (inputEl) inputEl.value = '';
+  if (depletedInput) depletedInput.value = '';
 }

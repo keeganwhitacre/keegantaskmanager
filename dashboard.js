@@ -87,9 +87,14 @@ const RESEARCH_PROMPTS = [
 // Affect grid constants
 const GRID_SIZE = 5; // 5x5 grid, values 0-4
 const CTX_COLORS = {
-  work: '#ff9500', writing: '#af52de', social: '#ff2d55',
-  rest: '#5ac8fa', exercise: '#30d158', lab: '#007aff',
+  work: '#ff9500', writing: '#af52de', reading: '#5856d6',
+  lab: '#007aff', exercise: '#30d158', rest: '#5ac8fa',
+  chores: '#8e8e93', commute: '#ff3b30', leisure: '#ffcc00',
   none: 'var(--text-muted)'
+};
+const SOCIAL_COLORS = {
+  alone: '#8e8e93', partner: '#ff2d55', friends: '#ff9500',
+  colleagues: '#007aff', family: '#30d158', strangers: '#5ac8fa',
 };
 
 // ── TIME HELPERS ──
@@ -164,8 +169,10 @@ function renderReflection() {
 
 // ══════════════════════════════════════════════════════════════════
 // AFFECT GRID — 2D valence x arousal
-// Data: ds.affect = { "YYYY-MM-DD": { v: 0-4, a: 0-4, ctx: "work"|null } }
-// Backward compat: ds.moods = { "YYYY-MM-DD": 1-5 } migrated on init
+// Data: ds.affect = { "YYYY-MM-DD": [{ v: 0-4, a: 0-4, ctx: ["work","lab"], social: "alone"|null, t }] }
+// ctx is now an array of activity tags (multi-select)
+// social is a separate single-select companion field
+// Backward compat: old ctx:"string" migrated to ctx:["string"], old "social" ctx → social:"friends"
 // ══════════════════════════════════════════════════════════════════
 
 function migrateOldMoods() {
@@ -176,7 +183,7 @@ function migrateOldMoods() {
     Object.keys(ds.moods).forEach(function(dateStr) {
       if (!ds.affect[dateStr]) {
         var oldVal = ds.moods[dateStr]; // 1-5
-        ds.affect[dateStr] = [{ v: oldVal - 1, a: 2, ctx: null, t: dateStr + 'T12:00:00' }];
+        ds.affect[dateStr] = [{ v: oldVal - 1, a: 2, ctx: [], social: null, t: dateStr + 'T12:00:00' }];
       }
     });
     saveDash(false);
@@ -185,9 +192,38 @@ function migrateOldMoods() {
   Object.keys(ds.affect).forEach(function(dateStr) {
     var entry = ds.affect[dateStr];
     if (entry && !Array.isArray(entry)) {
-      ds.affect[dateStr] = [{ v: entry.v, a: entry.a, ctx: entry.ctx || null, t: entry.t || dateStr + 'T12:00:00' }];
+      ds.affect[dateStr] = [{ v: entry.v, a: entry.a, ctx: entry.ctx || [], social: entry.social || null, t: entry.t || dateStr + 'T12:00:00' }];
     }
   });
+  // Migrate ctx string → array, old "social" ctx → social field
+  var needsSave = false;
+  Object.keys(ds.affect).forEach(function(dateStr) {
+    var arr = ds.affect[dateStr];
+    if (!Array.isArray(arr)) return;
+    arr.forEach(function(entry) {
+      // ctx was a single string → convert to array
+      if (typeof entry.ctx === 'string') {
+        if (entry.ctx === 'social') {
+          // "social" was an activity tag in old schema — move to social field
+          entry.ctx = [];
+          if (!entry.social) entry.social = 'friends';
+        } else if (entry.ctx) {
+          entry.ctx = [entry.ctx];
+        } else {
+          entry.ctx = [];
+        }
+        needsSave = true;
+      } else if (entry.ctx === null || entry.ctx === undefined) {
+        entry.ctx = [];
+        needsSave = true;
+      }
+      if (entry.social === undefined) {
+        entry.social = null;
+        needsSave = true;
+      }
+    });
+  });
+  if (needsSave) saveDash(false);
 }
 
 // Get the latest affect entry for a date (returns object or null)
@@ -237,7 +273,11 @@ function renderAffect() {
   }
 
   document.querySelectorAll('.affect-ctx-chip').forEach(function(chip) {
-    chip.classList.toggle('active', !!(entry && entry.ctx === chip.dataset.ctx));
+    var ctxArr = (entry && Array.isArray(entry.ctx)) ? entry.ctx : [];
+    chip.classList.toggle('active', ctxArr.indexOf(chip.dataset.ctx) !== -1);
+  });
+  document.querySelectorAll('.affect-social-chip').forEach(function(chip) {
+    chip.classList.toggle('active', !!(entry && entry.social === chip.dataset.social));
   });
 
   var statusEl = document.getElementById('dAffectStatus');
@@ -279,7 +319,7 @@ function renderAffect() {
     } else {
       miniDot.style.background = 'var(--border-divider)';
     }
-    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') + (dayEntries.length > 1 ? ' (' + dayEntries.length + ' logs)' : '') : '');
+    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + ((ae.ctx && ae.ctx.length) ? ' (' + ae.ctx.join(', ') + ')' : '') + (ae.social ? ' w/' + ae.social : '') + (dayEntries.length > 1 ? ' (' + dayEntries.length + ' logs)' : '') : '');
     histEl.appendChild(miniDot);
   }
 }
@@ -316,13 +356,13 @@ function handleAffectGridInput(e, grid) {
   }
 
   if (shouldAppend && entries.length > 0) {
-    entries.push({ v: v, a: a, ctx: null, t: now });
+    entries.push({ v: v, a: a, ctx: [], social: null, t: now });
   } else if (entries.length > 0) {
     entries[entries.length - 1].v = v;
     entries[entries.length - 1].a = a;
     entries[entries.length - 1].t = now;
   } else {
-    entries.push({ v: v, a: a, ctx: null, t: now });
+    entries.push({ v: v, a: a, ctx: [], social: null, t: now });
   }
 
   // Backward compat
@@ -488,12 +528,21 @@ function renderInsights() {
     html += '</div>';
   }
 
-  // 4. CONTEXT PROFILES
-  var ctxDates = affectDates.filter(function(d) { return daily[d].affect.ctx; });
-  if (ctxDates.length >= 5) {
+  // 4. ACTIVITY PROFILES
+  var actDates = affectDates.filter(function(d) { var ae = daily[d].affect; return ae.ctx && ae.ctx.length > 0; });
+  if (actDates.length >= 5) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Affect × Context <span class="ins-sub">(avg valence & arousal by activity)</span></div>';
-    html += renderContextProfiles(daily, ctxDates);
+    html += '<div class="ins-label">Affect × Activity <span class="ins-sub">(avg valence & arousal by activity)</span></div>';
+    html += renderContextProfiles(daily, actDates);
+    html += '</div>';
+  }
+
+  // 4b. SOCIAL PROFILES
+  var socDates = affectDates.filter(function(d) { return daily[d].affect.social; });
+  if (socDates.length >= 5) {
+    html += '<div class="ins-section">';
+    html += '<div class="ins-label">Affect × Company <span class="ins-sub">(avg valence & arousal by who you\'re with)</span></div>';
+    html += renderSocialProfiles(daily, socDates);
     html += '</div>';
   }
 
@@ -557,7 +606,7 @@ function renderAffectCalendar(daily) {
       var isFuture = cursor > today;
       var bg = ae ? affectToColor(ae.v, ae.a) : 'var(--border-divider)';
       var cls = 'ins-cal-cell' + (isToday ? ' today' : '') + (isFuture ? ' future' : '');
-      var title = dStr + (ae ? ' — valence:' + ae.v + ' arousal:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') : '');
+      var title = dStr + (ae ? ' — valence:' + ae.v + ' arousal:' + ae.a + ((ae.ctx && ae.ctx.length) ? ' (' + ae.ctx.join(', ') + ')' : '') + (ae.social ? ' w/' + ae.social : '') : '');
       html += '<div class="' + cls + '" style="background:' + (isFuture ? 'transparent' : bg) + '" title="' + title + '"></div>';
       cursor.setDate(cursor.getDate() + 1);
     }
@@ -616,8 +665,11 @@ function renderAffectScatter(daily, affectDates) {
     var ae = daily[dateStr].affect;
     var px = pad + (ae.v / (GRID_SIZE - 1)) * innerW;
     var py = pad + (1 - ae.a / (GRID_SIZE - 1)) * innerH;
-    var color = ae.ctx ? (CTX_COLORS[ae.ctx] || CTX_COLORS.none) : CTX_COLORS.none;
-    if (ae.ctx) usedCtx[ae.ctx] = color;
+    var ctxArr = Array.isArray(ae.ctx) ? ae.ctx : (ae.ctx ? [ae.ctx] : []);
+    var primaryCtx = ctxArr.length > 0 ? ctxArr[0] : null;
+    var color = primaryCtx ? (CTX_COLORS[primaryCtx] || CTX_COLORS.none) : CTX_COLORS.none;
+    if (primaryCtx) usedCtx[primaryCtx] = color;
+    ctxArr.slice(1).forEach(function(c) { if (CTX_COLORS[c]) usedCtx[c] = CTX_COLORS[c]; });
     var opacity = Math.max(0.2, 1 - ((recent.length - i) / recent.length) * 0.7);
     svg += '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="5" fill="'+color+'" opacity="'+opacity.toFixed(2)+'" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>';
   });
@@ -733,13 +785,16 @@ function renderVariability(daily, affectDates) {
   return html;
 }
 
-// ── CONTEXT PROFILES ──
-function renderContextProfiles(daily, ctxDates) {
+// ── ACTIVITY PROFILES (multi-select ctx) ──
+function renderContextProfiles(daily, actDates) {
   var profiles = {};
-  ctxDates.forEach(function(d) {
-    var ae = daily[d].affect, ctx = ae.ctx;
-    if (!profiles[ctx]) profiles[ctx] = { vSum:0, aSum:0, count:0 };
-    profiles[ctx].vSum += ae.v; profiles[ctx].aSum += ae.a; profiles[ctx].count++;
+  actDates.forEach(function(d) {
+    var ae = daily[d].affect;
+    var ctxArr = Array.isArray(ae.ctx) ? ae.ctx : (ae.ctx ? [ae.ctx] : []);
+    ctxArr.forEach(function(ctx) {
+      if (!profiles[ctx]) profiles[ctx] = { vSum:0, aSum:0, count:0 };
+      profiles[ctx].vSum += ae.v; profiles[ctx].aSum += ae.a; profiles[ctx].count++;
+    });
   });
 
   var keys = Object.keys(profiles).sort(function(a,b){ return profiles[b].count - profiles[a].count; });
@@ -753,6 +808,38 @@ function renderContextProfiles(daily, ctxDates) {
 
     html += '<div class="ins-ctx-row">';
     html += '<div class="ins-ctx-label">'+esc(ctx)+'</div>';
+    html += '<div class="ins-ctx-bar-wrap">';
+    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,vPct).toFixed(0)+'%;background:'+color+';opacity:0.8;">v '+avgV.toFixed(1)+'</div>';
+    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,aPct).toFixed(0)+'%;background:'+color+';opacity:0.45;">a '+avgA.toFixed(1)+'</div>';
+    html += '</div>';
+    html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);width:20px;text-align:right;">'+p.count+'d</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<div class="ins-note" style="margin-top:8px;">Solid = avg valence, faded = avg arousal. Days with multiple activities count toward each.</div>';
+  return html;
+}
+
+// ── SOCIAL PROFILES ──
+function renderSocialProfiles(daily, socDates) {
+  var profiles = {};
+  socDates.forEach(function(d) {
+    var ae = daily[d].affect, soc = ae.social;
+    if (!profiles[soc]) profiles[soc] = { vSum:0, aSum:0, count:0 };
+    profiles[soc].vSum += ae.v; profiles[soc].aSum += ae.a; profiles[soc].count++;
+  });
+
+  var keys = Object.keys(profiles).sort(function(a,b){ return profiles[b].count - profiles[a].count; });
+  var html = '<div class="ins-context-profile">';
+  keys.forEach(function(soc) {
+    var p = profiles[soc];
+    if (p.count < 2) return;
+    var avgV = p.vSum/p.count, avgA = p.aSum/p.count;
+    var vPct = (avgV/(GRID_SIZE-1))*100, aPct = (avgA/(GRID_SIZE-1))*100;
+    var color = SOCIAL_COLORS[soc] || CTX_COLORS.none;
+
+    html += '<div class="ins-ctx-row">';
+    html += '<div class="ins-ctx-label">'+esc(soc)+'</div>';
     html += '<div class="ins-ctx-bar-wrap">';
     html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,vPct).toFixed(0)+'%;background:'+color+';opacity:0.8;">v '+avgV.toFixed(1)+'</div>';
     html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,aPct).toFixed(0)+'%;background:'+color+';opacity:0.45;">a '+avgA.toFixed(1)+'</div>';
@@ -959,7 +1046,11 @@ function renderSnapshot() {
     var vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
     var aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
     var affectStr = 'feeling <span class="snap-affect" style="color:' + affectToColor(ae.v, ae.a) + '">' + vLabels[ae.v] + ', ' + aLabels[ae.a] + '</span>';
-    if (ae.ctx) affectStr += ' <span class="snap-dim">(' + esc(ae.ctx) + ')</span>';
+    var ctxArr = Array.isArray(ae.ctx) ? ae.ctx : [];
+    var ctxParts = [];
+    if (ctxArr.length > 0) ctxParts.push(ctxArr.join(', '));
+    if (ae.social) ctxParts.push('w/' + ae.social);
+    if (ctxParts.length > 0) affectStr += ' <span class="snap-dim">(' + esc(ctxParts.join(' · ')) + ')</span>';
     parts.push(affectStr);
   }
 
@@ -1102,8 +1193,8 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
   grid.addEventListener('pointerup', function() { isDrawing = false; });
   grid.addEventListener('pointercancel', function() { isDrawing = false; });
 
-  // Context chips
-  document.getElementById('dAffectContextRow').addEventListener('click', function(e) {
+  // Activity chips (multi-select)
+  document.getElementById('dAffectActivityRow').addEventListener('click', function(e) {
     var chip = e.target.closest('.affect-ctx-chip'); if (!chip) return;
     var ctx = chip.dataset.ctx;
     var ds = getDState();
@@ -1111,7 +1202,22 @@ function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
     var today = getTodayStr();
     var latest = getLatestAffect(today);
     if (!latest) return;
-    latest.ctx = (latest.ctx === ctx) ? null : ctx;
+    if (!Array.isArray(latest.ctx)) latest.ctx = latest.ctx ? [latest.ctx] : [];
+    var idx = latest.ctx.indexOf(ctx);
+    if (idx !== -1) { latest.ctx.splice(idx, 1); } else { latest.ctx.push(ctx); }
+    saveDash(true); renderAffect(); renderInsights(); renderSnapshot();
+  });
+
+  // Social chips (single-select)
+  document.getElementById('dAffectSocialRow').addEventListener('click', function(e) {
+    var chip = e.target.closest('.affect-social-chip'); if (!chip) return;
+    var social = chip.dataset.social;
+    var ds = getDState();
+    if (!ds.affect) ds.affect = {};
+    var today = getTodayStr();
+    var latest = getLatestAffect(today);
+    if (!latest) return;
+    latest.social = (latest.social === social) ? null : social;
     saveDash(true); renderAffect(); renderInsights(); renderSnapshot();
   });
 

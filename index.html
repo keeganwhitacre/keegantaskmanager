@@ -434,13 +434,30 @@
           <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
         </div>
       </div>
-      <div class="affect-context-row" id="dAffectContextRow">
-        <div class="affect-ctx-chip" data-ctx="work">Work</div>
-        <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
-        <div class="affect-ctx-chip" data-ctx="social">Social</div>
-        <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
-        <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
-        <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
+      <div class="affect-ctx-section">
+        <div class="affect-ctx-label">activity</div>
+        <div class="affect-context-row" id="dAffectActivityRow">
+          <div class="affect-ctx-chip" data-ctx="work">Work</div>
+          <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
+          <div class="affect-ctx-chip" data-ctx="reading">Reading</div>
+          <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
+          <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
+          <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
+          <div class="affect-ctx-chip" data-ctx="chores">Chores</div>
+          <div class="affect-ctx-chip" data-ctx="commute">Commute</div>
+          <div class="affect-ctx-chip" data-ctx="leisure">Leisure</div>
+        </div>
+      </div>
+      <div class="affect-ctx-section">
+        <div class="affect-ctx-label">who with</div>
+        <div class="affect-context-row" id="dAffectSocialRow">
+          <div class="affect-social-chip" data-social="alone">Alone</div>
+          <div class="affect-social-chip" data-social="partner">Partner</div>
+          <div class="affect-social-chip" data-social="friends">Friends</div>
+          <div class="affect-social-chip" data-social="colleagues">Colleagues</div>
+          <div class="affect-social-chip" data-social="family">Family</div>
+          <div class="affect-social-chip" data-social="strangers">Strangers</div>
+        </div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div class="affect-mini-history" id="dAffectHistory"></div>
@@ -724,6 +741,7 @@
 </div>
 
 <div id="anchorOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(17, 20, 24, 0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+  <button id="anchorDismiss" style="position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-muted, #8e8e93); font-size:28px; cursor:pointer; padding:8px; line-height:1; z-index:10; -webkit-tap-highlight-color:transparent;">✕</button>
   <div id="anchorHoldView" style="display:flex; flex-direction:column; align-items:center; width: 100%; max-width: 320px;">
     <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:32px; letter-spacing:0.1em; text-transform:uppercase;">Pattern Interrupt</div>
     <div id="anchorSliderTrack" style="width:100%; height:64px; background:var(--bg-card, #1c2026); border:1px solid var(--border-divider, #3a3b42); border-radius:32px; position:relative; overflow:hidden; display:flex; align-items:center; padding:0 4px;">
@@ -745,7 +763,7 @@
   <div id="anchorPromptView" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
     <div id="anchorPromptText" style="font-size:20px; font-weight:500; line-height:1.4; margin-bottom:40px; color:#fff;"></div>
     <input type="text" id="anchorInput" style="background:transparent; border:none; border-bottom:1px solid var(--border-divider, #3a3b42); text-align:center; font-size:18px; width:100%; padding-bottom:12px; color:#fff; display:none; outline:none;" placeholder="Type here..." autocomplete="off">
-    <button id="anchorDepletedBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--bg-card); color:#fff; border:1px solid var(--border-divider); border-radius:12px;">Log 15m of Deep Leisure</button>
+    <input type="text" id="anchorDepletedInput" style="background:transparent; border:none; border-bottom:1px solid var(--border-divider, #3a3b42); text-align:center; font-size:18px; width:100%; padding-bottom:12px; color:#fff; display:none; outline:none;" placeholder="What did you notice?" autocomplete="off">
     <button id="anchorStuckBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--accent); color:#111418; border:none; border-radius:12px; font-weight:600;">I have the physical movement in my head</button>
   </div>
 </div>

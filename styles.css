@@ -1720,11 +1720,25 @@ body.deep-focus-mode #pomoDisplay {
 .affect-x-right { right: 0; top: 50%; transform: translateY(-50%); }
 
 /* Context chips */
+.affect-ctx-section {
+  margin-bottom: 8px;
+}
+.affect-ctx-section:last-child {
+  margin-bottom: 10px;
+}
+.affect-ctx-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  opacity: 0.6;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
 .affect-context-row {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
 }
 .affect-ctx-chip {
   font-family: var(--font-mono);
@@ -1742,6 +1756,24 @@ body.deep-focus-mode #pomoDisplay {
 .affect-ctx-chip.active {
   background: var(--accent);
   border-color: var(--accent);
+  color: #fff;
+}
+.affect-social-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-input);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.affect-social-chip.active {
+  background: #ff2d55;
+  border-color: #ff2d55;
   color: #fff;
 }
 
