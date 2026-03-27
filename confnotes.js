@@ -881,12 +881,12 @@ document.addEventListener('click', function(e) {
         id: uid(),
         title: targetTitle,
         speaker: '',
-        body: PAPER_TEMPLATE, // Uses your exact template from the top of the file!
+        body: '',             // Leaves the body blank
         tags: [],
         projectId: '',
         bodyIsMono: false,
         pinned: false,
-        type: 'paper', 
+        type: 'memo',         // 'memo' is your app's internal key for a standard Note
         url: '',
         ideaStatus: '',
         createdAt: new Date().toISOString(),
