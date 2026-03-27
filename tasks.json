@@ -1487,7 +1487,7 @@
   "cnNotes": [
     {
       "id": "mn8blp5bfyve",
-      "title": "Styff",
+      "title": "Stuff",
       "speaker": "",
       "body": "",
       "tags": [],
@@ -1498,7 +1498,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-27T03:07:01.391Z",
-      "updatedAt": "2026-03-27T03:07:04.786Z"
+      "updatedAt": "2026-03-27T03:07:07.483Z"
     },
     {
       "id": "mn7s2pbj3r14",
@@ -1776,5 +1776,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T03:07:07.288Z"
+  "updated": "2026-03-27T03:07:09.985Z"
 }
