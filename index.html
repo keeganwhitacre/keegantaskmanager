@@ -307,6 +307,12 @@
     <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
     <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
 
+    <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 12px 0; align-items: center; gap: 8px;">
+      <span class="cn-url-label" style="font-size:14px; opacity:0.6;">🔗</span>
+      <input class="cn-detail-source-input" id="cnUrlInput" type="text" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
+      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; text-decoration:none; font-size:12px; background:var(--accent-faded, rgba(0,122,255,0.1)); color:var(--accent, #007aff); padding:4px 10px; border-radius:6px; font-weight:600;">Open</a>
+    </div>
+    
     <details class="cn-detail-meta-drawer" id="cnTypeSettingsDrawer" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
       <summary class="cn-detail-meta-toggle">Note Type Settings</summary>
       <div class="cn-detail-meta-content">
@@ -314,11 +320,6 @@
           <div class="cn-type-chip active" data-type="memo">✎ Note</div>
           <div class="cn-type-chip" data-type="paper">📄 Paper</div>
           <div class="cn-type-chip" data-type="idea">💡 Idea</div>
-        </div>
-
-        <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 8px 0;">
-          <span class="cn-url-label">🔗</span>
-          <input class="cn-detail-source-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
         </div>
 
         <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none; padding: 0 0 10px 0;">
