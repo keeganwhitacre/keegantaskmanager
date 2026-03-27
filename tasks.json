@@ -1599,9 +1599,9 @@
       "pinned": true,
       "type": "paper",
       "url": "",
-      "ideaStatus": "raw",
+      "ideaStatus": "",
       "createdAt": "2026-03-26T18:00:22.447Z",
-      "updatedAt": "2026-03-27T19:12:47.993Z"
+      "updatedAt": "2026-03-27T19:26:11.992Z"
     },
     {
       "id": "mn4wwi8qfjcn",
@@ -1885,5 +1885,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:23:49.794Z"
+  "updated": "2026-03-27T19:26:14.493Z"
 }
