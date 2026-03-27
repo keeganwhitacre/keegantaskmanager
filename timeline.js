@@ -15,9 +15,8 @@ const GRID_SIZE = 5;
 const LOAD_INCREMENT = 4;
 
 const CTX_COLORS = {
-  work: '#ff9500', writing: '#af52de', reading: '#5856d6',
-  lab: '#007aff', exercise: '#30d158', rest: '#5ac8fa',
-  chores: '#8e8e93', commute: '#ff3b30', leisure: '#ffcc00',
+  work: '#ff9500', writing: '#af52de', social: '#ff2d55',
+  rest: '#5ac8fa', exercise: '#30d158', lab: '#007aff',
 };
 
 const CAT_COLORS = {
@@ -428,9 +427,7 @@ function renderDayCard(day, idx) {
   // Affect orb — with multi-log ring
   if (day.affect) {
     const color = affectToColor(day.affect.v, day.affect.a);
-    const ctxArr = Array.isArray(day.affect.ctx) ? day.affect.ctx : (day.affect.ctx ? [day.affect.ctx] : []);
-    const primaryCtx = ctxArr.length > 0 ? ctxArr[0] : null;
-    const ctxColor = primaryCtx ? CTX_COLORS[primaryCtx] || '' : '';
+    const ctxColor = day.affect.ctx ? CTX_COLORS[day.affect.ctx] || '' : '';
     var multiRing = hasMultiAffect ? 'box-shadow:0 0 12px ' + color + '44, inset 0 0 0 2px rgba(255,255,255,0.35);' : 'box-shadow:0 0 12px ' + color + '44;';
     html += '<div class="tl-orb" style="background:radial-gradient(circle at 35% 35%, ' + color + 'ee, ' + color + '88);' + multiRing + (ctxColor ? 'border-color:' + ctxColor + '88;' : '') + '">';
     if (hasMultiAffect) {
@@ -445,12 +442,8 @@ function renderDayCard(day, idx) {
   html += '<div class="tl-day-summary">';
   if (day.affect) {
     html += '<div class="tl-day-affect-label">' + _affectLabel(day.affect.v, day.affect.a);
-    var tlCtxArr = Array.isArray(day.affect.ctx) ? day.affect.ctx : (day.affect.ctx ? [day.affect.ctx] : []);
-    tlCtxArr.forEach(function(c) {
-      html += ' <span class="tl-ctx-tag" style="background:' + (CTX_COLORS[c] || '#888') + '15;color:' + (CTX_COLORS[c] || '#888') + ';">' + esc(c) + '</span>';
-    });
-    if (day.affect.social) {
-      html += ' <span class="tl-ctx-tag" style="background:#ff2d5515;color:#ff2d55;">' + esc(day.affect.social) + '</span>';
+    if (day.affect.ctx) {
+      html += ' <span class="tl-ctx-tag" style="background:' + (CTX_COLORS[day.affect.ctx] || '#888') + '15;color:' + (CTX_COLORS[day.affect.ctx] || '#888') + ';">' + esc(day.affect.ctx) + '</span>';
     }
     html += '</div>';
   } else {
