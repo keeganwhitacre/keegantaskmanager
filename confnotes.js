@@ -561,31 +561,35 @@ function toggleMdPreview(mode) {
       '<a href="#" class="internal-note-link" data-notetitle="$1">[[ $1 ]]</a>'
     );
 
-    // 2. THEN parse markdown
-    previewEl.innerHTML = marked.parse(processedContent, { breaks: true, gfm: true });
-
+    // 2. Parse markdown
+    let finalHtml = marked.parse(processedContent, { breaks: true, gfm: true });
+    
     // 3. Auto-inject the Paper URL into the preview!
     const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
     const isPaper = activeType && activeType.dataset.type === 'paper';
-    const urlVal = document.getElementById('cnUrlInput').value.trim();
+    const urlInput = document.getElementById('cnUrlInput');
+    const urlVal = urlInput ? urlInput.value.trim() : '';
     
     if (isPaper && urlVal) {
         // Automatically handle DOIs vs full links
         const linkHref = urlVal.startsWith('http') ? urlVal : 'https://doi.org/' + urlVal;
-        finalHtml = `<div style="margin-bottom: 16px;"><a href="${linkHref}" target="_blank" class="cn-md-paper-link">🔗 Open Source Document</a></div>` + finalHtml;
+        finalHtml = '<div style="margin-bottom: 16px;"><a href="' + linkHref + '" target="_blank" class="cn-md-paper-link">🔗 Open Source Document</a></div>' + finalHtml;
     }
 
     previewEl.innerHTML = finalHtml;
-    
-    // Open links in new tab
+
+    // Open ALL links in new tab
     previewEl.querySelectorAll('a').forEach(function(a) {
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener');
     });
+
+    // 4. The critical UI toggles that got lost!
     bodyEl.style.display = 'none';
     previewEl.style.display = 'block';
     toggleBtn.textContent = 'edit';
     toggleBtn.classList.add('md-active');
+
   } else {
     cnMdPreview = false;
     previewEl.style.display = 'none';
