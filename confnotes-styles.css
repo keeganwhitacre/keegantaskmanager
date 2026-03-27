@@ -622,3 +622,40 @@ body.deep-focus-mode #confNotesView { display: none !important; }
 .cn-md-paper-link:active {
     transform: scale(0.98);
 }
+
+/* ── NOTES GRID VIEW ("APPLE NOTES" STYLE) ── */
+.cn-grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    align-items: start;
+}
+
+.cn-grid-view .cn-note-card {
+    margin-bottom: 0;
+    height: 160px; /* Forces all boxes to be uniform height */
+    display: flex;
+    flex-direction: column;
+}
+
+.cn-grid-view .cn-card-title {
+    white-space: normal; /* Allow title to wrap to two lines in grid mode */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.cn-grid-view .cn-card-preview {
+    flex: 1; /* Pushes the meta tags to the absolute bottom of the card */
+    -webkit-line-clamp: 3; /* Shows slightly more text preview in box mode */
+}
+
+.cn-grid-view .cn-card-meta {
+    margin-top: auto;
+    overflow: hidden; /* Prevent long tags from breaking the box layout */
+    flex-wrap: nowrap;
+}
+
+.cn-grid-view .cn-card-time {
+    display: none; /* Hide timestamp in grid mode to keep boxes perfectly clean */
+}
