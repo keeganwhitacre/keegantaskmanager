@@ -1258,7 +1258,7 @@
           true,
           true,
           true,
-          false,
+          true,
           false,
           false
         ],
@@ -1839,5 +1839,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T14:14:57.275Z"
+  "updated": "2026-03-27T14:15:06.313Z"
 }
