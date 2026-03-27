@@ -1544,16 +1544,16 @@
       "id": "mn99x9cbt88r",
       "title": "dreaming",
       "speaker": "",
-      "body": "",
+      "body": "Testing this to ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
       "type": "memo",
-      "url": "",
-      "ideaStatus": "",
+      "url": "https://doi.org/10.1037/emo0001664",
+      "ideaStatus": "raw",
       "createdAt": "2026-03-27T19:07:47.723Z",
-      "updatedAt": "2026-03-27T19:07:47.723Z"
+      "updatedAt": "2026-03-27T19:07:54.659Z"
     },
     {
       "id": "mn973jnbm58j",
@@ -1898,5 +1898,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:07:50.225Z"
+  "updated": "2026-03-27T19:07:57.160Z"
 }
