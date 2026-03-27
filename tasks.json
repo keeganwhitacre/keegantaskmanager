@@ -1551,9 +1551,9 @@
       "pinned": false,
       "type": "paper",
       "url": "https://doi.org/10.1037/emo0001664",
-      "ideaStatus": "raw",
+      "ideaStatus": "",
       "createdAt": "2026-03-27T17:48:42.167Z",
-      "updatedAt": "2026-03-27T19:11:25.407Z"
+      "updatedAt": "2026-03-27T19:16:27.056Z"
     },
     {
       "id": "mn8wb0hen41g",
@@ -1885,5 +1885,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:12:50.494Z"
+  "updated": "2026-03-27T19:16:30.478Z"
 }
