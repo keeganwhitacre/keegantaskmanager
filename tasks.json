@@ -1541,10 +1541,25 @@
   },
   "cnNotes": [
     {
+      "id": "mn99xkpecl3l",
+      "title": "idea x",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-03-27T19:08:02.450Z",
+      "updatedAt": "2026-03-27T19:08:02.450Z"
+    },
+    {
       "id": "mn99x9cbt88r",
       "title": "dreaming",
       "speaker": "",
-      "body": "Testing this to ",
+      "body": "Testing this to [[idea x]]",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1553,7 +1568,7 @@
       "url": "https://doi.org/10.1037/emo0001664",
       "ideaStatus": "raw",
       "createdAt": "2026-03-27T19:07:47.723Z",
-      "updatedAt": "2026-03-27T19:07:54.659Z"
+      "updatedAt": "2026-03-27T19:08:00.743Z"
     },
     {
       "id": "mn973jnbm58j",
@@ -1898,5 +1913,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:07:57.160Z"
+  "updated": "2026-03-27T19:08:04.952Z"
 }
