@@ -1182,12 +1182,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -1303,6 +1297,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -1824,8 +1824,64 @@
       "personal": "personal",
       "hobby": "hobby",
       "apps": "apps"
-    }
+    },
+    "customHabits": [
+      {
+        "id": "sleep",
+        "label": "Slept 7h+",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "read",
+        "label": "Read",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "lift",
+        "label": "Lifted",
+        "bad": false,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "doom",
+        "label": "Doom scrolled",
+        "bad": true,
+        "days": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:06:58.240Z"
+  "updated": "2026-03-27T19:07:20.070Z"
 }
