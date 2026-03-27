@@ -1546,21 +1546,6 @@
   },
   "cnNotes": [
     {
-      "id": "mn9c8u73k8b5",
-      "title": "",
-      "speaker": "",
-      "body": "",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-03-27T20:12:47.200Z",
-      "updatedAt": "2026-03-27T20:12:47.200Z"
-    },
-    {
       "id": "mn973jnbm58j",
       "title": "Emotion-specific verbal fluency relates to the intensity and variety of emotional experiences but not their specificity",
       "speaker": "Wormwood et al.",
@@ -1912,5 +1897,5 @@
       "text": "I think it’s in my hands like they need something to do. Feels warm?"
     }
   ],
-  "updated": "2026-03-27T20:12:56.835Z"
+  "updated": "2026-03-27T20:39:06.350Z"
 }
