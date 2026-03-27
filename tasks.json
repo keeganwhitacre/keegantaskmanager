@@ -1597,11 +1597,11 @@
       "projectId": "",
       "bodyIsMono": false,
       "pinned": true,
-      "type": "memo",
-      "url": "https://doi.org/10.1037/emo0001664",
+      "type": "paper",
+      "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-26T18:00:22.447Z",
-      "updatedAt": "2026-03-27T18:44:15.581Z"
+      "updatedAt": "2026-03-27T19:12:47.993Z"
     },
     {
       "id": "mn4wwi8qfjcn",
@@ -1885,5 +1885,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:12:41.085Z"
+  "updated": "2026-03-27T19:12:50.494Z"
 }
