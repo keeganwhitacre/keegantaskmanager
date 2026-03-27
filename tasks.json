@@ -1505,6 +1505,21 @@
   },
   "cnNotes": [
     {
+      "id": "mn8wb0hen41g",
+      "title": "Dreams",
+      "speaker": "",
+      "body": "## ",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "raw",
+      "createdAt": "2026-03-27T12:46:34.802Z",
+      "updatedAt": "2026-03-27T12:46:43.244Z"
+    },
+    {
       "id": "mn8blp5bfyve",
       "title": "Stuff",
       "speaker": "",
@@ -1798,5 +1813,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T12:46:34.500Z"
+  "updated": "2026-03-27T12:46:45.747Z"
 }
