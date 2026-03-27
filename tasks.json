@@ -946,6 +946,7 @@
       "id": "1774580903704",
       "title": "Get Bel flowers!",
       "categories": [
+        "bel",
         "personal"
       ],
       "status": "active",
@@ -955,7 +956,9 @@
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -1794,5 +1797,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T03:08:26.209Z"
+  "updated": "2026-03-27T03:08:38.046Z"
 }
