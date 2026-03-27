@@ -979,6 +979,25 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mn9bgsvndjh4",
+      "title": "Constructionist Journal Club Paper",
+      "categories": [
+        "lab",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-04-02",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-03-27T19:51:00.874Z"
     }
   ],
   "projects": [
@@ -1885,5 +1904,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:50:31.610Z"
+  "updated": "2026-03-27T19:51:03.378Z"
 }
