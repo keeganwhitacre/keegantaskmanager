@@ -766,7 +766,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-25",
+      "due": "2026-03-27",
       "projectId": "mmdklg8dgrze",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1813,5 +1813,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T12:49:41.958Z"
+  "updated": "2026-03-27T14:14:04.380Z"
 }
