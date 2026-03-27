@@ -1730,10 +1730,10 @@
       "projectId": "",
       "bodyIsMono": false,
       "createdAt": "2026-03-14T13:23:24.534Z",
-      "updatedAt": "2026-03-27T19:12:33.039Z",
+      "updatedAt": "2026-03-27T19:16:31.502Z",
       "pinned": false,
       "type": "memo",
-      "ideaStatus": "raw"
+      "ideaStatus": ""
     },
     {
       "id": "mmpeyq6r3808",
@@ -1885,5 +1885,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:16:30.478Z"
+  "updated": "2026-03-27T19:16:35.451Z"
 }
