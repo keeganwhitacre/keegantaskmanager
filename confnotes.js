@@ -344,6 +344,8 @@ function openCNDetail(id) {
   var urlInput = document.getElementById('cnUrlInput');
   var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
   var topbarTitle = document.getElementById('cnDetailTitle');
+  // Clear any ghost URLs from previously opened notes!
+  if (urlInput) urlInput.value = nType === 'paper' ? (n.url || '') : '';
 
   // Type selector chips
   document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(function(c) {
@@ -481,18 +483,20 @@ function saveCNDetailNow() {
   var newType = activeType ? activeType.dataset.type : (n.type || 'memo');
   if (n.type !== newType) n.type = newType;
 
-  // URL (papers) — only set if changed
+  // URL (papers) — only save if it's actually a paper note
   var urlInput = document.getElementById('cnUrlInput');
   if (urlInput) {
-    var newUrl = urlInput.value.trim();
+    var newUrl = newType === 'paper' ? urlInput.value.trim() : '';
     if ((n.url || '') !== newUrl) n.url = newUrl;
   }
 
-  // Idea status — only set if changed
+  // Idea status — only save if it's actually an idea note
   var activeStatus = document.querySelector('#cnIdeaStatusRow .cn-status-chip.active');
-  if (activeStatus) {
+  if (activeStatus && newType === 'idea') {
     var newStatus = activeStatus.dataset.status;
     if ((n.ideaStatus || '') !== newStatus) n.ideaStatus = newStatus;
+  } else if (newType !== 'idea') {
+    if ((n.ideaStatus || '') !== '') n.ideaStatus = '';
   }
 
   const tags = [];
