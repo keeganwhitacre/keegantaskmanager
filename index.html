@@ -304,27 +304,30 @@
     </div>
 
     <!-- Type selector -->
-    <div class="cn-type-selector" id="cnTypeRow">
-      <div class="cn-type-chip active" data-type="memo">✎ Note</div>
-      <div class="cn-type-chip" data-type="paper">📄 Paper</div>
-      <div class="cn-type-chip" data-type="idea">💡 Idea</div>
-    </div>
-
     <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
     <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
 
-    <!-- URL input (papers only) -->
-    <div class="cn-url-row" id="cnUrlRow" style="display:none;">
-      <span class="cn-url-label">🔗</span>
-      <input class="cn-detail-source-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
-    </div>
+    <details class="cn-detail-meta-drawer" id="cnTypeSettingsDrawer" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
+      <summary class="cn-detail-meta-toggle">Note Type Settings</summary>
+      <div class="cn-detail-meta-content">
+        <div class="cn-type-selector" id="cnTypeRow" style="padding: 0 0 10px 0;">
+          <div class="cn-type-chip active" data-type="memo">✎ Note</div>
+          <div class="cn-type-chip" data-type="paper">📄 Paper</div>
+          <div class="cn-type-chip" data-type="idea">💡 Idea</div>
+        </div>
 
-    <!-- Idea status (ideas only) -->
-    <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none;">
-      <div class="cn-status-chip active" data-status="raw">raw</div>
-      <div class="cn-status-chip" data-status="developing">developing</div>
-      <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
-    </div>
+        <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 8px 0;">
+          <span class="cn-url-label">🔗</span>
+          <input class="cn-detail-source-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
+        </div>
+
+        <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none; padding: 0 0 10px 0;">
+          <div class="cn-status-chip active" data-status="raw">raw</div>
+          <div class="cn-status-chip" data-status="developing">developing</div>
+          <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
+        </div>
+      </div>
+    </details>
 
     <!-- Collapsible metadata -->
     <details class="cn-detail-meta-drawer" id="cnMetaDrawer">
