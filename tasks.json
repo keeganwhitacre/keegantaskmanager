@@ -960,6 +960,23 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
+    },
+    {
+      "id": "mn8zg4578fwz",
+      "title": "Start wrangling and organizing",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-03-27",
+      "projectId": "mn4ychs8u3os",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1813,5 +1830,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-27T14:14:04.380Z"
+  "updated": "2026-03-27T14:14:34.183Z"
 }
