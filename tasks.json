@@ -1598,10 +1598,10 @@
       "bodyIsMono": false,
       "pinned": true,
       "type": "memo",
-      "url": "",
+      "url": "https://doi.org/10.1037/emo0001664",
       "ideaStatus": "raw",
       "createdAt": "2026-03-26T18:00:22.447Z",
-      "updatedAt": "2026-03-26T21:01:34.479Z"
+      "updatedAt": "2026-03-27T18:44:15.581Z"
     },
     {
       "id": "mn4wwi8qfjcn",
@@ -1827,5 +1827,5 @@
     }
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T18:44:02.292Z"
+  "updated": "2026-03-27T18:44:22.705Z"
 }
