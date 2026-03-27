@@ -361,7 +361,7 @@ function openCNDetail(id) {
       urlInput.value = n.url || ''; 
       const launchBtn = document.getElementById('cnUrlLaunchBtn');
       if (launchBtn) {
-          launchBtn.style.display = n.url ? 'block' : 'none';
+          launchBtn.style.display = n.url ? 'flex' : 'none';
           launchBtn.href = n.url && !n.url.startsWith('http') ? 'https://doi.org/' + n.url : n.url;
       }
     }
@@ -573,7 +573,9 @@ function toggleMdPreview(mode) {
     if (isPaper && urlVal) {
         // Automatically handle DOIs vs full links
         const linkHref = urlVal.startsWith('http') ? urlVal : 'https://doi.org/' + urlVal;
-        finalHtml = '<div style="margin-bottom: 16px;"><a href="' + linkHref + '" target="_blank" class="cn-md-paper-link">🔗 Open Source Document</a></div>' + finalHtml;
+        
+        // Redesigned: Native-looking card component with icon
+        finalHtml = '<div style="margin-bottom: 20px;"><a href="' + linkHref + '" target="_blank" class="cn-md-paper-link"><svg viewBox="0 0 24 24" width="14" height="14" stroke="#af52de" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>Source Document</span></a></div>' + finalHtml;
     }
 
     previewEl.innerHTML = finalHtml;
@@ -809,7 +811,7 @@ if (urlInput) {
     const launchBtn = document.getElementById('cnUrlLaunchBtn');
     if(launchBtn) {
       const val = this.value.trim();
-      launchBtn.style.display = val ? 'block' : 'none';
+      launchBtn.style.display = val ? 'flex' : 'none';
       launchBtn.href = val && !val.startsWith('http') ? 'https://doi.org/' + val : val;
     }
   });
