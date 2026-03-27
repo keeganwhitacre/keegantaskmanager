@@ -1549,11 +1549,11 @@
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
+      "type": "idea",
+      "url": "https://doi.org/10.1037/emo0001664",
+      "ideaStatus": "developing",
       "createdAt": "2026-03-27T19:08:02.450Z",
-      "updatedAt": "2026-03-27T19:08:02.450Z"
+      "updatedAt": "2026-03-27T19:08:07.280Z"
     },
     {
       "id": "mn99x9cbt88r",
@@ -1913,5 +1913,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:08:04.952Z"
+  "updated": "2026-03-27T19:08:09.781Z"
 }
