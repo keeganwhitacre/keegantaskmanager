@@ -1565,10 +1565,10 @@
       "bodyIsMono": false,
       "pinned": false,
       "type": "memo",
-      "url": "https://doi.org/10.1037/emo0001664",
-      "ideaStatus": "developing",
+      "url": "",
+      "ideaStatus": "raw",
       "createdAt": "2026-03-27T12:46:34.802Z",
-      "updatedAt": "2026-03-27T19:08:54.514Z"
+      "updatedAt": "2026-03-27T19:11:19.437Z"
     },
     {
       "id": "mn8blp5bfyve",
@@ -1586,7 +1586,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-03-27T03:07:01.391Z",
-      "updatedAt": "2026-03-27T19:10:21.963Z"
+      "updatedAt": "2026-03-27T19:11:17.676Z"
     },
     {
       "id": "mn7s2pbj3r14",
@@ -1883,5 +1883,5 @@
     ]
   },
   "anchorLogs": [],
-  "updated": "2026-03-27T19:11:15.862Z"
+  "updated": "2026-03-27T19:11:21.938Z"
 }
