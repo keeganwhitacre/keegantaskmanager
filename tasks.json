@@ -1577,21 +1577,6 @@
       "updatedAt": "2026-03-28T23:11:23.582Z"
     },
     {
-      "id": "mnay06dhwi7k",
-      "title": "Paper 2",
-      "speaker": "",
-      "body": "This paper is like [[idea 2]]",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "paper",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-03-28T23:09:40.805Z",
-      "updatedAt": "2026-03-28T23:11:33.391Z"
-    },
-    {
       "id": "mnaxyidwt6g5",
       "title": "Paper 1",
       "speaker": "",
@@ -1965,5 +1950,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:11:35.892Z"
+  "updated": "2026-03-28T23:11:45.837Z"
 }
