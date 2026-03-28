@@ -1562,6 +1562,22 @@
   },
   "cnNotes": [
     {
+      "id": "mnaxyidwt6g5",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-03-28T23:08:23.060Z",
+      "updatedAt": "2026-03-28T23:08:23.060Z",
+      "locked": false
+    },
+    {
       "id": "mn973jnbm58j",
       "title": "Emotion-specific verbal fluency relates to the intensity and variety of emotional experiences but not their specificity",
       "speaker": "Wormwood et al.",
@@ -1919,5 +1935,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T21:43:46.547Z"
+  "updated": "2026-03-28T23:08:37.040Z"
 }
