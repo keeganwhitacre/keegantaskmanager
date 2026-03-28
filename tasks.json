@@ -1585,11 +1585,11 @@
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
+      "type": "paper",
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-03-28T23:09:40.805Z",
-      "updatedAt": "2026-03-28T23:09:52.027Z"
+      "updatedAt": "2026-03-28T23:11:33.391Z"
     },
     {
       "id": "mnaxyidwt6g5",
@@ -1965,5 +1965,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:11:33.299Z"
+  "updated": "2026-03-28T23:11:35.892Z"
 }
