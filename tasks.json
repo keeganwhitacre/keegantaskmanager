@@ -1572,9 +1572,9 @@
       "pinned": false,
       "type": "idea",
       "url": "",
-      "ideaStatus": "raw",
+      "ideaStatus": "ready to pitch",
       "createdAt": "2026-03-28T23:09:54.749Z",
-      "updatedAt": "2026-03-28T23:09:58.251Z"
+      "updatedAt": "2026-03-28T23:11:23.582Z"
     },
     {
       "id": "mnay06dhwi7k",
@@ -1965,5 +1965,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:11:20.579Z"
+  "updated": "2026-03-28T23:11:26.084Z"
 }
