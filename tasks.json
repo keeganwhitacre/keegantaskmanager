@@ -1562,37 +1562,6 @@
   },
   "cnNotes": [
     {
-      "id": "mnay0h4tchwn",
-      "title": "idea 2",
-      "speaker": "",
-      "body": "",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "idea",
-      "url": "",
-      "ideaStatus": "ready to pitch",
-      "createdAt": "2026-03-28T23:09:54.749Z",
-      "updatedAt": "2026-03-28T23:11:23.582Z"
-    },
-    {
-      "id": "mnaxyidwt6g5",
-      "title": "Paper 1",
-      "speaker": "",
-      "body": "This paper related to [[Paper 2]] xyz xyZ",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-03-28T23:08:23.060Z",
-      "updatedAt": "2026-03-28T23:09:38.680Z",
-      "locked": false
-    },
-    {
       "id": "mn973jnbm58j",
       "title": "Emotion-specific verbal fluency relates to the intensity and variety of emotional experiences but not their specificity",
       "speaker": "Wormwood et al.",
@@ -1950,5 +1919,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:11:45.837Z"
+  "updated": "2026-03-28T23:11:55.110Z"
 }
