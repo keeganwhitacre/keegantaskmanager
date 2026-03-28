@@ -1272,7 +1272,7 @@
           true,
           true,
           true,
-          false,
+          true,
           false
         ],
         "read": [
@@ -1533,7 +1533,7 @@
         {
           "v": 4,
           "a": 3,
-          "ctx": null,
+          "ctx": "social",
           "t": "2026-03-28T16:47:00.468Z"
         }
       ]
@@ -1919,5 +1919,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T16:47:02.973Z"
+  "updated": "2026-03-28T16:47:08.497Z"
 }
