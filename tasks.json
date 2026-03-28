@@ -1562,10 +1562,25 @@
   },
   "cnNotes": [
     {
+      "id": "mnay06dhwi7k",
+      "title": "Paper 2",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-03-28T23:09:40.805Z",
+      "updatedAt": "2026-03-28T23:09:40.805Z"
+    },
+    {
       "id": "mnaxyidwt6g5",
       "title": "Paper 1",
       "speaker": "",
-      "body": "This paper related to [[paper 2]]",
+      "body": "This paper related to [[Paper 2]] xyz xyZ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1574,7 +1589,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-03-28T23:08:23.060Z",
-      "updatedAt": "2026-03-28T23:09:32.424Z",
+      "updatedAt": "2026-03-28T23:09:38.680Z",
       "locked": false
     },
     {
@@ -1935,5 +1950,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:09:34.925Z"
+  "updated": "2026-03-28T23:09:43.306Z"
 }
