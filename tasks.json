@@ -1563,9 +1563,9 @@
   "cnNotes": [
     {
       "id": "mnaxyidwt6g5",
-      "title": "",
+      "title": "Paper 1",
       "speaker": "",
-      "body": "Th",
+      "body": "This paper related to ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1574,7 +1574,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-03-28T23:08:23.060Z",
-      "updatedAt": "2026-03-28T23:09:20.159Z",
+      "updatedAt": "2026-03-28T23:09:27.088Z",
       "locked": false
     },
     {
@@ -1935,5 +1935,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-28T23:09:22.660Z"
+  "updated": "2026-03-28T23:09:29.590Z"
 }
