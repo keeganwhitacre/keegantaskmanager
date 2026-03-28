@@ -43,6 +43,105 @@ function getIdeasForReview() {
   });
 }
 
+// ── BACKLINKS ──
+
+// Returns all notes (excluding current) whose body contains [[noteTitle]]
+function getBacklinks(noteTitle) {
+  if (!noteTitle) return [];
+  var escaped = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'i');
+  return getCnNotes().filter(function(n) {
+    return n.id !== cnActiveId && pattern.test(n.body || '');
+  });
+}
+
+// Extracts ~120 chars of context around the [[link]] match, with word-boundary truncation
+function getBacklinkContext(body, noteTitle) {
+  var escaped = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'i');
+  var idx = body.search(pattern);
+  if (idx === -1) return '';
+  var start = Math.max(0, idx - 60);
+  var end = Math.min(body.length, idx + noteTitle.length + 2 + 60);
+  // Trim to word boundaries
+  if (start > 0) {
+    var wordStart = body.indexOf(' ', start);
+    if (wordStart !== -1 && wordStart < idx) start = wordStart + 1;
+  }
+  if (end < body.length) {
+    var wordEnd = body.lastIndexOf(' ', end);
+    if (wordEnd > idx) end = wordEnd;
+  }
+  var snippet = body.slice(start, end);
+  if (start > 0) snippet = '…' + snippet;
+  if (end < body.length) snippet = snippet + '…';
+  return snippet;
+}
+
+function renderBacklinks(noteTitle) {
+  var drawer = document.getElementById('cnBacklinksDrawer');
+  var list = document.getElementById('cnBacklinksList');
+  var countEl = document.getElementById('cnBacklinksCount');
+  var arrow = document.getElementById('cnBacklinksArrow');
+  if (!drawer || !list || !countEl) return;
+
+  var links = getBacklinks(noteTitle);
+
+  // Hide entirely if note has no title yet (new note)
+  if (!noteTitle) { drawer.style.display = 'none'; return; }
+  drawer.style.display = '';
+
+  countEl.textContent = links.length > 0 ? String(links.length) : '';
+  countEl.style.display = links.length > 0 ? '' : 'none';
+
+  // Reset to closed state on each open
+  drawer.classList.remove('open');
+  if (arrow) arrow.style.transform = '';
+
+  if (links.length === 0) {
+    list.innerHTML = '<div class="cn-backlinks-empty">no notes link here yet</div>';
+  } else {
+    list.innerHTML = links.map(function(n) {
+      var nType = noteTypeOf(n);
+      var typeInfo = NOTE_TYPES[nType] || NOTE_TYPES.memo;
+      var context = getBacklinkContext(n.body || '', noteTitle);
+      // Highlight [[NoteTitle]] in the context snippet
+      var escapedTitle = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      var highlightPat = new RegExp('(\\[\\[' + escapedTitle + '\\]\\])', 'gi');
+      var contextHtml = esc(context).replace(
+        new RegExp('\\[\\[' + esc(noteTitle).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\]\\]', 'gi'),
+        '<mark>[[' + esc(noteTitle) + ']]</mark>'
+      );
+      return '<div class="cn-backlink-item cn-backlink-type-' + nType + '" data-blid="' + esc(n.id) + '">' +
+        '<span class="cn-backlink-icon">' + typeInfo.icon + '</span>' +
+        '<div class="cn-backlink-body">' +
+          '<div class="cn-backlink-title">' + esc(n.title || 'Untitled') + '</div>' +
+          (context ? '<div class="cn-backlink-context">' + contextHtml + '</div>' : '') +
+        '</div>' +
+        '<span class="cn-backlink-type-badge cn-bl-badge-' + nType + '">' + typeInfo.label.toLowerCase() + '</span>' +
+      '</div>';
+    }).join('');
+  }
+}
+
+// Rename: find-and-replace [[OldTitle]] -> [[NewTitle]] across all notes
+function renameLinkReferences(oldTitle, newTitle) {
+  if (!oldTitle || oldTitle === newTitle) return;
+  var escaped = oldTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'gi');
+  var replacement = '[[' + newTitle + ']]';
+  var changed = false;
+  getCnNotes().forEach(function(n) {
+    if (n.id === cnActiveId) return;
+    var updated = (n.body || '').replace(pattern, replacement);
+    if (updated !== n.body) {
+      n.body = updated;
+      changed = true;
+    }
+  });
+  if (changed) saveCN(true);
+}
+
 // ── LOCK SYSTEM ──
 let _pinUnlocked = false; // session-only, resets on reload
 
@@ -435,6 +534,9 @@ function openCNDetail(id) {
     detailEl.removeEventListener('animationend', handler);
   });
 
+  // Render backlinks for this note
+  renderBacklinks(n.title || '');
+
   // Default to preview if note has content, edit if empty
   toggleMdPreview((n.body || '').trim() ? 'on' : 'off');
 }
@@ -473,6 +575,11 @@ function saveCNDetailNow() {
 
   n.title = document.getElementById('cnTitleInput').value.trim();
   n.speaker = document.getElementById('cnSpeakerInput').value.trim();
+
+  // Rename [[links]] in other notes if title changed
+  if (_cnOpenSnapshot && n.title !== _cnOpenSnapshot.title && _cnOpenSnapshot.title) {
+    renameLinkReferences(_cnOpenSnapshot.title, n.title);
+  }
   n.body = document.getElementById('cnBodyInput').value;
   const projInp = document.getElementById('cnProjectInput');
   n.projectId = projInp ? projInp.value : '';
@@ -941,6 +1048,26 @@ document.addEventListener('click', function(e) {
       openCNDetail(newNote.id);
     }
   }
+});
+
+// ── BACKLINKS TOGGLE & NAVIGATION ──
+var cnBacklinksToggle = document.getElementById('cnBacklinksToggle');
+if (cnBacklinksToggle) {
+  cnBacklinksToggle.addEventListener('click', function() {
+    var drawer = document.getElementById('cnBacklinksDrawer');
+    var arrow = document.getElementById('cnBacklinksArrow');
+    var isOpen = drawer.classList.toggle('open');
+    if (arrow) arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
+  });
+}
+
+document.getElementById('cnBacklinksList').addEventListener('click', function(e) {
+  var item = e.target.closest('.cn-backlink-item');
+  if (!item) return;
+  var targetId = item.dataset.blid;
+  if (!targetId) return;
+  saveCNDetailNow();
+  openCNDetail(targetId);
 });
 
 // ── GRID / LIST VIEW TOGGLE ──
