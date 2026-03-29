@@ -1627,7 +1627,7 @@
       "id": "mnc00s5s74in",
       "title": "Bel gift idea 🎁",
       "speaker": "",
-      "body": "A billboard top 100 booklet or something physical that shows the billboard top 100 maybe with QR codes info on the artist what year it was released in an image",
+      "body": "A billboard top 100 booklet or something physical that shows the billboard top 100 maybe with QR codes info",
       "tags": [
         "bel",
         "personal",
@@ -1637,7 +1637,7 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-29T16:53:54.448Z",
-      "updatedAt": "2026-03-29T18:59:28.270Z",
+      "updatedAt": "2026-03-29T19:26:42.474Z",
       "type": "memo",
       "locked": true
     },
@@ -1999,5 +1999,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T19:26:41.360Z"
+  "updated": "2026-03-29T19:26:44.975Z"
 }
