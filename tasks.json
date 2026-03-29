@@ -1028,6 +1028,21 @@
       "pinnedToday": true,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1774810520900",
+      "title": "Help bel with swipes",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-29",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1981,5 +1996,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T18:55:05.818Z"
+  "updated": "2026-03-29T18:55:23.406Z"
 }
