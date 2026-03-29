@@ -1037,7 +1037,8 @@
       "id": "1774810520900",
       "title": "Help bel with swipes",
       "categories": [
-        "personal"
+        "bel",
+        "hobby"
       ],
       "status": "active",
       "priority": "md",
@@ -1046,7 +1047,9 @@
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -2000,5 +2003,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T18:55:28.903Z"
+  "updated": "2026-03-29T18:55:33.326Z"
 }
