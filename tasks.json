@@ -1646,12 +1646,16 @@
       "title": "Bel 🫶 idea for gift",
       "speaker": "",
       "body": "A billboard top 100 booklet or something physical that shows the billboard top 100 maybe with QR codes info on the artist what year it was released in an image",
-      "tags": [],
+      "tags": [
+        "bel",
+        "personal",
+        "hobby"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-29T16:53:54.448Z",
-      "updatedAt": "2026-03-29T16:53:54.448Z",
+      "updatedAt": "2026-03-29T18:59:08.512Z",
       "type": "memo",
       "locked": true
     },
@@ -2013,5 +2017,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T18:59:04.936Z"
+  "updated": "2026-03-29T18:59:12.019Z"
 }
