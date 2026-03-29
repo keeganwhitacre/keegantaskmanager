@@ -985,6 +985,7 @@
       "id": "1774810483576",
       "title": "Bel gift idea start",
       "categories": [
+        "bel",
         "personal"
       ],
       "status": "active",
@@ -994,7 +995,9 @@
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -1948,5 +1951,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T18:54:46.082Z"
+  "updated": "2026-03-29T18:54:50.795Z"
 }
