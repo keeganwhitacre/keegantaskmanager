@@ -998,6 +998,21 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
+    },
+    {
+      "id": "1774810498752",
+      "title": "Clean room again!",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-03-29",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -1951,5 +1966,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-29T18:54:50.795Z"
+  "updated": "2026-03-29T18:55:01.262Z"
 }
