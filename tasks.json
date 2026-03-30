@@ -1381,7 +1381,7 @@
       },
       "2026-W14": {
         "sleep": [
-          false,
+          true,
           false,
           false,
           false,
@@ -1399,7 +1399,7 @@
           false
         ],
         "lift": [
-          false,
+          true,
           false,
           false,
           false,
@@ -1665,7 +1665,7 @@
         {
           "v": 4,
           "a": 3,
-          "ctx": null,
+          "ctx": "exercise",
           "t": "2026-03-30T11:03:24.924Z"
         }
       ]
@@ -2078,5 +2078,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-30T11:03:27.424Z"
+  "updated": "2026-03-30T11:03:35.689Z"
 }
