@@ -1031,10 +1031,11 @@
       "due": "2026-03-29",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
       "projectId": "",
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-03-30T10:02:18.798Z"
     },
     {
       "id": "1774812980696",
@@ -2016,5 +2017,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-30T10:02:17.562Z"
+  "updated": "2026-03-30T10:02:21.300Z"
 }
