@@ -838,7 +838,7 @@
       "priority": "lo",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-30",
+      "due": "2026-03-31",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -2079,5 +2079,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-30T19:20:59.508Z"
+  "updated": "2026-03-30T19:21:05.888Z"
 }
