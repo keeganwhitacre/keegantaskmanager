@@ -1255,8 +1255,8 @@
     }
   ],
   "dash": {
-    "intention": "Focus more on reading and less doomscrolling while I ease back into real life and work. Get back to gym consistency and sleep schedule.",
-    "intentionWeek": "2026-W13",
+    "intention": "",
+    "intentionWeek": "2026-W14",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -1373,6 +1373,44 @@
           false,
           false,
           true,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "2026-W14": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
           false,
           false,
           false,
@@ -2022,5 +2060,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-30T10:19:51.134Z"
+  "updated": "2026-03-30T11:01:12.424Z"
 }
