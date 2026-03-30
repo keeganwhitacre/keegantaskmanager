@@ -1255,7 +1255,7 @@
     }
   ],
   "dash": {
-    "intention": "",
+    "intention": "This week I want to lock in at work, hang out with my friends, continue the secret Bel project, and keep my habits consistent. I need to start reading again it’s been months…",
     "intentionWeek": "2026-W14",
     "quoteIdx": 8,
     "countdown": {
@@ -1662,7 +1662,8 @@
       ]
     },
     "weeklyReflections": {
-      "2026-W12": "Exciting!"
+      "2026-W12": "Exciting!",
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. "
     },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
@@ -1677,6 +1678,14 @@
         "reviewedAt": "2026-03-23T13:58:36.951Z",
         "intentionRating": -1,
         "carryActions": {}
+      },
+      "2026-W13": {
+        "reviewed": true,
+        "reviewedAt": "2026-03-30T11:03:17.542Z",
+        "intentionRating": -1,
+        "carryActions": {
+          "1774812980696": "keep"
+        }
       }
     },
     "researchReflections": {
@@ -2060,5 +2069,5 @@
       "text": "[Task Avoidance Broken]"
     }
   ],
-  "updated": "2026-03-30T11:01:12.424Z"
+  "updated": "2026-03-30T11:03:20.043Z"
 }
