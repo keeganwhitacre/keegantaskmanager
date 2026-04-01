@@ -705,9 +705,10 @@
       "due": "2026-03-31",
       "projectId": "",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-04-01T14:48:29.385Z"
     },
     {
       "id": "1773678336900",
@@ -2250,5 +2251,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T14:38:35.084Z"
+  "updated": "2026-04-01T14:48:31.887Z"
 }
