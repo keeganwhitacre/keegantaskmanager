@@ -693,7 +693,7 @@
     },
     {
       "id": "mmrrs89t7aub",
-      "title": "Use OSU $125",
+      "title": "Submit LSA OSU $125",
       "categories": [
         "personal",
         "hobby"
@@ -706,7 +706,8 @@
       "projectId": "",
       "noteIsMono": false,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "milestoneId": ""
     },
     {
       "id": "1773678336900",
@@ -2249,5 +2250,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T14:25:16.440Z"
+  "updated": "2026-04-01T14:38:35.084Z"
 }
