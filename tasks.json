@@ -975,7 +975,7 @@
       "priority": "hi",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-03-31",
+      "due": "2026-04-01",
       "projectId": "mn4ychs8u3os",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1036,21 +1036,6 @@
       "projectId": "",
       "milestoneId": "",
       "completedAt": "2026-03-30T10:02:18.798Z"
-    },
-    {
-      "id": "1774812980696",
-      "title": "Write for mom",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-03-31",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0
     },
     {
       "id": "mnemjewrva40",
@@ -2115,5 +2100,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T01:01:36.550Z"
+  "updated": "2026-04-01T01:59:55.602Z"
 }
