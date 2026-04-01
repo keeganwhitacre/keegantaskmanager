@@ -1060,15 +1060,7 @@
       "stage": "Waiting",
       "due": "2026-03-31",
       "note": "<p style=\"font-size: 16px; cursor: text; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; caret-color: rgb(227, 227, 227); color: rgb(227, 227, 227); font-family: &quot;Google Sans Flex&quot;, &quot;Google Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif;\"><br></p>",
-      "milestones": [
-        {
-          "id": "mnfeh2xeg9eq",
-          "title": "Submit paper",
-          "due": "2026-03-31",
-          "done": true,
-          "completedAt": "2026-04-01T02:01:48.919Z"
-        }
-      ],
+      "milestones": [],
       "history": [
         {
           "type": "stage",
@@ -1094,6 +1086,11 @@
           "type": "milestone",
           "label": "✓ Submit paper",
           "date": "2026-04-01T02:01:48.920Z"
+        },
+        {
+          "type": "milestone-del",
+          "label": "Removed: Submit paper",
+          "date": "2026-04-01T02:01:51.610Z"
         }
       ],
       "description": ""
@@ -2173,5 +2170,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T02:01:51.421Z"
+  "updated": "2026-04-01T02:01:54.111Z"
 }
