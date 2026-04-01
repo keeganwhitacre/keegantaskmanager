@@ -1395,6 +1395,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -1548,12 +1554,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -1850,6 +1850,21 @@
     }
   },
   "cnNotes": [
+    {
+      "id": "mng40gg808az",
+      "title": "",
+      "speaker": "",
+      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "paper",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-01T13:56:42.440Z",
+      "updatedAt": "2026-04-01T13:56:42.440Z"
+    },
     {
       "id": "mnc00s5s74in",
       "title": "Bel gift idea 🎁",
@@ -2232,5 +2247,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T11:28:59.739Z"
+  "updated": "2026-04-01T13:56:44.943Z"
 }
