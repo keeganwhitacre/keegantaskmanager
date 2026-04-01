@@ -1514,7 +1514,7 @@
         "sleep": [
           true,
           false,
-          false,
+          true,
           false,
           false,
           false,
@@ -1532,7 +1532,7 @@
         "lift": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2232,5 +2232,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T11:28:54.975Z"
+  "updated": "2026-04-01T11:28:59.739Z"
 }
