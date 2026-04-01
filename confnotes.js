@@ -539,6 +539,9 @@ function openCNDetail(id) {
 
   // Default to preview if note has content, edit if empty
   toggleMdPreview((n.body || '').trim() ? 'on' : 'off');
+
+  // Size textarea to content so page scrolls instead of textarea
+  autoResizeBody();
 }
 
 function closeCNDetail() {
@@ -711,6 +714,7 @@ function toggleMdPreview(mode) {
     toggleBtn.textContent = 'preview';
     toggleBtn.classList.remove('md-active');
     if (mode !== 'off') bodyEl.focus();
+    autoResizeBody();
   }
 }
 
@@ -928,10 +932,22 @@ if (urlInput) {
   });
 }
 
+// ── AUTO-RESIZE TEXTAREA ──
+// Makes the body textarea grow with content so the page scrolls instead of the textarea.
+function autoResizeBody() {
+  var el = document.getElementById('cnBodyInput');
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
 ['cnTitleInput', 'cnSpeakerInput', 'cnBodyInput'].forEach(function(id) {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', queueCNSave);
 });
+// Body textarea auto-resize on input
+var _cnBodyEl = document.getElementById('cnBodyInput');
+if (_cnBodyEl) _cnBodyEl.addEventListener('input', autoResizeBody);
 const cnProjInp = document.getElementById('cnProjectInput');
 if (cnProjInp) cnProjInp.addEventListener('change', function() { saveCNDetailNow(); });
 
@@ -942,6 +958,7 @@ document.getElementById('cnMonoToggle').addEventListener('click', function() {
   this.textContent = isMono ? 'mono on' : 'mono off';
   this.classList.toggle('mono-active', isMono);
   queueCNSave();
+  autoResizeBody();
 });
 
 document.getElementById('cnMdToggle').addEventListener('click', function() {

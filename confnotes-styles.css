@@ -120,6 +120,7 @@
   min-height: calc(100vh - 60px);
   min-height: calc(100dvh - 60px);
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  overflow: visible;
 }
 
 /* Note open/close transitions */
@@ -195,11 +196,12 @@
 }
 
 .cn-detail-body-input {
-  width: 100%; flex: 1; min-height: 300px;
+  width: 100%; min-height: 120px;
   background: transparent; border: none; outline: none; resize: none;
   color: var(--text-main); -webkit-text-fill-color: var(--text-main);
   font-family: var(--font-main); font-size: 15px; line-height: 1.8;
   box-sizing: border-box; padding: 0;
+  overflow: hidden;
 }
 .cn-detail-body-input::placeholder { color: var(--text-muted); opacity: 0.4; }
 .cn-detail-body-input.mono { font-family: var(--font-mono); font-size: 13px; }
@@ -211,11 +213,10 @@
 
 /* ── MARKDOWN PREVIEW ── */
 .cn-md-preview {
-  flex: 1; min-height: 300px;
+  min-height: 120px;
   color: var(--text-main);
   font-family: var(--font-main); font-size: 15px; line-height: 1.8;
-  padding: 0; overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 0;
 }
 .cn-md-preview h1, .cn-md-preview h2, .cn-md-preview h3,
 .cn-md-preview h4, .cn-md-preview h5, .cn-md-preview h6 {
