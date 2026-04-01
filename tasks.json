@@ -1101,7 +1101,14 @@
       "stage": "Active",
       "due": "",
       "note": "",
-      "milestones": [],
+      "milestones": [
+        {
+          "id": "mnfehxephbug",
+          "title": "Choose specific researcher",
+          "due": "",
+          "done": false
+        }
+      ],
       "history": [
         {
           "type": "stage",
@@ -1122,6 +1129,11 @@
           "type": "milestone-del",
           "label": "Removed: Choose specific researxher",
           "date": "2026-04-01T02:02:22.763Z"
+        },
+        {
+          "type": "milestone-add",
+          "label": "Added: Choose specific researcher",
+          "date": "2026-04-01T02:02:27.553Z"
         }
       ],
       "description": "Host a researcher for AFSP"
@@ -2193,5 +2205,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T02:02:25.265Z"
+  "updated": "2026-04-01T02:02:30.055Z"
 }
