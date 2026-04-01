@@ -87,8 +87,8 @@ function renderBacklinks(noteTitle) {
 
   var links = getBacklinks(noteTitle);
 
-  // Hide entirely if note has no title yet (new note)
-  if (!noteTitle) { drawer.style.display = 'none'; return; }
+  // Hide entirely if note has no title yet (new note) or no backlinks
+  if (!noteTitle || links.length === 0) { drawer.style.display = 'none'; return; }
   drawer.style.display = '';
 
   countEl.textContent = links.length > 0 ? String(links.length) : '';
@@ -98,10 +98,7 @@ function renderBacklinks(noteTitle) {
   drawer.classList.remove('open');
   if (arrow) arrow.style.transform = '';
 
-  if (links.length === 0) {
-    list.innerHTML = '<div class="cn-backlinks-empty">no notes link here yet</div>';
-  } else {
-    list.innerHTML = links.map(function(n) {
+  list.innerHTML = links.map(function(n) {
       var nType = noteTypeOf(n);
       var typeInfo = NOTE_TYPES[nType] || NOTE_TYPES.memo;
       var context = getBacklinkContext(n.body || '', noteTitle);
@@ -121,7 +118,6 @@ function renderBacklinks(noteTitle) {
         '<span class="cn-backlink-type-badge cn-bl-badge-' + nType + '">' + typeInfo.label.toLowerCase() + '</span>' +
       '</div>';
     }).join('');
-  }
 }
 
 // Rename: find-and-replace [[OldTitle]] -> [[NewTitle]] across all notes
