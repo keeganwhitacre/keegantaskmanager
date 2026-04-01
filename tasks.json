@@ -1882,9 +1882,9 @@
   "cnNotes": [
     {
       "id": "mng84lygguci",
-      "title": "",
+      "title": "Titles",
       "speaker": "",
-      "body": "",
+      "body": "Hello",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1893,7 +1893,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-01T15:51:54.664Z",
-      "updatedAt": "2026-04-01T15:51:54.664Z"
+      "updatedAt": "2026-04-01T15:52:04.610Z"
     },
     {
       "id": "mnc00s5s74in",
@@ -2277,5 +2277,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T15:52:00.142Z"
+  "updated": "2026-04-01T15:52:09.061Z"
 }
