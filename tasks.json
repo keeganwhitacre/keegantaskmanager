@@ -1066,9 +1066,10 @@
       "note": "",
       "due": "2026-04-01",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
-      "pinnedToday": true
+      "pinnedToday": true,
+      "completedAt": "2026-04-01T15:02:30.569Z"
     },
     {
       "id": "mng5151qucxw",
@@ -2252,5 +2253,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T14:50:42.125Z"
+  "updated": "2026-04-01T15:02:33.077Z"
 }
