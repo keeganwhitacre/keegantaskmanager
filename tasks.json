@@ -1050,9 +1050,10 @@
       "note": "",
       "due": "2026-04-01",
       "noteIsMono": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
-      "pinnedToday": false
+      "pinnedToday": false,
+      "completedAt": "2026-04-01T14:50:39.622Z"
     },
     {
       "id": "mnfwd209m8xd",
@@ -2251,5 +2252,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T14:48:31.887Z"
+  "updated": "2026-04-01T14:50:42.125Z"
 }
