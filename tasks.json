@@ -1157,6 +1157,12 @@
           "title": "Play with basic fabric or old shirt",
           "due": "",
           "done": false
+        },
+        {
+          "id": "mnfeg6dfepxx",
+          "title": "Hem a pair of pants",
+          "due": "",
+          "done": false
         }
       ],
       "history": [
@@ -1184,6 +1190,11 @@
           "type": "milestone-del",
           "label": "Removed: Hem pair of pands",
           "date": "2026-04-01T02:01:00.984Z"
+        },
+        {
+          "type": "milestone-add",
+          "label": "Added: Hem a pair of pants",
+          "date": "2026-04-01T02:01:05.859Z"
         }
       ]
     }
@@ -2133,5 +2144,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T02:01:03.486Z"
+  "updated": "2026-04-01T02:01:08.362Z"
 }
