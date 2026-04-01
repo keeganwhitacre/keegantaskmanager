@@ -1838,7 +1838,7 @@
       "id": "mnc00s5s74in",
       "title": "Bel gift idea 🎁",
       "speaker": "",
-      "body": "# The Billboard Top 100\n- Coffee Table book\n\n## Featuring\n- 100 songs, album art, fun facts, Spotify QR code, design\n- Hardcover book\n- Bel pic featured on the cover\n\n### 3/29 Update\n- got all album covers, Spotify codes, info, and scripts\n- scripts for colors\n- finalizing design for pages\n- Figma plugin - look into\n\n### 3/30 mid day update\n- got basic templates done + a decent chunk of the rest\n- made an svg of the billboard logo with belboard\n- need to continue matching colors\n- need to find easy way to add Spotify code\n\n### Ideas\n- cover front - logo with gradient + noise\n- back - either the colored dots or the wall of text\n- side is futura belboard 2026\n- little copyright in the corner",
+      "body": "# The Billboard Top 100\n- Coffee Table book\n\n## Featuring\n- 100 songs, album art, fun facts, Spotify QR code, design\n- Hardcover book\n- Bel pic featured on the cover\n\n### 3/29 Update\n- got all album covers, Spotify codes, info, and scripts\n- scripts for colors\n- finalizing design for pages\n- Figma plugin - look into\n\n### 3/30 mid day update\n- got basic templates done + a decent chunk of the rest\n- made an svg of the billboard logo with belboard\n- need to continue matching colors\n- need to find easy way to add Spotify code\n\n### Ideas\n- cover front - logo with gradient + noise\n- back - either the colored dots or the wall of text\n- side is futura belboard 2026\n- little copyright in the corner\n\n",
       "tags": [
         "bel",
         "personal",
@@ -1848,7 +1848,7 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-03-29T16:53:54.448Z",
-      "updatedAt": "2026-03-30T20:24:20.812Z",
+      "updatedAt": "2026-04-01T02:03:23.322Z",
       "type": "memo",
       "locked": true
     },
@@ -2216,5 +2216,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T02:03:17.237Z"
+  "updated": "2026-04-01T02:03:25.848Z"
 }
