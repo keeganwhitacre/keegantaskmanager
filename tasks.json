@@ -1163,6 +1163,12 @@
           "title": "Hem a pair of pants",
           "due": "",
           "done": false
+        },
+        {
+          "id": "mnfegavohmk6",
+          "title": "Attempt to change a shirts fit",
+          "due": "",
+          "done": false
         }
       ],
       "history": [
@@ -1195,6 +1201,11 @@
           "type": "milestone-add",
           "label": "Added: Hem a pair of pants",
           "date": "2026-04-01T02:01:05.859Z"
+        },
+        {
+          "type": "milestone-add",
+          "label": "Added: Attempt to change a shirts fit",
+          "date": "2026-04-01T02:01:11.700Z"
         }
       ]
     }
@@ -2144,5 +2155,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-01T02:01:08.362Z"
+  "updated": "2026-04-01T02:01:14.202Z"
 }
