@@ -1939,6 +1939,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhws5czssv2",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "idea",
+      "url": "",
+      "ideaStatus": "raw",
+      "createdAt": "2026-04-02T20:09:49.859Z",
+      "updatedAt": "2026-04-02T20:09:53.144Z"
+    },
+    {
       "id": "mnhu3t9ag7d8",
       "title": "RA Hiring Process",
       "speaker": "",
@@ -2352,5 +2367,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:34:00.622Z"
+  "updated": "2026-04-02T20:09:55.646Z"
 }
