@@ -1939,6 +1939,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhx5dh90gro",
+      "title": "Custom",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "idea",
+      "url": "",
+      "ideaStatus": "raw",
+      "createdAt": "2026-04-02T20:20:06.910Z",
+      "updatedAt": "2026-04-02T20:20:11.739Z"
+    },
+    {
       "id": "mnhws5czssv2",
       "title": "Revamp phone HBD app",
       "speaker": "",
@@ -2367,5 +2382,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T20:19:41.962Z"
+  "updated": "2026-04-02T20:20:14.240Z"
 }
