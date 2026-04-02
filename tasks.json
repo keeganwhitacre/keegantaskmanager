@@ -1125,6 +1125,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775161469931",
+      "title": "Call",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-02",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2382,5 +2397,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T20:21:13.957Z"
+  "updated": "2026-04-02T20:24:32.442Z"
 }
