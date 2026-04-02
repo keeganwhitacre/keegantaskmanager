@@ -1941,16 +1941,16 @@
       "id": "mnhvb8c06t75",
       "title": "idea 3",
       "speaker": "",
-      "body": "",
+      "body": "dsfgxdghdxfghf",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
+      "type": "idea",
       "url": "",
-      "ideaStatus": "",
+      "ideaStatus": "raw",
       "createdAt": "2026-04-02T19:28:40.944Z",
-      "updatedAt": "2026-04-02T19:28:40.944Z"
+      "updatedAt": "2026-04-02T19:28:44.249Z"
     },
     {
       "id": "mnhvayl6uo11",
@@ -2411,5 +2411,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:28:43.444Z"
+  "updated": "2026-04-02T19:28:48.830Z"
 }
