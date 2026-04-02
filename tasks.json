@@ -1107,6 +1107,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mnhv0ek91co4",
+      "title": "Look into HBD phone task",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2328,5 +2345,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:02:07.546Z"
+  "updated": "2026-04-02T19:20:18.306Z"
 }
