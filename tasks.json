@@ -1361,7 +1361,7 @@
       }
     ]
   },
-  "scratchpad": "Leather journal",
+  "scratchpad": "Leather journal\n",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -2279,5 +2279,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T11:18:54.721Z"
+  "updated": "2026-04-02T11:19:07.349Z"
 }
