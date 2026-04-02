@@ -1919,7 +1919,9 @@
       "title": "RA Hiring Process",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "lab"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
@@ -1927,7 +1929,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-02T18:54:55.198Z",
-      "updatedAt": "2026-04-02T18:55:00.085Z"
+      "updatedAt": "2026-04-02T18:55:04.897Z"
     },
     {
       "id": "mnhsmmvxu2bi",
@@ -2326,5 +2328,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T18:55:02.587Z"
+  "updated": "2026-04-02T18:55:07.398Z"
 }
