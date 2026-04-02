@@ -1940,7 +1940,7 @@
   "cnNotes": [
     {
       "id": "mnhws5czssv2",
-      "title": "Revamp",
+      "title": "Revamp phone HBD app",
       "speaker": "",
       "body": "",
       "tags": [],
@@ -1951,7 +1951,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-04-02T20:09:49.859Z",
-      "updatedAt": "2026-04-02T20:09:57.442Z"
+      "updatedAt": "2026-04-02T20:10:01.186Z"
     },
     {
       "id": "mnhu3t9ag7d8",
@@ -2367,5 +2367,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T20:09:59.944Z"
+  "updated": "2026-04-02T20:10:04.113Z"
 }
