@@ -1941,16 +1941,16 @@
       "id": "mnhv9dqwjl92",
       "title": "paper 1",
       "speaker": "",
-      "body": "",
+      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
+      "type": "paper",
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-02T19:27:14.648Z",
-      "updatedAt": "2026-04-02T19:27:14.648Z"
+      "updatedAt": "2026-04-02T19:27:21.515Z"
     },
     {
       "id": "mnhv92pfh5jq",
@@ -2381,5 +2381,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:27:17.150Z"
+  "updated": "2026-04-02T19:27:24.016Z"
 }
