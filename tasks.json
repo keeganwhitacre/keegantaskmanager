@@ -1941,16 +1941,16 @@
       "id": "mnhvayl6uo11",
       "title": "idea 2",
       "speaker": "",
-      "body": "",
+      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
-      "type": "memo",
+      "type": "idea",
       "url": "",
-      "ideaStatus": "",
+      "ideaStatus": "raw",
       "createdAt": "2026-04-02T19:28:28.314Z",
-      "updatedAt": "2026-04-02T19:28:28.314Z"
+      "updatedAt": "2026-04-02T19:28:31.250Z"
     },
     {
       "id": "mnhv9dqwjl92",
@@ -2396,5 +2396,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:28:30.815Z"
+  "updated": "2026-04-02T19:28:33.751Z"
 }
