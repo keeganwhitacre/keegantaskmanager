@@ -1915,6 +1915,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhsmmvxu2bi",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "idea",
+      "url": "",
+      "ideaStatus": "raw",
+      "createdAt": "2026-04-02T18:13:34.173Z",
+      "updatedAt": "2026-04-02T18:13:34.173Z"
+    },
+    {
       "id": "mnc00s5s74in",
       "title": "Bel gift idea 🎁",
       "speaker": "",
@@ -2296,5 +2311,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T18:10:55.160Z"
+  "updated": "2026-04-02T18:13:34.552Z"
 }
