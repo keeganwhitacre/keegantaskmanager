@@ -1938,6 +1938,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhv92pfh5jq",
+      "title": "Testing 1",
+      "speaker": "",
+      "body": "[[",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-02T19:27:00.339Z",
+      "updatedAt": "2026-04-02T19:27:08.333Z"
+    },
+    {
       "id": "mnhu3t9ag7d8",
       "title": "RA Hiring Process",
       "speaker": "",
@@ -2351,5 +2366,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:25:54.696Z"
+  "updated": "2026-04-02T19:27:10.833Z"
 }
