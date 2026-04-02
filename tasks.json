@@ -1938,10 +1938,25 @@
   },
   "cnNotes": [
     {
+      "id": "mnhv9dqwjl92",
+      "title": "paper 1",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-02T19:27:14.648Z",
+      "updatedAt": "2026-04-02T19:27:14.648Z"
+    },
+    {
       "id": "mnhv92pfh5jq",
       "title": "Testing 1",
       "speaker": "",
-      "body": "[[",
+      "body": "[[paper 1]]\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1950,7 +1965,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-02T19:27:00.339Z",
-      "updatedAt": "2026-04-02T19:27:08.333Z"
+      "updatedAt": "2026-04-02T19:27:12.234Z"
     },
     {
       "id": "mnhu3t9ag7d8",
@@ -2366,5 +2381,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:27:10.833Z"
+  "updated": "2026-04-02T19:27:17.150Z"
 }
