@@ -1938,66 +1938,6 @@
   },
   "cnNotes": [
     {
-      "id": "mnhvb8c06t75",
-      "title": "idea 3",
-      "speaker": "",
-      "body": "dsfgxdghdxfghf",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "idea",
-      "url": "",
-      "ideaStatus": "raw",
-      "createdAt": "2026-04-02T19:28:40.944Z",
-      "updatedAt": "2026-04-02T19:28:44.249Z"
-    },
-    {
-      "id": "mnhvayl6uo11",
-      "title": "idea 2",
-      "speaker": "",
-      "body": "idea about x",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "idea",
-      "url": "",
-      "ideaStatus": "raw",
-      "createdAt": "2026-04-02T19:28:28.314Z",
-      "updatedAt": "2026-04-02T19:28:37.188Z"
-    },
-    {
-      "id": "mnhv9dqwjl92",
-      "title": "paper 1",
-      "speaker": "",
-      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "paper",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-02T19:27:14.648Z",
-      "updatedAt": "2026-04-02T19:27:21.515Z"
-    },
-    {
-      "id": "mnhv92pfh5jq",
-      "title": "Testing 1",
-      "speaker": "",
-      "body": "[[paper 1]]'s thoughts on [[idea 2]] lead me to consider [[idea 3]]\n",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-02T19:27:00.339Z",
-      "updatedAt": "2026-04-02T19:28:25.717Z"
-    },
-    {
       "id": "mnhu3t9ag7d8",
       "title": "RA Hiring Process",
       "speaker": "",
@@ -2411,5 +2351,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:29:35.149Z"
+  "updated": "2026-04-02T19:30:21.135Z"
 }
