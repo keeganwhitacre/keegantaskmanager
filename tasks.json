@@ -1938,10 +1938,25 @@
   },
   "cnNotes": [
     {
+      "id": "mnhvb8c06t75",
+      "title": "idea 3",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-02T19:28:40.944Z",
+      "updatedAt": "2026-04-02T19:28:40.944Z"
+    },
+    {
       "id": "mnhvayl6uo11",
       "title": "idea 2",
       "speaker": "",
-      "body": "**One-line summary:**\n\n\n**What I'd challenge:**\n\n\n**What I'd steal for my own work:**\n\n",
+      "body": "idea about x",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1950,7 +1965,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-04-02T19:28:28.314Z",
-      "updatedAt": "2026-04-02T19:28:31.250Z"
+      "updatedAt": "2026-04-02T19:28:37.188Z"
     },
     {
       "id": "mnhv9dqwjl92",
@@ -2396,5 +2411,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:28:33.751Z"
+  "updated": "2026-04-02T19:28:43.444Z"
 }
