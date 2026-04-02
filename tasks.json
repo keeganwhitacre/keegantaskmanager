@@ -1942,7 +1942,7 @@
       "id": "mnhx5dh90gro",
       "title": "Custom EMA software stored locally - figure out IRB",
       "speaker": "",
-      "body": "",
+      "body": "Figure out IRB",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1951,7 +1951,7 @@
       "url": "",
       "ideaStatus": "raw",
       "createdAt": "2026-04-02T20:20:06.910Z",
-      "updatedAt": "2026-04-02T20:20:22.450Z"
+      "updatedAt": "2026-04-02T20:20:31.418Z"
     },
     {
       "id": "mnhws5czssv2",
@@ -2382,5 +2382,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T20:20:25.236Z"
+  "updated": "2026-04-02T20:20:33.919Z"
 }
