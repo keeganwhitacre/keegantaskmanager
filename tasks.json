@@ -1915,6 +1915,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhu3t9ag7d8",
+      "title": "RA Hiring Process",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-02T18:54:55.198Z",
+      "updatedAt": "2026-04-02T18:55:00.085Z"
+    },
+    {
       "id": "mnhsmmvxu2bi",
       "title": "Beginner Constructionism Journal Club",
       "speaker": "",
@@ -2311,5 +2326,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T18:14:13.120Z"
+  "updated": "2026-04-02T18:55:02.587Z"
 }
