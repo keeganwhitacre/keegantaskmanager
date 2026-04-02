@@ -1938,6 +1938,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnhvayl6uo11",
+      "title": "idea 2",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-02T19:28:28.314Z",
+      "updatedAt": "2026-04-02T19:28:28.314Z"
+    },
+    {
       "id": "mnhv9dqwjl92",
       "title": "paper 1",
       "speaker": "",
@@ -1956,7 +1971,7 @@
       "id": "mnhv92pfh5jq",
       "title": "Testing 1",
       "speaker": "",
-      "body": "[[paper 1]]\n",
+      "body": "[[paper 1]]'s thoughts on [[idea 2]] lead me to consider [[idea 3]]\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -1965,7 +1980,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-02T19:27:00.339Z",
-      "updatedAt": "2026-04-02T19:27:12.234Z"
+      "updatedAt": "2026-04-02T19:28:25.717Z"
     },
     {
       "id": "mnhu3t9ag7d8",
@@ -2381,5 +2396,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T19:27:46.869Z"
+  "updated": "2026-04-02T19:28:30.815Z"
 }
