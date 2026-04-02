@@ -1128,7 +1128,7 @@
     },
     {
       "id": "1775161469931",
-      "title": "Call",
+      "title": "Call Joe",
       "categories": [
         "personal"
       ],
@@ -1139,7 +1139,9 @@
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -2397,5 +2399,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T20:24:32.442Z"
+  "updated": "2026-04-02T20:24:38.103Z"
 }
