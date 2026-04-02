@@ -1918,18 +1918,18 @@
       "id": "mnhu3t9ag7d8",
       "title": "RA Hiring Process",
       "speaker": "",
-      "body": "Google form with questions, not up to who emails\n",
+      "body": "Google form with questions, not up to who emails\n-= \nFiltered from there to interviews\nNotes from interviews lead to selection w/ grad students",
       "tags": [
         "lab"
       ],
       "projectId": "",
-      "bodyIsMono": false,
+      "bodyIsMono": true,
       "pinned": false,
       "type": "memo",
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-02T18:54:55.198Z",
-      "updatedAt": "2026-04-02T18:55:25.909Z"
+      "updatedAt": "2026-04-02T18:55:52.044Z"
     },
     {
       "id": "mnhsmmvxu2bi",
@@ -2328,5 +2328,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-02T18:55:28.410Z"
+  "updated": "2026-04-02T18:55:54.546Z"
 }
