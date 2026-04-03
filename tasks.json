@@ -1261,7 +1261,7 @@
     {
       "id": "mmgcg8sqamq9",
       "title": "Personal Research Project",
-      "stage": "Planning",
+      "stage": "Active",
       "due": "",
       "note": "EMA app?<div><br></div><div>Need to start thinking about personal research projects integrating SAS information, talking with Kristen, and future interests <br></div><div><br></div><div>EMA App with built in PAT complete, talk to Jingyi </div>",
       "milestones": [
@@ -1294,6 +1294,11 @@
           "type": "milestone",
           "label": "✓ Build app",
           "date": "2026-04-03T01:59:27.280Z"
+        },
+        {
+          "type": "stage",
+          "label": "Stage → Active",
+          "date": "2026-04-03T01:59:37.317Z"
         }
       ],
       "description": ""
@@ -2435,5 +2440,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T01:59:29.782Z"
+  "updated": "2026-04-03T01:59:39.819Z"
 }
