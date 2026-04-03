@@ -1263,7 +1263,7 @@
       "title": "Personal Research Project",
       "stage": "Planning",
       "due": "",
-      "note": "EMA app?<div><br></div><div>Need to start thinking about personal research projects integrating SAS information, talking with Kristen, and future interests <br></div>",
+      "note": "EMA app?<div><br></div><div>Need to start thinking about personal research projects integrating SAS information, talking with Kristen, and future interests <br></div><div><br></div><div>EMA </div>",
       "milestones": [
         {
           "id": "mnfehhieonti",
@@ -1278,7 +1278,8 @@
           "label": "Added: Talk to Kristen",
           "date": "2026-04-01T02:02:06.950Z"
         }
-      ]
+      ],
+      "description": ""
     },
     {
       "id": "mn4ychs8u3os",
@@ -2417,5 +2418,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T01:52:36.651Z"
+  "updated": "2026-04-03T01:59:13.464Z"
 }
