@@ -2017,6 +2017,21 @@
   },
   "cnNotes": [
     {
+      "id": "mniuwj2izs39",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-03T12:05:01.194Z",
+      "updatedAt": "2026-04-03T12:05:01.194Z"
+    },
+    {
       "id": "mnhx5dh90gro",
       "title": "Custom EMA software stored locally",
       "speaker": "",
@@ -2460,5 +2475,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T12:04:56.989Z"
+  "updated": "2026-04-03T12:05:02.283Z"
 }
