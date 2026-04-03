@@ -2021,7 +2021,9 @@
       "title": "EMA-PAT Writeup",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "lab"
+      ],
       "projectId": "mmgcg8sqamq9",
       "bodyIsMono": false,
       "pinned": false,
@@ -2029,7 +2031,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-03T12:05:01.194Z",
-      "updatedAt": "2026-04-03T12:05:14.428Z"
+      "updatedAt": "2026-04-03T12:05:17.027Z"
     },
     {
       "id": "mnhx5dh90gro",
@@ -2475,5 +2477,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T12:05:16.929Z"
+  "updated": "2026-04-03T12:05:19.528Z"
 }
