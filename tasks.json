@@ -2030,7 +2030,7 @@
       "id": "mniuwj2izs39",
       "title": "EMA-PAT Writeup",
       "speaker": "",
-      "body": "# Origin\nBuilding off the idea of a [[Custom EMA software stored locally]] and Jingyi's suggestion to look into the PAT, I decided to [[Revamp phone HBD app]]\n\nThis led to the creation of the ePAT (name in progress) (Ecological Phase Assessment Task)\n\n# The ePAT\nTo build the ePAT I made use of two open source applications. The first was the actual phase adjustment task - https://github.com/huma-engineering/Phase-Adjustment-Task\n- This task was built using swift architecture to run on iOS devices\n  - however, this means participants have to download a compiled Xcode app through either TestFlight or another method and it only works on apple devices without significant recompilation\n  - this method also relied on precompiled libraries with large sizes\nTo overcome these obstacles I also looked into web based 'ppg' heart rate detectors finding this website \n- https://heartrate.netlify.app/\n  - this is a simple netlify app that worked on my device, checked using my AirPods Heartrate detectors for accuracy and found similar results\n  - this website also used an open source GitHub repo so others could use the code\n    - https://github.com/richrd/heart-rate-monitor\n",
+      "body": "# Origin\nBuilding off the idea of a [[Custom EMA software stored locally]] and Jingyi's suggestion to look into the PAT, I decided to [[Revamp phone HBD app]]\n\nThis led to the creation of the ePAT (name in progress) (Ecological Phase Assessment Task)\n\n# The ePAT\nTo build the ePAT I made use of two open source applications. The first was the actual phase adjustment task - https://github.com/huma-engineering/Phase-Adjustment-Task\n- This task was built using swift architecture to run on iOS devices\n  - however, this means participants have to download a compiled Xcode app through either TestFlight or another method and it only works on apple devices without significant recompilation\n  - this method also relied on precompiled libraries with large sizes\nTo overcome these obstacles I also looked into web based 'ppg' heart rate detectors finding this website \n- https://heartrate.netlify.app/\n  - this is a simple netlify app that worked on my device, checked using my AirPods Heartrate detectors for accuracy and found similar results\n  - this website also used an open source GitHub repo so others could use the code\n    - https://github.com/richrd/heart-rate-monitor\n\n",
       "tags": [
         "lab"
       ],
@@ -2041,7 +2041,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-03T12:05:01.194Z",
-      "updatedAt": "2026-04-03T13:43:48.554Z"
+      "updatedAt": "2026-04-03T13:43:55.410Z"
     },
     {
       "id": "mnhx5dh90gro",
@@ -2487,5 +2487,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T13:43:51.119Z"
+  "updated": "2026-04-03T13:43:57.911Z"
 }
