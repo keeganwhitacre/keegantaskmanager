@@ -1162,6 +1162,24 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mniugkce54tf",
+      "title": "Write up documentation for EMA",
+      "categories": [
+        "lab",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "",
+      "due": "2026-04-03",
+      "projectId": "mmgcg8sqamq9",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2442,5 +2460,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T11:52:12.209Z"
+  "updated": "2026-04-03T11:52:38.857Z"
 }
