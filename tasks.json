@@ -2020,7 +2020,7 @@
       "id": "mniuwj2izs39",
       "title": "EMA-PAT Writeup",
       "speaker": "",
-      "body": "[[Custom EMA software stored locally]]\n",
+      "body": "[[Custom EMA software stored locally]] [[Revamp phone HBD app\n",
       "tags": [
         "lab"
       ],
@@ -2031,7 +2031,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-03T12:05:01.194Z",
-      "updatedAt": "2026-04-03T12:05:27.460Z"
+      "updatedAt": "2026-04-03T12:05:44.927Z"
     },
     {
       "id": "mnhx5dh90gro",
@@ -2477,5 +2477,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T12:05:41.081Z"
+  "updated": "2026-04-03T12:05:47.428Z"
 }
