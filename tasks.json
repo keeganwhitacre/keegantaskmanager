@@ -1505,7 +1505,7 @@
       }
     ]
   },
-  "scratchpad": "Analog!\n\n",
+  "scratchpad": "Analog!",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -2517,5 +2517,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T16:35:39.204Z"
+  "updated": "2026-04-03T16:35:43.635Z"
 }
