@@ -1128,23 +1128,6 @@
       "completedAt": "2026-04-03T01:52:34.146Z"
     },
     {
-      "id": "1775161469931",
-      "title": "Call Joe",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-04-02",
-      "noteIsMono": false,
-      "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": "",
-      "milestoneId": ""
-    },
-    {
       "id": "mnhzfsb4tiyi",
       "title": "Text Nora good luck!",
       "categories": [
@@ -1158,8 +1141,9 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-03T11:52:07.101Z"
     },
     {
       "id": "mni9fyzsfhdt",
@@ -2458,5 +2442,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T02:04:19.253Z"
+  "updated": "2026-04-03T11:52:09.605Z"
 }
