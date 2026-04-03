@@ -2030,7 +2030,7 @@
       "id": "mniuwj2izs39",
       "title": "EMA-PAT Writeup",
       "speaker": "",
-      "body": "Building off the idea of a [[Custom EMA software stored locally]] and Jingyi's suggestion to look into the PAT, I decided to [[Revamp phone HBD app]]\n\nThis led to the creation of the ePAT (name in progress) (Ecological Phase Assessment Task)\n\n# The ePAT\n\n",
+      "body": "# Origin\nBuilding off the idea of a [[Custom EMA software stored locally]] and Jingyi's suggestion to look into the PAT, I decided to [[Revamp phone HBD app]]\n\nThis led to the creation of the ePAT (name in progress) (Ecological Phase Assessment Task)\n\n# The ePAT\n\n",
       "tags": [
         "lab"
       ],
@@ -2041,7 +2041,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-03T12:05:01.194Z",
-      "updatedAt": "2026-04-03T13:14:24.326Z"
+      "updatedAt": "2026-04-03T13:14:31.862Z"
     },
     {
       "id": "mnhx5dh90gro",
@@ -2487,5 +2487,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T13:14:27.834Z"
+  "updated": "2026-04-03T13:14:34.681Z"
 }
