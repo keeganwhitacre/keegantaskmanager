@@ -1179,8 +1179,9 @@
       "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-03T14:00:44.935Z"
     }
   ],
   "projects": [
@@ -1320,6 +1321,11 @@
           "type": "stage",
           "label": "Stage → Active",
           "date": "2026-04-03T01:59:37.317Z"
+        },
+        {
+          "type": "task",
+          "label": "✓ Write up documentation for EMA",
+          "date": "2026-04-03T14:00:44.935Z"
         }
       ],
       "description": ""
@@ -2487,5 +2493,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T14:00:43.277Z"
+  "updated": "2026-04-03T14:00:47.437Z"
 }
