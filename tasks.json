@@ -2018,7 +2018,7 @@
   "cnNotes": [
     {
       "id": "mniuwj2izs39",
-      "title": "",
+      "title": "EMA-PAT Writeup",
       "speaker": "",
       "body": "",
       "tags": [],
@@ -2029,7 +2029,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-03T12:05:01.194Z",
-      "updatedAt": "2026-04-03T12:05:01.194Z"
+      "updatedAt": "2026-04-03T12:05:09.788Z"
     },
     {
       "id": "mnhx5dh90gro",
@@ -2475,5 +2475,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T12:05:02.283Z"
+  "updated": "2026-04-03T12:05:12.289Z"
 }
