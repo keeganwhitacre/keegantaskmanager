@@ -1270,6 +1270,13 @@
           "title": "Talk to Kristen",
           "due": "",
           "done": false
+        },
+        {
+          "id": "mni99r3pym5l",
+          "title": "Build app",
+          "due": "",
+          "done": true,
+          "completedAt": "2026-04-03T01:59:27.280Z"
         }
       ],
       "history": [
@@ -1277,6 +1284,16 @@
           "type": "milestone-add",
           "label": "Added: Talk to Kristen",
           "date": "2026-04-01T02:02:06.950Z"
+        },
+        {
+          "type": "milestone-add",
+          "label": "Added: Build app",
+          "date": "2026-04-03T01:59:26.581Z"
+        },
+        {
+          "type": "milestone",
+          "label": "✓ Build app",
+          "date": "2026-04-03T01:59:27.280Z"
         }
       ],
       "description": ""
@@ -2418,5 +2435,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T01:59:23.339Z"
+  "updated": "2026-04-03T01:59:29.782Z"
 }
