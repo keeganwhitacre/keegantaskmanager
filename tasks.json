@@ -2064,9 +2064,9 @@
   "cnNotes": [
     {
       "id": "mnjq44xhz3vd",
-      "title": "Stop Hyper",
+      "title": "Stop Hyperfixating",
       "speaker": "",
-      "body": "",
+      "body": "Use journal and this app to write things down - offload plans and ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2075,7 +2075,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-04T02:38:44.213Z",
-      "updatedAt": "2026-04-04T02:38:50.026Z"
+      "updatedAt": "2026-04-04T02:39:06.400Z"
     },
     {
       "id": "mniuwj2izs39",
@@ -2538,5 +2538,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-04T02:38:52.529Z"
+  "updated": "2026-04-04T02:39:08.902Z"
 }
