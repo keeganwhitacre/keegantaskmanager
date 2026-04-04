@@ -1576,7 +1576,7 @@
     }
   ],
   "dash": {
-    "intention": "This week I want to lock in at work, hang out with my friends, continue the secret Bel project, and keep my habits consistent. I need to start reading again it’s been months…",
+    "intention": "",
     "intentionWeek": "2026-W14",
     "quoteIdx": 8,
     "countdown": {
@@ -1773,7 +1773,8 @@
       "2026-03-31": 4,
       "2026-04-01": 5,
       "2026-04-02": 5,
-      "2026-04-03": 2
+      "2026-04-03": 2,
+      "2026-04-04": 4
     },
     "affect": {
       "2026-03-04": {
@@ -2043,6 +2044,14 @@
           "ctx": "rest",
           "t": "2026-04-03T23:09:48.632Z"
         }
+      ],
+      "2026-04-04": [
+        {
+          "v": 3,
+          "a": 3,
+          "ctx": null,
+          "t": "2026-04-04T16:24:54.633Z"
+        }
       ]
     },
     "weeklyReflections": {
@@ -2072,6 +2081,12 @@
         "carryActions": {
           "1774812980696": "keep"
         }
+      },
+      "2026-W14": {
+        "reviewed": true,
+        "reviewedAt": "2026-04-04T16:24:51.253Z",
+        "intentionRating": 2,
+        "carryActions": {}
       }
     },
     "researchReflections": {
@@ -2555,5 +2570,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-04T16:23:10.921Z"
+  "updated": "2026-04-04T16:24:57.138Z"
 }
