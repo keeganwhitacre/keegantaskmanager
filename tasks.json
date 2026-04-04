@@ -2063,6 +2063,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnjq44xhz3vd",
+      "title": "Stop Hyper",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-04T02:38:44.213Z",
+      "updatedAt": "2026-04-04T02:38:50.026Z"
+    },
+    {
       "id": "mniuwj2izs39",
       "title": "EMA-PAT Writeup",
       "speaker": "ePAT",
@@ -2523,5 +2538,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-03T23:10:01.037Z"
+  "updated": "2026-04-04T02:38:52.529Z"
 }
