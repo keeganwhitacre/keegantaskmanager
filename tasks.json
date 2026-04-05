@@ -1228,7 +1228,7 @@
       "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "SQI + IBI checks\nFeedback\nConfirmations",
+      "note": "SQI + IBI checks move from validation to actual testing\nDouble check calibration period + viability of all new adjustments\nFeedback for participants\nConfirmations for knob",
       "due": "2026-04-06",
       "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
@@ -2630,5 +2630,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-05T14:25:09.704Z"
+  "updated": "2026-04-05T16:05:10.350Z"
 }
