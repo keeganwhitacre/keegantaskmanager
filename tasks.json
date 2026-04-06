@@ -1220,6 +1220,21 @@
       "pomodoros": 0
     },
     {
+      "id": "1775477028996",
+      "title": "Send bradie her diploma pic",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-06",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "mnltpl9ke0yh",
       "title": "ePAT adjustments",
       "categories": [
@@ -1267,21 +1282,6 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
-      "id": "1775477028996",
-      "title": "Send bradie her diploma pic",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-04-06",
-      "noteIsMono": false,
-      "pinnedToday": true,
       "done": false,
       "pomodoros": 0
     }
@@ -2683,5 +2683,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T12:03:51.507Z"
+  "updated": "2026-04-06T12:03:54.364Z"
 }
