@@ -1824,7 +1824,7 @@
           false
         ],
         "lift": [
-          false,
+          true,
           false,
           false,
           false,
@@ -2683,5 +2683,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T12:04:16.310Z"
+  "updated": "2026-04-06T12:05:16.948Z"
 }
