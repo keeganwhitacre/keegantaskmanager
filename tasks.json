@@ -1333,7 +1333,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "",
+      "due": "2026-04-06",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -2753,5 +2753,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T17:46:47.243Z"
+  "updated": "2026-04-06T17:46:54.534Z"
 }
