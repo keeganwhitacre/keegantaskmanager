@@ -1273,7 +1273,8 @@
       "id": "mnluog0s16sd",
       "title": "AFSP Meeting for Research",
       "categories": [
-        "personal"
+        "personal",
+        "afsp"
       ],
       "status": "active",
       "priority": "md",
@@ -2711,5 +2712,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T13:37:32.920Z"
+  "updated": "2026-04-06T13:37:39.969Z"
 }
