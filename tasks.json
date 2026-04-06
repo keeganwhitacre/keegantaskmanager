@@ -1269,6 +1269,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775477028996",
+      "title": "Send bradie her diploma pic",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-06",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2668,5 +2683,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T11:59:32.791Z"
+  "updated": "2026-04-06T12:03:51.507Z"
 }
