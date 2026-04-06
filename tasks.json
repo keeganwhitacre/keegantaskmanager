@@ -1940,6 +1940,15 @@
           false,
           false,
           false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
         ]
       }
     },
@@ -2799,5 +2808,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T18:02:16.324Z"
+  "updated": "2026-04-06T18:03:46.749Z"
 }
