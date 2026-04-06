@@ -1289,23 +1289,6 @@
       "milestoneId": ""
     },
     {
-      "id": "mnkjkbr4i73d",
-      "title": "Email Ren",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-07",
-      "projectId": "mmgcg8sqamq9",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mnnhhvt56m65",
       "title": "ePAT refinements",
       "categories": [
@@ -1317,6 +1300,23 @@
       "note": "- look into PAT 2 features\n- better positioning guide + pressure using SQI",
       "due": "2026-04-07",
       "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
+      "id": "mnkjkbr4i73d",
+      "title": "Email Ren",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-04-07",
+      "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
       "noteIsMono": false,
       "done": false,
@@ -2770,5 +2770,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T17:48:46.723Z"
+  "updated": "2026-04-06T17:48:50.074Z"
 }
