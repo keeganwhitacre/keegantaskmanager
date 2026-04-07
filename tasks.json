@@ -1820,6 +1820,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2020,12 +2026,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -2405,7 +2405,7 @@
   "cnNotes": [
     {
       "id": "mnoyohaaxxav",
-      "title": "2-2-2",
+      "title": "Dates",
       "speaker": "",
       "body": "",
       "tags": [
@@ -2418,7 +2418,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-07T18:37:21.154Z",
-      "updatedAt": "2026-04-07T18:37:26.763Z"
+      "updatedAt": "2026-04-07T18:42:20.856Z"
     },
     {
       "id": "mnjq44xhz3vd",
@@ -2909,5 +2909,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:37:32.503Z"
+  "updated": "2026-04-07T18:42:23.357Z"
 }
