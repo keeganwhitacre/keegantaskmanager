@@ -1757,7 +1757,7 @@
       }
     ]
   },
-  "scratchpad": "Analog!\nShy + decisions app\n\nThis week -\n- secret project reveal\n- starfield\n- leather journal\n- ePAT w/ Kristen\n- meeting Wednesday for AFSP\n- new clothes\n- relax and stop hyperfixating\n- phone off at 8:30\n- Tetris effect?",
+  "scratchpad": "Analog!\nShoebox.\n\nThis week -\n- secret project reveal\n- starfield\n- leather journal\n- ePAT w/ Kristen\n- meeting Wednesday for AFSP\n- new clothes\n- relax and stop hyperfixating\n- phone off at 8:30\n- Tetris effect?",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -1820,6 +1820,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2020,12 +2026,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -2883,5 +2883,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T16:15:06.620Z"
+  "updated": "2026-04-07T16:31:30.877Z"
 }
