@@ -1839,6 +1839,11 @@
         "id": "mnoyzgn18s94",
         "text": "living room fort (new apt)",
         "done": false
+      },
+      {
+        "id": "mnoz2kr8qmqo",
+        "text": "north market",
+        "done": false
       }
     ]
   },
@@ -2994,5 +2999,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:46:37.729Z"
+  "updated": "2026-04-07T18:48:21.338Z"
 }
