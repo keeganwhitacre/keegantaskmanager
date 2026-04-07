@@ -1774,6 +1774,11 @@
         "id": "mnoyw44ux675",
         "text": "dessert only outing",
         "done": false
+      },
+      {
+        "id": "mnoyw7xq5a3l",
+        "text": "arcade competition",
+        "done": false
       }
     ]
   },
@@ -2929,5 +2934,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:43:19.859Z"
+  "updated": "2026-04-07T18:43:24.788Z"
 }
