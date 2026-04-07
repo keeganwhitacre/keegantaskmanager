@@ -2405,10 +2405,12 @@
   "cnNotes": [
     {
       "id": "mnoyohaaxxav",
-      "title": "",
+      "title": "2-2-2",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "bel"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
@@ -2416,7 +2418,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-07T18:37:21.154Z",
-      "updatedAt": "2026-04-07T18:37:21.154Z"
+      "updatedAt": "2026-04-07T18:37:26.763Z"
     },
     {
       "id": "mnjq44xhz3vd",
@@ -2907,5 +2909,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:37:22.037Z"
+  "updated": "2026-04-07T18:37:29.264Z"
 }
