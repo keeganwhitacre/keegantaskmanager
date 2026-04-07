@@ -1284,10 +1284,11 @@
       "due": "2026-04-06",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
       "projectId": "",
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-04-07T11:10:53.476Z"
     },
     {
       "id": "mnnhhvt56m65",
@@ -2810,5 +2811,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-06T21:55:55.865Z"
+  "updated": "2026-04-07T11:10:55.983Z"
 }
