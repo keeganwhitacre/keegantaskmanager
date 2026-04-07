@@ -1452,10 +1452,12 @@
     {
       "id": "mnp0dea0igfh",
       "title": "shoebox. ad",
-      "categories": [],
+      "categories": [
+        "hobby"
+      ],
       "status": "active",
       "priority": "md",
-      "pinnedToday": false,
+      "pinnedToday": true,
       "note": "",
       "due": "",
       "projectId": "",
@@ -3054,5 +3056,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T19:24:45.778Z"
+  "updated": "2026-04-07T19:24:50.463Z"
 }
