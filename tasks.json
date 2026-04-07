@@ -1445,8 +1445,9 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-07T14:33:58.979Z"
     }
   ],
   "projects": [
@@ -2882,5 +2883,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T14:19:31.454Z"
+  "updated": "2026-04-07T14:34:01.487Z"
 }
