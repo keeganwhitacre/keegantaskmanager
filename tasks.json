@@ -1291,23 +1291,6 @@
       "completedAt": "2026-04-07T11:10:53.476Z"
     },
     {
-      "id": "mnnhhvt56m65",
-      "title": "ePAT refinements",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "- look into PAT 2 features\n- better positioning guide + pressure using SQI",
-      "due": "2026-04-07",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mnn8k7169vem",
       "title": "Check out researchers + get list for AFSP meeting",
       "categories": [
@@ -1342,6 +1325,23 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-04-06T19:35:10.193Z"
+    },
+    {
+      "id": "mnnhhvt56m65",
+      "title": "ePAT refinements",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "- look into PAT 2 features\n- better positioning guide + pressure using SQI",
+      "due": "2026-04-07",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     },
     {
       "id": "mnkjkbr4i73d",
@@ -2864,5 +2864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:22:12.524Z"
+  "updated": "2026-04-07T11:22:18.741Z"
 }
