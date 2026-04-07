@@ -1381,16 +1381,19 @@
       "id": "1775560806542",
       "title": "Get leather journal",
       "categories": [
-        "personal"
+        "personal",
+        "hobby"
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
-      "due": "2026-04-07",
+      "note": "Arrives according to UPS",
+      "due": "2026-04-10",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -2826,5 +2829,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:20:09.070Z"
+  "updated": "2026-04-07T11:20:25.712Z"
 }
