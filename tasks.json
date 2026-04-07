@@ -2593,23 +2593,6 @@
       "updatedAt": "2026-04-07T21:25:12.008Z"
     },
     {
-      "id": "mnoyohaaxxav",
-      "title": "Dates",
-      "speaker": "",
-      "body": "",
-      "tags": [
-        "bel"
-      ],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": true,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-07T18:37:21.154Z",
-      "updatedAt": "2026-04-07T18:42:20.856Z"
-    },
-    {
       "id": "mnjq44xhz3vd",
       "title": "Stop Hyperfixating",
       "speaker": "",
@@ -3098,5 +3081,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T21:30:32.335Z"
+  "updated": "2026-04-07T21:30:38.161Z"
 }
