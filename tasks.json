@@ -1315,7 +1315,7 @@
         "afsp"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "pinnedToday": false,
       "note": "https://afsp.org/research-grants/\nhttps://afsp.org/grant/who-recovers-a-longitudinal-study-exploring-personal-recovery-after-a-suicidal-ep",
       "due": "2026-04-07",
@@ -2864,5 +2864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:22:01.789Z"
+  "updated": "2026-04-07T11:22:12.524Z"
 }
