@@ -1301,7 +1301,7 @@
       "priority": "hi",
       "pinnedToday": false,
       "note": "https://afsp.org/research-grants/\nhttps://afsp.org/grant/who-recovers-a-longitudinal-study-exploring-personal-recovery-after-a-suicidal-ep",
-      "due": "2026-04-07",
+      "due": "2026-04-08",
       "projectId": "mmdklg8dgrze",
       "milestoneId": "mnfehxephbug",
       "noteIsMono": false,
@@ -1336,7 +1336,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "- look into PAT 2 features\n- better positioning guide + pressure using SQI",
-      "due": "2026-04-07",
+      "due": "2026-04-08",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1997,12 +1997,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2203,6 +2197,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -3098,5 +3098,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T19:24:50.463Z"
+  "updated": "2026-04-07T21:30:32.335Z"
 }
