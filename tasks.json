@@ -1376,6 +1376,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775560806542",
+      "title": "Get leather journal",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-07",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2811,5 +2826,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:13:26.422Z"
+  "updated": "2026-04-07T11:20:09.070Z"
 }
