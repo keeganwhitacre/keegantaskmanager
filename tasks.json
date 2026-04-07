@@ -2413,7 +2413,7 @@
       ],
       "projectId": "",
       "bodyIsMono": false,
-      "pinned": false,
+      "pinned": true,
       "type": "memo",
       "url": "",
       "ideaStatus": "",
@@ -2909,5 +2909,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:37:29.264Z"
+  "updated": "2026-04-07T18:37:32.503Z"
 }
