@@ -1344,23 +1344,6 @@
       "pomodoros": 0
     },
     {
-      "id": "mnkjkbr4i73d",
-      "title": "Email Ren",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-07",
-      "projectId": "mmgcg8sqamq9",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mnnhkmr7d9oj",
       "title": "Check out starfield update",
       "categories": [
@@ -1372,6 +1355,23 @@
       "note": "",
       "due": "2026-04-07",
       "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
+      "id": "mnkjkbr4i73d",
+      "title": "Email Ren",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-04-07",
+      "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
       "noteIsMono": false,
       "done": false,
@@ -2864,5 +2864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:22:18.741Z"
+  "updated": "2026-04-07T11:22:27.810Z"
 }
