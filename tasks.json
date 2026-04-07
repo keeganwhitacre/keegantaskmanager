@@ -1480,6 +1480,21 @@
       "done": false,
       "pomodoros": 0,
       "pinnedToday": true
+    },
+    {
+      "id": "mnp4pctjaoml",
+      "title": "Finalize shoebox, both branding and design",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-07",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
