@@ -1834,6 +1834,11 @@
         "id": "mnoyz4da4ccr",
         "text": "spa night",
         "done": false
+      },
+      {
+        "id": "mnoyzgn18s94",
+        "text": "living room fort (new apt)",
+        "done": false
       }
     ]
   },
@@ -2989,5 +2994,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:45:40.131Z"
+  "updated": "2026-04-07T18:45:56.035Z"
 }
