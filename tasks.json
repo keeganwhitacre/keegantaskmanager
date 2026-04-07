@@ -1904,7 +1904,7 @@
       "2026-W15": {
         "sleep": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -1922,7 +1922,7 @@
         ],
         "lift": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -1939,7 +1939,7 @@
           false
         ],
         "phone": [
-          false,
+          true,
           false,
           false,
           false,
@@ -2811,5 +2811,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:10:55.983Z"
+  "updated": "2026-04-07T11:11:06.045Z"
 }
