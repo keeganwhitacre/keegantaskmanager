@@ -1429,6 +1429,24 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mnopguus9fjq",
+      "title": "Shoebox app!",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-04-07",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2864,5 +2882,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T13:28:21.900Z"
+  "updated": "2026-04-07T14:19:31.454Z"
 }
