@@ -1769,6 +1769,11 @@
         "id": "mnoyvrg5vze3",
         "text": "breakfast date",
         "done": false
+      },
+      {
+        "id": "mnoyw44ux675",
+        "text": "dessert only outing",
+        "done": false
       }
     ]
   },
@@ -2924,5 +2929,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T18:43:03.419Z"
+  "updated": "2026-04-07T18:43:19.859Z"
 }
