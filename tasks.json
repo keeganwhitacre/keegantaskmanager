@@ -1389,7 +1389,7 @@
       "note": "Arrives according to UPS",
       "due": "2026-04-10",
       "noteIsMono": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0,
       "projectId": "",
@@ -2829,5 +2829,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-07T11:20:25.712Z"
+  "updated": "2026-04-07T11:20:33.666Z"
 }
