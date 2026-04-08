@@ -1520,6 +1520,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mnqbhsgks5ev",
+      "title": "Look into August researchers",
+      "categories": [
+        "afsp"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "mmdklg8dgrze",
+      "milestoneId": "mnfehxephbug",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3176,5 +3193,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T17:23:33.972Z"
+  "updated": "2026-04-08T17:23:52.733Z"
 }
