@@ -1492,7 +1492,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "- logo\n- sw.js\n- manifest.json",
+      "note": "- logo\n- sw.js\n- manifest.json\n- typography?",
       "due": "2026-04-07",
       "noteIsMono": false,
       "done": false,
@@ -3147,5 +3147,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T12:03:38.452Z"
+  "updated": "2026-04-08T12:43:58.437Z"
 }
