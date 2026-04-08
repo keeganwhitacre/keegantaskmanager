@@ -1598,7 +1598,8 @@
           "id": "mnfei5y2evlr",
           "title": "Contact Ashley w/ request",
           "due": "",
-          "done": false
+          "done": true,
+          "completedAt": "2026-04-08T17:23:56.196Z"
         }
       ],
       "history": [
@@ -1641,6 +1642,11 @@
           "type": "task",
           "label": "✓ AFSP Meeting for Research @1:00",
           "date": "2026-04-08T17:23:31.468Z"
+        },
+        {
+          "type": "milestone",
+          "label": "✓ Contact Ashley w/ request",
+          "date": "2026-04-08T17:23:56.196Z"
         }
       ],
       "description": "Host a researcher for AFSP"
@@ -3193,5 +3199,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T17:23:52.733Z"
+  "updated": "2026-04-08T17:23:58.697Z"
 }
