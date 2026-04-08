@@ -1492,12 +1492,14 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "- logo\n- sw.js",
       "due": "2026-04-07",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true
+      "pinnedToday": true,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -3112,5 +3114,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T11:37:41.583Z"
+  "updated": "2026-04-08T11:38:47.915Z"
 }
