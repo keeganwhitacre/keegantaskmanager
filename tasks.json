@@ -2596,9 +2596,9 @@
   "cnNotes": [
     {
       "id": "mnpznbn7m3b7",
-      "title": "",
+      "title": "Things!!",
       "speaker": "",
-      "body": "",
+      "body": "- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2607,7 +2607,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-08T11:52:12.979Z",
-      "updatedAt": "2026-04-08T11:52:12.979Z"
+      "updatedAt": "2026-04-08T11:52:19.741Z"
     },
     {
       "id": "mnpd68melo8r",
@@ -3129,5 +3129,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T11:52:13.663Z"
+  "updated": "2026-04-08T11:52:22.243Z"
 }
