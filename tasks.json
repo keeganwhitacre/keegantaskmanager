@@ -1336,7 +1336,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "- look into PAT 2 features\n- better positioning guide + pressure using SQI",
-      "due": "2026-04-08",
+      "due": "2026-04-09",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -3103,5 +3103,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T10:57:21.790Z"
+  "updated": "2026-04-08T10:57:29.944Z"
 }
