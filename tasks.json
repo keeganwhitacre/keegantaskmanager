@@ -2595,6 +2595,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnpznbn7m3b7",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-08T11:52:12.979Z",
+      "updatedAt": "2026-04-08T11:52:12.979Z"
+    },
+    {
       "id": "mnpd68melo8r",
       "title": "Starfield!",
       "speaker": "",
@@ -3114,5 +3129,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T11:52:10.305Z"
+  "updated": "2026-04-08T11:52:13.663Z"
 }
