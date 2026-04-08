@@ -1239,6 +1239,24 @@
       "completedAt": "2026-04-06T17:46:36.057Z"
     },
     {
+      "id": "mnn8k7169vem",
+      "title": "Check out researchers + get list for AFSP meeting",
+      "categories": [
+        "personal",
+        "afsp"
+      ],
+      "status": "active",
+      "priority": "hi",
+      "pinnedToday": false,
+      "note": "https://afsp.org/research-grants/\nhttps://afsp.org/grant/who-recovers-a-longitudinal-study-exploring-personal-recovery-after-a-suicidal-ep",
+      "due": "2026-04-08",
+      "projectId": "mmdklg8dgrze",
+      "milestoneId": "mnfehxephbug",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "mnluog0s16sd",
       "title": "AFSP Meeting for Research @1:00",
       "categories": [
@@ -1289,24 +1307,6 @@
       "projectId": "",
       "milestoneId": "",
       "completedAt": "2026-04-07T11:10:53.476Z"
-    },
-    {
-      "id": "mnn8k7169vem",
-      "title": "Check out researchers + get list for AFSP meeting",
-      "categories": [
-        "personal",
-        "afsp"
-      ],
-      "status": "active",
-      "priority": "hi",
-      "pinnedToday": false,
-      "note": "https://afsp.org/research-grants/\nhttps://afsp.org/grant/who-recovers-a-longitudinal-study-exploring-personal-recovery-after-a-suicidal-ep",
-      "due": "2026-04-08",
-      "projectId": "mmdklg8dgrze",
-      "milestoneId": "mnfehxephbug",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     },
     {
       "id": "mnnhfjpf5434",
@@ -3103,5 +3103,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T10:57:18.052Z"
+  "updated": "2026-04-08T10:57:21.790Z"
 }
