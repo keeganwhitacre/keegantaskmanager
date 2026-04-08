@@ -1486,18 +1486,18 @@
     },
     {
       "id": "mnp4pctjaoml",
-      "title": "Finalize shoebox, both branding and design",
+      "title": "Finalize shoebox and submit!",
       "categories": [
         "personal"
       ],
       "status": "active",
       "priority": "md",
-      "note": "- logo\n- sw.js\n- manifest.json\n- typography?",
-      "due": "2026-04-07",
+      "note": "",
+      "due": "2026-04-08",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "projectId": "",
       "milestoneId": ""
     },
@@ -3147,5 +3147,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T16:31:12.656Z"
+  "updated": "2026-04-08T16:33:21.551Z"
 }
