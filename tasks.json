@@ -2584,6 +2584,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnpd68melo8r",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-08T01:23:04.358Z",
+      "updatedAt": "2026-04-08T01:23:04.358Z"
+    },
+    {
       "id": "mnp4oc08rccl",
       "title": "Ideas for shoebox",
       "speaker": "",
@@ -3085,5 +3100,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T01:23:01.526Z"
+  "updated": "2026-04-08T01:23:04.923Z"
 }
