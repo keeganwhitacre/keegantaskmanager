@@ -2157,7 +2157,7 @@
         "sleep": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2175,7 +2175,7 @@
         "lift": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2547,7 +2547,7 @@
         {
           "v": 4,
           "a": 3,
-          "ctx": null,
+          "ctx": "exercise",
           "t": "2026-04-08T11:13:18.911Z"
         }
       ]
@@ -3112,5 +3112,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T11:13:21.414Z"
+  "updated": "2026-04-08T11:13:27.855Z"
 }
