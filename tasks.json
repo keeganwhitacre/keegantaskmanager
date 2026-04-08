@@ -1937,7 +1937,7 @@
       }
     ]
   },
-  "scratchpad": "Analog!\nShoebox.\n\nThis week -\n- starfield\n- leather journal\n- ePAT w/ Kristen\n- meeting Wednesday for AFS\n- phone off at 8:30",
+  "scratchpad": "Analog!\nShoebox.\n\nThis week -\n- starfield\n- leather journal\n- ePAT w/ Kristen\n- meeting Wednesday for AFSP\n- phone off at 8:30",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -2593,7 +2593,8 @@
       "bodyIsMono": false,
       "pinned": false,
       "createdAt": "2026-04-07T21:25:12.008Z",
-      "updatedAt": "2026-04-07T21:25:12.008Z"
+      "updatedAt": "2026-04-07T21:25:12.008Z",
+      "type": "memo"
     },
     {
       "id": "mnjq44xhz3vd",
@@ -3084,5 +3085,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T01:22:55.193Z"
+  "updated": "2026-04-08T01:23:01.526Z"
 }
