@@ -1268,7 +1268,7 @@
       "pinnedToday": false,
       "note": "",
       "due": "2026-04-08",
-      "projectId": "",
+      "projectId": "mmdklg8dgrze",
       "milestoneId": "",
       "noteIsMono": false,
       "done": false,
@@ -2572,6 +2572,10 @@
         }
       ]
     },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!",
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. "
+    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
       "2026-03-23": "Cluttering my mental space is my lack of nothing time, the need for a talk, and getting back to work.",
@@ -2580,10 +2584,6 @@
       "2026-03-27": "If I could only accomplish three things today they would be\n- reaching out to Ashley to follow up\n- starting to look at how to integrate the EPIC sleep data and fitbit\n- finish work on app finally",
       "2026-03-30": "I would say surplus. I feel like I have a ton of energy right now after being sick last week and finally getting to the gym this morning. I am ready for the day and the week!",
       "2026-04-01": "Data wrangling!"
-    },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!",
-      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. "
     },
     "weeklyReviews": {
       "2026-W12": {
@@ -2612,21 +2612,6 @@
     }
   },
   "cnNotes": [
-    {
-      "id": "mnq6nzcra10l",
-      "title": "To do",
-      "speaker": "",
-      "body": "- stop spending as much money, start saving more\n- get back into gaming with starfield in free time\n- finish grapes of wrath and start reading more\n- start planning dates and being more spontaneous and \"lets do this\"\n- ",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-08T15:08:41.019Z",
-      "updatedAt": "2026-04-08T15:09:49.078Z"
-    },
     {
       "id": "mnpznbn7m3b7",
       "title": "Things!!",
@@ -3162,5 +3147,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-08T15:09:51.579Z"
+  "updated": "2026-04-08T15:15:44.383Z"
 }
