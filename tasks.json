@@ -1557,6 +1557,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mnriuph0sa2y",
+      "title": "reply to Dr. Bluck with dates",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3229,5 +3246,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-09T13:34:46.293Z"
+  "updated": "2026-04-09T13:37:38.878Z"
 }
