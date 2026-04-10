@@ -1605,7 +1605,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "Arrives according to UPS",
+      "note": "Arrived according to UPS",
       "due": "2026-04-10",
       "noteIsMono": false,
       "pinnedToday": false,
@@ -3328,5 +3328,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T19:58:13.326Z"
+  "updated": "2026-04-10T20:10:56.198Z"
 }
