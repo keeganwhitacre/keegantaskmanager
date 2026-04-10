@@ -1564,7 +1564,8 @@
       "id": "mnriuph0sa2y",
       "title": "reply to Dr. Bluck with dates",
       "categories": [
-        "personal"
+        "personal",
+        "paper"
       ],
       "status": "active",
       "priority": "md",
@@ -3275,5 +3276,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T12:51:48.748Z"
+  "updated": "2026-04-10T12:51:57.542Z"
 }
