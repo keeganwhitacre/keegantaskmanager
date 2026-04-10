@@ -1576,6 +1576,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775825500501",
+      "title": "Make a quick shoebox post",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-10",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3257,5 +3272,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T11:15:13.762Z"
+  "updated": "2026-04-10T12:51:43.007Z"
 }
