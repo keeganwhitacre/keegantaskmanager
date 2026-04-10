@@ -1613,6 +1613,25 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
+    },
+    {
+      "id": "mntbvzb56oko",
+      "title": "Write up ePAT study idea",
+      "categories": [
+        "lab",
+        "phd",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-04-13",
+      "projectId": "mmgcg8sqamq9",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3309,5 +3328,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T19:30:30.680Z"
+  "updated": "2026-04-10T19:58:13.326Z"
 }
