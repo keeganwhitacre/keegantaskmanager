@@ -1543,6 +1543,24 @@
       "completedAt": "2026-04-09T15:45:54.021Z"
     },
     {
+      "id": "1775825500501",
+      "title": "Make a quick shoebox post",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "lo",
+      "note": "",
+      "due": "2026-04-10",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
+    },
+    {
       "id": "mnriuph0sa2y",
       "title": "reply to Dr. Bluck with dates",
       "categories": [
@@ -1588,24 +1606,6 @@
       "due": "2026-04-10",
       "noteIsMono": false,
       "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": "",
-      "milestoneId": ""
-    },
-    {
-      "id": "1775825500501",
-      "title": "Make a quick shoebox post",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
-      "status": "active",
-      "priority": "lo",
-      "note": "",
-      "due": "2026-04-10",
-      "noteIsMono": false,
-      "pinnedToday": true,
       "done": false,
       "pomodoros": 0,
       "projectId": "",
@@ -3291,5 +3291,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T13:50:17.978Z"
+  "updated": "2026-04-10T13:50:29.305Z"
 }
