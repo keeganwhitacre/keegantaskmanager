@@ -1516,7 +1516,7 @@
       "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "- get developer license again…\n- finish and release BANK!\n- convert and release shoebox.\n- consider converting task manager…",
+      "note": "- finish and release BANK",
       "due": "",
       "projectId": "",
       "milestoneId": "",
@@ -3248,5 +3248,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T11:14:25.330Z"
+  "updated": "2026-04-10T11:14:50.057Z"
 }
