@@ -1381,22 +1381,19 @@
       "pomodoros": 0
     },
     {
-      "id": "1775560806542",
-      "title": "Get leather journal",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
+      "id": "mnsyq77fj0am",
+      "title": "Show Ruofan EMA",
+      "categories": [],
       "status": "active",
       "priority": "md",
-      "note": "Arrives according to UPS",
-      "due": "2026-04-10",
-      "noteIsMono": false,
       "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
+      "note": "",
+      "due": "2026-04-10",
       "projectId": "",
-      "milestoneId": ""
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     },
     {
       "id": "mnoj49gkeu19",
@@ -1561,6 +1558,24 @@
       "completedAt": "2026-04-09T15:45:54.021Z"
     },
     {
+      "id": "1775560806542",
+      "title": "Get leather journal",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "Arrives according to UPS",
+      "due": "2026-04-10",
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "done": false,
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
+    },
+    {
       "id": "mnriuph0sa2y",
       "title": "reply to Dr. Bluck with dates",
       "categories": [
@@ -1595,21 +1610,6 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
-    },
-    {
-      "id": "mnsyq77fj0am",
-      "title": "Show Ruofan EMA",
-      "categories": [],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-10",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3291,5 +3291,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T13:49:55.084Z"
+  "updated": "2026-04-10T13:50:04.313Z"
 }
