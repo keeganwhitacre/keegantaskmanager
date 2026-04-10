@@ -1595,6 +1595,21 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
+    },
+    {
+      "id": "mnsyq77fj0am",
+      "title": "Show Ruofan EMA",
+      "categories": [],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2113,6 +2128,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2313,12 +2334,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -3276,5 +3291,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T12:51:57.542Z"
+  "updated": "2026-04-10T13:49:48.612Z"
 }
