@@ -1543,24 +1543,6 @@
       "completedAt": "2026-04-09T15:45:54.021Z"
     },
     {
-      "id": "1775560806542",
-      "title": "Get leather journal",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "Arrives according to UPS",
-      "due": "2026-04-10",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": "",
-      "milestoneId": ""
-    },
-    {
       "id": "1775825500501",
       "title": "Make a quick shoebox post",
       "categories": [
@@ -1595,6 +1577,24 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775560806542",
+      "title": "Get leather journal",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "Arrives according to UPS",
+      "due": "2026-04-10",
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "done": false,
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "mnsyq77fj0am",
@@ -3291,5 +3291,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T13:50:42.490Z"
+  "updated": "2026-04-10T13:50:49.585Z"
 }
