@@ -1581,16 +1581,19 @@
       "id": "1775825500501",
       "title": "Make a quick shoebox post",
       "categories": [
-        "personal"
+        "personal",
+        "hobby"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "lo",
       "note": "",
       "due": "2026-04-10",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -3272,5 +3275,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-10T12:51:43.007Z"
+  "updated": "2026-04-10T12:51:48.748Z"
 }
