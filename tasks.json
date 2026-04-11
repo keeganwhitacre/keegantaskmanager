@@ -2773,7 +2773,7 @@
       "id": "mnun7luya7yv",
       "title": "Apartments!",
       "speaker": "",
-      "body": "",
+      "body": "3677 Indianola Ave\nColumbus, OH  43214\nUnited States ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2782,7 +2782,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-11T18:02:55.211Z",
-      "updatedAt": "2026-04-11T18:02:59.328Z"
+      "updatedAt": "2026-04-11T18:10:37.924Z"
     },
     {
       "id": "mntgpj39fpt2",
@@ -3366,5 +3366,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-11T18:03:01.830Z"
+  "updated": "2026-04-11T18:10:40.426Z"
 }
