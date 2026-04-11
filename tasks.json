@@ -2770,6 +2770,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnun7luya7yv",
+      "title": "Apartments!",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-11T18:02:55.211Z",
+      "updatedAt": "2026-04-11T18:02:59.328Z"
+    },
+    {
       "id": "mntgpj39fpt2",
       "title": "Shoebox theme ideas!",
       "speaker": "",
@@ -3351,5 +3366,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-11T15:03:01.933Z"
+  "updated": "2026-04-11T18:03:01.830Z"
 }
