@@ -2773,7 +2773,7 @@
       "id": "mnun7luya7yv",
       "title": "Apartments!",
       "speaker": "",
-      "body": "3677 Indianola Ave\nColumbus, OH  43214\nUnited States \n- round tree rents\n",
+      "body": "3677 Indianola Ave\nColumbus, OH  43214\nUnited States \n- round tree rents\n95 Georgetown Dr\nColumbus, OH  43214\nUnited States\n- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2782,7 +2782,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-11T18:02:55.211Z",
-      "updatedAt": "2026-04-11T18:56:22.049Z"
+      "updatedAt": "2026-04-11T18:56:25.183Z"
     },
     {
       "id": "mntgpj39fpt2",
@@ -3366,5 +3366,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-11T18:56:24.552Z"
+  "updated": "2026-04-11T18:56:27.684Z"
 }
