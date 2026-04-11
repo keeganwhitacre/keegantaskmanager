@@ -2723,7 +2723,8 @@
     },
     "weeklyReflections": {
       "2026-W12": "Exciting!",
-      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. "
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
+      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
     },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
@@ -2754,6 +2755,12 @@
         "reviewed": true,
         "reviewedAt": "2026-04-04T16:24:51.253Z",
         "intentionRating": 2,
+        "carryActions": {}
+      },
+      "2026-W15": {
+        "reviewed": true,
+        "reviewedAt": "2026-04-11T15:02:59.431Z",
+        "intentionRating": 3,
         "carryActions": {}
       }
     },
@@ -3344,5 +3351,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-11T15:02:03.258Z"
+  "updated": "2026-04-11T15:03:01.933Z"
 }
