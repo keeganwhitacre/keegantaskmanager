@@ -2341,8 +2341,8 @@
           true,
           false,
           false,
-          false,
-          false
+          true,
+          true
         ],
         "read": [
           false,
@@ -3396,5 +3396,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-12T04:41:13.060Z"
+  "updated": "2026-04-12T04:41:23.214Z"
 }
