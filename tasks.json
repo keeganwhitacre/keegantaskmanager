@@ -1633,6 +1633,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1775968865330",
+      "title": "Play starfield",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-12",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3366,5 +3381,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-11T22:28:03.123Z"
+  "updated": "2026-04-12T04:41:07.837Z"
 }
