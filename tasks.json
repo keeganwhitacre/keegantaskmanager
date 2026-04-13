@@ -1336,7 +1336,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "- reorganizing the onedrive for Ohio State\n  - structure and setup",
+      "note": "",
       "due": "2026-04-13",
       "noteIsMono": false,
       "pinnedToday": true,
@@ -1355,7 +1355,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "- look into PAT 2 features\n  - interesting stuff\n- better positioning guide + pressure using SQI\n  - make the circle red",
-      "due": "2026-04-17",
+      "due": "2026-04-13",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1390,7 +1390,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-04-17",
+      "due": "2026-04-13",
       "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1643,7 +1643,7 @@
       "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels\n\nKristen agreed on interoception being treated as a trait is not what she thinks",
+      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels",
       "due": "2026-04-13",
       "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
@@ -1700,41 +1700,6 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-04-12T19:39:34.877Z"
-    },
-    {
-      "id": "mnxjecadvexh",
-      "title": "Schedule 1:1 meeting w/ Kristen",
-      "categories": [
-        "lab",
-        "phd"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-16",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
-      "id": "mnxjev84r0xo",
-      "title": "Organization of OneDrive sketches",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "",
-      "due": "2026-04-14",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2190,7 +2155,7 @@
       }
     ]
   },
-  "scratchpad": "Today\n- work on ePAT + organization\n- work on shoebox (1 hour MAX)\n- starfield!\n\nThis week\n- finish shoebox\n- start using journal + shoebox + tasks",
+  "scratchpad": "Analog!\nShoebox.\n\nThis week -\n- starfield\n- leather journal\n- ePAT w/ Kristen\n- phone off at 8:30",
   "shop": [
     {
       "id": 1772723159518.5393,
@@ -2888,11 +2853,6 @@
         }
       ]
     },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!",
-      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
-      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
-    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
       "2026-03-23": "Cluttering my mental space is my lack of nothing time, the need for a talk, and getting back to work.",
@@ -2902,6 +2862,11 @@
       "2026-03-30": "I would say surplus. I feel like I have a ton of energy right now after being sick last week and finally getting to the gym this morning. I am ready for the day and the week!",
       "2026-04-01": "Data wrangling!",
       "2026-04-09": "Relaxed day at work, maybe shoebox gets accepted... again (🤞 ), hang w bel for a bit before going to her exhibition. In bed early for tomorrow!"
+    },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!",
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
+      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
     },
     "weeklyReviews": {
       "2026-W12": {
@@ -2937,21 +2902,19 @@
   },
   "cnNotes": [
     {
-      "id": "mnxh8zjibylb",
-      "title": "Admin Meeting 4/13",
+      "id": "mnxkc2cfmhts",
+      "title": "",
       "speaker": "",
-      "body": "# Admin Meeting Notes\n- Organization of one drive and setup for eventual crossover to \n- write up a structure for the \n- Lab off boarding manual\n  - leaving the lab - where to put data, and everything\n  - Adrienne leaving the lab soon, off boarding data, projects, etc\n    - person folder? maybe for past members? \n    - make sure in the project folder you have uploaded all of your analyses, readme, data organized, easy for someone to find\n- Manual - weekly lab meetings, one drive organization, buckid, all sorts of things that could be needed as an employee or student\n- each project -  sub projects + main project\n  - EPIC folder\n    - main\n      - clean code\n      - raw data\n      - etc\n    - project x\n    - project y",
-      "tags": [
-        "lab"
-      ],
+      "body": "",
+      "tags": [],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
       "type": "memo",
       "url": "",
       "ideaStatus": "",
-      "createdAt": "2026-04-13T17:39:20.430Z",
-      "updatedAt": "2026-04-13T18:12:34.241Z"
+      "createdAt": "2026-04-13T19:05:42.879Z",
+      "updatedAt": "2026-04-13T19:05:42.879Z"
     },
     {
       "id": "mnun7luya7yv",
@@ -3550,5 +3513,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T18:44:03.767Z"
+  "updated": "2026-04-13T19:05:44.390Z"
 }
