@@ -1665,6 +1665,21 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-04-12T19:39:34.877Z"
+    },
+    {
+      "id": "1776047835362",
+      "title": "Shoebox update v2",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-13",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3407,5 +3422,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T02:37:07.871Z"
+  "updated": "2026-04-13T02:37:17.866Z"
 }
