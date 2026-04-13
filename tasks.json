@@ -2209,8 +2209,8 @@
     }
   ],
   "dash": {
-    "intention": "This week I want to re-ground myself and restore myself to my own life. This means less hyperfixating on projects, keep them to their assigned timeframes. I want to get back into my hobbies, load some film into my camera, play a new game (starfield), and hopefully start writing again. I need to hang out with my friends more alone and just with them as well as take back my nights. I was turning off my phone at 9:00 consistently and that stopped for a few months. I want to go back to that but make it 8:30 and just shut off scrolling. I can still game or watch things but just no more texting, scrolling, checking things, etc. Its a good week to slow down and remember who I am!",
-    "intentionWeek": "2026-W15",
+    "intention": "",
+    "intentionWeek": "2026-W16",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -2218,6 +2218,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2417,13 +2423,54 @@
           false,
           false
         ]
+      },
+      "2026-W16": {
+        "sleep": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -2461,7 +2508,8 @@
       "2026-04-08": 5,
       "2026-04-09": 4,
       "2026-04-10": 4,
-      "2026-04-12": 5
+      "2026-04-12": 5,
+      "2026-04-13": 5
     },
     "affect": {
       "2026-03-04": {
@@ -2794,6 +2842,14 @@
           "a": 1,
           "ctx": "rest",
           "t": "2026-04-12T04:41:34.093Z"
+        }
+      ],
+      "2026-04-13": [
+        {
+          "v": 4,
+          "a": 3,
+          "ctx": "work",
+          "t": "2026-04-13T13:43:29.912Z"
         }
       ]
     },
@@ -3442,5 +3498,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T12:06:36.427Z"
+  "updated": "2026-04-13T13:43:32.414Z"
 }
