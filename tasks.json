@@ -2902,6 +2902,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnxh8zjibylb",
+      "title": "Admin Meeting 4/13",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-13T17:39:20.430Z",
+      "updatedAt": "2026-04-13T17:39:26.518Z"
+    },
+    {
       "id": "mnun7luya7yv",
       "title": "Apartments!",
       "speaker": "",
@@ -3498,5 +3513,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T17:10:25.748Z"
+  "updated": "2026-04-13T17:39:29.019Z"
 }
