@@ -1346,6 +1346,25 @@
       "milestoneId": ""
     },
     {
+      "id": "mntbvzb56oko",
+      "title": "Write up ePAT study idea",
+      "categories": [
+        "lab",
+        "phd",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels",
+      "due": "2026-04-13",
+      "projectId": "mmgcg8sqamq9",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "mnnhhvt56m65",
       "title": "ePAT refinements",
       "categories": [
@@ -1631,25 +1650,6 @@
       "projectId": "",
       "milestoneId": "",
       "completedAt": "2026-04-11T15:02:00.754Z"
-    },
-    {
-      "id": "mntbvzb56oko",
-      "title": "Write up ePAT study idea",
-      "categories": [
-        "lab",
-        "phd",
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels",
-      "due": "2026-04-13",
-      "projectId": "mmgcg8sqamq9",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
     },
     {
       "id": "1776047835362",
@@ -3498,5 +3498,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T14:59:25.219Z"
+  "updated": "2026-04-13T14:59:30.184Z"
 }
