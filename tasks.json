@@ -2888,11 +2888,6 @@
         }
       ]
     },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!",
-      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
-      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
-    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
       "2026-03-23": "Cluttering my mental space is my lack of nothing time, the need for a talk, and getting back to work.",
@@ -2902,6 +2897,11 @@
       "2026-03-30": "I would say surplus. I feel like I have a ton of energy right now after being sick last week and finally getting to the gym this morning. I am ready for the day and the week!",
       "2026-04-01": "Data wrangling!",
       "2026-04-09": "Relaxed day at work, maybe shoebox gets accepted... again (🤞 ), hang w bel for a bit before going to her exhibition. In bed early for tomorrow!"
+    },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!",
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
+      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
     },
     "weeklyReviews": {
       "2026-W12": {
@@ -2936,6 +2936,21 @@
     }
   },
   "cnNotes": [
+    {
+      "id": "mnxkcqsyffn5",
+      "title": "The Prompt Problem",
+      "speaker": "",
+      "body": "// The Quiet & Sensory (Grounding)\n        \"a moment you almost didn't notice\",\n        \"a detail you don't want to forget\",\n        \"a sharp contrast you noticed\",\n        \"a detail that most people probably walked right past\",\n        \"a shift in the background noise\",\n        \"a brief pocket of absolute calm\",\n        \"the most colorful thing you saw today\",\n        \"the exact moment your energy shifted today\",\n        \"a small detour from the usual path\",\n        \"the shape of a shadow\",\n        \"the angle of light at a particular hour\",\n        \"a moment the light did something\",\n        \"the temperature of a room when you walked in\",\n        \"a pause in a conversation you were near\",\n        \"a smell that arrived before you saw the source\",\n        \"the way a door sounded closing\",\n        \"a small piece of weather that only lasted a minute\",\n        \"the first warm or cool thing you touched today\",\n        \n        // The Warm & Human (Affective Shift)\n        \"the smallest gesture\",\n        \"something you overheard\",\n        \"a moment of quiet competence you observed\",\n        \"a reminder of something much older than you\",\n        \"a sentence that stayed with you\",\n        \"something that almost made you smile\",\n        \"a plant growing somewhere it probably shouldn't be\",\n        \"something held carefully by someone\",\n        \"a small kindness aimed at no one in particular\",\n        \"a sign that someone had been there before you\",\n        \"something arranged with more care than it needed\",\n        \"someone who was clearly enjoying their own company\",\n        \"a shared glance or smile with a stranger\",\n        \"an animal just going about its day\",\n        \"two people walking perfectly in step\",\n        \"a piece of good news you could tell someone just got\",\n        \"a moment of playfulness you caught in your periphery\",\n        \"someone looking out a window\",\n        \"a small, unspoken favor someone did for someone else\",\n        \n        // Open-Ended Warmth (High Accessibility, Low Guilt)\n        \"evidence of a good mood\",\n        \"a sign of patience\",\n        \"someone taking their time with something\",\n        \"a small, effortless courtesy\",\n        \"a sign that someone cares about their space\",\n        \"a moment of unexpected softness\",\n        \"a tiny, everyday victory\",\n        \"a space that felt lived-in and loved\",\n        \"evidence of someone looking out for someone else\",\n        \"a quiet moment of routine\",\n        \"a splash of color someone chose to wear\",\n        \"a moment that felt like it belonged in a photograph\",\n        \"a sound that felt particularly welcoming\",\n        \"a thing that was made or fixed by hand\",\n        \"a piece of the day that felt distinctly human\",\n        \"a sign of people sharing a space well\",\n        \"a moment of pure curiosity\",\n        \"something that felt genuinely cozy\",\n        \"an interaction that just felt easy\",\n        \"a detail that showed someone was paying attention\",\n        \n        // Additional Grounding & Environment\n        \"a shadow moving slowly across a wall\",\n        \"someone wearing a color that perfectly matched their surroundings\",\n        \"a very specific shade of green or blue\",\n        \"a sudden breeze that changed the temperature\",\n        \"the exact moment a streetlamp or porch light turned on\",\n        \"a fleeting smell of rain, coffee, or woodsmoke\",\n        \"a piece of clothing you saw that you really liked\",\n        \"a moment the sun broke through the clouds or the canopy\",\n        \"the sound of pages turning in a quiet room\",\n        \"a reflection in a puddle or window that caught your eye\",\n        \"a space that felt surprisingly welcoming\"\n    ]",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-13T19:06:14.578Z",
+      "updatedAt": "2026-04-13T19:06:23.319Z"
+    },
     {
       "id": "mnxh8zjibylb",
       "title": "Admin Meeting 4/13",
@@ -3550,5 +3565,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T19:06:11.849Z"
+  "updated": "2026-04-13T19:06:25.821Z"
 }
