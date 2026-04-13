@@ -1670,16 +1670,19 @@
       "id": "1776047835362",
       "title": "Shoebox update v2",
       "categories": [
-        "personal"
+        "personal",
+        "hobby"
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
+      "note": "- add ambient sounds\n- wire up IAP",
       "due": "2026-04-13",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -3422,5 +3425,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T02:37:17.866Z"
+  "updated": "2026-04-13T02:37:34.892Z"
 }
