@@ -2905,7 +2905,7 @@
       "id": "mnxh8zjibylb",
       "title": "Admin Meeting 4/13",
       "speaker": "",
-      "body": "",
+      "body": "# ",
       "tags": [
         "lab"
       ],
@@ -2916,7 +2916,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-13T17:39:20.430Z",
-      "updatedAt": "2026-04-13T17:39:30.355Z"
+      "updatedAt": "2026-04-13T17:39:38.689Z"
     },
     {
       "id": "mnun7luya7yv",
@@ -3515,5 +3515,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T17:39:32.856Z"
+  "updated": "2026-04-13T17:39:41.190Z"
 }
