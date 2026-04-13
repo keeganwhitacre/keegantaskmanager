@@ -1346,25 +1346,6 @@
       "milestoneId": ""
     },
     {
-      "id": "mntbvzb56oko",
-      "title": "Write up ePAT study idea",
-      "categories": [
-        "lab",
-        "phd",
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels",
-      "due": "2026-04-13",
-      "projectId": "mmgcg8sqamq9",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mnnhhvt56m65",
       "title": "ePAT refinements",
       "categories": [
@@ -1409,7 +1390,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-04-17",
+      "due": "2026-04-13",
       "projectId": "mmgcg8sqamq9",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1650,6 +1631,25 @@
       "projectId": "",
       "milestoneId": "",
       "completedAt": "2026-04-11T15:02:00.754Z"
+    },
+    {
+      "id": "mntbvzb56oko",
+      "title": "Write up ePAT study idea",
+      "categories": [
+        "lab",
+        "phd",
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels",
+      "due": "2026-04-13",
+      "projectId": "mmgcg8sqamq9",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     },
     {
       "id": "1776047835362",
@@ -2853,11 +2853,6 @@
         }
       ]
     },
-    "weeklyReflections": {
-      "2026-W12": "Exciting!",
-      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
-      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
-    },
     "reflections": {
       "2026-03-21": "The most important thing for me right now is to get some rest. I am so exhausted from travel and lack of sleep that I know I am not at 100% capacity. I am not really doing it first as its been nice to lay in bed, look at my pictures, and mess with my app. I also don't want to mess up my sleep schedule by sleeping at 3 PM. I guess another important thing is just processing everything from the past 1.5 weeks, it has been very busy. It is nice to have a day or two to myself with no responsibilities.",
       "2026-03-23": "Cluttering my mental space is my lack of nothing time, the need for a talk, and getting back to work.",
@@ -2867,6 +2862,11 @@
       "2026-03-30": "I would say surplus. I feel like I have a ton of energy right now after being sick last week and finally getting to the gym this morning. I am ready for the day and the week!",
       "2026-04-01": "Data wrangling!",
       "2026-04-09": "Relaxed day at work, maybe shoebox gets accepted... again (🤞 ), hang w bel for a bit before going to her exhibition. In bed early for tomorrow!"
+    },
+    "weeklyReflections": {
+      "2026-W12": "Exciting!",
+      "2026-W13": "I would name this week filler. I got sick and mostly did things I knew I had to do already. ",
+      "2026-W15": "Less hyperfixation. More time to myself. Better mood."
     },
     "weeklyReviews": {
       "2026-W12": {
@@ -2920,7 +2920,7 @@
       "id": "mntgpj39fpt2",
       "title": "Shoebox theme ideas!",
       "speaker": "",
-      "body": "- rest of the themes\n  - \n- ideas\n  - change throughout the day. - 5 distinct themes\n  - Aurora as separate 0.99 purchase\n\n\nYou write to fill it, and over months it becomes this strange and beautiful record of a life that you almost didn’t notice you were living.\n\nocean waves - https://pixabay.com/sound-effects/nature-calm-shoreline-waves-baltic-sea-427923/\ngulls - https://pixabay.com/sound-effects/nature-herring-gull-1-27057/\nwind - https://pixabay.com/sound-effects/nature-wind-blowing-457954/\n\n",
+      "body": "- rest of the themes\n  - \n- ideas\n  - change throughout the day. - 5 distinct themes\n  - Aurora as separate 0.99 purchase\n\n\nYou write to fill it, and over months it becomes this strange and beautiful record of a life that you almost didn’t notice you were living.\n\nocean waves - https://pixabay.com/sound-effects/nature-calm-shoreline-waves-baltic-sea-427923/\ngulls - https://pixabay.com/sound-effects/nature-herring-gull-1-27057/\nwind - https://pixabay.com/sound-effects/nature-wind-blowing-457954/\n\nv2 notes\n- siri integration - tell Siri to add a memory to shoebox!\n- \n\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2929,7 +2929,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-10T22:13:07.941Z",
-      "updatedAt": "2026-04-13T13:49:26.513Z"
+      "updatedAt": "2026-04-13T15:54:54.167Z"
     },
     {
       "id": "mnt09pbb72go",
@@ -3498,5 +3498,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T14:59:35.040Z"
+  "updated": "2026-04-13T15:54:56.669Z"
 }
