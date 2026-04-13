@@ -1652,6 +1652,24 @@
       "pomodoros": 0
     },
     {
+      "id": "1776047835362",
+      "title": "Shoebox update v2",
+      "categories": [
+        "personal",
+        "hobby"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "- add ambient sounds\n- wire up IAP",
+      "due": "2026-04-13",
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "done": false,
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
+    },
+    {
       "id": "1775968865330",
       "title": "Play starfield",
       "categories": [
@@ -1682,24 +1700,6 @@
       "done": true,
       "pomodoros": 0,
       "completedAt": "2026-04-12T19:39:34.877Z"
-    },
-    {
-      "id": "1776047835362",
-      "title": "Shoebox update v2",
-      "categories": [
-        "personal",
-        "hobby"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "- add ambient sounds\n- wire up IAP",
-      "due": "2026-04-13",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": "",
-      "milestoneId": ""
     }
   ],
   "projects": [
@@ -3442,5 +3442,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T11:49:28.811Z"
+  "updated": "2026-04-13T11:49:36.699Z"
 }
