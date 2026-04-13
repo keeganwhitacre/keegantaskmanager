@@ -1678,7 +1678,7 @@
       "note": "- add ambient sounds\n- wire up IAP",
       "due": "2026-04-13",
       "noteIsMono": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0,
       "projectId": "",
@@ -3425,5 +3425,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-13T02:37:34.892Z"
+  "updated": "2026-04-13T02:37:38.333Z"
 }
