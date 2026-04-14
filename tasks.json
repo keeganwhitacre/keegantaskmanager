@@ -1354,7 +1354,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "pinnedToday": false,
+      "pinnedToday": true,
       "note": "- look into PAT 2 features\n  - interesting stuff\n- better positioning guide + pressure using SQI\n  - make the circle red",
       "due": "2026-04-17",
       "projectId": "",
@@ -3584,5 +3584,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T11:14:21.666Z"
+  "updated": "2026-04-14T11:49:07.535Z"
 }
