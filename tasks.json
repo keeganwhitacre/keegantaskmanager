@@ -2272,6 +2272,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2475,7 +2481,7 @@
       "2026-W16": {
         "sleep": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2493,7 +2499,7 @@
         ],
         "lift": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2519,12 +2525,6 @@
           false
         ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -2563,7 +2563,8 @@
       "2026-04-09": 4,
       "2026-04-10": 4,
       "2026-04-12": 5,
-      "2026-04-13": 5
+      "2026-04-13": 5,
+      "2026-04-14": 4
     },
     "affect": {
       "2026-03-04": {
@@ -2904,6 +2905,14 @@
           "a": 3,
           "ctx": "work",
           "t": "2026-04-13T13:43:29.912Z"
+        }
+      ],
+      "2026-04-14": [
+        {
+          "v": 3,
+          "a": 3,
+          "ctx": "work",
+          "t": "2026-04-14T13:32:05.835Z"
         }
       ]
     },
@@ -3599,5 +3608,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T12:04:22.004Z"
+  "updated": "2026-04-14T13:32:12.831Z"
 }
