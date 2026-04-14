@@ -2956,6 +2956,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnykptt4axys",
+      "title": "",
+      "speaker": "",
+      "body": "neil young!!!!!!!!!!!!!!!!!!!!!!!!!!!!! deerhoof!!!!!!!!!!!!!!!!!!!!!!!!! animal collective!!!!!!!!!!!!!!!!!!!!!!! the raincoats!!!!!!!!!!!!!!!!!!!!!!!! daniel johnston!!!!!!!!!!!!!!!!!!!!! devo!!!!!!!!!!!!!!!!!!! cindy lee!!!!!!!!!!!!!!!!!!!!!!!",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-14T12:04:11.176Z",
+      "updatedAt": "2026-04-14T12:04:16.904Z"
+    },
+    {
       "id": "mnxkcqsyffn5",
       "title": "The Prompt Problem",
       "speaker": "",
@@ -3584,5 +3599,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T11:58:33.820Z"
+  "updated": "2026-04-14T12:04:19.408Z"
 }
