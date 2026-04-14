@@ -2965,6 +2965,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnytqvtsfbcd",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-14T16:16:56.992Z",
+      "updatedAt": "2026-04-14T16:16:56.992Z"
+    },
+    {
       "id": "mnytqtbuvydt",
       "title": "",
       "speaker": "",
@@ -3641,5 +3656,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T16:16:54.455Z"
+  "updated": "2026-04-14T16:16:59.739Z"
 }
