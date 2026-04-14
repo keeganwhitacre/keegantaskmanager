@@ -2965,6 +2965,21 @@
   },
   "cnNotes": [
     {
+      "id": "mnyveaiwp1b7",
+      "title": "Epat issues",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-14T17:03:08.744Z",
+      "updatedAt": "2026-04-14T17:03:15.218Z"
+    },
+    {
       "id": "mnytqvtsfbcd",
       "title": "",
       "speaker": "",
@@ -3656,5 +3671,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T17:03:05.504Z"
+  "updated": "2026-04-14T17:03:17.719Z"
 }
