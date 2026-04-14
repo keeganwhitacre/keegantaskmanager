@@ -2968,7 +2968,7 @@
       "id": "mnyveaiwp1b7",
       "title": "Epat issues",
       "speaker": "",
-      "body": "- brought back ",
+      "body": "- brought back double beats somehow\n- ",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -2977,7 +2977,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-14T17:03:08.744Z",
-      "updatedAt": "2026-04-14T17:03:18.800Z"
+      "updatedAt": "2026-04-14T17:03:25.684Z"
     },
     {
       "id": "mnytqvtsfbcd",
@@ -3671,5 +3671,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T17:03:21.301Z"
+  "updated": "2026-04-14T17:03:28.185Z"
 }
