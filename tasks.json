@@ -1347,23 +1347,6 @@
       "completedAt": "2026-04-13T19:25:15.610Z"
     },
     {
-      "id": "mnnhhvt56m65",
-      "title": "ePAT refinements",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": true,
-      "note": "- look into PAT 2 features\n  - interesting stuff\n- better positioning guide + pressure using SQI\n  - make the circle red",
-      "due": "2026-04-17",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mnnhkmr7d9oj",
       "title": "Check out starfield update",
       "categories": [
@@ -1647,6 +1630,23 @@
       "note": "ePAT in an ecological setting and then finding whether context, other factors, etc influence interoception or whether it is a trait like measure. This could be aligned with constructionist theory or show trait levels\n\nKristen agreed on interoception being treated as a trait is not what she thinks",
       "due": "2026-04-14",
       "projectId": "mmgcg8sqamq9",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
+      "id": "mnnhhvt56m65",
+      "title": "ePAT refinements",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": true,
+      "note": "- look into PAT 2 features\n  - interesting stuff\n- better positioning guide + pressure using SQI\n  - make the circle red",
+      "due": "2026-04-17",
+      "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
       "done": false,
@@ -3584,5 +3584,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-14T11:49:07.535Z"
+  "updated": "2026-04-14T11:49:12.233Z"
 }
