@@ -2512,7 +2512,7 @@
         ],
         "phone": [
           false,
-          false,
+          true,
           false,
           false,
           false,
@@ -3651,5 +3651,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-15T12:51:19.987Z"
+  "updated": "2026-04-15T12:51:26.826Z"
 }
