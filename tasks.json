@@ -1630,8 +1630,9 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-15T12:51:01.014Z"
     },
     {
       "id": "mntbvzb56oko",
@@ -3641,5 +3642,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-15T12:50:52.623Z"
+  "updated": "2026-04-15T12:51:03.519Z"
 }
