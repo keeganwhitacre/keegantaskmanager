@@ -3021,7 +3021,10 @@
       "title": "Lifting Notes",
       "speaker": "",
       "body": "",
-      "tags": [],
+      "tags": [
+        "hobby",
+        "paper"
+      ],
       "projectId": "",
       "bodyIsMono": false,
       "pinned": false,
@@ -3029,7 +3032,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T14:43:08.761Z",
-      "updatedAt": "2026-04-16T14:43:13.523Z"
+      "updatedAt": "2026-04-16T14:43:16.697Z"
     },
     {
       "id": "mnynxwjt6ocb",
@@ -3693,5 +3696,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:43:16.024Z"
+  "updated": "2026-04-16T14:43:19.199Z"
 }
