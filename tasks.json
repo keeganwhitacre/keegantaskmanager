@@ -3017,6 +3017,21 @@
   },
   "cnNotes": [
     {
+      "id": "mo1l9ye1hy1w",
+      "title": "Lifting Notes",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-16T14:43:08.761Z",
+      "updatedAt": "2026-04-16T14:43:13.523Z"
+    },
+    {
       "id": "mnynxwjt6ocb",
       "title": "ePAT - Interoception State vs Trait Writeup Guide",
       "speaker": "",
@@ -3678,5 +3693,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:42:01.763Z"
+  "updated": "2026-04-16T14:43:16.024Z"
 }
