@@ -3037,7 +3037,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- The page break [x] is all the way on the right side of the screen\n- Questions aren't tied to the time of day (lmao)\n- ",
+      "body": "# Bugs\n- The page break [x] is all the way on the right side of the screen\n- Questions aren't tied to the time of day (lmao)\n- Live preview is just too big still\n- ",
       "tags": [
         "lab",
         "phd"
@@ -3049,7 +3049,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-16T23:24:29.704Z"
+      "updatedAt": "2026-04-16T23:29:21.603Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3731,5 +3731,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T23:24:32.204Z"
+  "updated": "2026-04-16T23:29:24.105Z"
 }
