@@ -1788,6 +1788,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mo1qa2m974ps",
+      "title": "EMA Studio?",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3696,5 +3713,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:44:50.228Z"
+  "updated": "2026-04-16T17:03:14.829Z"
 }
