@@ -1490,6 +1490,23 @@
       "completedAt": "2026-04-08T18:58:27.412Z"
     },
     {
+      "id": "mo1qa2m974ps",
+      "title": "EMA Studio?",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "mnq01ymgfy64",
       "title": "App Store Arc",
       "categories": [
@@ -1782,23 +1799,6 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "Once Kristen approves the new structure, make final edits and begin to transfer data over from the UNC OneDrive. \n\nNaming conventions will be the worst...",
-      "due": "",
-      "projectId": "",
-      "milestoneId": "",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
-      "id": "mo1qa2m974ps",
-      "title": "EMA Studio?",
-      "categories": [
-        "lab"
-      ],
-      "status": "active",
-      "priority": "md",
-      "pinnedToday": false,
-      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc",
       "due": "",
       "projectId": "",
       "milestoneId": "",
@@ -3713,5 +3713,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T17:03:14.829Z"
+  "updated": "2026-04-16T17:03:18.931Z"
 }
