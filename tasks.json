@@ -1778,7 +1778,7 @@
       "categories": [
         "lab"
       ],
-      "status": "active",
+      "status": "waiting",
       "priority": "md",
       "pinnedToday": false,
       "note": "Once Kristen approves the new structure, make final edits and begin to transfer data over from the UNC OneDrive. \n\nNaming conventions will be the worst...",
@@ -3684,5 +3684,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:35:03.893Z"
+  "updated": "2026-04-16T14:35:11.097Z"
 }
