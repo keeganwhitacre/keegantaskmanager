@@ -1746,7 +1746,7 @@
       "categories": [
         "lab"
       ],
-      "status": "active",
+      "status": "waiting",
       "priority": "md",
       "pinnedToday": false,
       "note": "Shane + Doug",
@@ -3684,5 +3684,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:35:11.097Z"
+  "updated": "2026-04-16T14:35:16.251Z"
 }
