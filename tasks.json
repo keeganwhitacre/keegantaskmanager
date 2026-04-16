@@ -3017,21 +3017,6 @@
   },
   "cnNotes": [
     {
-      "id": "mnyveaiwp1b7",
-      "title": "Epat issues",
-      "speaker": "",
-      "body": "- brought back double beats somehow\n- no in study camera showing make red\n- can I just move the knob to the same spot every time?\n- do I implement cheat detection?",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-14T17:03:08.744Z",
-      "updatedAt": "2026-04-14T17:03:55.567Z"
-    },
-    {
       "id": "mnynxwjt6ocb",
       "title": "ePAT - Interoception State vs Trait Writeup Guide",
       "speaker": "",
@@ -3693,5 +3678,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T14:36:57.387Z"
+  "updated": "2026-04-16T14:37:17.429Z"
 }
