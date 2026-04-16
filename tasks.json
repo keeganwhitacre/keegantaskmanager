@@ -1498,7 +1498,7 @@
       "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc",
+      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc\n\nHeart rate - did that surprise you?",
       "due": "",
       "projectId": "",
       "milestoneId": "",
@@ -3713,5 +3713,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-16T17:03:18.931Z"
+  "updated": "2026-04-16T17:25:20.975Z"
 }
