@@ -1783,11 +1783,11 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-04-16",
+      "due": "2026-04-17",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": true
+      "pinnedToday": false
     },
     {
       "id": "mo1kzibuucdr",
@@ -3731,5 +3731,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-17T11:54:22.319Z"
+  "updated": "2026-04-17T11:54:30.025Z"
 }
