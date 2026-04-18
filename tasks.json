@@ -1767,7 +1767,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "Shane + Doug",
-      "due": "2026-04-18",
+      "due": "2026-04-20",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -3748,5 +3748,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-18T13:16:59.488Z"
+  "updated": "2026-04-18T13:17:04.365Z"
 }
