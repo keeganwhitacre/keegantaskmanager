@@ -1783,11 +1783,13 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-04-17",
+      "due": "2026-04-22",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
-      "pinnedToday": false
+      "pinnedToday": false,
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "mo1kzibuucdr",
@@ -3761,5 +3763,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-18T13:16:40.340Z"
+  "updated": "2026-04-18T13:16:45.284Z"
 }
