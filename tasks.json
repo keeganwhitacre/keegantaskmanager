@@ -1827,7 +1827,7 @@
       "categories": [],
       "status": "active",
       "priority": "md",
-      "pinnedToday": false,
+      "pinnedToday": true,
       "note": "",
       "due": "",
       "projectId": "",
@@ -3761,5 +3761,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-18T03:41:37.193Z"
+  "updated": "2026-04-18T03:41:43.467Z"
 }
