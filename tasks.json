@@ -1820,6 +1820,21 @@
       "pinnedToday": true,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mo3sivksxwbw",
+      "title": "Laundry, mow, buzz hair, get sheet",
+      "categories": [],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2338,12 +2353,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2591,6 +2600,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -3746,5 +3761,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-17T19:53:00.481Z"
+  "updated": "2026-04-18T03:41:37.193Z"
 }
