@@ -1835,7 +1835,7 @@
       "note": "",
       "due": "2026-04-20",
       "noteIsMono": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0,
       "projectId": "",
@@ -3766,5 +3766,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-19T13:33:53.662Z"
+  "updated": "2026-04-19T13:33:57.507Z"
 }
