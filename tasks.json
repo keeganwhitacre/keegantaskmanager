@@ -1833,11 +1833,13 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-04-19",
+      "due": "2026-04-20",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     }
   ],
   "projects": [
@@ -3764,5 +3766,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-19T13:33:49.735Z"
+  "updated": "2026-04-19T13:33:53.662Z"
 }
