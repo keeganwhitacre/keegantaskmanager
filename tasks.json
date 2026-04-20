@@ -3087,7 +3087,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- The page break [x] is all the way on the right side of the screen\n- confidence is broken after PAT trials\n- session greetings should be editable by default\n- pills don't have html\n- saves locally but the buttons and text revert (preview shows name and colors chosen but the ui resets to default interoception study, coral, dark)\n- no institution label on the preview \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- location? IRB....\n- Multiple tasks within one session\n- ",
+      "body": "# Bugs\n- The page break [x] is all the way on the right side of the screen\n- confidence is broken after PAT trials\n- session greetings should be editable by default\n- pills don't have html\n- saves locally but the buttons and text revert (preview shows name and colors chosen but the ui resets to default interoception study, coral, dark), also the questions reset until I make a change\n- no institution label on the preview \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- location? IRB....\n- Multiple tasks within one session\n- ",
       "tags": [
         "lab",
         "phd"
@@ -3099,7 +3099,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-20T14:09:03.222Z"
+      "updatedAt": "2026-04-20T14:09:19.804Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3781,5 +3781,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-20T14:09:05.723Z"
+  "updated": "2026-04-20T14:09:22.305Z"
 }
