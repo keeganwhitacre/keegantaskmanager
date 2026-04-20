@@ -3087,7 +3087,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- ePAT can't progress past first phase, the UI needs some work on the knob\n- \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- ",
+      "body": "# Bugs\n- ePAT can't progress past first phase, the UI needs some work on the knob\n- \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- ",
       "tags": [
         "lab",
         "phd"
@@ -3099,7 +3099,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-20T14:54:18.643Z"
+      "updatedAt": "2026-04-20T15:54:24.711Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3781,5 +3781,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-20T14:54:21.242Z"
+  "updated": "2026-04-20T15:54:27.214Z"
 }
