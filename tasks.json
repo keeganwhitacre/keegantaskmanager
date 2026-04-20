@@ -1840,6 +1840,21 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
+    },
+    {
+      "id": "1776686649468",
+      "title": "Lab + Admin meetings",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-20",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3766,5 +3781,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-19T13:33:57.507Z"
+  "updated": "2026-04-20T12:04:11.978Z"
 }
