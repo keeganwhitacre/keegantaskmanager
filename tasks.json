@@ -1767,7 +1767,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "Shane + Doug",
-      "due": "2026-04-20",
+      "due": "2026-04-22",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -1825,6 +1825,21 @@
       "completedAt": "2026-04-19T13:33:32.123Z"
     },
     {
+      "id": "1776686649468",
+      "title": "Lab + Admin meetings",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-20",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
       "id": "1776605627230",
       "title": "Call back WFACO about 15-16 month lease",
       "categories": [
@@ -1840,21 +1855,6 @@
       "pomodoros": 0,
       "projectId": "",
       "milestoneId": ""
-    },
-    {
-      "id": "1776686649468",
-      "title": "Lab + Admin meetings",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-04-20",
-      "noteIsMono": false,
-      "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0
     }
   ],
   "projects": [
@@ -3781,5 +3781,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-20T12:04:11.978Z"
+  "updated": "2026-04-20T12:04:21.718Z"
 }
