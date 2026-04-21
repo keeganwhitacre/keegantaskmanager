@@ -1736,8 +1736,9 @@
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-21T01:21:55.449Z"
     },
     {
       "id": "mnxjev84r0xo",
@@ -1836,8 +1837,9 @@
       "due": "2026-04-20",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-21T01:21:54.233Z"
     },
     {
       "id": "1776605627230",
@@ -1851,10 +1853,26 @@
       "due": "2026-04-20",
       "noteIsMono": false,
       "pinnedToday": false,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
       "projectId": "",
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-04-21T01:21:56.181Z"
+    },
+    {
+      "id": "mo8mz67l7qe5",
+      "title": "Flight credit ",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-21",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
@@ -2364,8 +2382,8 @@
     }
   ],
   "dash": {
-    "intention": "This week I want to finish shoebox, pitch it to everyone I know, and play starfield. I also want to finalize apartment hunting so its off my head (and Bel's). Mostly just relax for real this week. Lay off the hyperfixation, actually USE shoebox as its supposed to be used. ",
-    "intentionWeek": "2026-W16",
+    "intention": "",
+    "intentionWeek": "2026-W17",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -2625,6 +2643,53 @@
           false,
           false
         ]
+      },
+      "2026-W17": {
+        "sleep": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
       }
     },
     "moods": {
@@ -2667,7 +2732,9 @@
       "2026-04-13": 5,
       "2026-04-14": 4,
       "2026-04-15": 5,
-      "2026-04-16": 4
+      "2026-04-16": 4,
+      "2026-04-20": 5,
+      "2026-04-21": 4
     },
     "affect": {
       "2026-03-04": {
@@ -3033,6 +3100,22 @@
           "ctx": "work",
           "t": "2026-04-16T14:35:25.368Z"
         }
+      ],
+      "2026-04-20": [
+        {
+          "v": 4,
+          "a": 2,
+          "ctx": "rest",
+          "t": "2026-04-21T01:21:43.068Z"
+        }
+      ],
+      "2026-04-21": [
+        {
+          "v": 3,
+          "a": 3,
+          "ctx": "exercise",
+          "t": "2026-04-21T11:57:47.058Z"
+        }
       ]
     },
     "weeklyReflections": {
@@ -3087,7 +3170,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- Onboarding doesn't work\n- ePAT knob and ui in general is fugly and not clear\n- \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
+      "body": "# Bugs\n- ePAT can't progress past first phase, the UI needs some work on the knob\n- \n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
       "tags": [
         "lab",
         "phd"
@@ -3099,7 +3182,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-21T14:42:23.008Z"
+      "updatedAt": "2026-04-20T16:09:53.040Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3781,5 +3864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-21T14:42:25.511Z"
+  "updated": "2026-04-21T14:42:31.261Z"
 }
