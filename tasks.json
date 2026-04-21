@@ -1858,6 +1858,21 @@
       "projectId": "",
       "milestoneId": "",
       "completedAt": "2026-04-21T01:21:56.181Z"
+    },
+    {
+      "id": "mo8mz67l7qe5",
+      "title": "Flight credit ",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-21",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0,
+      "pinnedToday": true
     }
   ],
   "projects": [
