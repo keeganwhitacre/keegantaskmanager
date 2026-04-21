@@ -3170,7 +3170,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- ePAT knob needs CSS styling\n- ePAT make sure - no bluetooth headphones!\n- no instructions\n- \n\n# Features\n- scheduling day requirements\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
+      "body": "# Bugs\n- ePAT knob needs CSS styling\n- ePAT make sure - no bluetooth headphones!\n\n# Features\n- scheduling day requirements\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
       "tags": [
         "lab",
         "phd"
@@ -3182,7 +3182,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-21T15:27:24.232Z"
+      "updatedAt": "2026-04-21T15:27:28.530Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3864,5 +3864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-21T15:27:26.733Z"
+  "updated": "2026-04-21T15:27:31.031Z"
 }
