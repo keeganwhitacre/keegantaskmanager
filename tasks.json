@@ -3170,7 +3170,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- Onboarding doesn't work\n- ePAT knob and ui in general is fugly and not clear\n- no ePAT checks\n- no instructions\n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
+      "body": "# Bugs\n- ePAT knob and ui in general is fugly and not clear\n- no ePAT checks\n- no instructions\n\n# Features\n- Get heart rate for questions\n- sound decibels\n- Multiple tasks within one session\n- indexeddb storage\n- save midway through and resume\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n- google web hooks for storing data at the end of a study session",
       "tags": [
         "lab",
         "phd"
@@ -3182,7 +3182,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-21T14:42:48.837Z"
+      "updatedAt": "2026-04-21T15:22:55.425Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3864,5 +3864,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-21T14:42:51.338Z"
+  "updated": "2026-04-21T15:22:57.928Z"
 }
