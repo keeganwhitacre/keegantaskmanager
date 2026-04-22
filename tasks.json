@@ -3160,6 +3160,21 @@
   },
   "cnNotes": [
     {
+      "id": "moaev3xzrjcq",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-22T18:53:34.008Z",
+      "updatedAt": "2026-04-22T18:53:34.008Z"
+    },
+    {
       "id": "mo9zt5yt7z9a",
       "title": "Long Term EMA Studio",
       "speaker": "",
@@ -3872,5 +3887,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T18:52:24.657Z"
+  "updated": "2026-04-22T18:53:34.783Z"
 }
