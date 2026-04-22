@@ -1474,14 +1474,14 @@
     },
     {
       "id": "mo1qa2m974ps",
-      "title": "EMA Studio continuance",
+      "title": "EMA Forge continuance",
       "categories": [
         "lab"
       ],
       "status": "active",
       "priority": "md",
       "pinnedToday": true,
-      "note": "ePAT implementation, future tasks, qualtrics level of compatibility, export options, ui customization, etc\n\nHeart rate - did that surprise you?",
+      "note": "",
       "due": "",
       "projectId": "",
       "milestoneId": "",
@@ -3872,5 +3872,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T13:22:25.675Z"
+  "updated": "2026-04-22T15:05:50.599Z"
 }
