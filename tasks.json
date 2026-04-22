@@ -3163,7 +3163,7 @@
       "id": "mo9zt5yt7z9a",
       "title": "Long Term EMA Studio",
       "speaker": "",
-      "body": "- finalize naming?\n- make sure branching works, ui makes sense\n- add in easy webhook option\n  - test\n- add in potential twilio integration\n- validate HR with ECG and CNAP\n- add in new tasks\n- pilot study\n- methods paper\n- validation paper?\n- share with others",
+      "body": "- make sure branching works, ui makes sense\n- add in easy webhook option\n  - test\n- add in potential twilio integration\n- validate HR with ECG and CNAP\n- add in new tasks\n- pilot study\n- methods paper\n- validation paper?\n- share with others",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -3172,7 +3172,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-22T11:52:09.077Z",
-      "updatedAt": "2026-04-22T11:53:43.974Z"
+      "updatedAt": "2026-04-22T17:30:56.791Z"
     },
     {
       "id": "mo23ujal12ch",
@@ -3872,5 +3872,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T17:30:53.969Z"
+  "updated": "2026-04-22T17:30:59.292Z"
 }
