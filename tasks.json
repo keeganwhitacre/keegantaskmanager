@@ -3168,9 +3168,9 @@
   "cnNotes": [
     {
       "id": "mo9zt5yt7z9a",
-      "title": "Long Term",
+      "title": "Long Term EMA Studio",
       "speaker": "",
-      "body": "",
+      "body": "- finalize naming?\n- make sure branching works, ui makes sense\n- add in webhook",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -3179,7 +3179,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-22T11:52:09.077Z",
-      "updatedAt": "2026-04-22T11:52:13.233Z"
+      "updatedAt": "2026-04-22T11:52:31.500Z"
     },
     {
       "id": "mo23ujal12ch",
@@ -3879,5 +3879,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T11:52:15.735Z"
+  "updated": "2026-04-22T11:52:34.002Z"
 }
