@@ -2632,7 +2632,7 @@
         "sleep": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2650,7 +2650,7 @@
         "lift": [
           true,
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -2667,7 +2667,7 @@
         ],
         "phone": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -3863,5 +3863,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T13:21:28.293Z"
+  "updated": "2026-04-22T13:22:15.189Z"
 }
