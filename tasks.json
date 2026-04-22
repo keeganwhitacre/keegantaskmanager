@@ -3178,7 +3178,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n\n# Features\n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n\n- google web hooks + microsoft option in documentation\n  - ",
+      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n\n# Features\n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed\n- dashboard imports JSONs and can export CSV if needed\n- twilio integration with API, phone numbers, scripts done locally, etc\n\n- google web hooks + microsoft option in documentation\n  - link to instructions on the study builder page\n  - make easy to understand, copy paste this script, etc etc",
       "tags": [
         "lab",
         "phd"
@@ -3190,7 +3190,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-22T18:52:08.220Z"
+      "updatedAt": "2026-04-22T18:52:22.155Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3872,5 +3872,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-22T18:52:10.721Z"
+  "updated": "2026-04-22T18:52:24.657Z"
 }
