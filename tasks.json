@@ -3184,21 +3184,6 @@
       "updatedAt": "2026-04-23T15:22:43.228Z"
     },
     {
-      "id": "moaev3xzrjcq",
-      "title": "Twilio Integration",
-      "speaker": "",
-      "body": "This is a massive milestone! You’ve essentially built a highly secure, privacy-first, enterprise-grade research platform that costs absolutely $0 in server hosting. That is genuinely a game-changer for academic labs operating on tight grant budgets.\n\nSince you are ready to start thinking about the **Twilio Integration**, let's map out exactly how to do it safely and elegantly within your serverless constraints. \n\n### The Twilio Challenge (and the Golden Rule)\nBecause EMA Forge exports a static frontend, **you can never let the user put their Twilio Account SID or Auth Token into the Builder.** If those keys end up in the exported `config.json` or HTML file, anyone who inspects the web page can steal them and rack up thousands of dollars in spam texts on the lab's account.\n\nTherefore, the Twilio integration must live strictly on the researcher's side, acting as a bridge between the **Deployment CSV** and the participant's phone.\n\n### The Ideal Architecture: The \"Twilio Scheduler\"\nSince your researchers will already be using Google Sheets or Microsoft Excel to store their incoming data, we can use those exact same platforms to schedule the outgoing texts!\n\nHere is the blueprint for how this works perfectly:\n\n#### Step 1: Upgrading the Deployment CSV\nRight now, `js/tabs/deployment.js` generates:\n`Participant_ID, Day, Session, Phase_Sequence, URL`\n\nTo schedule a text, Twilio needs two more things: a **Phone Number** and an exact **Send Time**. \nWe should update the Deployment tab so the researcher can input a \"Study Start Date\". The Builder will then use the window rules (e.g., `start: \"08:00\", end: \"10:00\"`) to randomly generate the exact send timestamps and output a **Twilio-Ready CSV**:\n`Participant_ID, Phone_Number, Send_Time, Message_Body`\n*(The `Message_Body` would just be \"Time for your next check-in: [URL]\")*\n\n#### Step 2: The \"Drop-in\" Scheduler (Google/Microsoft)\nYou provide a pre-written template in your documentation (just like the Webhook script). \n1. The researcher creates a new Google Sheet called \"Twilio Scheduler\".\n2. They paste in their Twilio SID, Auth Token, and Twilio Phone Number into a settings tab.\n3. They paste the **Twilio-Ready CSV** into the main sheet. They type in the participants' real phone numbers into the empty `Phone_Number` column.\n4. They click a button that says **\"Start Scheduler\"**.\n\nBehind the scenes, a Google Apps Script runs every 15 minutes. It checks the `Send_Time` column. If a row's time has arrived, it securely pings the Twilio API, sends the text, and writes \"Sent\" next to the row.\n\n### Why this is the perfect solution:\n1. **100% Secure:** The Twilio API keys live safely locked inside the researcher's private Google/Microsoft account. They never touch the participant app.\n2. **Easy UI:** Researchers already know how to manage a spreadsheet of phone numbers.\n3. **Expiry Timestamps (The `t=` parameter):** When the Builder generates those exact send times for the CSV, it can automatically append the `&t=1732812000000` timestamp to the URL. This means your \"Link Expiry\" and \"Grace Period\" features will instantly start working flawlessly!\n\nDoes this sound like the right approach for the Twilio side of things? If so, the next code we need to touch will be updating `js/tabs/deployment.js` to add the \"Generate Timestamps\" logic!",
-      "tags": [],
-      "projectId": "",
-      "bodyIsMono": false,
-      "pinned": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-04-22T18:53:34.008Z",
-      "updatedAt": "2026-04-22T18:53:39.951Z"
-    },
-    {
       "id": "mo9zt5yt7z9a",
       "title": "Long Term EMA Studio",
       "speaker": "",
@@ -3911,5 +3896,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T17:39:21.871Z"
+  "updated": "2026-04-23T17:39:38.820Z"
 }
