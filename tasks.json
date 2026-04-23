@@ -3217,7 +3217,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n- onboarding is not locked no setting\n\n# Features\n- need to add documentation for twilio\n- need to \n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed",
+      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n- onboarding is not locked no setting\n\n# Features\n- need to add documentation for twilio\n- need to add links from builder to the readme for twilio + web hooks\n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed",
       "tags": [
         "lab",
         "phd"
@@ -3229,7 +3229,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-23T15:36:11.201Z"
+      "updatedAt": "2026-04-23T15:36:36.073Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3911,5 +3911,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T15:36:13.702Z"
+  "updated": "2026-04-23T15:36:38.575Z"
 }
