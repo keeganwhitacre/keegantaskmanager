@@ -1767,7 +1767,7 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-04-22",
+      "due": "2026-04-27",
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0,
@@ -3896,5 +3896,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T18:57:06.372Z"
+  "updated": "2026-04-23T18:57:13.059Z"
 }
