@@ -3187,7 +3187,7 @@
       "id": "mo9zt5yt7z9a",
       "title": "Long Term EMA Studio",
       "speaker": "",
-      "body": "- add in easy webhook option\n  - test\n- add in potential twilio integration\n- validate HR with ECG and CNAP\n- add in new tasks\n- pilot study\n- methods paper\n- validation paper?\n- share with others",
+      "body": "- validate HR with ECG and CNAP\n- add in new tasks\n- pilot study\n- methods paper\n- validation paper?\n- share with others",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -3196,7 +3196,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-22T11:52:09.077Z",
-      "updatedAt": "2026-04-22T17:31:00.362Z"
+      "updatedAt": "2026-04-23T17:39:46.819Z"
     },
     {
       "id": "mo23ujal12ch",
@@ -3896,5 +3896,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T17:39:42.111Z"
+  "updated": "2026-04-23T17:39:49.321Z"
 }
