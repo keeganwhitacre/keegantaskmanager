@@ -3169,6 +3169,21 @@
   },
   "cnNotes": [
     {
+      "id": "mobmrmds0eqb",
+      "title": "twiili",
+      "speaker": "",
+      "body": "ZB384KPB87RSYDQ48QVWPGTU",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-23T15:22:34.384Z",
+      "updatedAt": "2026-04-23T15:22:43.228Z"
+    },
+    {
       "id": "moaev3xzrjcq",
       "title": "Twilio Integration",
       "speaker": "",
@@ -3896,5 +3911,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T13:37:24.089Z"
+  "updated": "2026-04-23T15:22:45.879Z"
 }
