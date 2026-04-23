@@ -3178,7 +3178,7 @@
       "id": "mobw4rnhy40h",
       "title": "Study Links",
       "speaker": "",
-      "body": "\n1,0,Setup,Onboarding, https://emaforge.keeganwhitacre.com/ematest.html?id=1&session=onboarding\n1,1,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w1\n1,1,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w2\n1,1,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w3\n1,2,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w1\n1,2,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w2\n1,2,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w3\n1,3,Morning,Pre-EMA → ePAT,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w1\n1,3,Afternoon,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w2\n1,3,Evening,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w3\n1,4,Morning,Pre-EMA → ePAT,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w1\n1,4,Afternoon,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w2\n1,4,Evening,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w3\n1,5,Morning,Pre-EMA → ePAT,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w1\n1,5,Afternoon,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w2\n1,5,Evening,EMA,https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w3\n",
+      "body": "\n1,0,Setup,Onboarding, https://emaforge.keeganwhitacre.com/ematest.html?id=1&session=onboarding\n1,1,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w1\n1,1,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w2\n1,1,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=1&session=w3\n1,2,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w1\n1,2,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w2\n1,2,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=2&session=w3\n1,3,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w1\n1,3,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w2\n1,3,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=3&session=w3\n1,4,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w1\n1,4,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w2\n1,4,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=4&session=w3\n1,5,Morning,Pre-EMA → ePAT, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w1\n1,5,Afternoon,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w2\n1,5,Evening,EMA, https://emaforge.keeganwhitacre.com/ematest.html?id=1&day=5&session=w3\n",
       "tags": [],
       "projectId": "",
       "bodyIsMono": false,
@@ -3187,7 +3187,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-23T19:44:44.285Z",
-      "updatedAt": "2026-04-23T19:45:00.931Z"
+      "updatedAt": "2026-04-23T19:45:18.225Z"
     },
     {
       "id": "mobmrmds0eqb",
@@ -3917,5 +3917,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-23T19:45:03.433Z"
+  "updated": "2026-04-23T19:45:20.727Z"
 }
