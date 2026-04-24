@@ -3223,7 +3223,7 @@
       "id": "mo23ujal12ch",
       "title": "Bugs and Features",
       "speaker": "",
-      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n- onboarding is not locked no setting\n\n# Features\n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed",
+      "body": "# Bugs\n- ePAT make sure - no bluetooth headphones!\n- epat calibration only on EMA's with ePAT enabled\n- onboarding is not locked no setting\nI chrome\n\n# Features\n- scheduling day requirements\n- sound decibels\n- indexeddb storage\n- only one session+day+id allowed",
       "tags": [
         "lab",
         "phd"
@@ -3235,7 +3235,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-23T17:39:08.285Z"
+      "updatedAt": "2026-04-24T14:57:32.036Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3917,5 +3917,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-24T14:57:29.744Z"
+  "updated": "2026-04-24T14:57:34.538Z"
 }
