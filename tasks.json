@@ -1873,6 +1873,23 @@
       "pomodoros": 0,
       "pinnedToday": true,
       "completedAt": "2026-04-27T14:58:20.784Z"
+    },
+    {
+      "id": "mohifsvfyejn",
+      "title": "HVAC Repair?",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -2383,7 +2400,7 @@
   ],
   "dash": {
     "intention": "",
-    "intentionWeek": "2026-W18",
+    "intentionWeek": "2026-W17",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -2391,6 +2408,12 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
+    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2684,60 +2707,7 @@
           false,
           false
         ]
-      },
-      "2026-W18": {
-        "sleep": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "read": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "lift": [
-          true,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "doom": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ],
-        "phone": [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
-        ]
       }
-    },
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -2784,8 +2754,7 @@
       "2026-04-21": 4,
       "2026-04-22": 5,
       "2026-04-23": 3,
-      "2026-04-26": 5,
-      "2026-04-27": 4
+      "2026-04-26": 5
     },
     "affect": {
       "2026-03-04": {
@@ -3196,14 +3165,6 @@
           "a": 2,
           "ctx": "rest",
           "t": "2026-04-27T00:36:26.966Z"
-        }
-      ],
-      "2026-04-27": [
-        {
-          "v": 3,
-          "a": 2,
-          "ctx": "rest",
-          "t": "2026-04-27T16:10:59.018Z"
         }
       ]
     },
@@ -4004,5 +3965,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-27T16:11:19.870Z"
+  "updated": "2026-04-27T18:08:04.023Z"
 }
