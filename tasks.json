@@ -2628,8 +2628,8 @@
           true,
           true,
           true,
-          false,
-          false,
+          true,
+          true,
           false
         ],
         "read": [
@@ -2646,7 +2646,7 @@
           true,
           true,
           true,
-          false,
+          true,
           false,
           false
         ],
@@ -3932,5 +3932,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-27T00:36:31.915Z"
+  "updated": "2026-04-27T00:36:36.659Z"
 }
