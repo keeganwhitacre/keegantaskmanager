@@ -2383,7 +2383,7 @@
   ],
   "dash": {
     "intention": "",
-    "intentionWeek": "2026-W17",
+    "intentionWeek": "2026-W18",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -2391,12 +2391,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2690,7 +2684,60 @@
           false,
           false
         ]
+      },
+      "2026-W18": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -3948,5 +3995,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-27T14:58:23.288Z"
+  "updated": "2026-04-27T16:10:56.606Z"
 }
