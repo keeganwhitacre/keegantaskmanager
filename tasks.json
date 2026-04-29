@@ -1747,10 +1747,10 @@
       "categories": [
         "lab"
       ],
-      "status": "waiting",
+      "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "Shane + Doug\n\nPsychToolbox - see if OSU has license\n- no license - buy 1 license\nRemote control options?",
+      "note": "Shane + Doug\n\nPsychToolbox - see if OSU has license\n- no license - buy 1 license\nRemote control options?\nPsychoPI\nMindware license manager\nE-Prime - shared license?",
       "due": "2026-04-28",
       "projectId": "",
       "milestoneId": "",
@@ -4078,5 +4078,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T16:11:21.823Z"
+  "updated": "2026-04-29T16:16:51.021Z"
 }
