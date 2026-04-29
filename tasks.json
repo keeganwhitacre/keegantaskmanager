@@ -1941,6 +1941,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1777481004684",
+      "title": "call krgre about water setup + basement storage",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-29",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -4095,5 +4110,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T16:40:02.708Z"
+  "updated": "2026-04-29T16:43:27.189Z"
 }
