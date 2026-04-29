@@ -1905,6 +1905,21 @@
       "pinnedToday": true,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1777469701096",
+      "title": "Start working on talk!",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-04-29",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -4039,5 +4054,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-28T17:02:05.824Z"
+  "updated": "2026-04-29T13:35:03.602Z"
 }
