@@ -1903,8 +1903,9 @@
       "due": "2026-04-28",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-04-29T13:35:21.800Z"
     },
     {
       "id": "1777469701096",
@@ -4057,5 +4058,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T13:35:18.193Z"
+  "updated": "2026-04-29T13:35:24.303Z"
 }
