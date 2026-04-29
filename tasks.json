@@ -1934,7 +1934,7 @@
       "status": "active",
       "priority": "md",
       "pinnedToday": false,
-      "note": "",
+      "note": "look into pieces list price + OSU",
       "due": "",
       "projectId": "",
       "milestoneId": "",
@@ -4095,5 +4095,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T16:20:44.778Z"
+  "updated": "2026-04-29T16:34:36.205Z"
 }
