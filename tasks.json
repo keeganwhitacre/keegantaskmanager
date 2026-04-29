@@ -2442,12 +2442,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2789,6 +2783,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -3303,6 +3303,21 @@
     }
   },
   "cnNotes": [
+    {
+      "id": "mok71j3ylfhk",
+      "title": "Buy Snacks",
+      "speaker": "",
+      "body": "Turtle chips\nPeach rings\n",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-04-29T15:12:18.430Z",
+      "updatedAt": "2026-04-29T15:12:28.989Z"
+    },
     {
       "id": "mobw4rnhy40h",
       "title": "Study Links",
@@ -4046,5 +4061,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T13:57:43.857Z"
+  "updated": "2026-04-29T15:12:31.494Z"
 }
