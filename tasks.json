@@ -3307,7 +3307,7 @@
       "id": "mok940kcczqh",
       "title": "Lab Equipment",
       "speaker": "",
-      "body": "- PPG pair\n- Lab Laptop - Windows\n- ",
+      "body": "- Lab Laptop - Windows\n  - prioritize laptop soon\n- PPG pair",
       "tags": [
         "lab"
       ],
@@ -3318,7 +3318,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-29T16:10:13.596Z",
-      "updatedAt": "2026-04-29T16:10:57.836Z"
+      "updatedAt": "2026-04-29T16:11:19.321Z"
     },
     {
       "id": "mok71j3ylfhk",
@@ -4078,5 +4078,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T16:11:00.338Z"
+  "updated": "2026-04-29T16:11:21.823Z"
 }
