@@ -1955,10 +1955,11 @@
       "due": "2026-04-30",
       "noteIsMono": false,
       "pinnedToday": true,
-      "done": false,
+      "done": true,
       "pomodoros": 0,
       "projectId": "",
-      "milestoneId": ""
+      "milestoneId": "",
+      "completedAt": "2026-04-30T21:04:19.987Z"
     },
     {
       "id": "mokafv7wnmbz",
@@ -1970,7 +1971,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-04-30",
+      "due": "2026-05-01",
       "projectId": "",
       "milestoneId": "",
       "noteIsMono": false,
@@ -2004,6 +2005,21 @@
       "due": "2026-04-30",
       "noteIsMono": false,
       "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
+    },
+    {
+      "id": "1777583058297",
+      "title": "Set up wifi",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-05-01",
+      "noteIsMono": false,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0
     }
@@ -4175,5 +4191,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-30T21:04:14.464Z"
+  "updated": "2026-04-30T21:04:27.030Z"
 }
