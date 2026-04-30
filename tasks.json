@@ -1950,12 +1950,14 @@
       ],
       "status": "active",
       "priority": "md",
-      "note": "",
-      "due": "2026-04-29",
+      "note": "Read lease\nSign lease\nCall for WiFi",
+      "due": "2026-04-30",
       "noteIsMono": false,
       "pinnedToday": true,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "mokafv7wnmbz",
@@ -2506,12 +2508,6 @@
     },
     "reflection": "",
     "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2853,6 +2849,12 @@
           false
         ]
       }
+    },
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "moods": {
       "2026-03-04": 4,
@@ -4157,5 +4159,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-29T17:39:34.057Z"
+  "updated": "2026-04-30T00:48:35.891Z"
 }
