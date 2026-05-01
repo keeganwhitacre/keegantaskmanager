@@ -2002,13 +2002,15 @@
         "personal"
       ],
       "status": "active",
-      "priority": "md",
+      "priority": "hi",
       "note": "",
       "due": "2026-05-01",
       "noteIsMono": false,
       "pinnedToday": false,
       "done": false,
-      "pomodoros": 0
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
     },
     {
       "id": "1777583058297",
@@ -4210,5 +4212,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-01T10:45:38.974Z"
+  "updated": "2026-05-01T10:45:43.109Z"
 }
