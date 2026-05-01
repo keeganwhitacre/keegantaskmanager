@@ -2004,9 +2004,9 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-04-30",
+      "due": "2026-05-01",
       "noteIsMono": false,
-      "pinnedToday": true,
+      "pinnedToday": false,
       "done": false,
       "pomodoros": 0
     },
@@ -4210,5 +4210,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-04-30T21:05:08.093Z"
+  "updated": "2026-05-01T10:45:38.974Z"
 }
