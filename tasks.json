@@ -2052,7 +2052,7 @@
       ],
       "status": "active",
       "priority": "md",
-      "pinnedToday": false,
+      "pinnedToday": true,
       "note": "",
       "due": "",
       "projectId": "",
@@ -4229,5 +4229,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-01T13:37:28.206Z"
+  "updated": "2026-05-01T13:37:33.327Z"
 }
