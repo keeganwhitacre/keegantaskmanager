@@ -2063,6 +2063,23 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "mon7nwn0naes",
+      "title": "Ruofan leaving schedule",
+      "categories": [
+        "lab"
+      ],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "",
+      "due": "2026-05-05",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -4232,5 +4249,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-01T15:28:56.786Z"
+  "updated": "2026-05-01T17:53:03.429Z"
 }
