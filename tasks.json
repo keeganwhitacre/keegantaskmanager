@@ -1509,6 +1509,23 @@
       "pomodoros": 0
     },
     {
+      "id": "1777583051957",
+      "title": "Sign lease",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "hi",
+      "note": "",
+      "due": "2026-05-01",
+      "noteIsMono": false,
+      "pinnedToday": false,
+      "done": false,
+      "pomodoros": 0,
+      "projectId": "",
+      "milestoneId": ""
+    },
+    {
       "id": "mnqbhsgks5ev",
       "title": "Look into August researchers",
       "categories": [
@@ -1994,23 +2011,6 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
-    },
-    {
-      "id": "1777583051957",
-      "title": "Sign lease",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "hi",
-      "note": "",
-      "due": "2026-05-01",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0,
-      "projectId": "",
-      "milestoneId": ""
     },
     {
       "id": "1777583058297",
@@ -4212,5 +4212,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-01T10:45:43.109Z"
+  "updated": "2026-05-01T10:45:47.496Z"
 }
