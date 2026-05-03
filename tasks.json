@@ -2081,6 +2081,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "moq68e4mi2br",
+      "title": "Finish tracker app",
+      "categories": [],
+      "status": "active",
+      "priority": "md",
+      "pinnedToday": false,
+      "note": "- compare Claude and Google api\n- recommendations based on backlog + new ones to add",
+      "due": "",
+      "projectId": "",
+      "milestoneId": "",
+      "noteIsMono": false,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -4250,5 +4265,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-02T11:42:37.750Z"
+  "updated": "2026-05-03T19:36:18.513Z"
 }
