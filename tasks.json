@@ -2096,6 +2096,21 @@
       "noteIsMono": false,
       "done": false,
       "pomodoros": 0
+    },
+    {
+      "id": "1777836986925",
+      "title": "Revamp tasks app.",
+      "categories": [
+        "personal"
+      ],
+      "status": "active",
+      "priority": "md",
+      "note": "",
+      "due": "2026-05-03",
+      "noteIsMono": false,
+      "pinnedToday": true,
+      "done": false,
+      "pomodoros": 0
     }
   ],
   "projects": [
@@ -4265,5 +4280,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-03T19:36:18.513Z"
+  "updated": "2026-05-03T19:36:29.431Z"
 }
