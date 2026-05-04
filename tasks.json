@@ -3548,6 +3548,21 @@
   },
   "cnNotes": [
     {
+      "id": "mord127qsxva",
+      "title": "",
+      "speaker": "",
+      "body": "",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-05-04T15:34:17.462Z",
+      "updatedAt": "2026-05-04T15:34:17.462Z"
+    },
+    {
       "id": "mor589eh6qg7",
       "title": "Revamp tasks",
       "speaker": "",
@@ -4352,5 +4367,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T15:33:51.442Z"
+  "updated": "2026-05-04T15:34:35.425Z"
 }
