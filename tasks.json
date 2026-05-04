@@ -1779,23 +1779,6 @@
       "completedAt": "2026-05-01T15:28:52.545Z"
     },
     {
-      "id": "mo1hnbk6sgas",
-      "title": "Follow up with Azure",
-      "categories": [
-        "personal"
-      ],
-      "status": "active",
-      "priority": "md",
-      "note": "",
-      "due": "2026-04-27",
-      "noteIsMono": false,
-      "done": false,
-      "pomodoros": 0,
-      "pinnedToday": false,
-      "projectId": "",
-      "milestoneId": ""
-    },
-    {
       "id": "mo1kzibuucdr",
       "title": "Start Data Transfer",
       "categories": [
@@ -4328,5 +4311,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T16:56:25.813Z"
+  "updated": "2026-05-04T18:14:01.752Z"
 }
