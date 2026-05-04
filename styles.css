@@ -152,32 +152,45 @@ a { color: inherit; text-decoration: none; }
 }
 .header-action:active { opacity: 0.5; }
 
-/* Tab bar */
-.tab-bar {
+/* Bottom nav */
+.bottom-nav {
   display: flex;
-  padding: 14px 24px 0;
-  gap: 20px;
-  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0 max(env(safe-area-inset-bottom, 0px), 8px);
+  padding-top: 0;
+  border-top: 0.5px solid var(--border);
   background: var(--bg);
+  flex-shrink: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
 }
 
-.tab-btn {
-  font-size: 13px;
+.bottom-tab {
+  flex: 1;
+  font-size: 12px;
   font-weight: 400;
   color: var(--text-tertiary);
-  letter-spacing: 0.03em;
-  padding: 0 0 10px;
-  border-bottom: 1px solid transparent;
+  letter-spacing: 0.04em;
+  padding: 12px 0 8px;
   cursor: pointer;
   user-select: none;
   background: transparent;
+  border: none;
   border-radius: 0;
-  transition: color 0.12s, border-color 0.12s;
+  text-align: center;
+  transition: color 0.12s;
+  font-family: var(--font-sans);
 }
-.tab-btn.active {
+.bottom-tab.active {
   color: var(--text-primary);
-  border-bottom-color: var(--text-primary);
 }
+
+/* Keep old tab-bar class as no-op so any stray references don't break */
+.tab-bar { display: none; }
 
 /* Main scroll area */
 .main-scroll {
@@ -186,7 +199,7 @@ a { color: inherit; text-decoration: none; }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding: 0 24px;
-  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 .main-scroll::-webkit-scrollbar { display: none; }
 
@@ -209,7 +222,7 @@ a { color: inherit; text-decoration: none; }
 /* FAB — add button */
 .fab {
   position: fixed;
-  bottom: max(env(safe-area-inset-bottom, 0px), 24px);
+  bottom: calc(max(env(safe-area-inset-bottom, 0px), 8px) + 56px);
   right: 24px;
   width: 48px;
   height: 48px;
@@ -1071,7 +1084,7 @@ body.reflect-mode .tasks-view, body.reflect-mode .notes-view { display: none; }
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding: 0 24px;
-  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 .reflect-scroll::-webkit-scrollbar { display: none; }
 
@@ -1759,3 +1772,6 @@ body:not(.notes-mode)   .only-notes   { display: none !important; }
 body.reflect-mode       .hide-reflect  { display: none !important; }
 body.notes-mode         .hide-notes    { display: none !important; }
 body.bel-mode           .hide-bel      { display: none !important; }
+
+/* Hide bottom nav in bel mode */
+body.bel-mode .bottom-nav { display: none; }
