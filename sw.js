@@ -1,58 +1,33 @@
 var CACHE_VERSION = 'kw-v9';
 var STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/app.js',
-  '/styles.css',
+  '/', '/index.html', '/app.js', '/styles.css',
   '/manifest.json',
-  '/confnotes.js',
-  '/confnotes-styles.css',
-  '/bel.js',
-  '/dashboard.js',
-  '/router.js',
-  '/state.js',
-  '/sync.js',
-  '/timeline.js',
+  '/state.js', '/sync.js', '/router.js',
+  '/dashboard.js', '/timeline.js', '/bel.js',
   '/lib/marked.min.js',
-
-  // DM Mono only — system-ui handles everything else
   '/fonts/dm-mono-v16-latin-regular.woff2',
   '/fonts/dm-mono-v16-latin-500.woff2',
 ];
 
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open(CACHE_VERSION).then(function(cache) {
-      return cache.addAll(STATIC_ASSETS);
-    }).then(function() { return self.skipWaiting(); })
-  );
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_VERSION).then(c => c.addAll(STATIC_ASSETS)).then(() => self.skipWaiting()));
 });
-
-self.addEventListener('activate', function(e) {
-  e.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_VERSION; })
-            .map(function(k)   { return caches.delete(k); })
-      );
-    }).then(function() { return self.clients.claim(); })
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k)))
+  ).then(() => self.clients.claim()));
 });
-
-self.addEventListener('fetch', function(e) {
+self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
-  // Don't cache GitHub API calls
-  if (url.hostname === 'api.github.com') return;
-
+  if (new URL(e.request.url).hostname === 'api.github.com') return;
   e.respondWith(
-    caches.match(e.request).then(function(cached) {
+    caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).then(function(response) {
-        if (!response || response.status !== 200 || response.type !== 'basic') return response;
-        const clone = response.clone();
-        caches.open(CACHE_VERSION).then(function(cache) { cache.put(e.request, clone); });
-        return response;
+      return fetch(e.request).then(res => {
+        if (!res || res.status !== 200 || res.type !== 'basic') return res;
+        const clone = res.clone();
+        caches.open(CACHE_VERSION).then(c => c.put(e.request, clone));
+        return res;
       });
     })
   );
