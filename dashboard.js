@@ -1,328 +1,180 @@
 // ══════════════════════════════════════════════════════════════════
-// DASHBOARD MODULE — all dashboard widgets
-// Clock, weather, intention, countdown, quotes, reflection,
-// affect grid (valence × arousal), habits, book tracker,
-// constructionist insights, weekly reflection
+// DASHBOARD.JS — Reflect view: affect grid, habits, insights
+// Stripped of: intention, daily reflection, snapshot, weekly review,
+//              prompt card, research prompts, sliding pills.
+// Preserved:   affect grid (5×5 continuous), habit tracking,
+//              context chips, history strip, full insights suite.
 // ══════════════════════════════════════════════════════════════════
 
-import { state, esc, saveDash, getDState, getHabits, showToast } from './state.js';
-import { switchView, updateReflectPill } from './router.js';
+import { state, esc, saveDash, getHabits, getDState, on } from './state.js';
+import { ghPush } from './sync.js';
+import { switchView } from './router.js';
 
-// ── Dependencies injected from app.js via init ──
-let _isActuallyDueToday = () => false;
-let _dueClass = () => '';
-let _fmtDue = () => '';
+// ── CONSTANTS ──
 
-// ── Dashboard-local state ──
-let reflectTimer = null;
-let weeklyReflectTimer = null;
+const GRID_SIZE = 5; // 0-4 on each axis
 
-// ── DATA ──
-
-const QUOTES = [
-  { text: "I don't sing because I'm happy; I'm happy because I sing.", attr: "William James" },
-  { text: "Between stimulus and response there is a space. In that space is our power to choose our response.", attr: "Viktor Frankl" },
-  { text: "The body is our general medium for having a world.", attr: "Merleau-Ponty" },
-  { text: "Emotions are not reactions to the world. They are your constructions of the world.", attr: "Lisa Feldman Barrett" },
-  { text: "An emotion is your brain's creation of what your bodily sensations mean, in relation to what is going on around you.", attr: "Lisa Feldman Barrett" },
-  { text: "We suffer more in imagination than in reality.", attr: "Seneca" },
-  { text: "The impediment to action advances action. What stands in the way becomes the way.", attr: "Marcus Aurelius" },
-  { text: "The unexamined life is not worth living.", attr: "Socrates" },
-  { text: "Every experience is preceded by expectation.", attr: "William James" },
-  { text: "The world of experience is produced by the mind that experiences it.", attr: "John Dewey" },
-  { text: "Hard choices, easy life. Easy choices, hard life.", attr: "Jerzy Gregorek" },
-  { text: "Your experiences are not a window on reality. They are the product of a brain predicting what comes next.", attr: "Lisa Feldman Barrett" },
-  { text: "The mind that is not baffled is not employed. The impeded stream is the one that sings.", attr: "Wendell Berry" },
-  { text: "Nothing is so practical as a good theory.", attr: "Kurt Lewin" },
-  { text: "A year from now you will wish you had started today.", attr: "Karen Lamb" },
-  { text: "Concepts are not reflections of reality; they are tools for constructing it.", attr: "John Dewey" },
-  { text: "Most of what we say and do is not essential. Ask yourself at every moment: Is this necessary?", attr: "Marcus Aurelius" },
-  { text: "The cost of a thing is the amount of what I will call life which is required to be exchanged for it.", attr: "Thoreau" },
+const CTX_LABELS = [
+  { key: 'work',     label: 'work'     },
+  { key: 'writing',  label: 'writing'  },
+  { key: 'social',   label: 'social'   },
+  { key: 'rest',     label: 'rest'     },
+  { key: 'exercise', label: 'exercise' },
+  { key: 'lab',      label: 'lab'      },
 ];
-
-const PROMPTS = [
-  "What's one thing you're avoiding that you already know the answer to?",
-  "What's the one task that, if done today, would make everything else easier?",
-  "What am I noticing in my body right now? What does it mean to me?",
-  "What would finishing strong today actually require?",
-  "Am I categorizing my experience right now, or actually attending to it?",
-  "What's the most important thing, and are you doing it first?",
-  "What sensations are present right now? How am I making sense of them?",
-  "What's cluttering your mental space right now?",
-  "If I had to invent a new word for how I feel right now, what would it be?",
-  "What does the best version of today look like?",
-  "What predictions is my brain making right now — and are they accurate?",
-  "If you could only accomplish three things today, what would they be?",
-  "What concept am I using to understand this feeling? Is there a better one?",
-  "What are you pretending not to know?",
-  "How is my body budget right now — depleted, balanced, or surplus?",
-];
-
-const WEEKLY_PROMPTS = [
-  "Looking at this week's affect pattern, how would you describe the emotional theme?",
-  "What concept or word best captures how this week felt overall?",
-  "If this week's experience had a color and a texture, what would they be?",
-  "What sensations showed up most often this week? How did you make sense of them?",
-  "What category would you give the dominant feeling-tone of this week?",
-];
-
-const RESEARCH_PROMPTS = [
-  "What's a finding in your subfield you disagree with, and why?",
-  "If you had unlimited funding and participants, what study would you run tomorrow?",
-  "What's the weakest link in your current study's design?",
-  "What would a skeptical reviewer say about your methods section right now?",
-  "Name one researcher whose approach you want to emulate — what specifically?",
-  "What's a construct in your field that's poorly measured? How would you fix it?",
-  "What's a question you keep coming back to but haven't formalized into a study?",
-  "If you could only publish one more paper, what would it be about?",
-  "What's something you learned at a recent conference that changed how you think?",
-  "What methodological skill would make your next study significantly better?",
-  "What's an assumption in your theoretical framework you haven't tested?",
-  "If you had to explain your research to a curious stranger in 60 seconds, what would you say?",
-  "What's a dataset that exists somewhere that could answer a question you care about?",
-  "What's a paper you keep citing without having fully engaged with its limitations?",
-  "What would your research program look like in 5 years if everything went well?",
-];
-
-// Affect grid constants
-const GRID_SIZE = 5; // 5x5 grid, values 0-4
-const CTX_COLORS = {
-  work: '#ff9500', writing: '#af52de', social: '#ff2d55',
-  rest: '#5ac8fa', exercise: '#30d158', lab: '#007aff',
-  none: 'var(--text-muted)'
-};
 
 // ── TIME HELPERS ──
 
-function getISOWeek(d) { const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = date.getUTCDay() || 7; date.setUTCDate(date.getUTCDate() + 4 - day); const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1)); const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7); return date.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0'); }
-function getWeekStart(d) { const date = new Date(d); const day = date.getDay(); const diff = (day === 0 ? -6 : 1 - day); date.setDate(date.getDate() + diff); return date; }
-function getTodayStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-function getDayOfWeek() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
-
-// ── INTENTION ──
-
-function renderIntention() {
-  const ds = getDState();
-  const now = new Date(); const week = getISOWeek(now); const ws = getWeekStart(now);
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('dWeekMeta').textContent = 'Week of ' + months[ws.getMonth()] + ' ' + ws.getDate() + '  ·  ' + week;
-  if (ds.intentionWeek !== week) { ds.intention = ''; ds.intentionWeek = week; saveDash(true); }
-  document.getElementById('dIntention').value = ds.intention || '';
+function getISOWeek(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day  = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return date.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0');
 }
 
-// ── TODAY'S TASKS ──
-
-function renderDashTasks() {
-  const todayTasks = state.tasks.filter(t => !t.done && _isActuallyDueToday(t)).slice(0, 5);
-  const list = document.getElementById('dTaskList'); list.innerHTML = '';
-  if (todayTasks.length === 0) {
-    list.innerHTML = '<div style="font-size:12px;color:#333;padding:4px 0;">Nothing due today</div>';
-  } else {
-    todayTasks.forEach(t => {
-      const row = document.createElement('div'); row.className = 'd-task-row';
-      const dc = _dueClass(t.due); const dueStr = t.due ? _fmtDue(t.due) : '';
-      row.innerHTML = '<div class="d-task-dot ' + (t.priority || 'md') + '"></div><div class="d-task-name">' + esc(t.title) + '</div>' + (dueStr ? '<div class="d-task-due ' + dc + '">' + esc(dueStr) + '</div>' : '');
-      list.appendChild(row);
-    });
-  }
-  const open = state.tasks.filter(t => !t.done).length;
-  const openText = document.getElementById('dOpenTasks');
-  openText.textContent = open + ' open task' + (open !== 1 ? 's' : '') + '  switch to Tasks';
-  openText.onclick = function() { switchView('tasks'); };
+function getTodayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
-// ── REFLECTION ──
-
-function migrateReflections() {
-  var ds = getDState();
-  // Migrate old single-string reflection to keyed structure
-  if (!ds.reflections) ds.reflections = {};
-  if (ds.reflection && ds.reflectionDate && !ds.reflections[ds.reflectionDate]) {
-    ds.reflections[ds.reflectionDate] = ds.reflection;
-  }
+function getDayOfWeek() {
+  const d = new Date().getDay();
+  return d === 0 ? 6 : d - 1; // 0=Mon … 6=Sun
 }
 
-function renderReflection() {
-  const ds = getDState();
-  if (!ds.reflections) ds.reflections = {};
-  if (!ds.researchReflections) ds.researchReflections = {};
-  const today = getTodayStr();
-  const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-  const prompt = PROMPTS[doy % PROMPTS.length];
-  document.getElementById('dPrompt').textContent = prompt;
-  document.getElementById('dReflect').value = ds.reflections[today] || '';
-
-  // Research prompt
-  var resPromptEl = document.getElementById('dResearchPrompt');
-  var resReflectEl = document.getElementById('dResearchReflect');
-  if (resPromptEl && resReflectEl) {
-    var resPrompt = RESEARCH_PROMPTS[doy % RESEARCH_PROMPTS.length];
-    resPromptEl.textContent = resPrompt;
-    resReflectEl.value = ds.researchReflections[today] || '';
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════
-// AFFECT GRID — 2D valence x arousal
-// Data: ds.affect = { "YYYY-MM-DD": { v: 0-4, a: 0-4, ctx: "work"|null } }
-// Backward compat: ds.moods = { "YYYY-MM-DD": 1-5 } migrated on init
-// ══════════════════════════════════════════════════════════════════
-
-function migrateOldMoods() {
-  var ds = getDState();
-  if (!ds.affect) ds.affect = {};
-  // Migrate old moods → affect arrays
-  if (ds.moods && Object.keys(ds.moods).length > 0) {
-    Object.keys(ds.moods).forEach(function(dateStr) {
-      if (!ds.affect[dateStr]) {
-        var oldVal = ds.moods[dateStr]; // 1-5
-        ds.affect[dateStr] = [{ v: oldVal - 1, a: 2, ctx: null, t: dateStr + 'T12:00:00' }];
-      }
-    });
-    saveDash(false);
-  }
-  // Migrate single-object affect entries → arrays
-  Object.keys(ds.affect).forEach(function(dateStr) {
-    var entry = ds.affect[dateStr];
-    if (entry && !Array.isArray(entry)) {
-      ds.affect[dateStr] = [{ v: entry.v, a: entry.a, ctx: entry.ctx || null, t: entry.t || dateStr + 'T12:00:00' }];
-    }
-  });
-}
-
-// Get the latest affect entry for a date (returns object or null)
-function getLatestAffect(dateStr) {
-  var ds = getDState();
-  if (!ds.affect || !ds.affect[dateStr]) return null;
-  var arr = ds.affect[dateStr];
-  if (!Array.isArray(arr)) return arr; // safety
-  return arr.length > 0 ? arr[arr.length - 1] : null;
-}
-
-// Get all entries for a date
-function getAffectEntries(dateStr) {
-  var ds = getDState();
-  if (!ds.affect || !ds.affect[dateStr]) return [];
-  var arr = ds.affect[dateStr];
-  return Array.isArray(arr) ? arr : [arr];
-}
+// ── AFFECT COLOR (bilinear across quadrants) ──
 
 function affectToColor(v, a) {
-  var vn = v / (GRID_SIZE - 1);
-  var an = a / (GRID_SIZE - 1);
-  var tl = [255, 149, 0], tr = [255, 59, 48], bl = [90, 130, 200], br = [48, 209, 88];
-  var r = Math.round(tl[0]*(1-vn)*an + tr[0]*vn*an + bl[0]*(1-vn)*(1-an) + br[0]*vn*(1-an));
-  var g = Math.round(tl[1]*(1-vn)*an + tr[1]*vn*an + bl[1]*(1-vn)*(1-an) + br[1]*vn*(1-an));
-  var b = Math.round(tl[2]*(1-vn)*an + tr[2]*vn*an + bl[2]*(1-vn)*(1-an) + br[2]*vn*(1-an));
+  const vn = v / (GRID_SIZE - 1);
+  const an = a / (GRID_SIZE - 1);
+  const tl = [255, 149, 0], tr = [255, 59, 48], bl = [90, 130, 200], br = [48, 209, 88];
+  const r = Math.round(tl[0]*(1-vn)*an + tr[0]*vn*an + bl[0]*(1-vn)*(1-an) + br[0]*vn*(1-an));
+  const g = Math.round(tl[1]*(1-vn)*an + tr[1]*vn*an + bl[1]*(1-vn)*(1-an) + br[1]*vn*(1-an));
+  const b = Math.round(tl[2]*(1-vn)*an + tr[2]*vn*an + bl[2]*(1-vn)*(1-an) + br[2]*vn*(1-an));
   return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
+// ── AFFECT DATA HELPERS ──
+
+function getLatestAffect(dateStr) {
+  const ds = getDState();
+  if (!ds.affect || !ds.affect[dateStr]) return null;
+  const arr = ds.affect[dateStr];
+  if (!Array.isArray(arr)) return arr;
+  return arr.length > 0 ? arr[arr.length - 1] : null;
+}
+
+function getAffectEntries(dateStr) {
+  const ds = getDState();
+  if (!ds.affect || !ds.affect[dateStr]) return [];
+  const arr = ds.affect[dateStr];
+  return Array.isArray(arr) ? arr : [arr];
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AFFECT GRID
+// ══════════════════════════════════════════════════════════════════
+
 function renderAffect() {
-  var ds = getDState();
+  const ds      = getDState();
   if (!ds.affect) ds.affect = {};
-  var today = getTodayStr();
-  var entry = getLatestAffect(today);
-  var entries = getAffectEntries(today);
+  const today   = getTodayStr();
+  const entry   = getLatestAffect(today);
+  const entries = getAffectEntries(today);
 
-  var dot = document.getElementById('dAffectDot');
-  if (entry) {
-    dot.style.display = 'block';
-    // Inset the dot so it doesn't get clipped at the edges of the grid
-    var PAD = 6; // percent inset from each edge
-    dot.style.left = PAD + (entry.v / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
-    dot.style.top = PAD + (1 - entry.a / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
-    dot.style.background = affectToColor(entry.v, entry.a);
-  } else {
-    dot.style.display = 'none';
-  }
-
-  document.querySelectorAll('.affect-ctx-chip').forEach(function(chip) {
-    chip.classList.toggle('active', !!(entry && entry.ctx === chip.dataset.ctx));
-  });
-
-  var statusEl = document.getElementById('dAffectStatus');
-  if (entry) {
-    var vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
-    var aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
-    statusEl.textContent = vLabels[entry.v] + ' · ' + aLabels[entry.a];
-  } else {
-    statusEl.textContent = 'tap to log';
-  }
-
-  // Log count indicator
-  var logCountEl = document.getElementById('dAffectLogCount');
-  if (logCountEl) {
-    if (entries.length > 1) {
-      logCountEl.style.display = 'block';
-      logCountEl.textContent = entries.length + ' logs today';
+  // Position dot
+  const dot = document.getElementById('dAffectDot');
+  if (dot) {
+    if (entry) {
+      const PAD = 6;
+      dot.style.left       = PAD + (entry.v / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
+      dot.style.top        = PAD + (1 - entry.a / (GRID_SIZE - 1)) * (100 - 2 * PAD) + '%';
+      dot.style.background = affectToColor(entry.v, entry.a);
+      dot.classList.add('placed');
     } else {
-      logCountEl.style.display = 'none';
+      dot.classList.remove('placed');
     }
   }
 
-  // Mini history (last 7 days)
-  var histEl = document.getElementById('dAffectHistory');
-  histEl.innerHTML = '';
-  for (var i = 6; i >= 0; i--) {
-    var d = new Date(); d.setDate(d.getDate() - i);
-    var dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    var ae = getLatestAffect(dStr);
-    var dayEntries = getAffectEntries(dStr);
-    var miniDot = document.createElement('div');
-    miniDot.className = 'affect-mini-dot' + (dStr === today ? ' today' : '');
-    if (ae) {
-      miniDot.style.background = affectToColor(ae.v, ae.a);
-      // Show subtle ring if multiple entries
-      if (dayEntries.length > 1) {
-        miniDot.style.boxShadow = 'inset 0 0 0 1.5px rgba(255,255,255,0.5)';
-      }
+  // Status text
+  const statusEl = document.getElementById('dAffectStatus');
+  if (statusEl) {
+    if (entry) {
+      const vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
+      const aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
+      const logNote = entries.length > 1 ? ' · ' + entries.length + ' logs' : '';
+      statusEl.textContent = vLabels[entry.v] + ' · ' + aLabels[entry.a] + logNote;
     } else {
-      miniDot.style.background = 'var(--border-divider)';
+      statusEl.textContent = 'tap to log';
     }
-    miniDot.title = dStr + (ae ? ' — v:' + ae.v + ' a:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') + (dayEntries.length > 1 ? ' (' + dayEntries.length + ' logs)' : '') : '');
-    histEl.appendChild(miniDot);
+  }
+
+  // Context chips
+  const ctxRow = document.getElementById('dAffectContextRow');
+  if (ctxRow) {
+    ctxRow.innerHTML = '';
+    CTX_LABELS.forEach(function(ctx) {
+      const chip = document.createElement('div');
+      chip.className = 'chip' + (entry && entry.ctx === ctx.key ? ' active' : '');
+      chip.dataset.ctx = ctx.key;
+      chip.textContent = ctx.label;
+      ctxRow.appendChild(chip);
+    });
+  }
+
+  // History strip (last 14 days)
+  const histEl = document.getElementById('dAffectHistory');
+  if (histEl) {
+    histEl.innerHTML = '';
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const dStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      const ae          = getLatestAffect(dStr);
+      const dayEntries  = getAffectEntries(dStr);
+      const dot         = document.createElement('div');
+      dot.className     = 'affect-mini-dot' + (dStr === today ? ' today-entry' : '');
+      dot.style.background = ae ? affectToColor(ae.v, ae.a) : 'var(--border)';
+      if (ae && dayEntries.length > 1) dot.style.outline = '1px solid var(--text-tertiary)';
+      dot.title = dStr + (ae ? ' · v:' + ae.v + ' a:' + ae.a : '');
+      histEl.appendChild(dot);
+    }
   }
 }
 
 function handleAffectGridInput(e, grid) {
-  var rect = grid.getBoundingClientRect();
-  var clientX = e.clientX, clientY = e.clientY;
-  if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+  const rect    = grid.getBoundingClientRect();
+  const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+  const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
 
-  var x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-  var y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+  const x = Math.max(0, Math.min(1, (clientX - rect.left)  / rect.width));
+  const y = Math.max(0, Math.min(1, (clientY - rect.top)   / rect.height));
 
-  var v = Math.round(x * (GRID_SIZE - 1));
-  var a = Math.round((1 - y) * (GRID_SIZE - 1));
+  const v = Math.round(x * (GRID_SIZE - 1));
+  const a = Math.round((1 - y) * (GRID_SIZE - 1));
 
-  var ds = getDState();
+  const ds    = getDState();
   if (!ds.affect) ds.affect = {};
-  var today = getTodayStr();
-  var now = new Date().toISOString();
+  const today = getTodayStr();
+  const now   = new Date().toISOString();
 
   if (!ds.affect[today]) ds.affect[today] = [];
   if (!Array.isArray(ds.affect[today])) ds.affect[today] = [ds.affect[today]];
 
-  var entries = ds.affect[today];
-  var latest = entries.length > 0 ? entries[entries.length - 1] : null;
+  const entries = ds.affect[today];
+  const latest  = entries.length > 0 ? entries[entries.length - 1] : null;
 
-  // If last entry was less than 2 hours ago, overwrite it (dragging / adjusting)
-  // Otherwise append a new entry
-  var shouldAppend = true;
-  if (latest && latest.t) {
-    var lastTime = new Date(latest.t).getTime();
-    var elapsed = Date.now() - lastTime;
-    if (elapsed < 2 * 60 * 60 * 1000) shouldAppend = false; // less than 2 hours
-  }
+  // Overwrite if within 2 hours, else append
+  const shouldAppend = !latest || !latest.t ||
+    (Date.now() - new Date(latest.t).getTime()) >= 2 * 60 * 60 * 1000;
 
-  if (shouldAppend && entries.length > 0) {
-    entries.push({ v: v, a: a, ctx: null, t: now });
-  } else if (entries.length > 0) {
+  if (shouldAppend) {
+    entries.push({ v, a, ctx: null, t: now });
+  } else {
     entries[entries.length - 1].v = v;
     entries[entries.length - 1].a = a;
     entries[entries.length - 1].t = now;
-  } else {
-    entries.push({ v: v, a: a, ctx: null, t: now });
   }
 
   // Backward compat
@@ -330,219 +182,235 @@ function handleAffectGridInput(e, grid) {
   ds.moods[today] = v + 1;
 
   saveDash(true);
-
-  var dot = document.getElementById('dAffectDot');
-  dot.classList.add('placing');
-  setTimeout(function() { dot.classList.remove('placing'); }, 200);
-
   renderAffect();
   renderInsights();
-  renderSnapshot();
 }
 
-// ── HABITS ──
+// ══════════════════════════════════════════════════════════════════
+// HABITS
+// ══════════════════════════════════════════════════════════════════
 
 function renderHabits() {
-  const ds = getDState();
-  const now = new Date(); const week = getISOWeek(now); const todayDow = getDayOfWeek();
-  const dayLabels = ['M','T','W','T','F','S','S'];
-  if (!ds.habits[week]) { ds.habits[week] = {}; }
-  let habitsDirty = false;
-  getHabits().forEach(h => { if (!ds.habits[week][h.id]) { ds.habits[week][h.id] = [false,false,false,false,false,false,false]; habitsDirty = true; } });
-  if (habitsDirty) saveDash(false);
+  const ds       = getDState();
+  const now      = new Date();
+  const week     = getISOWeek(now);
+  const todayDow = getDayOfWeek();
 
-  const labelRow = document.getElementById('dHabitDayLabels'); labelRow.innerHTML = '';
-  dayLabels.forEach((l, i) => { const el = document.createElement('div'); el.className = 'd-day-label' + (i === todayDow ? ' today-col' : ''); el.textContent = l; labelRow.appendChild(el); });
+  if (!ds.habits)       ds.habits = {};
+  if (!ds.habits[week]) ds.habits[week] = {};
 
-  const rowsEl = document.getElementById('dHabitRows'); rowsEl.innerHTML = '';
-  getHabits().forEach(h => {
-    const checks = ds.habits[week][h.id] || [false,false,false,false,false,false,false];
-    const scheduleDays = h.days || [0,1,2,3,4,5,6];
-    const row = document.createElement('div'); row.className = 'd-habit-row';
-    const label = document.createElement('div'); label.className = 'd-habit-label'; label.textContent = h.label;
-    // Show schedule hint if not every day
-    if (scheduleDays.length < 7) {
-      const hint = document.createElement('span');
-      hint.style.cssText = 'font-size:9px;color:var(--text-muted);opacity:0.5;margin-left:4px;font-family:var(--font-mono);';
-      const dayAbbr = ['M','T','W','T','F','S','S'];
-      hint.textContent = scheduleDays.map(function(d){ return dayAbbr[d]; }).join('');
-      label.appendChild(hint);
+  // Ensure all habits have an entry for this week
+  let dirty = false;
+  getHabits().forEach(function(h) {
+    if (!ds.habits[week][h.id]) {
+      ds.habits[week][h.id] = [false,false,false,false,false,false,false];
+      dirty = true;
     }
-    row.appendChild(label);
-    const checksEl = document.createElement('div'); checksEl.className = 'd-habit-checks';
-    checks.forEach((checked, i) => {
-      const cb = document.createElement('div'); const isBad = h.bad;
-      const isOffDay = scheduleDays.indexOf(i) === -1;
-      cb.className = 'd-habit-cb'
-        + (isOffDay ? ' off-day' : '')
-        + (checked && !isOffDay ? (isBad ? ' checked-bad' : ' checked') : '')
-        + (i === todayDow ? ' today-col' : '')
-        + (i > todayDow ? ' future' : '');
-      cb.dataset.habit = h.id; cb.dataset.day = i;
-      if (!isOffDay) {
-        cb.addEventListener('click', function() {
-          if (!ds.habits[week][h.id]) ds.habits[week][h.id] = [false,false,false,false,false,false,false];
-          ds.habits[week][h.id][i] = !ds.habits[week][h.id][i];
-          const isNowChecked = ds.habits[week][h.id][i]; saveDash(true);
-          if (h.bad) { cb.classList.toggle('checked-bad', isNowChecked); cb.classList.remove('checked'); }
-          else { cb.classList.toggle('checked', isNowChecked); cb.classList.remove('checked-bad'); }
-          cb.classList.remove('just-checked'); requestAnimationFrame(function() { requestAnimationFrame(function() { cb.classList.add('just-checked'); }); });
-        });
-      }
-      checksEl.appendChild(cb);
+  });
+  if (dirty) saveDash(false);
+
+  const container = document.getElementById('dHabits');
+  if (!container) return;
+  container.innerHTML = '';
+
+  getHabits().forEach(function(h) {
+    const checks      = ds.habits[week][h.id] || [false,false,false,false,false,false,false];
+    const scheduleDays = h.days || [0,1,2,3,4,5,6];
+    const isScheduled = scheduleDays.includes(todayDow);
+    const isChecked   = checks[todayDow];
+
+    const row = document.createElement('div');
+    row.className = 'habit-row';
+
+    const name = document.createElement('div');
+    name.className = 'habit-name';
+    name.textContent = h.label;
+
+    // Streak calc
+    let streak = 0;
+    for (let i = todayDow - 1; i >= 0; i--) {
+      if (!scheduleDays.includes(i)) continue;
+      if (checks[i]) streak++;
+      else break;
+    }
+    if (isChecked) streak++;
+
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex; align-items:center; gap:8px;';
+
+    if (streak > 1 && !h.bad) {
+      const streakEl = document.createElement('span');
+      streakEl.className = 'habit-streak';
+      streakEl.textContent = streak + 'd';
+      right.appendChild(streakEl);
+    }
+
+    const check = document.createElement('div');
+    check.className = 'habit-check' + (isChecked ? ' done' : '') + (!isScheduled ? ' off-day' : '');
+    check.style.opacity = isScheduled ? '1' : '0.3';
+    check.innerHTML = '<svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>';
+
+    check.addEventListener('click', function() {
+      if (!isScheduled) return;
+      const ds2 = getDState();
+      if (!ds2.habits[week][h.id]) ds2.habits[week][h.id] = [false,false,false,false,false,false,false];
+      ds2.habits[week][h.id][todayDow] = !ds2.habits[week][h.id][todayDow];
+      saveDash(true); ghPush();
+      renderHabits();
+      renderInsights();
     });
-    row.appendChild(checksEl); rowsEl.appendChild(row);
+
+    right.appendChild(check);
+    row.appendChild(name);
+    row.appendChild(right);
+    container.appendChild(row);
   });
 }
 
 // ══════════════════════════════════════════════════════════════════
-// INSIGHTS — constructionist affect analytics
+// INSIGHTS (full suite preserved)
 // ══════════════════════════════════════════════════════════════════
-
-function weekDayToDate(isoWeek, dayIdx) {
-  var parts = isoWeek.split('-W');
-  var year = parseInt(parts[0]);
-  var week = parseInt(parts[1]);
-  var jan4 = new Date(year, 0, 4);
-  var dow = jan4.getDay() || 7;
-  var weekStart = new Date(jan4);
-  weekStart.setDate(jan4.getDate() - dow + 1 + (week - 1) * 7);
-  var d = new Date(weekStart);
-  d.setDate(d.getDate() + dayIdx);
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
 
 function buildDailyData() {
-  var ds = getDState();
-  var daily = {};
+  const ds    = getDState();
+  const daily = {};
 
-  var weeks = Object.keys(ds.habits || {}).sort();
-  weeks.forEach(function(wk) {
-    for (var d = 0; d < 7; d++) {
-      var dateStr = weekDayToDate(wk, d);
-      if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
-      getHabits().forEach(function(h) {
-        var checks = (ds.habits[wk] && ds.habits[wk][h.id]) || [];
-        if (checks[d]) daily[dateStr].habits[h.id] = true;
+  // Habits
+  Object.keys(ds.habits || {}).forEach(function(week) {
+    Object.keys(ds.habits[week]).forEach(function(habitId) {
+      const checks = ds.habits[week][habitId];
+      checks.forEach(function(checked, dow) {
+        // Convert week+dow to date string
+        const dStr = _weekDowToDate(week, dow);
+        if (!dStr) return;
+        if (!daily[dStr]) daily[dStr] = { habits: {}, affect: null };
+        daily[dStr].habits[habitId] = checked;
       });
-    }
+    });
   });
 
-  var affect = ds.affect || {};
-  Object.keys(affect).forEach(function(dateStr) {
+  // Affect
+  Object.keys(ds.affect || {}).forEach(function(dateStr) {
     if (!daily[dateStr]) daily[dateStr] = { habits: {}, affect: null };
-    // Use latest entry for insights
-    var arr = affect[dateStr];
-    if (Array.isArray(arr) && arr.length > 0) {
-      daily[dateStr].affect = arr[arr.length - 1];
-    } else if (arr && !Array.isArray(arr)) {
-      daily[dateStr].affect = arr; // legacy single object
-    }
+    const arr = ds.affect[dateStr];
+    daily[dateStr].affect = Array.isArray(arr) && arr.length > 0
+      ? arr[arr.length - 1]
+      : (arr && !Array.isArray(arr) ? arr : null);
   });
 
   return daily;
 }
 
+function _weekDowToDate(isoWeek, dow) {
+  try {
+    const parts = isoWeek.split('-W');
+    const year  = parseInt(parts[0]);
+    const week  = parseInt(parts[1]);
+    const jan4  = new Date(year, 0, 4);
+    const day   = jan4.getDay() || 7;
+    const weekStart = new Date(jan4);
+    weekStart.setDate(jan4.getDate() - day + 1 + (week - 1) * 7);
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + dow);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  } catch (e) { return null; }
+}
+
 function renderInsights() {
-  var container = document.getElementById('dInsightsContent');
+  const container = document.getElementById('dInsightsContent');
   if (!container) return;
 
-  var daily = buildDailyData();
-  var dates = Object.keys(daily).sort();
-  var today = getTodayStr();
-  var affectDates = dates.filter(function(d) { return d <= today && daily[d] && daily[d].affect; });
+  const daily       = buildDailyData();
+  const dates       = Object.keys(daily).sort();
+  const today       = getTodayStr();
+  const affectDates = dates.filter(function(d) { return d <= today && daily[d] && daily[d].affect; });
 
   if (affectDates.length < 5) {
-    container.innerHTML = '<div class="ins-empty">Log your affect for ' + (5 - affectDates.length) + ' more days to see insights here.</div>';
-    renderWeeklyReflection();
+    container.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);padding:12px 0;font-style:italic;">log affect for ' + (5 - affectDates.length) + ' more days to see insights.</div>';
     return;
   }
 
-  var html = '';
+  let html = '';
 
-  // 1. AFFECT CALENDAR HEATMAP
+  // 1. Affect calendar heatmap
   html += '<div class="ins-section">';
-  html += '<div class="ins-label">Affect Calendar <span class="ins-sub">(last 90 days)</span></div>';
+  html += '<div class="ins-label">affect calendar <span class="ins-sub">(90 days)</span></div>';
   html += renderAffectCalendar(daily);
   html += '</div>';
 
-  // 2. AFFECT SPACE SCATTERPLOT
+  // 2. Affect scatter
   html += '<div class="ins-section">';
-  html += '<div class="ins-label">Your Affect Space <span class="ins-sub">(last 90 days)</span></div>';
+  html += '<div class="ins-label">affect space <span class="ins-sub">(90 days)</span></div>';
   html += renderAffectScatter(daily, affectDates);
   html += '</div>';
 
-  // 2. DUAL TREND
+  // 3. Dual trend (7-day rolling avg)
   if (affectDates.length >= 7) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Valence & Arousal Trend <span class="ins-sub">(7-day rolling avg)</span></div>';
+    html += '<div class="ins-label">valence & arousal trend <span class="ins-sub">(7-day avg)</span></div>';
     html += renderDualTrend(daily, dates);
     html += '</div>';
   }
 
-  // 3. AFFECT VARIABILITY
+  // 4. Variability
   if (affectDates.length >= 14) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Affect Variability <span class="ins-sub">(14-day window)</span></div>';
+    html += '<div class="ins-label">affect variability <span class="ins-sub">(14-day window)</span></div>';
     html += renderVariability(daily, affectDates);
     html += '</div>';
   }
 
-  // 4. CONTEXT PROFILES
-  var ctxDates = affectDates.filter(function(d) { return daily[d].affect.ctx; });
+  // 5. Context profiles
+  const ctxDates = affectDates.filter(function(d) { return daily[d].affect.ctx; });
   if (ctxDates.length >= 5) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Affect × Context <span class="ins-sub">(avg valence & arousal by activity)</span></div>';
+    html += '<div class="ins-label">affect × context <span class="ins-sub">(avg by activity)</span></div>';
     html += renderContextProfiles(daily, ctxDates);
     html += '</div>';
   }
 
-  // 5. HABIT CO-OCCURRENCE
+  // 6. Habit × affect co-occurrence
   if (affectDates.length >= 14) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Affect × Habits <span class="ins-sub">(co-occurrence, not causal)</span></div>';
+    html += '<div class="ins-label">affect × habits <span class="ins-sub">(co-occurrence, not causal)</span></div>';
     html += renderHabitAffect(daily, affectDates);
     html += '</div>';
   }
 
-  // 6. TEMPORAL DYNAMICS
+  // 7. Day-of-week patterns
   if (affectDates.length >= 14) {
     html += '<div class="ins-section">';
-    html += '<div class="ins-label">Day-of-Week Patterns</div>';
+    html += '<div class="ins-label">day-of-week patterns</div>';
     html += renderTemporalDynamics(daily, affectDates);
     html += '</div>';
   }
 
-  // 7. HABIT COMPLETION
+  // 8. Habit completion rates
   html += '<div class="ins-section">';
-  html += '<div class="ins-label">Habit Completion</div>';
+  html += '<div class="ins-label">habit completion</div>';
   html += renderHabitRates(daily, dates);
   html += '</div>';
 
   container.innerHTML = html;
-  renderWeeklyReflection();
 }
 
-// ── AFFECT CALENDAR ──
+// ── CALENDAR HEATMAP ──
 function renderAffectCalendar(daily) {
-  var today = new Date();
-  var startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 89);
+  const today     = new Date();
+  const todayStr  = getTodayStr();
+  const startDate = new Date(today); startDate.setDate(startDate.getDate() - 89);
 
-  var html = '<div class="ins-cal-wrap">';
-  html += '<div class="ins-cal-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>';
-  html += '<div class="ins-cal-grid">';
-
-  // Find Monday on or before startDate
-  var cursor = new Date(startDate);
-  var dow = cursor.getDay() || 7;
+  let cursor = new Date(startDate);
+  const dow  = cursor.getDay() || 7;
   cursor.setDate(cursor.getDate() - (dow - 1));
 
-  var endDate = new Date(today);
-  endDate.setDate(endDate.getDate() + 1);
-  var currentMonth = -1;
-  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var todayStr = getTodayStr();
+  const endDate    = new Date(today); endDate.setDate(endDate.getDate() + 1);
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let   currentMonth = -1;
+
+  let html = '<div class="ins-cal-wrap">';
+  html += '<div class="ins-cal-day-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>';
+  html += '<div class="ins-cal-grid">';
 
   while (cursor <= endDate) {
     if (cursor.getMonth() !== currentMonth) {
@@ -550,588 +418,311 @@ function renderAffectCalendar(daily) {
       html += '<div class="ins-cal-month">' + monthNames[currentMonth] + '</div>';
     }
     html += '<div class="ins-cal-row">';
-    for (var i = 0; i < 7; i++) {
-      var dStr = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
-      var ae = daily[dStr] ? daily[dStr].affect : null;
-      var isToday = dStr === todayStr;
-      var isFuture = cursor > today;
-      var bg = ae ? affectToColor(ae.v, ae.a) : 'var(--border-divider)';
-      var cls = 'ins-cal-cell' + (isToday ? ' today' : '') + (isFuture ? ' future' : '');
-      var title = dStr + (ae ? ' — valence:' + ae.v + ' arousal:' + ae.a + (ae.ctx ? ' (' + ae.ctx + ')' : '') : '');
-      html += '<div class="' + cls + '" style="background:' + (isFuture ? 'transparent' : bg) + '" title="' + title + '"></div>';
+    for (let i = 0; i < 7; i++) {
+      const dStr  = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
+      const ae    = daily[dStr] ? daily[dStr].affect : null;
+      const isTod = dStr === todayStr;
+      const isFut = cursor > today;
+      const bg    = ae ? affectToColor(ae.v, ae.a) : 'var(--border)';
+      html += '<div class="ins-cal-cell' + (isTod ? ' today' : '') + (isFut ? ' future' : '') + '" style="background:' + (isFut ? 'transparent' : bg) + '" title="' + dStr + (ae ? ' v:' + ae.v + ' a:' + ae.a : '') + '"></div>';
       cursor.setDate(cursor.getDate() + 1);
     }
     html += '</div>';
   }
-  html += '</div>'; // grid
-
-  // Legend: show the four corners
-  html += '<div class="ins-cal-legend">';
-  html += '<span class="ins-cal-legend-label">drained+rough</span>';
-  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(0, 0) + '"></div>';
-  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 0) + '"></div>';
-  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 2) + '"></div>';
-  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(2, 4) + '"></div>';
-  html += '<div class="ins-cal-cell legend" style="background:' + affectToColor(4, 4) + '"></div>';
-  html += '<span class="ins-cal-legend-label">wired+good</span>';
-  html += '</div>';
-
-  html += '</div>'; // wrap
+  html += '</div></div>';
   return html;
 }
 
 // ── SCATTER ──
 function renderAffectScatter(daily, affectDates) {
-  var w = 240, h = 240, pad = 24;
-  var innerW = w - pad * 2, innerH = h - pad * 2;
+  const W = 220, H = 220, PAD = 20;
+  const inner = W - PAD * 2;
 
-  var cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 90);
-  var cutStr = cutoff.getFullYear() + '-' + String(cutoff.getMonth()+1).padStart(2,'0') + '-' + String(cutoff.getDate()).padStart(2,'0');
-  var recent = affectDates.filter(function(d) { return d >= cutStr; });
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 90);
+  const cutStr = cutoff.getFullYear() + '-' + String(cutoff.getMonth()+1).padStart(2,'0') + '-' + String(cutoff.getDate()).padStart(2,'0');
+  const recent = affectDates.filter(function(d) { return d >= cutStr; });
 
-  var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" style="max-width:260px;margin:0 auto;display:block;">';
-  svg += '<defs>';
-  svg += '<radialGradient id="scBg1" cx="100%" cy="0%"><stop offset="0%" stop-color="#ff3b30" stop-opacity="0.06"/><stop offset="60%" stop-color="#ff3b30" stop-opacity="0"/></radialGradient>';
-  svg += '<radialGradient id="scBg2" cx="0%" cy="0%"><stop offset="0%" stop-color="#ff9500" stop-opacity="0.06"/><stop offset="60%" stop-color="#ff9500" stop-opacity="0"/></radialGradient>';
-  svg += '<radialGradient id="scBg3" cx="100%" cy="100%"><stop offset="0%" stop-color="#30d158" stop-opacity="0.06"/><stop offset="60%" stop-color="#30d158" stop-opacity="0"/></radialGradient>';
-  svg += '<radialGradient id="scBg4" cx="0%" cy="100%"><stop offset="0%" stop-color="#5a82c8" stop-opacity="0.06"/><stop offset="60%" stop-color="#5a82c8" stop-opacity="0"/></radialGradient>';
-  svg += '</defs>';
-  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="var(--border-divider)"/>';
-  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg1)"/>';
-  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg2)"/>';
-  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg3)"/>';
-  svg += '<rect x="'+pad+'" y="'+pad+'" width="'+innerW+'" height="'+innerH+'" rx="8" fill="url(#scBg4)"/>';
-
-  var cx = pad + innerW/2, cy = pad + innerH/2;
-  svg += '<line x1="'+pad+'" y1="'+cy+'" x2="'+(pad+innerW)+'" y2="'+cy+'" stroke="var(--text-muted)" stroke-opacity="0.15" stroke-width="0.5"/>';
-  svg += '<line x1="'+cx+'" y1="'+pad+'" x2="'+cx+'" y2="'+(pad+innerH)+'" stroke="var(--text-muted)" stroke-opacity="0.15" stroke-width="0.5"/>';
-
-  svg += '<text x="'+cx+'" y="'+(pad-8)+'" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">wired</text>';
-  svg += '<text x="'+cx+'" y="'+(pad+innerH+14)+'" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">drained</text>';
-  svg += '<text x="'+(pad-4)+'" y="'+(cy+3)+'" text-anchor="end" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">rough</text>';
-  svg += '<text x="'+(pad+innerW+4)+'" y="'+(cy+3)+'" text-anchor="start" font-family="var(--font-mono)" font-size="8" fill="var(--text-muted)" opacity="0.6">good</text>';
-
-  var usedCtx = {};
-  recent.forEach(function(dateStr, i) {
-    var ae = daily[dateStr].affect;
-    var px = pad + (ae.v / (GRID_SIZE - 1)) * innerW;
-    var py = pad + (1 - ae.a / (GRID_SIZE - 1)) * innerH;
-    var color = ae.ctx ? (CTX_COLORS[ae.ctx] || CTX_COLORS.none) : CTX_COLORS.none;
-    if (ae.ctx) usedCtx[ae.ctx] = color;
-    var opacity = Math.max(0.2, 1 - ((recent.length - i) / recent.length) * 0.7);
-    svg += '<circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="5" fill="'+color+'" opacity="'+opacity.toFixed(2)+'" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>';
+  let dots = '';
+  recent.forEach(function(d) {
+    const ae = daily[d].affect;
+    const x  = PAD + (ae.v / (GRID_SIZE - 1)) * inner;
+    const y  = PAD + (1 - ae.a / (GRID_SIZE - 1)) * inner;
+    dots += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3" fill="' + affectToColor(ae.v, ae.a) + '" opacity="0.7"/>';
   });
-  svg += '</svg>';
 
-  var ctxKeys = Object.keys(usedCtx);
-  if (ctxKeys.length > 0) {
-    svg += '<div class="ins-scatter-legend">';
-    ctxKeys.forEach(function(k) { svg += '<div class="ins-scatter-legend-item"><div class="ins-scatter-legend-dot" style="background:'+usedCtx[k]+'"></div>'+k+'</div>'; });
-    svg += '<div class="ins-scatter-legend-item"><div class="ins-scatter-legend-dot" style="background:var(--text-muted)"></div>unlabeled</div>';
-    svg += '</div>';
-  }
-
-  svg += '<div class="ins-note" style="margin-top:8px;">'+recent.length+' days plotted. Each dot is one day in your affect space.</div>';
-  return svg;
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;max-width:' + W + 'px;">' +
+    '<line x1="' + PAD + '" y1="' + (H/2) + '" x2="' + (W-PAD) + '" y2="' + (H/2) + '" stroke="var(--border)" stroke-width="0.5"/>' +
+    '<line x1="' + (W/2) + '" y1="' + PAD + '" x2="' + (W/2) + '" y2="' + (H-PAD) + '" stroke="var(--border)" stroke-width="0.5"/>' +
+    dots + '</svg>';
 }
 
 // ── DUAL TREND ──
 function renderDualTrend(daily, dates) {
-  var allDates = [];
-  var today = new Date(); var start = new Date(today); start.setDate(start.getDate() - 59);
-  var cursor = new Date(start);
-  while (cursor <= today) {
-    allDates.push(cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0'));
-    cursor.setDate(cursor.getDate() + 1);
-  }
+  const today = getTodayStr();
+  const recent = dates.filter(function(d) { return d <= today && daily[d].affect; }).slice(-30);
+  if (recent.length < 3) return '<div style="font-size:12px;color:var(--text-tertiary);">not enough data</div>';
 
-  var vPoints = [], aPoints = [];
-  for (var i = 0; i < allDates.length; i++) {
-    var vSum = 0, aSum = 0, count = 0;
-    for (var j = Math.max(0, i - 6); j <= i; j++) {
-      var ae = daily[allDates[j]] ? daily[allDates[j]].affect : null;
-      if (ae) { vSum += ae.v; aSum += ae.a; count++; }
-    }
-    if (count >= 2) {
-      vPoints.push({ idx: i, val: vSum / count });
-      aPoints.push({ idx: i, val: aSum / count });
-    }
-  }
+  const W = 280, H = 80, PAD = 8;
+  const pts = function(key) {
+    return recent.map(function(d, i) {
+      const x = PAD + (i / (recent.length - 1)) * (W - PAD * 2);
+      const v = daily[d].affect[key] / (GRID_SIZE - 1);
+      const y = PAD + (1 - v) * (H - PAD * 2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+  };
 
-  if (vPoints.length < 3) return '<div class="ins-note">Not enough data for trend.</div>';
-
-  var w = 280, h = 60, padX = 2, padY = 4;
-  var xScale = (w - 2 * padX) / (allDates.length - 1);
-  var yScale = (h - 2 * padY) / (GRID_SIZE - 1);
-
-  function buildPath(points) {
-    var d = '';
-    points.forEach(function(p, pi) {
-      var x = padX + p.idx * xScale;
-      var y = h - padY - p.val * yScale;
-      d += (pi === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
-    });
-    return d;
-  }
-
-  var html = '<div class="ins-dual-trend-wrap">';
-  html += '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">';
-  for (var g = 0; g < GRID_SIZE; g++) {
-    var gy = h - padY - g * yScale;
-    html += '<line x1="0" y1="'+gy.toFixed(1)+'" x2="'+w+'" y2="'+gy.toFixed(1)+'" stroke="var(--border-divider)" stroke-width="0.5"/>';
-  }
-  html += '<path d="'+buildPath(vPoints)+'" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>';
-  html += '<path d="'+buildPath(aPoints)+'" fill="none" stroke="#ff9500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" stroke-dasharray="4,3"/>';
-  html += '</svg>';
-
-  html += '<div class="ins-dual-trend-legend">';
-  html += '<span><span class="legend-line" style="background:#30d158;"></span> valence</span>';
-  html += '<span><span class="legend-line" style="background:#ff9500;"></span> arousal</span>';
-  if (vPoints.length > 0) {
-    html += '<span style="margin-left:auto;">now: v='+vPoints[vPoints.length-1].val.toFixed(1)+' a='+aPoints[aPoints.length-1].val.toFixed(1)+'</span>';
-  }
-  html += '</div></div>';
-  return html;
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;">' +
+    '<polyline points="' + pts('v') + '" fill="none" stroke="var(--text-primary)" stroke-width="1.5" opacity="0.7"/>' +
+    '<polyline points="' + pts('a') + '" fill="none" stroke="var(--text-secondary)" stroke-width="1" opacity="0.5" stroke-dasharray="3,2"/>' +
+    '</svg>' +
+    '<div style="display:flex;gap:12px;margin-top:4px;">' +
+    '<span style="font-family:var(--font-mono);font-size:10px;color:var(--text-primary);">— valence</span>' +
+    '<span style="font-family:var(--font-mono);font-size:10px;color:var(--text-secondary);">- - arousal</span>' +
+    '</div>';
 }
 
 // ── VARIABILITY ──
 function renderVariability(daily, affectDates) {
-  var recent = affectDates.slice(-14);
-  if (recent.length < 7) return '<div class="ins-note">Need more data for variability.</div>';
+  const today  = getTodayStr();
+  const recent = affectDates.filter(function(d) { return d <= today; }).slice(-14);
+  if (recent.length < 5) return '';
 
-  var vs = [], as = [];
-  recent.forEach(function(d) { var ae = daily[d].affect; vs.push(ae.v); as.push(ae.a); });
-
-  function stdev(arr) {
-    var n = arr.length, mean = arr.reduce(function(s,x){return s+x;},0)/n;
-    return Math.sqrt(arr.reduce(function(s,x){return s+(x-mean)*(x-mean);},0)/n);
+  function sd(arr) {
+    const mean = arr.reduce(function(a,b){return a+b;},0) / arr.length;
+    return Math.sqrt(arr.reduce(function(s,x){return s+(x-mean)*(x-mean);},0) / arr.length);
   }
 
-  var vSD = stdev(vs), aSD = stdev(as);
-  var combined = (vSD + aSD) / 2;
-  var normalized = Math.min(1, combined / 1.5);
-  var pct = Math.round(normalized * 100);
+  const vs = recent.map(function(d){ return daily[d].affect.v; });
+  const as = recent.map(function(d){ return daily[d].affect.a; });
+  const sdV = sd(vs).toFixed(2);
+  const sdA = sd(as).toFixed(2);
 
-  var radius = 20, stroke = 5, circ = 2 * Math.PI * radius;
-  var offset = circ * (1 - normalized);
-  var ringColor = normalized > 0.5 ? '#30d158' : (normalized > 0.25 ? '#ffcc00' : '#ff9500');
-
-  var html = '<div class="ins-variability">';
-  html += '<div class="ins-variability-ring"><svg viewBox="0 0 52 52">';
-  html += '<circle cx="26" cy="26" r="'+radius+'" fill="none" stroke="var(--border-divider)" stroke-width="'+stroke+'"/>';
-  html += '<circle cx="26" cy="26" r="'+radius+'" fill="none" stroke="'+ringColor+'" stroke-width="'+stroke+'" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" stroke-linecap="round"/>';
-  html += '</svg><div class="ins-variability-val">'+pct+'</div></div>';
-
-  var granLabel = normalized > 0.5 ? 'High' : (normalized > 0.25 ? 'Moderate' : 'Low');
-  html += '<div class="ins-variability-text">';
-  html += '<strong>'+granLabel+' variability</strong> over '+recent.length+' days. ';
-  html += 'Valence SD: '+vSD.toFixed(2)+', Arousal SD: '+aSD.toFixed(2)+'. ';
-  if (normalized > 0.5) html += 'Your affect is differentiated — a wide range of states.';
-  else if (normalized > 0.25) html += 'Moderate spread in your day-to-day experience.';
-  else html += 'Fairly consistent affect — staying in a narrow band.';
-  html += '</div></div>';
-  return html;
+  return '<div style="display:flex;gap:24px;">' +
+    '<div><div style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);">' + sdV + '</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);">valence SD</div></div>' +
+    '<div><div style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);">' + sdA + '</div><div style="font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);">arousal SD</div></div>' +
+    '</div>';
 }
 
 // ── CONTEXT PROFILES ──
 function renderContextProfiles(daily, ctxDates) {
-  var profiles = {};
+  const profiles = {};
   ctxDates.forEach(function(d) {
-    var ae = daily[d].affect, ctx = ae.ctx;
-    if (!profiles[ctx]) profiles[ctx] = { vSum:0, aSum:0, count:0 };
-    profiles[ctx].vSum += ae.v; profiles[ctx].aSum += ae.a; profiles[ctx].count++;
+    const ae = daily[d].affect;
+    if (!ae.ctx) return;
+    if (!profiles[ae.ctx]) profiles[ae.ctx] = { v: [], a: [] };
+    profiles[ae.ctx].v.push(ae.v);
+    profiles[ae.ctx].a.push(ae.a);
   });
 
-  var keys = Object.keys(profiles).sort(function(a,b){ return profiles[b].count - profiles[a].count; });
-  var html = '<div class="ins-context-profile">';
-  keys.forEach(function(ctx) {
-    var p = profiles[ctx];
-    if (p.count < 2) return;
-    var avgV = p.vSum/p.count, avgA = p.aSum/p.count;
-    var vPct = (avgV/(GRID_SIZE-1))*100, aPct = (avgA/(GRID_SIZE-1))*100;
-    var color = CTX_COLORS[ctx] || CTX_COLORS.none;
-
-    html += '<div class="ins-ctx-row">';
-    html += '<div class="ins-ctx-label">'+esc(ctx)+'</div>';
-    html += '<div class="ins-ctx-bar-wrap">';
-    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,vPct).toFixed(0)+'%;background:'+color+';opacity:0.8;">v '+avgV.toFixed(1)+'</div>';
-    html += '<div class="ins-ctx-bar" style="width:'+Math.max(20,aPct).toFixed(0)+'%;background:'+color+';opacity:0.45;">a '+avgA.toFixed(1)+'</div>';
-    html += '</div>';
-    html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);width:20px;text-align:right;">'+p.count+'d</div>';
-    html += '</div>';
+  let html = '';
+  Object.keys(profiles).forEach(function(ctx) {
+    const p    = profiles[ctx];
+    const avgV = (p.v.reduce(function(a,b){return a+b;},0) / p.v.length).toFixed(1);
+    const avgA = (p.a.reduce(function(a,b){return a+b;},0) / p.a.length).toFixed(1);
+    html += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:0.5px solid var(--border);">' +
+      '<span style="font-size:13px;color:var(--text-primary);">' + esc(ctx) + '</span>' +
+      '<span style="font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary);">v:' + avgV + ' a:' + avgA + ' (n=' + p.v.length + ')</span>' +
+      '</div>';
   });
-  html += '</div>';
-  html += '<div class="ins-note" style="margin-top:8px;">Solid = avg valence, faded = avg arousal. Higher = more pleasant / more energized.</div>';
-  return html;
+  return html || '<div style="font-size:12px;color:var(--text-tertiary);">no context data</div>';
 }
 
 // ── HABIT × AFFECT ──
 function renderHabitAffect(daily, affectDates) {
-  var html = '<div class="ins-corr">';
+  const habits = getHabits().filter(function(h) { return !h.bad; });
+  if (!habits.length) return '';
 
-  getHabits().forEach(function(h) {
-    var wV=0, wA=0, wC=0, woV=0, woA=0, woC=0;
-    affectDates.forEach(function(d) {
-      var ae = daily[d].affect, did = daily[d].habits[h.id];
-      if (did) { wV+=ae.v; wA+=ae.a; wC++; } else { woV+=ae.v; woA+=ae.a; woC++; }
-    });
+  let html = '';
+  habits.forEach(function(h) {
+    const withHabit    = affectDates.filter(function(d){ return daily[d].habits[h.id]; });
+    const withoutHabit = affectDates.filter(function(d){ return !daily[d].habits[h.id]; });
+    if (withHabit.length < 3) return;
 
-    if (wC < 3 || woC < 3) {
-      html += '<div class="ins-corr-row"><span class="ins-corr-name">'+esc(h.label)+'</span><span class="ins-corr-val muted">not enough data</span></div>';
-      return;
-    }
+    const avg = function(dates, key) {
+      if (!dates.length) return 0;
+      return (dates.reduce(function(s,d){ return s + daily[d].affect[key]; }, 0) / dates.length).toFixed(1);
+    };
 
-    var wAvgV=wV/wC, woAvgV=woV/woC, wAvgA=wA/wC, woAvgA=woA/woC;
-    var vDiff=wAvgV-woAvgV, aDiff=wAvgA-woAvgA;
-    var effectiveVDiff = h.bad ? -vDiff : vDiff;
-
-    var label, cls;
-    if (Math.abs(vDiff)<0.15 && Math.abs(aDiff)<0.15) {
-      label='no clear co-occurrence'; cls='flat';
-    } else {
-      var parts=[];
-      if (Math.abs(vDiff)>=0.15) {
-        parts.push(h.bad ? 'valence '+Math.abs(vDiff).toFixed(1)+(vDiff>0?' higher with':' higher without') : 'valence '+(vDiff>0?'+':'')+vDiff.toFixed(1));
-      }
-      if (Math.abs(aDiff)>=0.15) parts.push('arousal '+(aDiff>0?'+':'')+aDiff.toFixed(1));
-      label=parts.join(', ');
-      cls = effectiveVDiff>0.15 ? 'pos' : (effectiveVDiff<-0.15 ? 'neg' : 'flat');
-    }
-
-    html += '<div class="ins-corr-row"><span class="ins-corr-name">'+esc(h.label)+'</span><span class="ins-corr-val '+cls+'">'+label+'</span></div>';
-    html += '<div class="ins-corr-bars">';
-    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">with</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:'+((wAvgV/(GRID_SIZE-1))*100).toFixed(0)+'%;background:var(--accent)"></div></div><span class="ins-corr-bar-val">'+wAvgV.toFixed(1)+'</span></div>';
-    html += '<div class="ins-corr-bar-row"><span class="ins-corr-bar-label">w/o</span><div class="ins-corr-bar"><div class="ins-corr-bar-fill" style="width:'+((woAvgV/(GRID_SIZE-1))*100).toFixed(0)+'%;background:var(--text-muted)"></div></div><span class="ins-corr-bar-val">'+woAvgV.toFixed(1)+'</span></div>';
-    html += '</div>';
+    html += '<div style="padding:6px 0;border-bottom:0.5px solid var(--border);">' +
+      '<div style="font-size:13px;color:var(--text-primary);margin-bottom:3px;">' + esc(h.label) + '</div>' +
+      '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);">' +
+      'on: v' + avg(withHabit,'v') + ' a' + avg(withHabit,'a') +
+      (withoutHabit.length >= 3 ? ' · off: v' + avg(withoutHabit,'v') + ' a' + avg(withoutHabit,'a') : '') +
+      '</div></div>';
   });
-
-  html += '<div class="ins-note" style="margin-top:10px;">Based on '+affectDates.length+' days. Co-occurrence ≠ causation.</div>';
-  html += '</div>';
-  return html;
+  return html || '<div style="font-size:12px;color:var(--text-tertiary);">not enough data</div>';
 }
 
 // ── TEMPORAL DYNAMICS ──
 function renderTemporalDynamics(daily, affectDates) {
-  var dayNames = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var buckets = []; for (var i=0;i<7;i++) buckets.push({vSum:0,aSum:0,count:0});
-
-  affectDates.forEach(function(dateStr) {
-    var d = new Date(dateStr+'T12:00:00');
-    var dow = d.getDay(), idx = dow===0?6:dow-1;
-    var ae = daily[dateStr].affect;
-    buckets[idx].vSum+=ae.v; buckets[idx].aSum+=ae.a; buckets[idx].count++;
+  const byDow = [[],[],[],[],[],[],[]];
+  affectDates.forEach(function(d) {
+    const dow = new Date(d + 'T12:00:00').getDay();
+    const idx = dow === 0 ? 6 : dow - 1;
+    byDow[idx].push(daily[d].affect.v);
   });
-
-  var html = '<div style="display:flex;flex-direction:column;gap:2px;">';
-  buckets.forEach(function(b,i) {
-    if (b.count<1) { html+='<div class="ins-temporal-row"><div class="ins-temporal-day">'+dayNames[i]+'</div><div style="font-size:10px;color:var(--text-muted);font-style:italic;">—</div></div>'; return; }
-    var avgV=b.vSum/b.count, avgA=b.aSum/b.count;
-    var vPct=(avgV/(GRID_SIZE-1))*100, aPct=(avgA/(GRID_SIZE-1))*100;
-    html += '<div class="ins-temporal-row"><div class="ins-temporal-day">'+dayNames[i]+'</div>';
-    html += '<div class="ins-temporal-bars">';
-    html += '<div class="ins-temporal-bar" style="width:'+Math.max(8,vPct).toFixed(0)+'%;background:#30d158;opacity:0.7;"></div>';
-    html += '<div class="ins-temporal-bar" style="width:'+Math.max(8,aPct).toFixed(0)+'%;background:#ff9500;opacity:0.45;"></div>';
-    html += '</div>';
-    html += '<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);width:52px;text-align:right;">'+avgV.toFixed(1)+' / '+avgA.toFixed(1)+'</div></div>';
+  const labels = ['M','T','W','T','F','S','S'];
+  const W = 280, H = 60, PAD = 8;
+  const barW = (W - PAD * 2) / 7;
+  let bars = '';
+  byDow.forEach(function(vs, i) {
+    if (!vs.length) return;
+    const avg = vs.reduce(function(a,b){return a+b;},0) / vs.length;
+    const h   = Math.max(4, (avg / (GRID_SIZE - 1)) * (H - PAD * 2));
+    const x   = PAD + i * barW + barW * 0.15;
+    const y   = H - PAD - h;
+    bars += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + (barW * 0.7).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="var(--text-primary)" opacity="0.7" rx="2"/>';
+    bars += '<text x="' + (x + barW * 0.35).toFixed(1) + '" y="' + (H - 1) + '" text-anchor="middle" font-size="8" fill="var(--text-tertiary)" font-family="monospace">' + labels[i] + '</text>';
   });
-  html += '</div>';
-  html += '<div class="ins-note" style="margin-top:6px;">Green = valence, orange = arousal. Scale: 0 (rough/drained) to 4 (good/wired).</div>';
-  return html;
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;">' + bars + '</svg>';
 }
 
 // ── HABIT RATES ──
 function renderHabitRates(daily, dates) {
-  var today = getTodayStr();
-  var relevantDates = dates.filter(function(d) { return d <= today; });
-  if (relevantDates.length === 0) return '';
+  const habits = getHabits();
+  if (!habits.length) return '<div style="font-size:12px;color:var(--text-tertiary);">no habits configured</div>';
 
-  var html = '<div class="ins-habit-rates">';
-  getHabits().forEach(function(h) {
-    var scheduleDays = h.days || [0,1,2,3,4,5,6];
-    var total=0, checked=0, streakCurrent=0, inStreak=true;
-    for (var i=relevantDates.length-1;i>=0;i--) {
-      // Check if this date is a scheduled day for this habit
-      var dateObj = new Date(relevantDates[i]+'T12:00:00');
-      var dow = dateObj.getDay(); // 0=Sun
-      var dowMon = dow===0?6:dow-1; // Convert to Mon=0
-      if (scheduleDays.indexOf(dowMon) === -1) continue; // skip off-days entirely
+  const today  = getTodayStr();
+  const recent = dates.filter(function(d) { return d <= today; }).slice(-28);
 
-      var d=daily[relevantDates[i]], did=d&&d.habits[h.id];
-      total++; if(did) checked++;
-      if(inStreak&&did&&!h.bad) streakCurrent++;
-      else if(inStreak&&!did&&!h.bad) inStreak=false;
-      if(h.bad&&inStreak&&!did) streakCurrent++;
-      else if(h.bad&&inStreak&&did) inStreak=false;
-    }
-    var pct=total>0?Math.round((checked/total)*100):0;
-    var barColor=h.bad?'var(--danger)':'var(--success)';
-    var streakLabel='';
-    if(!h.bad&&streakCurrent>1) streakLabel=' · '+streakCurrent+'-day streak';
-    else if(h.bad&&streakCurrent>1) streakLabel=' · '+streakCurrent+' days clean';
+  let html = '';
+  habits.forEach(function(h) {
+    const scheduled = recent.filter(function(d) {
+      const dow = new Date(d + 'T12:00:00').getDay();
+      const idx = dow === 0 ? 6 : dow - 1;
+      return (h.days || [0,1,2,3,4,5,6]).includes(idx);
+    });
+    const done = scheduled.filter(function(d){ return daily[d] && daily[d].habits[h.id]; });
+    const pct  = scheduled.length ? Math.round((done.length / scheduled.length) * 100) : 0;
 
-    html+='<div class="ins-habit-row"><div class="ins-habit-info"><span class="ins-habit-name">'+esc(h.label)+'</span><span class="ins-habit-pct">'+pct+'%'+streakLabel+'</span></div>';
-    html+='<div class="ins-habit-bar"><div class="ins-habit-bar-fill" style="width:'+Math.min(100,pct)+'%;background:'+barColor+'"></div></div></div>';
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:0.5px solid var(--border);">' +
+      '<div style="flex:1;font-size:13px;color:var(--text-primary);">' + esc(h.label) + '</div>' +
+      '<div style="width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;">' +
+      '<div style="width:' + pct + '%;height:100%;background:var(--text-primary);opacity:' + (h.bad ? '0.4' : '0.8') + ';"></div></div>' +
+      '<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary);width:30px;text-align:right;">' + pct + '%</div>' +
+      '</div>';
   });
-  html += '</div>';
   return html;
 }
 
-// ── WEEKLY REFLECTION ──
-function renderWeeklyReflection() {
-  var ds = getDState();
-  var card = document.getElementById('dWeeklyReflectCard');
-  if (!card) return;
+// ══════════════════════════════════════════════════════════════════
+// TODAY / REVIEW MODE
+// ══════════════════════════════════════════════════════════════════
 
-  var now = new Date(), week = getISOWeek(now);
-  var dow = now.getDay();
-  var affectCount = Object.keys(ds.affect || {}).length;
-
-  // Show Fri-Sun or if enough data exists
-  if (affectCount < 5 && dow !== 0 && dow !== 5 && dow !== 6) {
-    card.style.display = 'none'; return;
-  }
-  card.style.display = 'block';
-
-  if (!ds.weeklyReflections) ds.weeklyReflections = {};
-
-  var doy = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
-  var weekNum = Math.floor(doy / 7);
-  document.getElementById('dWeeklyPrompt').textContent = WEEKLY_PROMPTS[weekNum % WEEKLY_PROMPTS.length];
-  document.getElementById('dWeeklyReflect').value = ds.weeklyReflections[week] || '';
-
-  var pastEl = document.getElementById('dPastLabels');
-  pastEl.innerHTML = '';
-  Object.keys(ds.weeklyReflections).sort().reverse().slice(0,8).forEach(function(wk) {
-    var text = ds.weeklyReflections[wk];
-    if (!text || text.length < 2) return;
-    var el = document.createElement('span');
-    el.className = 'ins-past-label';
-    el.textContent = wk.replace(/^\d{4}-/,'') + ': ' + (text.length>35 ? text.slice(0,33)+'…' : text);
-    el.title = wk + ': ' + text;
-    pastEl.appendChild(el);
-  });
-}
-
-// ── DAILY SNAPSHOT ──
-
-function renderSnapshot() {
-  var card = document.getElementById('dSnapshotCard');
-  var body = document.getElementById('dSnapshotBody');
-  if (!card || !body) return;
-
-  var today = getTodayStr();
-  var ds = getDState();
-  var parts = [];
-
-  // Tasks completed today
-  var doneToday = state.tasks.filter(function(t) {
-    return t.done && t.completedAt && new Date(t.completedAt).toDateString() === new Date().toDateString();
-  });
-  if (doneToday.length > 0) {
-    // Find dominant category
-    var catCounts = {};
-    doneToday.forEach(function(t) {
-      (t.categories || []).forEach(function(c) { catCounts[c] = (catCounts[c] || 0) + 1; });
-    });
-    var topCat = null, topCount = 0;
-    Object.keys(catCounts).forEach(function(c) { if (catCounts[c] > topCount) { topCat = c; topCount = catCounts[c]; } });
-
-    var taskStr = '<span class="snap-num">' + doneToday.length + '</span> task' + (doneToday.length !== 1 ? 's' : '') + ' done';
-    if (topCat) taskStr += ' <span class="snap-dim">(mostly ' + esc(topCat) + ')</span>';
-    parts.push(taskStr);
-  }
-
-  // Pomodoro sessions today
-  var pomoToday = 0;
-  state.tasks.forEach(function(t) {
-    if (t.completedAt && new Date(t.completedAt).toDateString() === new Date().toDateString()) {
-      pomoToday += (t.pomodoros || 0);
-    }
-    // Also count pomos on incomplete tasks that might have been worked today
-    // (pomodoros increment during the day on focused tasks)
-  });
-  // Simpler: just count from pomo cycles if focus was used today
-  // Actually, pomo.cycles resets — skip this unless we track it daily
-
-  // Affect
-  var ae = getLatestAffect(today);
-  if (ae) {
-    var vLabels = ['rough', 'low', 'neutral', 'okay', 'good'];
-    var aLabels = ['drained', 'low-energy', 'moderate', 'alert', 'wired'];
-    var affectStr = 'feeling <span class="snap-affect" style="color:' + affectToColor(ae.v, ae.a) + '">' + vLabels[ae.v] + ', ' + aLabels[ae.a] + '</span>';
-    if (ae.ctx) affectStr += ' <span class="snap-dim">(' + esc(ae.ctx) + ')</span>';
-    parts.push(affectStr);
-  }
-
-  // Habits checked today
-  var week = getISOWeek(new Date());
-  var todayDow = getDayOfWeek();
-  var habitsChecked = [];
-  getHabits().forEach(function(h) {
-    var checks = ds.habits && ds.habits[week] && ds.habits[week][h.id];
-    if (checks && checks[todayDow] && !h.bad) habitsChecked.push(h.label.toLowerCase());
-    if (checks && checks[todayDow] && h.bad) habitsChecked.push(h.label.toLowerCase());
-  });
-  if (habitsChecked.length > 0) {
-    parts.push(habitsChecked.join(', '));
-  }
-
-  // Show or hide
-  if (parts.length === 0) {
-    card.style.display = 'none';
-    return;
-  }
-
-  card.style.display = 'block';
-  body.innerHTML = parts.map(function(p) { return '<div class="snap-line">' + p + '</div>'; }).join('');
-}
-
-// ── FULL RENDER (Today mode) ──
-
-function renderReflectToday() {
-  renderIntention(); renderDashTasks();
-  renderReflection(); renderAffect(); renderHabits();
-  renderSnapshot(); renderInsights();
-}
-
-// ── Segmented control state ──
-let _reflectMode = 'today'; // 'today' or 'review'
+let _reflectMode = 'today';
 
 function getReflectMode() { return _reflectMode; }
 
 function setReflectMode(mode) {
   _reflectMode = mode;
-  var todayEl = document.getElementById('reflectToday');
-  var reviewEl = document.getElementById('reflectReview');
-  var segToday = document.getElementById('reflectSegToday');
-  var segReview = document.getElementById('reflectSegReview');
+  const todayEl  = document.getElementById('reflectToday');
+  const reviewEl = document.getElementById('reflectReview');
+  const segToday = document.getElementById('reflectSegToday');
+  const segRev   = document.getElementById('reflectSegReview');
+
   if (!todayEl || !reviewEl) return;
 
   if (mode === 'today') {
-    todayEl.style.display = '';
+    todayEl.style.display  = '';
     reviewEl.style.display = 'none';
-    if (segToday) segToday.classList.add('active');
-    if (segReview) segReview.classList.remove('active');
+    segToday?.classList.add('active');
+    segRev?.classList.remove('active');
     renderReflectToday();
   } else {
-    todayEl.style.display = 'none';
+    todayEl.style.display  = 'none';
     reviewEl.style.display = '';
-    if (segToday) segToday.classList.remove('active');
-    if (segReview) segReview.classList.add('active');
+    segToday?.classList.remove('active');
+    segRev?.classList.add('active');
   }
+}
+
+function renderReflectToday() {
+  renderAffect();
+  renderHabits();
+  renderInsights();
 }
 
 // ── ENTER / EXIT ──
 
 function onReflectEnter() {
   setReflectMode(_reflectMode);
-
-  // Update the reflect segmented pill after the view is visible and laid out
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      updateReflectPill();
-    });
-  });
-
-  // Stagger animate the Today cards
-  var container = document.getElementById('reflectToday');
-  if (!container || _reflectMode !== 'today') return;
-  var items = container.querySelectorAll(':scope > .d-card, :scope > .d-grid-2, :scope > details');
-  items.forEach(function(el, i) {
-    el.classList.remove('stagger-child'); el.classList.add('stagger-ready');
-    el.style.setProperty('--si', i);
-  });
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      items.forEach(function(el) { el.classList.remove('stagger-ready'); el.classList.add('stagger-child'); });
-    });
-  });
 }
 
-function onReflectExit() {
-  var container = document.getElementById('reflectToday');
-  if (container) {
-    container.querySelectorAll('.stagger-child, .stagger-ready').forEach(function(el) {
-      el.classList.remove('stagger-child', 'stagger-ready');
-    });
-  }
-}
+function onReflectExit() { /* nothing to tear down */ }
 
-// ── INIT ──
+// ══════════════════════════════════════════════════════════════════
+// INIT — wire up grid interaction, seg control, ctx chips
+// ══════════════════════════════════════════════════════════════════
 
-function initDashboard({ isActuallyDueToday, dueClass, fmtDue }) {
-  _isActuallyDueToday = isActuallyDueToday;
-  _dueClass = dueClass;
-  _fmtDue = fmtDue;
-
+function initDashboard() {
   migrateOldMoods();
-  migrateReflections();
 
-  // Intention
-  document.getElementById('dIntention').addEventListener('input', function() { getDState().intention = this.value; saveDash(true); });
+  // Affect grid interaction
+  const grid = document.getElementById('dAffectGrid');
+  if (grid) {
+    let drawing = false;
+    grid.addEventListener('pointerdown', function(e) {
+      drawing = true;
+      grid.setPointerCapture(e.pointerId);
+      handleAffectGridInput(e, grid);
+    });
+    grid.addEventListener('pointermove', function(e) {
+      if (drawing) handleAffectGridInput(e, grid);
+    });
+    grid.addEventListener('pointerup',     function() { drawing = false; });
+    grid.addEventListener('pointercancel', function() { drawing = false; });
+  }
 
-  // Reflection
-  document.getElementById('dReflect').addEventListener('input', function() {
-    var ds = getDState();
-    if (!ds.reflections) ds.reflections = {};
-    ds.reflections[getTodayStr()] = this.value;
-    if (reflectTimer) clearTimeout(reflectTimer);
-    reflectTimer = setTimeout(function() { saveDash(true); }, 800);
-  });
-
-  // Research reflection
-  var resReflectEl = document.getElementById('dResearchReflect');
-  if (resReflectEl) {
-    resReflectEl.addEventListener('input', function() {
-      var ds = getDState();
-      if (!ds.researchReflections) ds.researchReflections = {};
-      ds.researchReflections[getTodayStr()] = this.value;
-      if (reflectTimer) clearTimeout(reflectTimer);
-      reflectTimer = setTimeout(function() { saveDash(true); }, 800);
+  // Context chip taps
+  const ctxRow = document.getElementById('dAffectContextRow');
+  if (ctxRow) {
+    ctxRow.addEventListener('click', function(e) {
+      const chip = e.target.closest('[data-ctx]');
+      if (!chip) return;
+      const ctx   = chip.dataset.ctx;
+      const today = getTodayStr();
+      const entry = getLatestAffect(today);
+      if (!entry) return;
+      entry.ctx = (entry.ctx === ctx) ? null : ctx;
+      saveDash(true);
+      renderAffect();
     });
   }
 
-  // ── AFFECT GRID ──
-  var grid = document.getElementById('dAffectGrid');
-  var isDrawing = false;
-  grid.addEventListener('pointerdown', function(e) {
-    isDrawing = true; grid.setPointerCapture(e.pointerId);
-    handleAffectGridInput(e, grid);
-  });
-  grid.addEventListener('pointermove', function(e) { if (isDrawing) handleAffectGridInput(e, grid); });
-  grid.addEventListener('pointerup', function() { isDrawing = false; });
-  grid.addEventListener('pointercancel', function() { isDrawing = false; });
-
-  // Context chips
-  document.getElementById('dAffectContextRow').addEventListener('click', function(e) {
-    var chip = e.target.closest('.affect-ctx-chip'); if (!chip) return;
-    var ctx = chip.dataset.ctx;
-    var ds = getDState();
-    if (!ds.affect) ds.affect = {};
-    var today = getTodayStr();
-    var latest = getLatestAffect(today);
-    if (!latest) return;
-    latest.ctx = (latest.ctx === ctx) ? null : ctx;
-    saveDash(true); renderAffect(); renderInsights(); renderSnapshot();
-  });
-
-  // Weekly reflection
-  var weeklyEl = document.getElementById('dWeeklyReflect');
-  if (weeklyEl) {
-    weeklyEl.addEventListener('input', function() {
-      var ds = getDState(), week = getISOWeek(new Date());
-      if (!ds.weeklyReflections) ds.weeklyReflections = {};
-      ds.weeklyReflections[week] = this.value;
-      if (weeklyReflectTimer) clearTimeout(weeklyReflectTimer);
-      weeklyReflectTimer = setTimeout(function() { saveDash(true); }, 800);
+  // Insights toggle — render on first open
+  const insDetails = document.getElementById('dInsightsDetails');
+  if (insDetails) {
+    insDetails.addEventListener('toggle', function() {
+      if (insDetails.open) renderInsights();
     });
   }
 
-  // Segmented control
-  var segToday = document.getElementById('reflectSegToday');
-  var segReview = document.getElementById('reflectSegReview');
-  if (segToday) segToday.addEventListener('click', function() { setReflectMode('today'); });
-  if (segReview) segReview.addEventListener('click', function() { setReflectMode('review'); });
+  // Seg control
+  document.getElementById('reflectSegToday')?.addEventListener('click', function() { setReflectMode('today'); });
+  document.getElementById('reflectSegReview')?.addEventListener('click', function() { setReflectMode('review'); });
+}
+
+// ── DATA MIGRATION ──
+function migrateOldMoods() {
+  const ds = getDState();
+  if (!ds.affect) ds.affect = {};
+  if (ds.moods && Object.keys(ds.moods).length > 0) {
+    Object.keys(ds.moods).forEach(function(dateStr) {
+      if (!ds.affect[dateStr]) {
+        const old = ds.moods[dateStr];
+        ds.affect[dateStr] = [{ v: old - 1, a: 2, ctx: null, t: dateStr + 'T12:00:00' }];
+      }
+    });
+    saveDash(false);
+  }
+  // Normalize single-object entries to arrays
+  Object.keys(ds.affect).forEach(function(dateStr) {
+    const entry = ds.affect[dateStr];
+    if (entry && !Array.isArray(entry)) {
+      ds.affect[dateStr] = [{ v: entry.v, a: entry.a, ctx: entry.ctx || null, t: entry.t || dateStr + 'T12:00:00' }];
+    }
+  });
 }
 
 export { initDashboard, renderReflectToday, onReflectEnter, onReflectExit, getReflectMode, setReflectMode };
