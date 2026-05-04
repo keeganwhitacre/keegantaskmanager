@@ -3568,9 +3568,9 @@
       "pinned": false,
       "type": "memo",
       "url": "",
-      "ideaStatus": "",
+      "ideaStatus": "raw",
       "createdAt": "2026-05-04T11:55:56.441Z",
-      "updatedAt": "2026-05-04T11:56:10.232Z"
+      "updatedAt": "2026-05-04T16:25:26.318Z"
     },
     {
       "id": "mokcaq2hrfvl",
@@ -4362,5 +4362,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T15:40:48.649Z"
+  "updated": "2026-05-04T16:25:28.821Z"
 }
