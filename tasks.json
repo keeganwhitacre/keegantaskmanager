@@ -2973,7 +2973,7 @@
       },
       "2026-W19": {
         "sleep": [
-          false,
+          true,
           false,
           false,
           false,
@@ -2991,7 +2991,7 @@
           false
         ],
         "lift": [
-          false,
+          true,
           false,
           false,
           false,
@@ -4352,5 +4352,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T15:33:13.285Z"
+  "updated": "2026-05-04T15:33:18.191Z"
 }
