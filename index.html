@@ -1,776 +1,472 @@
 <!DOCTYPE html>
-
-<html lang="en" style="background:#000">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Tasks">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <title>Tasks</title>
 
-<script>
-  (function(){
-    var bg={aurora:'#111418',halcyon:'#dce8f4'};
-    try{var t=localStorage.getItem('kw_theme_v2')||'halcyon'; if(t==='neon')t='aurora'; if(t==='ios26'||t==='bel-bel'||t==='newsprint')t='halcyon'; if(t==='ios-dark')t='aurora'; if(!bg[t])t='halcyon'; document.documentElement.style.background=bg[t];}catch(e){}
-  })();
+  <!-- Flash-of-wrong-theme prevention -->
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('kw_theme_v2') || '';
+        if (t === 'aurora' || t === 'neon' || t === 'ios-dark') {
+          document.documentElement.style.background = '#0a0a0a';
+          document.body && document.body.classList.add('theme-dark');
+        }
+      } catch(e) {}
+    })();
   </script>
 
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="confnotes-styles.css">
-  <link rel="stylesheet" href="weekly-review.css">
 
-   <link rel="modulepreload" href="state.js">
+  <link rel="modulepreload" href="state.js">
   <link rel="modulepreload" href="sync.js">
   <link rel="modulepreload" href="router.js">
-  <link rel="modulepreload" href="pomo.js">
-  <link rel="modulepreload" href="shopping.js">
   <link rel="modulepreload" href="bel.js">
   <link rel="modulepreload" href="dashboard.js">
   <link rel="modulepreload" href="timeline.js">
   <link rel="modulepreload" href="confnotes.js">
+  <link rel="modulepreload" href="app.js">
 
-  
-  <style>
-    .cat-settings-row { display:flex; align-items:center; gap:8px; }
-    .cat-settings-row .input { margin-bottom:0; }
-    .habit-settings-row { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--border-divider, #3a3b42); border-radius:10px; }
-    .habit-settings-top { display:flex; align-items:center; gap:8px; }
-    .habit-settings-top .input { margin-bottom:0; }
-    .habit-day-toggles { display:flex; gap:4px; }
-    .habit-day-toggle { width:28px; height:24px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); font-size:10px; font-family:var(--font-mono, monospace); cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; }
-    .habit-day-toggle.active { background:var(--accent, #007aff); color:#fff; border-color:var(--accent, #007aff); }
-    .habit-bad-toggle { font-size:10px; padding:3px 8px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); cursor:pointer; -webkit-user-select:none; user-select:none; font-family:var(--font-mono, monospace); }
-    .habit-bad-toggle.active { background:rgba(255,58,48,0.15); color:#ff3a30; border-color:rgba(255,58,48,0.3); }
-  </style>
   <script type="module" src="app.js"></script>
   <script src="/lib/marked.min.js" defer></script>
   <script type="module" src="confnotes.js"></script>
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js');
-    });
-  }
-</script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
 </head>
 <body>
 
-<div class="sync-bar" id="syncBar"><div class="sync-dot"></div><span id="syncMsg"></span></div>
+<!-- ══════════════════════════════════════════════════════════
+     SYNC BAR
+══════════════════════════════════════════════════════════ -->
+<div class="sync-bar" id="syncBar"><span id="syncMsg"></span></div>
 
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════════ -->
 <div class="header">
-  <div class="header-top">
-    <div>
-      <div class="greeting" id="secretBelTrigger" style="display:inline-block; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; outline:none;">Hey Keegan</div>
-      <div class="date-line" id="dateDisplay"></div>
-      <div class="date-sub" id="dateSub"></div>
-    </div>
-    <div class="header-right">
-      <div class="icon-btn" id="anchorBtn" title="Grounding Anchor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="5" r="3"></circle>
-          <line x1="12" y1="22" x2="12" y2="8"></line>
-          <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
-        </svg>
-      </div>
-      <div class="icon-btn" id="shopBtn" title="Shopping List">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
-      </div>
-      <div class="icon-btn" id="settingsBtn">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      </div>
-    </div>
+  <span class="header-wordmark" id="secretBelTrigger">tasks.</span>
+  <div class="header-right">
+    <span class="header-action hide-reflect hide-notes hide-bel" id="searchTrigger">search</span>
+    <span class="header-action" id="settingsBtn">settings</span>
   </div>
 </div>
 
-<div class="tab-bar hide-in-bel hide-in-project-detail">
-  <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
-  <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
-  <button class="tab-btn" id="tabReflect" data-tab="reflect">Reflect</button>
-  <button class="tab-btn" id="tabNotes" data-tab="notes">Notes</button>
+<!-- ══════════════════════════════════════════════════════════
+     TAB BAR
+══════════════════════════════════════════════════════════ -->
+<div class="tab-bar hide-bel">
+  <button class="tab-btn active" id="tabTasks"   data-tab="tasks">tasks</button>
+  <button class="tab-btn"        id="tabNotes"   data-tab="notes">notes</button>
+  <button class="tab-btn"        id="tabReflect" data-tab="reflect">reflect</button>
 </div>
 
-<div class="search-trigger hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchTrigger" title="Search">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <span>Search</span>
+<!-- ══════════════════════════════════════════════════════════
+     TASKS VIEW
+══════════════════════════════════════════════════════════ -->
+<div class="tasks-view">
+
+  <!-- Search -->
+  <div class="search-wrap" id="searchWrap" style="padding: 0 24px;">
+    <input class="search-input" id="searchInput" type="search" placeholder="Search tasks…" autocomplete="off">
+  </div>
+
+  <!-- Category filter chips -->
+  <div class="filter-scroll" id="filterRow" style="padding: 0 24px 0;">
+    <div class="chip active" data-filter="all">all</div>
+    <div class="chip" data-filter="today">today</div>
+    <div class="chip" data-filter="manuscript">manuscript</div>
+    <div class="chip" data-filter="lab">lab</div>
+    <div class="chip" data-filter="phd">phd</div>
+    <div class="chip" data-filter="conf">conf</div>
+    <div class="chip" data-filter="personal">personal</div>
+    <div class="chip" data-filter="hobby">hobby</div>
+    <div class="chip" data-filter="blocked">blocked</div>
+    <div class="chip" data-filter="archive">archive</div>
+  </div>
+
+  <!-- Task list -->
+  <div class="main-scroll" id="taskList"></div>
+
 </div>
 
-<div class="search-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchWrap">
-  <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
-</div>
+<!-- ══════════════════════════════════════════════════════════
+     NOTES VIEW  (confnotes.js manages content)
+══════════════════════════════════════════════════════════ -->
+<div class="notes-view" id="confNotesView">
 
-<div class="focus-banner hide-in-bel hide-in-project hide-in-project-detail" id="focusBanner">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-     <span style="font-weight:700; letter-spacing:0.1em; font-size:11px; text-transform:uppercase;">Focus Mode</span>
-     <span id="pomoTaskLabel" style="font-size:11px; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%;">No task pinned</span>
-  </div>
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-     <div id="pomoDisplay" style="font-family:'DM Mono',monospace; font-size:36px; font-weight:500; line-height:1;">25:00</div>
-     <div style="display:flex; gap:8px;">
-       <button id="pomoSkipBtn" class="pomo-btn alt">Skip</button>
-       <button id="pomoStartBtn" class="pomo-btn">Start</button>
-     </div>
-  </div>
-  <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
-</div>
-
-<div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="quickAddWrap">
-  <div class="quick-add-row">
-    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
-    <button class="quick-add-send" id="quickAddSend">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-    </button>
-  </div>
-</div>
-
-<div class="focus-strip hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="focusStrip">
-  <div class="focus-dot"></div>
-  <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
-    <div class="focus-eye">Pinned Focus</div>
-    <div class="focus-title" id="focusTitle">No task pinned</div>
-    <div class="focus-sub" id="focusSub">Long-press any task to pin</div>
-  </div>
-  <div id="focusDoneBtn" style="display:none;font-size:18px;padding:6px 10px;cursor:pointer;color:#52d9a0;-webkit-user-select:none;user-select:none;" title="Complete focus task">✓</div>
-  <div class="focus-arr" id="focusArr">›</div>
-</div>
-
-<div class="filter-scroll hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="filterRow">
-  <div class="chip active" data-filter="all">All</div>
-  <div class="chip" data-filter="today">Today</div>
-  <div class="chip" data-filter="manuscript">Manuscript</div>
-  <div class="chip" data-filter="lab">Lab Ops</div>
-  <div class="chip" data-filter="phd">PhD Apps</div>
-  <div class="chip" data-filter="conf">Conference</div>
-  <div class="chip" data-filter="bel">Bel ♡</div>
-  <div class="chip" data-filter="personal">Personal</div>
-  <div class="chip" data-filter="hobby">Hobbies</div>
-  <div class="chip" data-filter="blocked">Blocked</div>
-  <div class="chip" data-filter="archive">Archive</div>
-</div>
-
-<div id="taskList" class="hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" style="min-height:calc(100vh - 320px);"></div>
-<div class="spacer hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="spacerEl"></div>
-
-<div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-    <div class="sheet-title" style="margin-bottom:0;">Active Projects</div>
-    <button class="sheet-btn primary" id="newProjectBtn" style="width:auto; padding:6px 16px; margin:0; font-size:12px;">+ New</button>
-  </div>
-  <div id="projectsList"></div>
-</div>
-
-<div id="projectDetailView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; align-items:center; margin-bottom:16px;">
-    <button id="closeProjectDetailBtn" class="icon-btn" style="margin-right:12px;">✕</button>
-    <div class="sheet-title" style="margin-bottom:0; flex:1;">Project details</div>
-    <div class="icon-btn" id="delProjectDetailBtn" style="border-color:transparent; background:transparent;">
-  <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</div>
+  <!-- Filter row -->
+  <div class="cn-filter-row" style="padding: 8px 24px 0; flex-shrink:0;">
+    <div class="chip active" data-cn-filter="all">all</div>
+    <div class="chip" data-cn-filter="memo">notes</div>
+    <div class="chip" data-cn-filter="paper">papers</div>
+    <div class="chip" data-cn-filter="idea">ideas</div>
+    <div class="chip" data-cn-filter="pinned">pinned</div>
   </div>
 
-  <textarea class="input" id="pdTitleInput" placeholder="Project Name" rows="2" style="font-size:22px; font-weight:600; background:transparent; border-color:transparent; padding:0; box-shadow:none; margin-bottom:4px; resize:none; line-height:1.2;"></textarea>
+  <!-- Note list -->
+  <div class="main-scroll" id="cnNoteList"></div>
 
-  <input class="pd-description-input" id="pdDescInput" type="text" placeholder="One-line goal or purpose..." autocomplete="off">
-
-  <!-- Progress bar -->
-  <div class="pd-progress-wrap" id="pdProgressWrap">
-    <div class="pd-progress-bar"><div class="pd-progress-fill" id="pdProgressFill"></div></div>
-    <div class="pd-progress-label" id="pdProgressLabel"></div>
-  </div>
-
-  <!-- Next up card -->
-  <div class="pd-next-card" id="pdNextCard" style="display:none;">
-    <div class="pd-next-label">Next Up</div>
-    <div id="pdNextContent"></div>
-  </div>
-
-  <div style="display:block; margin-bottom:8px;">
-  <div style="margin-bottom: 16px;">
-    <div class="sheet-label">Stage</div>
-    <div class="chip-row" id="pdStageRow" style="margin-bottom:0;">
-      <div class="s-chip" data-val="Planning">Plan</div>
-      <div class="s-chip" data-val="Active">Active</div>
-      <div class="s-chip" data-val="Waiting">Wait</div>
-      <div class="s-chip" data-val="Review">Review</div>
-      <div class="s-chip" data-val="Done">Done</div>
-    </div>
-  </div>
-  <div>
-    <div class="sheet-label">Deadline</div>
-    <input class="input" id="pdDueInput" type="date" style="color-scheme:dark; margin-bottom:0; padding:6px 10px; font-size:13px; border-radius:12px;">
-  </div>
-</div>
-
-  <!-- Activity log -->
-  <details class="pd-activity-card" id="pdActivityCard" style="display:none;">
-    <summary class="pd-activity-toggle">
-      <span class="d-card-label" style="margin-bottom:0;">Activity</span>
-      <span class="pd-activity-chevron">▸</span>
-    </summary>
-    <div class="pd-activity-list" id="pdActivityList"></div>
-  </details>
-
-  <!-- Milestones -->
-  <div class="pd-milestones-section">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <div class="sheet-label" style="margin-bottom:0;">Milestones</div>
-      <button id="pdAddMilestoneBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add</button>
-    </div>
-    <div id="pdMilestonesList"></div>
-    <div id="pdMilestoneAddRow" class="pd-milestone-add-row" style="display:none;">
-      <input class="input pd-ms-input" id="pdMilestoneInput" type="text" placeholder="e.g. Draft intro section" autocomplete="off" style="margin-bottom:0; flex:1;">
-      <input class="input pd-ms-date-input" id="pdMilestoneDueInput" type="date" style="color-scheme:dark; margin-bottom:0; width:auto;">
-      <button class="pd-ms-save-btn" id="pdMilestoneSaveBtn">Add</button>
-    </div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Project Notes</div>
-    <div id="pdNotesInput" class="bel-notes" contenteditable="true" placeholder="Dump all ideas, links, and status updates here..."></div>
-  </div>
-
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:12px;">
-    <div class="sheet-label" style="margin-bottom:0;">Active Tasks</div>
-    <button id="pdAddTaskBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add Task</button>
-  </div>
-  <div id="pdTasksList"></div>
-
-  <!-- Completed tasks -->
-  <details class="pd-completed-section" id="pdCompletedSection" style="display:none;">
-    <summary class="pd-completed-toggle">
-      <span class="sheet-label" style="margin-bottom:0;">Completed</span>
-      <span class="pd-completed-count" id="pdCompletedCount"></span>
-      <span class="pd-activity-chevron">▸</span>
-    </summary>
-    <div id="pdCompletedList"></div>
-  </details>
-</div>
-
-<div id="confNotesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div id="cnListView">
-    <div style="display:flex; align-items:center; margin-bottom:16px;">
-      <div class="sheet-title" style="margin-bottom:0; flex:1;">Notes</div>
-      
-      <div class="icon-btn" id="cnViewToggle" style="margin-right:8px;" title="Toggle View">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      </div>
-      
-      <div class="icon-btn" id="cnSearchToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <!-- Note detail (full-screen overlay) -->
+  <div class="cn-detail-view" id="cnDetailView">
+    <div class="cn-detail-header">
+      <span class="cn-detail-back" id="cnDetailBack">← notes</span>
+      <div class="cn-detail-actions">
+        <span class="cn-detail-action" id="cnDetailPreviewToggle">preview</span>
+        <span class="cn-detail-action" id="cnDetailMonoToggle">mono</span>
+        <span class="cn-detail-action" id="cnDetailMenuBtn">···</span>
       </div>
     </div>
 
-    <!-- Scratchpad area -->
-    <div class="cn-scratch-card">
-      <div class="cn-scratch-header">
-        <div class="cn-scratch-label">Scratchpad</div>
-        <div class="cn-scratch-right">
-          <span id="cnScratchSync" class="cn-scratch-sync"></span>
-          <span id="cnScratchMono" class="cn-scratch-mono">mono off</span>
+    <!-- Note type / URL row — shown contextually by JS -->
+    <div style="padding: 0 24px; flex-shrink:0;" id="cnNoteMetaBar">
+      <div style="display:flex; align-items:center; gap:8px; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
+        <div class="cn-filter-row" id="cnTypeRow" style="padding:0; gap:6px;">
+          <div class="cn-type-chip active" data-type="memo">note</div>
+          <div class="cn-type-chip" data-type="paper">paper</div>
+          <div class="cn-type-chip" data-type="idea">idea</div>
         </div>
-      </div>
-      <textarea id="cnScratchpad" class="cn-scratch-textarea" placeholder="Dump thoughts here... ideas, R output, half-formed hypotheses." rows="4"></textarea>
-    </div>
-
-    <div id="cnSearchWrap" class="cn-search-wrap">
-      <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes...">
-    </div>
-    <div class="cn-filter-row" id="cnFilterRow"></div>
-    <div id="cnNotesList"></div>
-
-    <!-- New note type menu (shown when FAB is long-pressed in notes mode) -->
-    <div id="cnNewMenu" class="cn-new-menu" style="display:none;">
-      <div class="cn-new-menu-item" data-newtype="memo"><span class="cn-new-icon">✎</span> Note</div>
-      <div class="cn-new-menu-item" data-newtype="paper"><span class="cn-new-icon">📄</span> Paper</div>
-      <div class="cn-new-menu-item" data-newtype="idea"><span class="cn-new-icon">💡</span> Idea</div>
-    </div>
-  </div>
-
-  <!-- Distraction-free note editor -->
-  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none;">
-    <div class="cn-detail-topbar">
-      <button id="cnBackBtn" class="icon-btn" style="margin-right:8px;">&#8249;</button>
-      <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
-      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-        <span id="cnMdToggle" class="cn-scratch-mono" title="Preview markdown">preview</span>
-        <span id="cnMonoToggle" class="cn-scratch-mono">mono off</span>
-        <div class="icon-btn cn-lock-btn" id="cnLockBtn" title="Lock note" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
-        </div>
-        <div class="icon-btn" id="cnDeleteBtn" style="border-color:transparent; background:transparent;">
-          <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Type selector -->
-    <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
-    <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
-
-    <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 12px 0; align-items: center; gap: 8px;">
-      <span class="cn-url-label" style="font-size:14px; opacity:0.6;">🔗</span>
-      <input class="cn-detail-source-input" id="cnUrlInput" type="text" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
-      
-      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; align-items:center; justify-content:center; width:28px; height:28px; background:rgba(175, 82, 222, 0.1); border-radius:8px; color:#af52de; transition: transform 0.15s ease;" title="Open Source">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-      </a>
-    </div>
-    
-    <details class="cn-detail-meta-drawer" id="cnTypeSettingsDrawer" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
-      <summary class="cn-detail-meta-toggle">Note Type Settings</summary>
-      <div class="cn-detail-meta-content">
-        <div class="cn-type-selector" id="cnTypeRow" style="padding: 0 0 10px 0;">
-          <div class="cn-type-chip active" data-type="memo">✎ Note</div>
-          <div class="cn-type-chip" data-type="paper">📄 Paper</div>
-          <div class="cn-type-chip" data-type="idea">💡 Idea</div>
-        </div>
-
-        <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none; padding: 0 0 10px 0;">
+        <div id="cnIdeaStatusRow" style="display:none; gap:6px; flex-shrink:0;" class="cn-filter-row">
           <div class="cn-status-chip active" data-status="raw">raw</div>
           <div class="cn-status-chip" data-status="developing">developing</div>
-          <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
+          <div class="cn-status-chip" data-status="ready to pitch">ready</div>
         </div>
       </div>
-    </details>
+    </div>
 
-    <!-- Collapsible metadata -->
-    <details class="cn-detail-meta-drawer" id="cnMetaDrawer">
-      <summary class="cn-detail-meta-toggle">Tags, project & info</summary>
-      <div class="cn-detail-meta-content">
-        <div class="sheet-label">Tags</div>
-        <div class="chip-row" id="cnTagRow"></div>
-        <div class="sheet-label">Link to Project</div>
-        <select class="input" id="cnProjectInput" style="appearance:auto; margin-bottom:8px;">
-          <option value="">None</option>
-        </select>
-        <div class="cn-detail-meta" id="cnDetailMeta"></div>
+    <div class="cn-detail-body" id="cnDetailBody">
+      <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…" autocomplete="off" autocorrect="on" autocapitalize="sentences">
+
+      <!-- URL row (paper type) -->
+      <div class="cn-url-row" id="cnUrlRow" style="display:none;">
+        <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocomplete="off" autocapitalize="none">
+        <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">open ↗</a>
       </div>
-    </details>
 
-    <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write anything..."></textarea>
-    <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
+      <!-- Body textarea / md preview -->
+      <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write…" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
+      <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
 
-    <!-- Backlinks drawer — rendered by confnotes.js -->
-    <div class="cn-backlinks-drawer" id="cnBacklinksDrawer" style="display:none;">
-      <button class="cn-backlinks-toggle" id="cnBacklinksToggle">
-        <span class="cn-backlinks-arrow" id="cnBacklinksArrow">▸</span>
-        <span class="cn-backlinks-label-text">Linked from</span>
-        <span class="cn-backlinks-count" id="cnBacklinksCount"></span>
-      </button>
-      <div class="cn-backlinks-list" id="cnBacklinksList"></div>
+      <!-- Metadata drawer -->
+      <details class="cn-meta-drawer" id="cnMetaDrawer">
+        <summary class="cn-meta-toggle">tags &amp; info</summary>
+        <div class="cn-meta-content">
+          <div class="cn-tag-row" id="cnTagRow"></div>
+          <div class="cn-detail-meta" id="cnDetailMeta"></div>
+        </div>
+      </details>
+
+      <!-- Backlinks -->
+      <div class="cn-backlinks" id="cnBacklinks" style="display:none;">
+        <div class="cn-backlink-label">linked from</div>
+        <div id="cnBacklinkList"></div>
+      </div>
+    </div>
+
+    <!-- PIN overlay -->
+    <div class="cn-pin-overlay" id="cnPinOverlay" style="display:none;">
+      <div class="cn-pin-label">enter pin</div>
+      <div class="cn-pin-dots" id="cnPinDots">
+        <div class="cn-pin-dot"></div>
+        <div class="cn-pin-dot"></div>
+        <div class="cn-pin-dot"></div>
+        <div class="cn-pin-dot"></div>
+      </div>
+      <div class="cn-pin-pad" id="cnPinPad">
+        <div class="cn-pin-key" data-key="1">1</div>
+        <div class="cn-pin-key" data-key="2">2</div>
+        <div class="cn-pin-key" data-key="3">3</div>
+        <div class="cn-pin-key" data-key="4">4</div>
+        <div class="cn-pin-key" data-key="5">5</div>
+        <div class="cn-pin-key" data-key="6">6</div>
+        <div class="cn-pin-key" data-key="7">7</div>
+        <div class="cn-pin-key" data-key="8">8</div>
+        <div class="cn-pin-key" data-key="9">9</div>
+        <div class="cn-pin-key" data-key="del">⌫</div>
+        <div class="cn-pin-key" data-key="0">0</div>
+        <div class="cn-pin-key" data-key="cancel" style="font-size:12px; color:var(--text-tertiary);">cancel</div>
+      </div>
+    </div>
+
+    <!-- Note action menu -->
+    <div class="sheet-backdrop" id="cnMenuBackdrop"></div>
+    <div class="sheet" id="cnMenuSheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-actions" style="flex-direction:column; gap:8px; margin-top:0;">
+        <button class="sheet-btn" id="cnMenuPin">pin note</button>
+        <button class="sheet-btn" id="cnMenuLock">lock note</button>
+        <button class="sheet-btn" id="cnMenuDuplicate">duplicate</button>
+        <button class="sheet-btn danger" id="cnMenuDelete">delete note</button>
+      </div>
     </div>
   </div>
+
 </div>
 
-<div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; align-items:center; margin-bottom:16px;">
-    <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">&#8249;</button>
-    <div class="sheet-title" style="margin-bottom:0;">Beegan!</div>
-  </div>
-
-  <div class="d-card" style="position:relative; overflow:hidden;">
-    <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
-    <div class="d-card-label">Time Together</div>
-    <div id="belTimeCount" style="font-family:'DM Sans', sans-serif; font-size:32px; font-weight:600; line-height:1; margin-bottom:6px;">--</div>
-    <div id="belNextAnniv" style="font-size:11px; opacity:0.6; font-family:'DM Mono', monospace;">Set anniversary date below</div>
-    <div id="editBelDateBtn" style="font-size:10px; color:var(--accent); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
-
-<div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
-  <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
-  <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
-</div>
-
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Gift Ideas</div>
-    <div id="belGiftsList" class="bel-list"></div>
-    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-      <input class="input" id="belGiftInput" type="text" placeholder="Jot down an idea..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belGiftAddBtn">Add</button>
-    </div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Date Ideas</div>
-    <div id="belDatesList" class="bel-list"></div>
-    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-      <input class="input" id="belDateInput" type="text" placeholder="Places to go..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belDateAddBtn">Add</button>
-    </div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Her Favorites</div>
-    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks..."></div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Things I Love About Her</div>
-    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things..."></div>
-  </div>
-</div>
-
-<div id="reflectView" style="display:none;">
+<!-- ══════════════════════════════════════════════════════════
+     REFLECT VIEW  (dashboard.js manages content)
+══════════════════════════════════════════════════════════ -->
+<div class="reflect-view" id="reflectView">
 
   <!-- Today / Review segmented control -->
   <div class="reflect-seg-wrap">
     <div class="reflect-seg">
-      <button class="reflect-seg-btn active" id="reflectSegToday" data-mode="today">Today</button>
-      <button class="reflect-seg-btn" id="reflectSegReview" data-mode="review">Review</button>
+      <button class="reflect-seg-btn active" id="reflectSegToday">today</button>
+      <button class="reflect-seg-btn" id="reflectSegReview">review</button>
     </div>
   </div>
 
   <!-- TODAY MODE -->
-  <div id="reflectToday" style="padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-    <div class="wr-prompt-card" id="wrPromptCard" style="display:none;"></div>
-    <div class="d-card">
-      <div class="d-week-meta" id="dWeekMeta"></div>
-      <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
+  <div class="reflect-scroll" id="reflectToday">
 
-    <div class="d-card snapshot-card" id="dSnapshotCard" style="display:none;">
-      <div class="d-card-label">Today So Far</div>
-      <div class="snapshot-body" id="dSnapshotBody"></div>
-    </div>
-
-    <div class="d-card affect-card">
-      <div class="d-card-label" style="display:flex; justify-content:space-between;">
-        <span>How are you feeling?</span>
-        <span id="dAffectStatus" style="text-transform:none; opacity:0.8;"></span>
-      </div>
-      <div class="affect-grid-wrap">
-        <div class="affect-axis-label affect-y-top">wired</div>
-        <div class="affect-axis-label affect-y-bot">drained</div>
-        <div class="affect-axis-label affect-x-left">rough</div>
-        <div class="affect-axis-label affect-x-right">good</div>
-        <div class="affect-grid" id="dAffectGrid">
-          <div class="affect-grid-bg"></div>
-          <div class="affect-crosshair-h"></div>
-          <div class="affect-crosshair-v"></div>
-          <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
-        </div>
-      </div>
-      <div class="affect-context-row" id="dAffectContextRow">
-        <div class="affect-ctx-chip" data-ctx="work">Work</div>
-        <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
-        <div class="affect-ctx-chip" data-ctx="social">Social</div>
-        <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
-        <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
-        <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="affect-mini-history" id="dAffectHistory"></div>
-        <div class="affect-log-count" id="dAffectLogCount" style="display:none;"></div>
+    <!-- Affect grid -->
+    <div class="affect-section-label">affect</div>
+    <div class="affect-grid-wrap" style="padding: 16px 0 8px;">
+      <div class="affect-axis-label affect-y-top">wired</div>
+      <div class="affect-axis-label affect-y-bot">drained</div>
+      <div class="affect-axis-label affect-x-left">rough</div>
+      <div class="affect-axis-label affect-x-right">good</div>
+      <div class="affect-grid" id="dAffectGrid">
+        <div class="affect-grid-bg"></div>
+        <div class="affect-crosshair-h"></div>
+        <div class="affect-crosshair-v"></div>
+        <div class="affect-dot" id="dAffectDot"></div>
       </div>
     </div>
 
-    <div class="d-card">
-      <div class="d-card-label">Habits — This Week</div>
-      <div class="d-habit-header">
-        <div class="d-habit-name-col">Habit</div>
-        <div class="d-habit-days-col" id="dHabitDayLabels"></div>
-      </div>
-      <div id="dHabitRows"></div>
-    </div>
+    <!-- Affect status / log count -->
+    <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); padding: 4px 0 8px;" id="dAffectStatus"></div>
 
-    <div class="d-card">
-      <div class="d-card-label">Today's Tasks</div>
-      <div id="dTaskList"></div>
-      <div class="d-open-tasks" id="dOpenTasks"></div>
-    </div>
+    <!-- Context chips -->
+    <div class="affect-ctx-row" id="dAffectContextRow"></div>
 
-    <div class="d-card">
-      <div class="d-card-label">Daily Reflection</div>
-      <div class="d-prompt" id="dPrompt"></div>
-      <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
+    <!-- Affect history strip -->
+    <div class="affect-history" id="dAffectHistory"></div>
 
-    <div class="d-card cn-research-card">
-      <div class="d-card-label">Research Prompt <span style="font-weight:400;opacity:0.5;font-size:9px;letter-spacing:0.04em;">💡</span></div>
-      <div class="d-prompt" id="dResearchPrompt"></div>
-      <textarea class="d-reflect-input" id="dResearchReflect" rows="3" placeholder="Think like a researcher…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
+    <!-- Habits -->
+    <div class="habits-section-label">habits</div>
+    <div id="dHabits"></div>
 
-    <div class="d-card ins-card" id="dWeeklyReflectCard" style="display:none;">
-      <div class="d-card-label">Weekly Affect Reflection</div>
-      <div class="ins-weekly-prompt" id="dWeeklyPrompt"></div>
-      <textarea class="d-reflect-input" id="dWeeklyReflect" rows="2" placeholder="Describe the emotional theme of this week..." autocorrect="off" autocapitalize="sentences"></textarea>
-      <div class="ins-past-labels" id="dPastLabels"></div>
-    </div>
-
-    <details class="d-card ins-card" id="dInsightsCard">
-      <summary class="ins-toggle">
-        <span class="d-card-label" style="margin-bottom:0;">Insights</span>
-        <span class="ins-chevron">▸</span>
-      </summary>
-      <div class="ins-content" id="dInsightsContent"></div>
-    </details>
+    <div class="spacer"></div>
   </div>
 
   <!-- REVIEW MODE -->
-  <div id="reflectReview" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-    <div id="wrContainer"></div>
+  <div class="reflect-scroll" id="reflectReview" style="display:none;">
     <div id="timelineNav"></div>
     <div id="timelineBody"></div>
+    <div class="spacer"></div>
   </div>
 
 </div>
 
-<div id="focusModeBtn" class="hide-in-bel hide-in-project-detail">
-  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-  <span id="focusBtnLabel">Focus</span>
-</div>
-<div class="fab hide-in-bel hide-in-project-detail" id="fab">+</div>
-
-<div class="sheet" id="shopSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" style="margin-bottom:0">Shopping List</div>
-    <div id="closeShopSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+<!-- ══════════════════════════════════════════════════════════
+     BEL VIEW  (bel.js manages content)
+══════════════════════════════════════════════════════════ -->
+<div class="bel-view" id="belView">
+  <div class="header" style="border-bottom: 0.5px solid var(--border);">
+    <span class="header-wordmark">bel.</span>
+    <span class="header-action" id="belClose">← tasks</span>
   </div>
-  <div id="shopList" class="shop-list"></div>
-  <div style="margin-top:14px;display:-webkit-flex;display:flex;justify-content:flex-end;">
-    <div id="shopClearDone" class="sheet-btn" style="width:auto;padding:8px 16px;font-size:12px;opacity:0.6;">Clear checked</div>
-  </div>
-  <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
-    <button class="shop-add-btn" id="shopAddBtn">Add</button>
-  </div>
-</div>
+  <div class="bel-scroll">
 
-<div class="overlay" id="overlay"></div>
-
-<div class="sheet" id="projectSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" id="projectSheetTitle" style="margin-bottom:0">New Project</div>
-    <div id="closeProjectSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Project Name</div>
-  <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:8px;">
-
-  <div class="sheet-label">Goal / Purpose</div>
-  <input class="input" id="projDescInput" type="text" placeholder="One-line description..." style="margin-bottom:14px;">
-
-  <div class="sheet-label">Stage</div>
-  <div class="chip-row" id="projStageRow">
-    <div class="s-chip active" data-val="Planning">Planning</div>
-    <div class="s-chip" data-val="Active">Active</div>
-    <div class="s-chip" data-val="Waiting">Waiting</div>
-    <div class="s-chip" data-val="Review">Review</div>
-    <div class="s-chip" data-val="Done">Done</div>
-  </div>
-
-  <div class="sheet-label">Deadline (Optional)</div>
-  <input class="input" id="projDueInput" type="date" style="color-scheme:dark; margin-bottom:14px;">
-
-  <div class="sheet-label">Project Notes</div>
-  <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-
-<button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
-<button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
-
-</div>
-
-<div class="sheet" id="addSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" id="addSheetTitle" style="margin-bottom:0">New Task</div>
-    <div id="closeAddSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Task</div>
-  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing..." style="margin-bottom:8px;">
-
-  <div id="pomoCountDisplay" style="display:none; font-size:11px; margin-bottom:14px; color:#888; font-family:'DM Mono',monospace; letter-spacing:0.04em;"></div>
-
-  <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
-    Note
-    <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
-  </div>
-  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-
-  <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
-    Due Date
-    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
-  </div>
-  <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
-
-  <div class="sheet-label">Link to Project</div>
-  <select class="input" id="taskProjectInput" style="appearance:auto; margin-bottom:8px;">
-    <option value="">None</option>
-  </select>
-
-  <div id="taskMilestoneWrap" style="display:none;">
-    <div class="sheet-label">Milestone</div>
-    <select class="input" id="taskMilestoneInput" style="appearance:auto; margin-bottom:14px;">
-      <option value="">None</option>
-    </select>
-  </div>
-
-  <div class="sheet-label">Categories (Multi-Select)</div>
-  <div class="chip-row" id="catRow">
-    <div class="s-chip" data-val="manuscript">Manuscript</div>
-    <div class="s-chip" data-val="lab">Lab Ops</div>
-    <div class="s-chip" data-val="phd">PhD Apps</div>
-    <div class="s-chip" data-val="conf">Conference</div>
-    <div class="s-chip" data-val="bel">Bel ♡</div>
-    <div class="s-chip" data-val="personal">Personal</div>
-    <div class="s-chip" data-val="hobby">Hobby</div>
-  </div>
-
-  <div class="sheet-label">Status</div>
-  <div class="chip-row" id="statusRow">
-    <div class="s-chip active" data-val="active">Active</div>
-    <div class="s-chip" data-val="waiting">Waiting on</div>
-    <div class="s-chip" data-val="blocked">Blocked</div>
-    <div class="s-chip" data-val="review">In Review</div>
-  </div>
-
-  <div class="sheet-label">Priority</div>
-  <div class="chip-row" id="priRow">
-    <div class="s-chip" data-val="hi">High</div>
-    <div class="s-chip active" data-val="md">Med</div>
-    <div class="s-chip" data-val="lo">Low</div>
-  </div>
-
-<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
-<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
-<button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
-
-</div>
-
-<div class="sheet" id="settingsSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" style="margin-bottom:0">Settings</div>
-    <div id="closeSettingsSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Appearance</div>
-  <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
-
-<div class="theme-swatch" data-theme="halcyon" title="Light" style="background:linear-gradient(175deg,#d8e6f6,#e0e8f2,#e6e6ec);border:2px solid rgba(16,96,160,0.2);">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#1060a0;margin-top:auto;">LIGHT</div>
-</div>
-<div class="theme-swatch" data-theme="aurora" title="Dark" style="background:linear-gradient(135deg,#111418,#161A1F);border:2px solid rgba(74,188,224,0.3);">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#4ABCE0;margin-top:auto;">DARK</div>
-</div>
-
-  </div>
-
-  <div id="accentPickerSection" style="display:none;">
-    <div class="sheet-label">Accent Color</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="accentPresets"></div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-      <div id="accentPreview" style="width:32px;height:32px;border-radius:8px;border:2px solid var(--border-divider);flex-shrink:0;"></div>
-      <input class="input" id="accentHexInput" type="text" placeholder="#4ABCE0" maxlength="7" style="margin-bottom:0;flex:1;font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;">
-      <button class="sheet-btn primary" id="accentApplyBtn" style="width:auto;padding:10px 16px;margin-top:0;font-size:12px;">Apply</button>
+    <div class="bel-section-label">dates &amp; plans</div>
+    <div id="belDatesList" class="bel-list"></div>
+    <div class="bel-add-row">
+      <input class="bel-add-input" id="belDateInput" type="text" placeholder="Places to go…" autocapitalize="sentences">
+      <span class="bel-add-btn" id="belDateAddBtn">add</span>
     </div>
-    <button class="sheet-btn" id="accentResetBtn" style="font-size:12px;padding:8px 16px;">Reset to Default</button>
-  </div>
 
-  <div class="divider"></div>
-  <div class="sheet-label">GitHub Sync</div>
-  <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
-  <div class="settings-field">
-    <label>GitHub Username</label>
-    <input class="input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div class="settings-field">
-    <label>Repository Name</label>
-    <input class="input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div class="settings-field">
-    <label>Personal Access Token</label>
-    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:14px; line-height:1.7;">
-    Token needs <strong style="color:#9a9aaa">repo</strong> scope. Stored only in localStorage — never sent anywhere except GitHub's API.
-  </div>
-  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
-  <div class="divider"></div>
-  <div class="sheet-label">Notes PIN</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Set a PIN to lock individual notes. This is a visual lock — note content is still stored in plaintext.
-  </div>
-  <div id="pinStatus" style="font-size:12px; margin-bottom:10px; font-family:var(--font-mono);"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="setPinBtn" style="flex:1;margin-top:0;">Set PIN</button>
-    <button class="sheet-btn danger" id="clearPinBtn" style="flex:1;margin-top:0;display:none;">Remove PIN</button>
-  </div>
-  <div class="divider"></div>
-  <div class="sheet-label">Danger Zone</div>
-  <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
-  <div class="divider"></div>
-  <div class="sheet-label">Categories</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Edit keys and display labels. Key is used internally (lowercase, no spaces) — changing it will unlink existing tasks using that key.
-  </div>
-  <div id="catSettingsRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="addCatBtn" style="flex:1;margin-top:0;">+ Add Category</button>
-    <button class="sheet-btn primary" id="saveCatsBtn" style="flex:1;margin-top:0;">Save Categories</button>
-  </div>
-  <div class="divider"></div>
-  <div class="sheet-label">Habits</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Customize tracked habits. Mark bad habits to flag them red. Set which days each habit applies to (M=0 … S=6).
-  </div>
-  <div id="habitSettingsRows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="addHabitBtn" style="flex:1;margin-top:0;">+ Add Habit</button>
-    <button class="sheet-btn primary" id="saveHabitsBtn" style="flex:1;margin-top:0;">Save Habits</button>
+    <div class="bel-section-label">her favorites</div>
+    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks…"></div>
+
+    <div class="bel-section-label">things i love about her</div>
+    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things…"></div>
+
+    <div class="spacer"></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-<div class="toast-undo" id="toastUndo"><span id="toastUndoMsg">Task deleted</span><button class="toast-undo-btn" id="toastUndoBtn">UNDO</button></div>
+<!-- ══════════════════════════════════════════════════════════
+     FAB  (add task / add note)
+══════════════════════════════════════════════════════════ -->
+<button class="fab hide-bel hide-reflect" id="fab" aria-label="Add">
+  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
 
-<!-- <div class="bottom-fade hide-in-bel hide-in-project-detail"></div> -->
+<!-- ══════════════════════════════════════════════════════════
+     TASK DETAIL SHEET
+══════════════════════════════════════════════════════════ -->
+<div class="sheet-backdrop" id="taskSheetBackdrop"></div>
+<div class="sheet" id="taskSheet">
+  <div class="sheet-handle"></div>
+  <input class="sheet-title-input" id="taskSheetTitle" type="text" placeholder="Task name…" autocorrect="on" autocapitalize="sentences">
 
-<div class="pin-modal-overlay" id="pinModalOverlay" style="display:none;">
-  <div class="pin-modal">
-    <div class="pin-modal-title" id="pinModalTitle">Enter PIN</div>
-    <input class="pin-modal-input" id="pinModalInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
-    <div class="pin-modal-error" id="pinModalError"></div>
-    <div style="display:flex;gap:8px;">
-      <button class="sheet-btn" id="pinModalCancel">Cancel</button>
-      <button class="sheet-btn primary" id="pinModalConfirm">Confirm</button>
+  <!-- Priority -->
+  <div class="sheet-row">
+    <span class="sheet-row-label">priority</span>
+    <div class="seg-control" id="taskSheetPriority">
+      <div class="seg-btn" data-val="hi">high</div>
+      <div class="seg-btn active" data-val="md">normal</div>
+      <div class="seg-btn" data-val="lo">low</div>
     </div>
   </div>
+
+  <!-- Status -->
+  <div class="sheet-row">
+    <span class="sheet-row-label">status</span>
+    <div class="seg-control" id="taskSheetStatus">
+      <div class="seg-btn active" data-val="active">active</div>
+      <div class="seg-btn" data-val="waiting">waiting</div>
+      <div class="seg-btn" data-val="blocked">blocked</div>
+      <div class="seg-btn" data-val="review">review</div>
+    </div>
+  </div>
+
+  <!-- Due date -->
+  <div class="sheet-row">
+    <span class="sheet-row-label">due</span>
+    <input class="date-input" id="taskSheetDue" type="date">
+  </div>
+
+  <!-- Categories -->
+  <div class="sheet-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <span class="sheet-row-label">category</span>
+    <div class="cat-grid" id="taskSheetCats"></div>
+  </div>
+
+  <!-- Note -->
+  <div style="padding: 8px 0;">
+    <textarea class="sheet-note" id="taskSheetNote" placeholder="Add a note…" autocorrect="on" autocapitalize="sentences"></textarea>
+  </div>
+
+  <div class="sheet-actions">
+    <button class="sheet-btn danger" id="taskSheetDelete">delete</button>
+    <button class="sheet-btn" id="taskSheetPin">pin today</button>
+    <button class="sheet-btn primary" id="taskSheetSave">save</button>
+  </div>
 </div>
 
-<div id="anchorOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(17, 20, 24, 0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-  <div id="anchorHoldView" style="display:flex; flex-direction:column; align-items:center; width: 100%; max-width: 320px;">
-    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:32px; letter-spacing:0.1em; text-transform:uppercase;">Pattern Interrupt</div>
-    <div id="anchorSliderTrack" style="width:100%; height:64px; background:var(--bg-card, #1c2026); border:1px solid var(--border-divider, #3a3b42); border-radius:32px; position:relative; overflow:hidden; display:flex; align-items:center; padding:0 4px;">
-      <div style="position:absolute; width:100%; text-align:center; color:var(--text-muted, #8e8e93); font-size:14px; pointer-events:none; font-family:'DM Sans', sans-serif;">Slide to ground ➔</div>
-      <div id="anchorSliderThumb" style="width:56px; height:56px; background:var(--accent, #4ABCE0); border-radius:50%; box-shadow:0 2px 10px rgba(0,0,0,0.3); position:relative; z-index:2; cursor:grab; display:flex; align-items:center; justify-content:center; touch-action:none;">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="#111418" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+<!-- ══════════════════════════════════════════════════════════
+     SETTINGS SHEET
+══════════════════════════════════════════════════════════ -->
+<div class="settings-sheet" id="settingsSheet">
+  <div class="settings-header">
+    <span class="settings-close" id="settingsClose">close</span>
+    <span class="settings-title">settings</span>
+  </div>
+  <div class="settings-scroll">
+
+    <!-- Appearance -->
+    <div class="settings-section">
+      <div class="settings-section-label">appearance</div>
+      <div class="settings-row">
+        <span class="settings-row-label">theme</span>
+        <div class="theme-toggle" id="themeToggle">
+          <div class="theme-option active" data-theme="light">light</div>
+          <div class="theme-option" data-theme="dark">dark</div>
+          <div class="theme-option" data-theme="auto">auto</div>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="anchorTriage" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
-    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:24px; letter-spacing:0.1em; text-transform:uppercase;">State Check</div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%;">
-      <button class="anchor-btn" data-state="under" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Bored</button>
-      <button class="anchor-btn" data-state="over" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Stuck</button>
-      <button class="anchor-btn" data-state="depleted" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Drained</button>
-      <button class="anchor-btn" data-state="disconnected" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Lonely</button>
+
+    <!-- GitHub sync -->
+    <div class="settings-section">
+      <div class="settings-section-label">github sync</div>
+      <div class="settings-status" id="ghStatus">
+        <div class="status-dot"></div>
+        <span id="ghStatusText">not connected</span>
+      </div>
+      <div class="settings-field">
+        <label>username</label>
+        <input class="settings-input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off">
+      </div>
+      <div class="settings-field">
+        <label>repository</label>
+        <input class="settings-input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off">
+      </div>
+      <div class="settings-field">
+        <label>personal access token</label>
+        <input class="settings-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off">
+      </div>
+      <button class="settings-btn primary" id="saveSettingsBtn">save &amp; test connection</button>
     </div>
-  </div>
-  <div id="anchorPromptView" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
-    <div id="anchorPromptText" style="font-size:20px; font-weight:500; line-height:1.4; margin-bottom:40px; color:#fff;"></div>
-    <input type="text" id="anchorInput" style="background:transparent; border:none; border-bottom:1px solid var(--border-divider, #3a3b42); text-align:center; font-size:18px; width:100%; padding-bottom:12px; color:#fff; display:none; outline:none;" placeholder="Type here..." autocomplete="off">
-    <button id="anchorDepletedBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--bg-card); color:#fff; border:1px solid var(--border-divider); border-radius:12px;">Log 15m of Deep Leisure</button>
-    <button id="anchorStuckBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--accent); color:#111418; border:none; border-radius:12px; font-weight:600;">I have the physical movement in my head</button>
+
+    <!-- Categories -->
+    <div class="settings-section">
+      <div class="settings-section-label">categories</div>
+      <div id="catSettingsList"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input class="settings-input" id="newCatInput" type="text" placeholder="New category…" autocapitalize="none" style="flex:1;">
+        <button class="settings-btn" id="addCatBtn" style="width:auto; padding:8px 14px;">add</button>
+      </div>
+    </div>
+
+    <!-- Habits -->
+    <div class="settings-section">
+      <div class="settings-section-label">habits</div>
+      <div id="habitSettingsList"></div>
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <input class="settings-input" id="newHabitInput" type="text" placeholder="New habit…" autocapitalize="sentences" style="flex:1;">
+        <button class="settings-btn" id="addHabitBtn" style="width:auto; padding:8px 14px;">add</button>
+      </div>
+    </div>
+
+    <!-- Notes PIN -->
+    <div class="settings-section">
+      <div class="settings-section-label">notes pin</div>
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); margin-bottom:10px; line-height:1.6;">
+        set a 4-digit pin to lock individual notes. stored locally only.
+      </div>
+      <div class="settings-pin-row" id="pinInputRow">
+        <input class="settings-pin-digit" id="pinD0" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="settings-pin-digit" id="pinD1" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="settings-pin-digit" id="pinD2" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+        <input class="settings-pin-digit" id="pinD3" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
+      </div>
+      <button class="settings-btn" id="savePinBtn" style="margin-top:10px;">save pin</button>
+      <button class="settings-btn danger" id="clearPinBtn" style="margin-top:6px;">clear pin</button>
+    </div>
+
+    <!-- Data -->
+    <div class="settings-section">
+      <div class="settings-section-label">data</div>
+      <div class="settings-row" id="exportDataBtn" style="cursor:pointer;">
+        <span class="settings-row-label">export data</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">json ↓</span>
+      </div>
+      <div class="settings-row" id="importDataRow" style="cursor:pointer;">
+        <span class="settings-row-label">import data</span>
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">json ↑</span>
+      </div>
+      <input type="file" id="importFileInput" accept=".json" class="hidden">
+      <button class="settings-btn danger" id="clearDataBtn" style="margin-top:12px;">clear all local data</button>
+    </div>
+
+    <div class="spacer"></div>
   </div>
 </div>
-  
+
+<!-- ══════════════════════════════════════════════════════════
+     TOASTS
+══════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+<div class="toast-undo" id="toastUndo">
+  <span id="toastUndoMsg"></span>
+  <button class="toast-undo-btn" id="toastUndoBtn">undo</button>
+</div>
+
 </body>
 </html>
