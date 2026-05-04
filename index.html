@@ -1,554 +1,776 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" style="background:#000">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Tasks">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.json">
   <title>Tasks</title>
+
+<script>
+  (function(){
+    var bg={aurora:'#111418',halcyon:'#dce8f4'};
+    try{var t=localStorage.getItem('kw_theme_v2')||'halcyon'; if(t==='neon')t='aurora'; if(t==='ios26'||t==='bel-bel'||t==='newsprint')t='halcyon'; if(t==='ios-dark')t='aurora'; if(!bg[t])t='halcyon'; document.documentElement.style.background=bg[t];}catch(e){}
+  })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="confnotes-styles.css">
+  <link rel="stylesheet" href="weekly-review.css">
+
+   <link rel="modulepreload" href="state.js">
+  <link rel="modulepreload" href="sync.js">
+  <link rel="modulepreload" href="router.js">
+  <link rel="modulepreload" href="pomo.js">
+  <link rel="modulepreload" href="shopping.js">
+  <link rel="modulepreload" href="bel.js">
+  <link rel="modulepreload" href="dashboard.js">
+  <link rel="modulepreload" href="timeline.js">
+  <link rel="modulepreload" href="confnotes.js">
+
+  
   <style>
-    @font-face { font-display: swap; font-family: 'DM Mono'; font-style: normal; font-weight: 400; src: url('/fonts/dm-mono-v16-latin-regular.woff2') format('woff2'); }
-    @font-face { font-display: swap; font-family: 'DM Mono'; font-style: normal; font-weight: 500; src: url('/fonts/dm-mono-v16-latin-500.woff2') format('woff2'); }
-
-    :root {
-      --bg: #ffffff; --bg-secondary: #f7f7f5;
-      --text-primary: #0a0a0a; --text-secondary: #5a5a5a; --text-tertiary: #999999;
-      --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.14);
-      --danger: #c0392b; --warning: #d35400; --success: #27ae60;
-      --color-manuscript: #8e44ad; --color-lab: #2980b9; --color-phd: #e67e22;
-      --color-conf: #c0392b; --color-bel: #fd79a8; --color-personal: #27ae60; --color-hobby: #00cec9;
-      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-      --font-mono: 'DM Mono', ui-monospace, "SF Mono", Menlo, monospace;
-      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
-    }
-    body.theme-dark { --bg: #0a0a0a; --bg-secondary: #161616; --text-primary: #f0f0f0; --text-secondary: #8a8a8a; --text-tertiary: #555555; --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14); --danger: #e57373; --warning: #e6a020; --success: #4caf78; --color-manuscript: #af52de; --color-lab: #007aff; --color-phd: #ff9f0a; --color-conf: #ff3b30; --color-bel: #ff6b9d; --color-personal: #32d74b; --color-hobby: #64d2ff; }
-    @media (prefers-color-scheme: dark) { body:not(.theme-light) { --bg: #0a0a0a; --bg-secondary: #161616; --text-primary: #f0f0f0; --text-secondary: #8a8a8a; --text-tertiary: #555555; --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14); --danger: #e57373; --warning: #e6a020; --success: #4caf78; --color-manuscript: #af52de; --color-lab: #007aff; --color-phd: #ff9f0a; --color-conf: #ff3b30; --color-bel: #ff6b9d; --color-personal: #32d74b; --color-hobby: #64d2ff; } }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html { height: 100dvh; overflow: hidden; background: var(--bg); }
-    body { font-family: var(--font-sans); background: var(--bg); color: var(--text-primary); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
-    button, input, textarea, select { font: inherit; color: inherit; background: transparent; border: none; outline: none; appearance: none; -webkit-appearance: none; }
-    button { cursor: pointer; } a { color: inherit; text-decoration: none; }
-    input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
-
-    /* HEADER */
-    .header { display: flex; justify-content: space-between; align-items: baseline; padding: max(env(safe-area-inset-top,0px),16px) 24px 0; flex-shrink: 0; background: var(--bg); z-index: 10; }
-    .header-wordmark { font-size: 17px; font-weight: 400; color: var(--text-tertiary); letter-spacing: 0.01em; cursor: pointer; user-select: none; }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .header-action { font-size: 15px; color: var(--text-tertiary); cursor: pointer; padding: 4px 0; user-select: none; }
-    .header-action:active { opacity: 0.5; }
-
-    /* BOTTOM NAV */
-    .bottom-nav { display: flex; align-items: center; justify-content: space-around; padding: 0 0 max(env(safe-area-inset-bottom,0px),8px); border-top: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; }
-    .bottom-tab { flex: 1; font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.04em; padding: 12px 0 8px; cursor: pointer; user-select: none; text-align: center; transition: color 0.12s; background: transparent; border: none; }
-    .bottom-tab.active { color: var(--text-primary); }
-
-    /* SCROLL */
-    .main-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0 24px; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
-    .main-scroll::-webkit-scrollbar { display: none; }
-
-    /* SECTION LABELS */
-    .section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--text-tertiary); text-transform: uppercase; padding: 20px 0 8px; border-bottom: 0.5px solid var(--border); margin-bottom: 4px; }
-
-    /* FAB */
-    .fab { position: fixed; bottom: calc(max(env(safe-area-inset-bottom,0px),8px) + 56px); right: 24px; width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); display: flex; align-items: center; justify-content: center; z-index: 50; transition: transform 0.1s; border: none; }
-    .fab:active { transform: scale(0.92); }
-    .fab svg { width: 20px; height: 20px; stroke: var(--bg); stroke-width: 2; fill: none; }
-
-    /* SYNC BAR */
-    .sync-bar { position: fixed; top: 0; left: 0; right: 0; padding: 8px 24px; padding-top: calc(8px + env(safe-area-inset-top)); font-family: var(--font-mono); font-size: 11px; text-align: center; opacity: 0; transition: opacity 0.2s; z-index: 300; pointer-events: none; }
-    .sync-bar.show { opacity: 1; }
-    .sync-bar.error { color: var(--danger); }
-    .sync-bar.offline { color: var(--warning); }
-
-    /* TOAST */
-    .toast { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(8px); background: var(--text-primary); color: var(--bg); font-size: 13px; padding: 8px 16px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.22s ease; pointer-events: none; white-space: nowrap; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast-undo { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(8px); background: var(--text-primary); color: var(--bg); font-size: 13px; padding: 8px 8px 8px 16px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.22s ease; pointer-events: none; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-    .toast-undo.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
-    .toast-undo-btn { background: var(--bg); color: var(--text-primary); font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; border-radius: 99px; cursor: pointer; }
-
-    /* TASKS */
-    .task { position: relative; border-bottom: 0.5px solid var(--border); cursor: pointer; user-select: none; touch-action: pan-y; overflow: hidden; }
-    .task.done { opacity: 0.38; }
-    .task.dimmed { opacity: 0.5; }
-    .task-content { display: flex; align-items: baseline; gap: 12px; padding: 11px 0; background: var(--bg); position: relative; z-index: 2; width: 100%; transition: transform 0.18s ease, background 0.1s; }
-    .task-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; border: 1.5px solid var(--border-strong); background: transparent; transition: all 0.15s; }
-    .task-body { flex: 1; min-width: 0; }
-    .task-title { font-size: 15px; font-weight: 400; color: var(--text-primary); line-height: 1.4; }
-    .task.done .task-title { text-decoration: line-through; color: var(--text-tertiary); }
-    .task-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-    .cat { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em; padding: 2px 6px; border-radius: 4px; }
-    .status { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
-    .status.waiting { color: var(--warning); } .status.blocked { color: var(--danger); }
-    .task-due { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); flex-shrink: 0; align-self: flex-start; padding-top: 2px; }
-    .task-due.overdue { color: var(--danger); } .task-due.soon { color: var(--warning); }
-    .swipe-action-left, .swipe-action-right { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 20px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; opacity: 0; z-index: 1; }
-    .swipe-action-left { left: 0; color: var(--danger); }
-    .swipe-action-right { right: 0; color: var(--warning); }
-
-    /* FILTER */
-    .filter-scroll { display: flex; padding: 12px 24px 0; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
-    .filter-scroll::-webkit-scrollbar { display: none; }
-    .chip { flex-shrink: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 4px 0; margin-right: 18px; border-bottom: 1.5px solid transparent; cursor: pointer; user-select: none; transition: color 0.12s, border-color 0.12s; text-transform: uppercase; }
-    .chip.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
-
-    /* SEARCH */
-    .search-wrap { padding: 10px 0 0; display: none; }
-    .search-wrap.open { display: block; }
-    .search-input { width: 100%; font-size: 15px; padding: 8px 0; border-bottom: 0.5px solid var(--border-strong); background: transparent; color: var(--text-primary); }
-    .search-input::placeholder { color: var(--text-tertiary); }
-    .empty-state { text-align: center; padding: 48px 0; color: var(--text-tertiary); font-style: italic; font-size: 14px; }
-
-    /* SHEETS */
-    .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; display: none; opacity: 0; transition: opacity 0.22s; }
-    .sheet-backdrop.open { display: block; opacity: 1; }
-    .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 0.5px solid var(--border-strong); border-radius: var(--radius-lg) var(--radius-lg) 0 0; z-index: 110; padding: 20px 24px; padding-bottom: max(env(safe-area-inset-bottom,0px),24px); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); max-height: 92dvh; overflow-y: auto; }
-    .sheet.open { transform: translateY(0); }
-    .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 20px; }
-    .sheet-title-input { font-size: 17px; color: var(--text-primary); width: 100%; padding: 0 0 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 16px; }
-    .sheet-title-input::placeholder { color: var(--text-tertiary); }
-    .sheet-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-    .sheet-row-label { font-size: 14px; color: var(--text-secondary); }
-    .seg-control { display: flex; gap: 2px; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 2px; }
-    .seg-btn { flex: 1; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 6px 8px; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.12s; }
-    .seg-btn.active { background: var(--bg); color: var(--text-primary); }
-    .date-input { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm); padding: 6px 10px; }
-    .cat-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; }
-    .cat-toggle { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 4px 10px; border: 0.5px solid var(--border-strong); border-radius: 99px; cursor: pointer; transition: all 0.12s; }
-    .cat-toggle.active { color: var(--text-primary); border-color: var(--text-primary); background: var(--bg-secondary); }
-    .sheet-note { font-size: 14px; color: var(--text-secondary); line-height: 1.6; width: 100%; min-height: 80px; padding: 10px 0; resize: none; margin-top: 8px; }
-    .sheet-note::placeholder { color: var(--text-tertiary); }
-    .sheet-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .sheet-btn { flex: 1; padding: 11px; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); text-align: center; cursor: pointer; background: transparent; }
-    .sheet-btn.primary { color: var(--text-primary); border-color: var(--text-primary); }
-    .sheet-btn.danger { color: var(--danger); border-color: var(--danger); }
-
-    /* NOTES */
-    .cn-note-card { padding: 13px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
-    .cn-note-card:active { opacity: 0.6; }
-    .cn-card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
-    .cn-card-title { font-size: 15px; font-weight: 400; color: var(--text-primary); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cn-type-badge { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
-    .cn-card-preview { font-size: 13px; color: var(--text-tertiary); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-    .cn-card-footer { display: flex; align-items: center; justify-content: space-between; }
-    .cn-card-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
-    .cn-card-status { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
-    .cn-card-status.ready { color: var(--text-secondary); }
-    .cn-filter-row { display: flex; padding: 10px 24px 0; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
-    .cn-filter-row::-webkit-scrollbar { display: none; }
-
-    /* NOTE DETAIL */
-    .cn-detail-fullscreen { position: fixed; inset: 0; background: var(--bg); z-index: 60; display: flex; flex-direction: column; }
-    .cn-detail-topbar { display: flex; align-items: center; padding: max(env(safe-area-inset-top,0px),14px) 16px 10px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; gap: 8px; }
-    .cn-detail-topbar-actions { margin-left: auto; display: flex; gap: 14px; align-items: center; }
-    .cn-detail-action { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; letter-spacing: 0.03em; }
-    .cn-detail-action:active { opacity: 0.5; }
-    .cn-type-row { display: flex; gap: 6px; padding: 8px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
-    .cn-type-chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 2px 8px; cursor: pointer; }
-    .cn-type-chip.active { color: var(--text-primary); border-color: var(--text-primary); }
-    .cn-status-row { display: flex; gap: 6px; padding: 6px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; display: none; }
-    .cn-status-chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 2px 8px; cursor: pointer; }
-    .cn-status-chip.active { color: var(--text-primary); border-color: var(--text-primary); }
-    .cn-detail-title { font-size: 20px; font-weight: 400; color: var(--text-primary); width: 100%; padding: 14px 20px 10px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
-    .cn-detail-title::placeholder { color: var(--text-tertiary); }
-    .cn-detail-source { font-size: 13px; color: var(--text-secondary); width: 100%; padding: 8px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
-    .cn-detail-source::placeholder { color: var(--text-tertiary); }
-    .cn-url-row { display: none; padding: 6px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; align-items: center; gap: 8px; }
-    .cn-url-row.visible { display: flex; }
-    .cn-url-input { flex: 1; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); border: none; background: transparent; }
-    .cn-url-input::placeholder { color: var(--text-tertiary); }
-    .cn-url-open { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; flex-shrink: 0; }
-    .cn-detail-body { font-size: 15px; color: var(--text-primary); line-height: 1.7; width: 100%; flex: 1; resize: none; border: none; background: transparent; padding: 14px 20px; font-family: var(--font-sans); caret-color: var(--text-primary); }
-    .cn-detail-body::placeholder { color: var(--text-tertiary); }
-    .cn-detail-body.mono { font-family: var(--font-mono); font-size: 13px; line-height: 1.65; }
-    .cn-md-preview { flex: 1; padding: 14px 20px; font-size: 15px; line-height: 1.7; overflow-y: auto; color: var(--text-primary); display: none; }
-    .cn-md-preview h1 { font-size: 18px; font-weight: 500; margin: 12px 0 6px; }
-    .cn-md-preview h2 { font-size: 16px; font-weight: 500; margin: 10px 0 5px; }
-    .cn-md-preview h3 { font-size: 15px; font-weight: 500; margin: 8px 0 4px; }
-    .cn-md-preview p { margin-bottom: 10px; }
-    .cn-md-preview ul, .cn-md-preview ol { padding-left: 20px; margin-bottom: 10px; }
-    .cn-md-preview li { margin-bottom: 3px; }
-    .cn-md-preview code { font-family: var(--font-mono); font-size: 12px; background: var(--bg-secondary); padding: 1px 5px; border-radius: 3px; }
-    .cn-md-preview pre { background: var(--bg-secondary); padding: 12px; border-radius: 6px; overflow-x: auto; margin-bottom: 10px; }
-    .cn-md-preview pre code { background: none; padding: 0; }
-    .cn-md-preview blockquote { border-left: 2px solid var(--border-strong); padding-left: 12px; color: var(--text-secondary); margin: 8px 0; }
-    .cn-md-preview strong { font-weight: 500; }
-    .cn-md-preview a { color: var(--text-secondary); text-decoration: underline; }
-    .wiki-link { color: var(--color-lab); text-decoration: underline; cursor: pointer; }
-    .wiki-link-broken { color: var(--text-tertiary); text-decoration: underline dotted; cursor: pointer; }
-    .cn-backlinks { border-top: 0.5px solid var(--border); flex-shrink: 0; }
-    .cn-backlinks-toggle { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); padding: 10px 20px; cursor: pointer; }
-    .cn-backlinks-list { padding: 0 20px 10px; }
-    .cn-backlink-item { font-size: 13px; color: var(--text-secondary); padding: 5px 0; cursor: pointer; border-bottom: 0.5px solid var(--border); }
-    .cn-backlink-item:last-child { border-bottom: none; }
-
-    /* PIN MODAL */
-    .pin-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
-    .pin-overlay.open { display: flex; }
-    .pin-dots { display: flex; gap: 12px; }
-    .pin-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; transition: background 0.1s; }
-    .pin-dot.filled { background: var(--text-primary); border-color: var(--text-primary); }
-    .pin-pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 10px; }
-    .pin-key { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-secondary); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: background 0.1s; user-select: none; }
-    .pin-key:active { background: var(--border-strong); }
-
-    /* REFLECT */
-    .affect-grid-wrap { position: relative; padding: 16px 0; }
-    .affect-axis { position: absolute; font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); }
-    .affect-grid { width: 100%; aspect-ratio: 1; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); position: relative; cursor: crosshair; touch-action: none; background: var(--bg-secondary); overflow: hidden; }
-    .affect-crosshair-h { position: absolute; left: 0; right: 0; top: 50%; height: 0.5px; background: var(--border); pointer-events: none; }
-    .affect-crosshair-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 0.5px; background: var(--border); pointer-events: none; }
-    .affect-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; display: none; }
-    .affect-dot.placed { display: block; }
-    .affect-history { display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 0 4px; }
-    .affect-mini-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); cursor: pointer; flex-shrink: 0; }
-    .affect-status { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px; }
-    .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
-    .habit-name { font-size: 15px; color: var(--text-primary); }
-    .habit-streak { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-right: 8px; }
-    .habit-check { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.12s; flex-shrink: 0; }
-    .habit-check.done { background: var(--success); border-color: var(--success); }
-    .habit-check svg { width: 13px; height: 13px; stroke: var(--bg); fill: none; stroke-width: 2.5; display: none; }
-    .habit-check.done svg { display: block; }
-    .reflect-seg { display: flex; gap: 16px; padding: 12px 24px 0; flex-shrink: 0; }
-    .reflect-seg-btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--text-tertiary); padding: 0 0 8px; border-bottom: 1px solid transparent; cursor: pointer; background: transparent; border-radius: 0; transition: color 0.12s, border-color 0.12s; }
-    .reflect-seg-btn.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
-    .ins-section { padding: 14px 0; border-bottom: 0.5px solid var(--border); }
-    .ins-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; }
-
-    /* BEL */
-    .bel-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
-    .bel-cb { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border-strong); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .bel-cb.checked { background: var(--color-bel); border-color: var(--color-bel); }
-    .bel-cb.checked::after { content: '✓'; font-size: 10px; color: #fff; }
-    .bel-text { flex: 1; font-size: 14px; color: var(--text-primary); }
-    .bel-text.checked { text-decoration: line-through; opacity: 0.5; }
-    .bel-del { font-size: 16px; color: var(--text-tertiary); cursor: pointer; padding: 0 4px; }
-    .bel-add-row { display: flex; gap: 8px; padding: 10px 0; }
-    .bel-add-input { flex: 1; font-size: 15px; border-bottom: 0.5px solid var(--border); padding: 4px 0; color: var(--text-primary); }
-    .bel-add-input::placeholder { color: var(--text-tertiary); }
-    .bel-add-btn { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; padding: 4px 0; }
-    .bel-notes { font-size: 15px; color: var(--text-primary); line-height: 1.6; min-height: 48px; border-bottom: 0.5px solid var(--border); padding: 4px 0 8px; outline: none; }
-    .bel-notes:empty::before { content: attr(placeholder); color: var(--text-tertiary); }
-
-    /* SETTINGS */
-    .settings-sheet { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: none; flex-direction: column; transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
-    .settings-sheet.open { display: flex; transform: translateY(0); }
-    .settings-header { display: flex; justify-content: space-between; align-items: center; padding: max(env(safe-area-inset-top,0px),16px) 24px 12px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
-    .settings-scroll { flex: 1; overflow-y: auto; padding: 20px 24px; padding-bottom: max(env(safe-area-inset-bottom,0px),32px); }
-    .settings-section { margin-bottom: 28px; }
-    .settings-section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
-    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-    .settings-row-label { font-size: 15px; color: var(--text-primary); }
-    .settings-input { width: 100%; font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); padding: 10px 12px; background: transparent; margin-bottom: 10px; }
-    .settings-input::placeholder { color: var(--text-tertiary); }
-    .settings-btn { width: 100%; padding: 11px; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); cursor: pointer; margin-top: 6px; background: transparent; text-align: center; }
-    .settings-btn.primary { color: var(--text-primary); border-color: var(--text-primary); }
-    .settings-btn.danger { color: var(--danger); border-color: var(--danger); }
-    .settings-status { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding: 6px 0 10px; }
-    .settings-status.connected { color: var(--success); }
-    .theme-toggle { display: flex; gap: 2px; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 2px; }
-    .theme-option { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all 0.12s; }
-    .theme-option.active { background: var(--bg); color: var(--text-primary); }
-    .habit-settings-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
-    .habit-del { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; }
-
-    /* VIEW MANAGEMENT */
-    .tasks-view, .notes-view, .reflect-view, .bel-view { display: none; flex-direction: column; flex: 1; overflow: hidden; }
-    body.tasks-mode .tasks-view { display: flex; }
-    body.notes-mode .notes-view { display: flex; }
-    body.reflect-mode .reflect-view { display: flex; }
-    body.bel-mode .bel-view { display: flex; }
-    body.bel-mode .bottom-nav, body.bel-mode .fab { display: none; }
-
-    /* DESKTOP */
-    @media (min-width: 600px) {
-      body { max-width: 480px; margin: 0 auto; }
-      .bottom-nav { max-width: 480px; left: 50%; transform: translateX(-50%); right: auto; }
-      .sheet { max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); right: auto; width: 480px; }
-      .sheet.open { transform: translateX(-50%) translateY(0); }
-      .settings-sheet { max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); right: auto; width: 480px; }
-      .settings-sheet.open { transform: translateX(-50%) translateY(0); }
-      .fab { right: calc(50% - 240px + 24px); }
-      .sync-bar, .toast, .toast-undo { max-width: 480px; }
-      .cn-detail-fullscreen, .pin-overlay { max-width: 480px; left: 50%; transform: translateX(-50%); right: auto; width: 480px; }
-    }
+    .cat-settings-row { display:flex; align-items:center; gap:8px; }
+    .cat-settings-row .input { margin-bottom:0; }
+    .habit-settings-row { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--border-divider, #3a3b42); border-radius:10px; }
+    .habit-settings-top { display:flex; align-items:center; gap:8px; }
+    .habit-settings-top .input { margin-bottom:0; }
+    .habit-day-toggles { display:flex; gap:4px; }
+    .habit-day-toggle { width:28px; height:24px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); font-size:10px; font-family:var(--font-mono, monospace); cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; }
+    .habit-day-toggle.active { background:var(--accent, #007aff); color:#fff; border-color:var(--accent, #007aff); }
+    .habit-bad-toggle { font-size:10px; padding:3px 8px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); cursor:pointer; -webkit-user-select:none; user-select:none; font-family:var(--font-mono, monospace); }
+    .habit-bad-toggle.active { background:rgba(255,58,48,0.15); color:#ff3a30; border-color:rgba(255,58,48,0.3); }
   </style>
+  <script type="module" src="app.js"></script>
+  <script src="/lib/marked.min.js" defer></script>
+  <script type="module" src="confnotes.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
 </head>
-<body class="tasks-mode">
+<body>
 
-<div class="sync-bar" id="syncBar"><span id="syncMsg"></span></div>
+<div class="sync-bar" id="syncBar"><div class="sync-dot"></div><span id="syncMsg"></span></div>
 
 <div class="header">
-  <span class="header-wordmark" id="secretBelTrigger">tasks.</span>
-  <div class="header-right">
-    <span class="header-action" id="searchTrigger" style="display:none;">search</span>
-    <span class="header-action" id="settingsBtn">settings</span>
+  <div class="header-top">
+    <div>
+      <div class="greeting" id="secretBelTrigger" style="display:inline-block; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; outline:none;">Hey Keegan</div>
+      <div class="date-line" id="dateDisplay"></div>
+      <div class="date-sub" id="dateSub"></div>
+    </div>
+    <div class="header-right">
+      <div class="icon-btn" id="anchorBtn" title="Grounding Anchor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="5" r="3"></circle>
+          <line x1="12" y1="22" x2="12" y2="8"></line>
+          <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+        </svg>
+      </div>
+      <div class="icon-btn" id="shopBtn" title="Shopping List">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
+      </div>
+      <div class="icon-btn" id="settingsBtn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- TASKS VIEW -->
-<div class="tasks-view">
-  <div class="filter-scroll" id="filterRow"></div>
-  <div class="search-wrap" id="searchWrap" style="padding: 0 24px;">
-    <input class="search-input" id="searchInput" type="search" placeholder="Search tasks…" autocomplete="off">
-  </div>
-  <div class="main-scroll" id="taskList"></div>
+<div class="tab-bar hide-in-bel hide-in-project-detail">
+  <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
+  <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
+  <button class="tab-btn" id="tabReflect" data-tab="reflect">Reflect</button>
+  <button class="tab-btn" id="tabNotes" data-tab="notes">Notes</button>
 </div>
 
-<!-- NOTES VIEW -->
-<div class="notes-view" id="confNotesView">
-  <div class="cn-filter-row" id="cnFilterRow"></div>
-  <div id="cnListView" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
-    <div class="main-scroll" id="cnNotesList"></div>
+<div class="search-trigger hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchTrigger" title="Search">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <span>Search</span>
+</div>
+
+<div class="search-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchWrap">
+  <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
+</div>
+
+<div class="focus-banner hide-in-bel hide-in-project hide-in-project-detail" id="focusBanner">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+     <span style="font-weight:700; letter-spacing:0.1em; font-size:11px; text-transform:uppercase;">Focus Mode</span>
+     <span id="pomoTaskLabel" style="font-size:11px; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%;">No task pinned</span>
   </div>
-  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none; flex-direction:column;">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+     <div id="pomoDisplay" style="font-family:'DM Mono',monospace; font-size:36px; font-weight:500; line-height:1;">25:00</div>
+     <div style="display:flex; gap:8px;">
+       <button id="pomoSkipBtn" class="pomo-btn alt">Skip</button>
+       <button id="pomoStartBtn" class="pomo-btn">Start</button>
+     </div>
+  </div>
+  <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
+</div>
+
+<div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="quickAddWrap">
+  <div class="quick-add-row">
+    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
+    <button class="quick-add-send" id="quickAddSend">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="focus-strip hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="focusStrip">
+  <div class="focus-dot"></div>
+  <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
+    <div class="focus-eye">Pinned Focus</div>
+    <div class="focus-title" id="focusTitle">No task pinned</div>
+    <div class="focus-sub" id="focusSub">Long-press any task to pin</div>
+  </div>
+  <div id="focusDoneBtn" style="display:none;font-size:18px;padding:6px 10px;cursor:pointer;color:#52d9a0;-webkit-user-select:none;user-select:none;" title="Complete focus task">✓</div>
+  <div class="focus-arr" id="focusArr">›</div>
+</div>
+
+<div class="filter-scroll hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="filterRow">
+  <div class="chip active" data-filter="all">All</div>
+  <div class="chip" data-filter="today">Today</div>
+  <div class="chip" data-filter="manuscript">Manuscript</div>
+  <div class="chip" data-filter="lab">Lab Ops</div>
+  <div class="chip" data-filter="phd">PhD Apps</div>
+  <div class="chip" data-filter="conf">Conference</div>
+  <div class="chip" data-filter="bel">Bel ♡</div>
+  <div class="chip" data-filter="personal">Personal</div>
+  <div class="chip" data-filter="hobby">Hobbies</div>
+  <div class="chip" data-filter="blocked">Blocked</div>
+  <div class="chip" data-filter="archive">Archive</div>
+</div>
+
+<div id="taskList" class="hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" style="min-height:calc(100vh - 320px);"></div>
+<div class="spacer hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="spacerEl"></div>
+
+<div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+    <div class="sheet-title" style="margin-bottom:0;">Active Projects</div>
+    <button class="sheet-btn primary" id="newProjectBtn" style="width:auto; padding:6px 16px; margin:0; font-size:12px;">+ New</button>
+  </div>
+  <div id="projectsList"></div>
+</div>
+
+<div id="projectDetailView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; align-items:center; margin-bottom:16px;">
+    <button id="closeProjectDetailBtn" class="icon-btn" style="margin-right:12px;">✕</button>
+    <div class="sheet-title" style="margin-bottom:0; flex:1;">Project details</div>
+    <div class="icon-btn" id="delProjectDetailBtn" style="border-color:transparent; background:transparent;">
+  <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+</div>
+  </div>
+
+  <textarea class="input" id="pdTitleInput" placeholder="Project Name" rows="2" style="font-size:22px; font-weight:600; background:transparent; border-color:transparent; padding:0; box-shadow:none; margin-bottom:4px; resize:none; line-height:1.2;"></textarea>
+
+  <input class="pd-description-input" id="pdDescInput" type="text" placeholder="One-line goal or purpose..." autocomplete="off">
+
+  <!-- Progress bar -->
+  <div class="pd-progress-wrap" id="pdProgressWrap">
+    <div class="pd-progress-bar"><div class="pd-progress-fill" id="pdProgressFill"></div></div>
+    <div class="pd-progress-label" id="pdProgressLabel"></div>
+  </div>
+
+  <!-- Next up card -->
+  <div class="pd-next-card" id="pdNextCard" style="display:none;">
+    <div class="pd-next-label">Next Up</div>
+    <div id="pdNextContent"></div>
+  </div>
+
+  <div style="display:block; margin-bottom:8px;">
+  <div style="margin-bottom: 16px;">
+    <div class="sheet-label">Stage</div>
+    <div class="chip-row" id="pdStageRow" style="margin-bottom:0;">
+      <div class="s-chip" data-val="Planning">Plan</div>
+      <div class="s-chip" data-val="Active">Active</div>
+      <div class="s-chip" data-val="Waiting">Wait</div>
+      <div class="s-chip" data-val="Review">Review</div>
+      <div class="s-chip" data-val="Done">Done</div>
+    </div>
+  </div>
+  <div>
+    <div class="sheet-label">Deadline</div>
+    <input class="input" id="pdDueInput" type="date" style="color-scheme:dark; margin-bottom:0; padding:6px 10px; font-size:13px; border-radius:12px;">
+  </div>
+</div>
+
+  <!-- Activity log -->
+  <details class="pd-activity-card" id="pdActivityCard" style="display:none;">
+    <summary class="pd-activity-toggle">
+      <span class="d-card-label" style="margin-bottom:0;">Activity</span>
+      <span class="pd-activity-chevron">▸</span>
+    </summary>
+    <div class="pd-activity-list" id="pdActivityList"></div>
+  </details>
+
+  <!-- Milestones -->
+  <div class="pd-milestones-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div class="sheet-label" style="margin-bottom:0;">Milestones</div>
+      <button id="pdAddMilestoneBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add</button>
+    </div>
+    <div id="pdMilestonesList"></div>
+    <div id="pdMilestoneAddRow" class="pd-milestone-add-row" style="display:none;">
+      <input class="input pd-ms-input" id="pdMilestoneInput" type="text" placeholder="e.g. Draft intro section" autocomplete="off" style="margin-bottom:0; flex:1;">
+      <input class="input pd-ms-date-input" id="pdMilestoneDueInput" type="date" style="color-scheme:dark; margin-bottom:0; width:auto;">
+      <button class="pd-ms-save-btn" id="pdMilestoneSaveBtn">Add</button>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Project Notes</div>
+    <div id="pdNotesInput" class="bel-notes" contenteditable="true" placeholder="Dump all ideas, links, and status updates here..."></div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:12px;">
+    <div class="sheet-label" style="margin-bottom:0;">Active Tasks</div>
+    <button id="pdAddTaskBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add Task</button>
+  </div>
+  <div id="pdTasksList"></div>
+
+  <!-- Completed tasks -->
+  <details class="pd-completed-section" id="pdCompletedSection" style="display:none;">
+    <summary class="pd-completed-toggle">
+      <span class="sheet-label" style="margin-bottom:0;">Completed</span>
+      <span class="pd-completed-count" id="pdCompletedCount"></span>
+      <span class="pd-activity-chevron">▸</span>
+    </summary>
+    <div id="pdCompletedList"></div>
+  </details>
+</div>
+
+<div id="confNotesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div id="cnListView">
+    <div style="display:flex; align-items:center; margin-bottom:16px;">
+      <div class="sheet-title" style="margin-bottom:0; flex:1;">Notes</div>
+      
+      <div class="icon-btn" id="cnViewToggle" style="margin-right:8px;" title="Toggle View">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      </div>
+      
+      <div class="icon-btn" id="cnSearchToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+    </div>
+
+    <!-- Scratchpad area -->
+    <div class="cn-scratch-card">
+      <div class="cn-scratch-header">
+        <div class="cn-scratch-label">Scratchpad</div>
+        <div class="cn-scratch-right">
+          <span id="cnScratchSync" class="cn-scratch-sync"></span>
+          <span id="cnScratchMono" class="cn-scratch-mono">mono off</span>
+        </div>
+      </div>
+      <textarea id="cnScratchpad" class="cn-scratch-textarea" placeholder="Dump thoughts here... ideas, R output, half-formed hypotheses." rows="4"></textarea>
+    </div>
+
+    <div id="cnSearchWrap" class="cn-search-wrap">
+      <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes...">
+    </div>
+    <div class="cn-filter-row" id="cnFilterRow"></div>
+    <div id="cnNotesList"></div>
+
+    <!-- New note type menu (shown when FAB is long-pressed in notes mode) -->
+    <div id="cnNewMenu" class="cn-new-menu" style="display:none;">
+      <div class="cn-new-menu-item" data-newtype="memo"><span class="cn-new-icon">✎</span> Note</div>
+      <div class="cn-new-menu-item" data-newtype="paper"><span class="cn-new-icon">📄</span> Paper</div>
+      <div class="cn-new-menu-item" data-newtype="idea"><span class="cn-new-icon">💡</span> Idea</div>
+    </div>
+  </div>
+
+  <!-- Distraction-free note editor -->
+  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none;">
     <div class="cn-detail-topbar">
-      <button id="cnBackBtn" style="font-size:22px; color:var(--text-tertiary); background:transparent; border:none; cursor:pointer; line-height:1;">‹</button>
-      <div class="cn-detail-topbar-actions">
-        <span class="cn-detail-action" id="cnMonoToggle">mono</span>
-        <span class="cn-detail-action" id="cnMdToggle">preview</span>
-        <span class="cn-detail-action" id="cnPinToggle">pin</span>
-        <span class="cn-detail-action" id="cnLockToggle" style="display:none;">lock</span>
-        <span class="cn-detail-action" style="color:var(--danger);" id="cnDeleteBtn">delete</span>
-      </div>
-    </div>
-    <div class="cn-type-row" id="cnTypeRow">
-      <div class="cn-type-chip active" data-type="memo">note</div>
-      <div class="cn-type-chip" data-type="paper">paper</div>
-      <div class="cn-type-chip" data-type="idea">idea</div>
-    </div>
-    <div class="cn-status-row" id="cnStatusRow">
-      <div class="cn-status-chip active" data-status="raw">raw</div>
-      <div class="cn-status-chip" data-status="developing">developing</div>
-      <div class="cn-status-chip" data-status="ready to pitch">ready</div>
-    </div>
-    <input class="cn-detail-title" id="cnTitleInput" type="text" placeholder="Title…" autocorrect="on" autocapitalize="sentences">
-    <input class="cn-detail-source" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" autocapitalize="sentences">
-    <div class="cn-url-row" id="cnUrlRow">
-      <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocapitalize="none">
-      <a href="#" id="cnUrlOpen" class="cn-url-open" target="_blank">open ↗</a>
-    </div>
-    <textarea class="cn-detail-body" id="cnBodyInput" placeholder="Write… (use [[brackets]] for backlinks)" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
-    <div class="cn-md-preview" id="cnMdPreview"></div>
-    <div class="cn-backlinks" id="cnBacklinks" style="display:none;">
-      <div class="cn-backlinks-toggle" id="cnBacklinksToggle">backlinks ▸ <span id="cnBacklinksCount"></span></div>
-      <div class="cn-backlinks-list" id="cnBacklinksList" style="display:none;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- REFLECT VIEW -->
-<div class="reflect-view">
-  <div class="reflect-seg">
-    <button class="reflect-seg-btn active" id="reflectSegToday">today</button>
-    <button class="reflect-seg-btn" id="reflectSegReview">review</button>
-  </div>
-  <div id="reflectTodayPane" class="main-scroll">
-    <div class="section-label">affect</div>
-    <div class="affect-grid-wrap">
-      <div class="affect-axis" style="top:-2px; left:50%; transform:translateX(-50%);">wired</div>
-      <div class="affect-axis" style="bottom:-14px; left:50%; transform:translateX(-50%);">drained</div>
-      <div class="affect-axis" style="left:-4px; top:50%; transform:translateY(-50%);">rough</div>
-      <div class="affect-axis" style="right:-4px; top:50%; transform:translateY(-50%);">good</div>
-      <div class="affect-grid" id="dAffectGrid">
-        <div class="affect-crosshair-h"></div>
-        <div class="affect-crosshair-v"></div>
-        <div class="affect-dot" id="dAffectDot"></div>
-      </div>
-    </div>
-    <div class="affect-status" id="dAffectStatus">tap to log</div>
-    <div class="affect-history" id="dAffectHistory"></div>
-    <div class="section-label" style="margin-top:8px;">habits</div>
-    <div id="dHabits"></div>
-    <div class="spacer" style="height:20px;"></div>
-  </div>
-  <div id="reflectReviewPane" class="main-scroll" style="display:none;">
-    <div id="timelineNav"></div>
-    <div id="timelineBody"></div>
-  </div>
-</div>
-
-<!-- BEL VIEW -->
-<div class="bel-view" id="belView">
-  <div class="header" style="border-bottom:0.5px solid var(--border);">
-    <span class="header-wordmark" style="color:var(--color-bel);">bel.</span>
-    <span class="header-action" id="belClose">← tasks</span>
-  </div>
-  <div class="main-scroll">
-    <div style="font-family:var(--font-mono); font-size:30px; font-weight:400; color:var(--text-primary); padding:16px 0 4px;" id="belTimeCount">--</div>
-    <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); padding-bottom:16px; border-bottom:0.5px solid var(--border);" id="belNextAnniv"></div>
-    <div class="section-label">dates & plans</div>
-    <div id="belDatesList"></div>
-    <div class="bel-add-row">
-      <input class="bel-add-input" id="belDateInput" type="text" placeholder="Places to go…" autocapitalize="sentences">
-      <span class="bel-add-btn" id="belDateAddBtn">add</span>
-    </div>
-    <div class="section-label">her favorites</div>
-    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks…" style="min-height:60px;"></div>
-    <div class="section-label">things i love about her</div>
-    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things…" style="min-height:60px;"></div>
-    <div style="padding:16px 0;">
-      <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); letter-spacing:0.07em; text-transform:uppercase; margin-bottom:8px;">anniversary date</div>
-      <input type="date" id="belAnnivInput" style="font-family:var(--font-mono); font-size:13px; color:var(--text-primary); border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); padding:6px 10px; background:transparent;">
-    </div>
-    <div style="height:32px;"></div>
-  </div>
-</div>
-
-<!-- BOTTOM NAV & FAB -->
-<nav class="bottom-nav">
-  <button class="bottom-tab active" id="tabTasks">tasks</button>
-  <button class="bottom-tab" id="tabNotes">notes</button>
-  <button class="bottom-tab" id="tabReflect">reflect</button>
-</nav>
-<button class="fab" id="fab" aria-label="Add">
-  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
-
-<!-- TASK SHEET -->
-<div class="sheet-backdrop" id="taskSheetBackdrop"></div>
-<div class="sheet" id="taskSheet">
-  <div class="sheet-handle"></div>
-  <input class="sheet-title-input" id="taskSheetTitle" type="text" placeholder="Task name…" autocorrect="on" autocapitalize="sentences">
-  <div class="sheet-row">
-    <span class="sheet-row-label">priority</span>
-    <div class="seg-control" id="taskSheetPriority">
-      <div class="seg-btn" data-val="hi">high</div>
-      <div class="seg-btn active" data-val="md">normal</div>
-      <div class="seg-btn" data-val="lo">low</div>
-    </div>
-  </div>
-  <div class="sheet-row">
-    <span class="sheet-row-label">status</span>
-    <div class="seg-control" id="taskSheetStatus">
-      <div class="seg-btn active" data-val="active">active</div>
-      <div class="seg-btn" data-val="waiting">waiting</div>
-      <div class="seg-btn" data-val="blocked">blocked</div>
-    </div>
-  </div>
-  <div class="sheet-row">
-    <span class="sheet-row-label">due</span>
-    <input class="date-input" id="taskSheetDue" type="date">
-  </div>
-  <div class="sheet-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
-    <span class="sheet-row-label">category</span>
-    <div class="cat-grid" id="taskSheetCats"></div>
-  </div>
-  <div class="sheet-row" style="border-bottom:none;">
-    <span class="sheet-row-label">pin today</span>
-    <div class="seg-control" id="taskSheetPin" style="min-width:100px;">
-      <div class="seg-btn active" data-val="0">no</div>
-      <div class="seg-btn" data-val="1">yes</div>
-    </div>
-  </div>
-  <textarea class="sheet-note" id="taskSheetNote" placeholder="Add a note…"></textarea>
-  <div class="sheet-actions">
-    <button class="sheet-btn danger" id="taskSheetDelete" style="display:none;">delete</button>
-    <button class="sheet-btn primary" id="taskSheetSave">save</button>
-  </div>
-</div>
-
-<!-- SETTINGS SHEET -->
-<div class="settings-sheet" id="settingsSheet">
-  <div class="settings-header">
-    <span style="font-size:13px; font-family:var(--font-mono); color:var(--text-tertiary); letter-spacing:0.04em;">settings</span>
-    <span class="header-action" id="settingsClose">close</span>
-  </div>
-  <div class="settings-scroll">
-    <div class="settings-section">
-      <div class="settings-section-label">appearance</div>
-      <div class="settings-row">
-        <span class="settings-row-label">theme</span>
-        <div class="theme-toggle" id="themeToggle">
-          <div class="theme-option active" data-theme="auto">auto</div>
-          <div class="theme-option" data-theme="light">light</div>
-          <div class="theme-option" data-theme="dark">dark</div>
+      <button id="cnBackBtn" class="icon-btn" style="margin-right:8px;">&#8249;</button>
+      <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
+      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+        <span id="cnMdToggle" class="cn-scratch-mono" title="Preview markdown">preview</span>
+        <span id="cnMonoToggle" class="cn-scratch-mono">mono off</span>
+        <div class="icon-btn cn-lock-btn" id="cnLockBtn" title="Lock note" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
+        </div>
+        <div class="icon-btn" id="cnDeleteBtn" style="border-color:transparent; background:transparent;">
+          <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
         </div>
       </div>
     </div>
-    <div class="settings-section">
-      <div class="settings-section-label">github sync</div>
-      <div class="settings-status" id="ghStatus">not connected</div>
-      <input class="settings-input" id="ghUser" type="text" placeholder="username" autocapitalize="none" autocorrect="off">
-      <input class="settings-input" id="ghRepo" type="text" placeholder="repository" autocapitalize="none" autocorrect="off">
-      <input class="settings-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off">
-      <button class="settings-btn primary" id="saveGhBtn">save & test connection</button>
+
+    <!-- Type selector -->
+    <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
+    <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
+
+    <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 12px 0; align-items: center; gap: 8px;">
+      <span class="cn-url-label" style="font-size:14px; opacity:0.6;">🔗</span>
+      <input class="cn-detail-source-input" id="cnUrlInput" type="text" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
+      
+      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; align-items:center; justify-content:center; width:28px; height:28px; background:rgba(175, 82, 222, 0.1); border-radius:8px; color:#af52de; transition: transform 0.15s ease;" title="Open Source">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
     </div>
-    <div class="settings-section">
-      <div class="settings-section-label">habits</div>
-      <div id="habitSettingsList"></div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <input class="settings-input" id="newHabitInput" type="text" placeholder="New habit…" autocapitalize="sentences" style="flex:1; margin-bottom:0;">
-        <button class="settings-btn" id="addHabitBtn" style="width:auto; padding:8px 14px; margin-top:0;">add</button>
+    
+    <details class="cn-detail-meta-drawer" id="cnTypeSettingsDrawer" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
+      <summary class="cn-detail-meta-toggle">Note Type Settings</summary>
+      <div class="cn-detail-meta-content">
+        <div class="cn-type-selector" id="cnTypeRow" style="padding: 0 0 10px 0;">
+          <div class="cn-type-chip active" data-type="memo">✎ Note</div>
+          <div class="cn-type-chip" data-type="paper">📄 Paper</div>
+          <div class="cn-type-chip" data-type="idea">💡 Idea</div>
+        </div>
+
+        <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none; padding: 0 0 10px 0;">
+          <div class="cn-status-chip active" data-status="raw">raw</div>
+          <div class="cn-status-chip" data-status="developing">developing</div>
+          <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
+        </div>
       </div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-section-label">notes pin</div>
-      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); margin-bottom:10px; line-height:1.6;">4-digit pin to lock individual notes.</div>
-      <div style="display:flex; gap:6px; margin-bottom:10px;">
-        <input id="pinD0" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
-        <input id="pinD1" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
-        <input id="pinD2" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
-        <input id="pinD3" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
+    </details>
+
+    <!-- Collapsible metadata -->
+    <details class="cn-detail-meta-drawer" id="cnMetaDrawer">
+      <summary class="cn-detail-meta-toggle">Tags, project & info</summary>
+      <div class="cn-detail-meta-content">
+        <div class="sheet-label">Tags</div>
+        <div class="chip-row" id="cnTagRow"></div>
+        <div class="sheet-label">Link to Project</div>
+        <select class="input" id="cnProjectInput" style="appearance:auto; margin-bottom:8px;">
+          <option value="">None</option>
+        </select>
+        <div class="cn-detail-meta" id="cnDetailMeta"></div>
       </div>
-      <button class="settings-btn" id="savePinBtn">save pin</button>
-      <button class="settings-btn danger" id="clearPinBtn" style="display:none; margin-top:4px;">clear pin</button>
+    </details>
+
+    <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write anything..."></textarea>
+    <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
+
+    <!-- Backlinks drawer — rendered by confnotes.js -->
+    <div class="cn-backlinks-drawer" id="cnBacklinksDrawer" style="display:none;">
+      <button class="cn-backlinks-toggle" id="cnBacklinksToggle">
+        <span class="cn-backlinks-arrow" id="cnBacklinksArrow">▸</span>
+        <span class="cn-backlinks-label-text">Linked from</span>
+        <span class="cn-backlinks-count" id="cnBacklinksCount"></span>
+      </button>
+      <div class="cn-backlinks-list" id="cnBacklinksList"></div>
     </div>
-    <div class="settings-section">
-      <div class="settings-section-label">data</div>
-      <button class="settings-btn" id="exportBtn">export json</button>
-      <button class="settings-btn danger" id="clearDataBtn" style="margin-top:4px;">clear all local data</button>
-      <input type="file" id="importFile" accept=".json" style="display:none;">
-    </div>
-    <div style="height:32px;"></div>
   </div>
 </div>
 
-<!-- TOASTS -->
+<div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+  <div style="display:flex; align-items:center; margin-bottom:16px;">
+    <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">&#8249;</button>
+    <div class="sheet-title" style="margin-bottom:0;">Beegan!</div>
+  </div>
+
+  <div class="d-card" style="position:relative; overflow:hidden;">
+    <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
+    <div class="d-card-label">Time Together</div>
+    <div id="belTimeCount" style="font-family:'DM Sans', sans-serif; font-size:32px; font-weight:600; line-height:1; margin-bottom:6px;">--</div>
+    <div id="belNextAnniv" style="font-size:11px; opacity:0.6; font-family:'DM Mono', monospace;">Set anniversary date below</div>
+    <div id="editBelDateBtn" style="font-size:10px; color:var(--accent); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
+
+<div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
+  <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
+  <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
+</div>
+
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Gift Ideas</div>
+    <div id="belGiftsList" class="bel-list"></div>
+    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+      <input class="input" id="belGiftInput" type="text" placeholder="Jot down an idea..." style="margin-bottom:0;flex:1;">
+      <button class="shop-add-btn" id="belGiftAddBtn">Add</button>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Date Ideas</div>
+    <div id="belDatesList" class="bel-list"></div>
+    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+      <input class="input" id="belDateInput" type="text" placeholder="Places to go..." style="margin-bottom:0;flex:1;">
+      <button class="shop-add-btn" id="belDateAddBtn">Add</button>
+    </div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Her Favorites</div>
+    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks..."></div>
+  </div>
+
+  <div class="d-card">
+    <div class="d-card-label">Things I Love About Her</div>
+    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things..."></div>
+  </div>
+</div>
+
+<div id="reflectView" style="display:none;">
+
+  <!-- Today / Review segmented control -->
+  <div class="reflect-seg-wrap">
+    <div class="reflect-seg">
+      <button class="reflect-seg-btn active" id="reflectSegToday" data-mode="today">Today</button>
+      <button class="reflect-seg-btn" id="reflectSegReview" data-mode="review">Review</button>
+    </div>
+  </div>
+
+  <!-- TODAY MODE -->
+  <div id="reflectToday" style="padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+    <div class="wr-prompt-card" id="wrPromptCard" style="display:none;"></div>
+    <div class="d-card">
+      <div class="d-week-meta" id="dWeekMeta"></div>
+      <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
+    </div>
+
+    <div class="d-card snapshot-card" id="dSnapshotCard" style="display:none;">
+      <div class="d-card-label">Today So Far</div>
+      <div class="snapshot-body" id="dSnapshotBody"></div>
+    </div>
+
+    <div class="d-card affect-card">
+      <div class="d-card-label" style="display:flex; justify-content:space-between;">
+        <span>How are you feeling?</span>
+        <span id="dAffectStatus" style="text-transform:none; opacity:0.8;"></span>
+      </div>
+      <div class="affect-grid-wrap">
+        <div class="affect-axis-label affect-y-top">wired</div>
+        <div class="affect-axis-label affect-y-bot">drained</div>
+        <div class="affect-axis-label affect-x-left">rough</div>
+        <div class="affect-axis-label affect-x-right">good</div>
+        <div class="affect-grid" id="dAffectGrid">
+          <div class="affect-grid-bg"></div>
+          <div class="affect-crosshair-h"></div>
+          <div class="affect-crosshair-v"></div>
+          <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
+        </div>
+      </div>
+      <div class="affect-context-row" id="dAffectContextRow">
+        <div class="affect-ctx-chip" data-ctx="work">Work</div>
+        <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
+        <div class="affect-ctx-chip" data-ctx="social">Social</div>
+        <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
+        <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
+        <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="affect-mini-history" id="dAffectHistory"></div>
+        <div class="affect-log-count" id="dAffectLogCount" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-card-label">Habits — This Week</div>
+      <div class="d-habit-header">
+        <div class="d-habit-name-col">Habit</div>
+        <div class="d-habit-days-col" id="dHabitDayLabels"></div>
+      </div>
+      <div id="dHabitRows"></div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-card-label">Today's Tasks</div>
+      <div id="dTaskList"></div>
+      <div class="d-open-tasks" id="dOpenTasks"></div>
+    </div>
+
+    <div class="d-card">
+      <div class="d-card-label">Daily Reflection</div>
+      <div class="d-prompt" id="dPrompt"></div>
+      <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
+    </div>
+
+    <div class="d-card cn-research-card">
+      <div class="d-card-label">Research Prompt <span style="font-weight:400;opacity:0.5;font-size:9px;letter-spacing:0.04em;">💡</span></div>
+      <div class="d-prompt" id="dResearchPrompt"></div>
+      <textarea class="d-reflect-input" id="dResearchReflect" rows="3" placeholder="Think like a researcher…" autocorrect="off" autocapitalize="sentences"></textarea>
+    </div>
+
+    <div class="d-card ins-card" id="dWeeklyReflectCard" style="display:none;">
+      <div class="d-card-label">Weekly Affect Reflection</div>
+      <div class="ins-weekly-prompt" id="dWeeklyPrompt"></div>
+      <textarea class="d-reflect-input" id="dWeeklyReflect" rows="2" placeholder="Describe the emotional theme of this week..." autocorrect="off" autocapitalize="sentences"></textarea>
+      <div class="ins-past-labels" id="dPastLabels"></div>
+    </div>
+
+    <details class="d-card ins-card" id="dInsightsCard">
+      <summary class="ins-toggle">
+        <span class="d-card-label" style="margin-bottom:0;">Insights</span>
+        <span class="ins-chevron">▸</span>
+      </summary>
+      <div class="ins-content" id="dInsightsContent"></div>
+    </details>
+  </div>
+
+  <!-- REVIEW MODE -->
+  <div id="reflectReview" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
+    <div id="wrContainer"></div>
+    <div id="timelineNav"></div>
+    <div id="timelineBody"></div>
+  </div>
+
+</div>
+
+<div id="focusModeBtn" class="hide-in-bel hide-in-project-detail">
+  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  <span id="focusBtnLabel">Focus</span>
+</div>
+<div class="fab hide-in-bel hide-in-project-detail" id="fab">+</div>
+
+<div class="sheet" id="shopSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" style="margin-bottom:0">Shopping List</div>
+    <div id="closeShopSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div id="shopList" class="shop-list"></div>
+  <div style="margin-top:14px;display:-webkit-flex;display:flex;justify-content:flex-end;">
+    <div id="shopClearDone" class="sheet-btn" style="width:auto;padding:8px 16px;font-size:12px;opacity:0.6;">Clear checked</div>
+  </div>
+  <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
+    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
+    <button class="shop-add-btn" id="shopAddBtn">Add</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sheet" id="projectSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" id="projectSheetTitle" style="margin-bottom:0">New Project</div>
+    <div id="closeProjectSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Project Name</div>
+  <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:8px;">
+
+  <div class="sheet-label">Goal / Purpose</div>
+  <input class="input" id="projDescInput" type="text" placeholder="One-line description..." style="margin-bottom:14px;">
+
+  <div class="sheet-label">Stage</div>
+  <div class="chip-row" id="projStageRow">
+    <div class="s-chip active" data-val="Planning">Planning</div>
+    <div class="s-chip" data-val="Active">Active</div>
+    <div class="s-chip" data-val="Waiting">Waiting</div>
+    <div class="s-chip" data-val="Review">Review</div>
+    <div class="s-chip" data-val="Done">Done</div>
+  </div>
+
+  <div class="sheet-label">Deadline (Optional)</div>
+  <input class="input" id="projDueInput" type="date" style="color-scheme:dark; margin-bottom:14px;">
+
+  <div class="sheet-label">Project Notes</div>
+  <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+
+<button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
+<button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
+
+</div>
+
+<div class="sheet" id="addSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" id="addSheetTitle" style="margin-bottom:0">New Task</div>
+    <div id="closeAddSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Task</div>
+  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing..." style="margin-bottom:8px;">
+
+  <div id="pomoCountDisplay" style="display:none; font-size:11px; margin-bottom:14px; color:#888; font-family:'DM Mono',monospace; letter-spacing:0.04em;"></div>
+
+  <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
+    Note
+    <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
+  </div>
+  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
+
+  <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
+    Due Date
+    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
+  </div>
+  <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
+
+  <div class="sheet-label">Link to Project</div>
+  <select class="input" id="taskProjectInput" style="appearance:auto; margin-bottom:8px;">
+    <option value="">None</option>
+  </select>
+
+  <div id="taskMilestoneWrap" style="display:none;">
+    <div class="sheet-label">Milestone</div>
+    <select class="input" id="taskMilestoneInput" style="appearance:auto; margin-bottom:14px;">
+      <option value="">None</option>
+    </select>
+  </div>
+
+  <div class="sheet-label">Categories (Multi-Select)</div>
+  <div class="chip-row" id="catRow">
+    <div class="s-chip" data-val="manuscript">Manuscript</div>
+    <div class="s-chip" data-val="lab">Lab Ops</div>
+    <div class="s-chip" data-val="phd">PhD Apps</div>
+    <div class="s-chip" data-val="conf">Conference</div>
+    <div class="s-chip" data-val="bel">Bel ♡</div>
+    <div class="s-chip" data-val="personal">Personal</div>
+    <div class="s-chip" data-val="hobby">Hobby</div>
+  </div>
+
+  <div class="sheet-label">Status</div>
+  <div class="chip-row" id="statusRow">
+    <div class="s-chip active" data-val="active">Active</div>
+    <div class="s-chip" data-val="waiting">Waiting on</div>
+    <div class="s-chip" data-val="blocked">Blocked</div>
+    <div class="s-chip" data-val="review">In Review</div>
+  </div>
+
+  <div class="sheet-label">Priority</div>
+  <div class="chip-row" id="priRow">
+    <div class="s-chip" data-val="hi">High</div>
+    <div class="s-chip active" data-val="md">Med</div>
+    <div class="s-chip" data-val="lo">Low</div>
+  </div>
+
+<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
+<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
+<button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
+
+</div>
+
+<div class="sheet" id="settingsSheet">
+  <div class="handle"></div>
+  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
+    <div class="sheet-title" style="margin-bottom:0">Settings</div>
+    <div id="closeSettingsSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  </div>
+  <div class="sheet-label">Appearance</div>
+  <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
+
+<div class="theme-swatch" data-theme="halcyon" title="Light" style="background:linear-gradient(175deg,#d8e6f6,#e0e8f2,#e6e6ec);border:2px solid rgba(16,96,160,0.2);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#1060a0;margin-top:auto;">LIGHT</div>
+</div>
+<div class="theme-swatch" data-theme="aurora" title="Dark" style="background:linear-gradient(135deg,#111418,#161A1F);border:2px solid rgba(74,188,224,0.3);">
+  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#4ABCE0;margin-top:auto;">DARK</div>
+</div>
+
+  </div>
+
+  <div id="accentPickerSection" style="display:none;">
+    <div class="sheet-label">Accent Color</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="accentPresets"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+      <div id="accentPreview" style="width:32px;height:32px;border-radius:8px;border:2px solid var(--border-divider);flex-shrink:0;"></div>
+      <input class="input" id="accentHexInput" type="text" placeholder="#4ABCE0" maxlength="7" style="margin-bottom:0;flex:1;font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;">
+      <button class="sheet-btn primary" id="accentApplyBtn" style="width:auto;padding:10px 16px;margin-top:0;font-size:12px;">Apply</button>
+    </div>
+    <button class="sheet-btn" id="accentResetBtn" style="font-size:12px;padding:8px 16px;">Reset to Default</button>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sheet-label">GitHub Sync</div>
+  <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
+  <div class="settings-field">
+    <label>GitHub Username</label>
+    <input class="input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Repository Name</label>
+    <input class="input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div class="settings-field">
+    <label>Personal Access Token</label>
+    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
+  </div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:14px; line-height:1.7;">
+    Token needs <strong style="color:#9a9aaa">repo</strong> scope. Stored only in localStorage — never sent anywhere except GitHub's API.
+  </div>
+  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
+  <div class="divider"></div>
+  <div class="sheet-label">Notes PIN</div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
+    Set a PIN to lock individual notes. This is a visual lock — note content is still stored in plaintext.
+  </div>
+  <div id="pinStatus" style="font-size:12px; margin-bottom:10px; font-family:var(--font-mono);"></div>
+  <div style="display:flex;gap:8px;">
+    <button class="sheet-btn" id="setPinBtn" style="flex:1;margin-top:0;">Set PIN</button>
+    <button class="sheet-btn danger" id="clearPinBtn" style="flex:1;margin-top:0;display:none;">Remove PIN</button>
+  </div>
+  <div class="divider"></div>
+  <div class="sheet-label">Danger Zone</div>
+  <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
+  <div class="divider"></div>
+  <div class="sheet-label">Categories</div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
+    Edit keys and display labels. Key is used internally (lowercase, no spaces) — changing it will unlink existing tasks using that key.
+  </div>
+  <div id="catSettingsRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+  <div style="display:flex;gap:8px;">
+    <button class="sheet-btn" id="addCatBtn" style="flex:1;margin-top:0;">+ Add Category</button>
+    <button class="sheet-btn primary" id="saveCatsBtn" style="flex:1;margin-top:0;">Save Categories</button>
+  </div>
+  <div class="divider"></div>
+  <div class="sheet-label">Habits</div>
+  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
+    Customize tracked habits. Mark bad habits to flag them red. Set which days each habit applies to (M=0 … S=6).
+  </div>
+  <div id="habitSettingsRows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
+  <div style="display:flex;gap:8px;">
+    <button class="sheet-btn" id="addHabitBtn" style="flex:1;margin-top:0;">+ Add Habit</button>
+    <button class="sheet-btn primary" id="saveHabitsBtn" style="flex:1;margin-top:0;">Save Habits</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
-<div class="toast-undo" id="toastUndo">
-  <span id="toastUndoMsg"></span>
-  <button class="toast-undo-btn" id="toastUndoBtn">undo</button>
-</div>
+<div class="toast-undo" id="toastUndo"><span id="toastUndoMsg">Task deleted</span><button class="toast-undo-btn" id="toastUndoBtn">UNDO</button></div>
 
-<!-- PIN OVERLAY -->
-<div class="pin-overlay" id="pinOverlay">
-  <div style="font-size:13px; color:var(--text-tertiary); font-family:var(--font-mono); letter-spacing:0.04em;" id="pinOverlayLabel">enter pin</div>
-  <div class="pin-dots" id="pinDots">
-    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-  </div>
-  <div class="pin-pad">
-    <div class="pin-key" data-k="1">1</div><div class="pin-key" data-k="2">2</div><div class="pin-key" data-k="3">3</div>
-    <div class="pin-key" data-k="4">4</div><div class="pin-key" data-k="5">5</div><div class="pin-key" data-k="6">6</div>
-    <div class="pin-key" data-k="7">7</div><div class="pin-key" data-k="8">8</div><div class="pin-key" data-k="9">9</div>
-    <div class="pin-key" data-k="cancel" style="font-size:12px; color:var(--text-tertiary);">cancel</div>
-    <div class="pin-key" data-k="0">0</div>
-    <div class="pin-key" data-k="del" style="font-size:16px;">⌫</div>
+<!-- <div class="bottom-fade hide-in-bel hide-in-project-detail"></div> -->
+
+<div class="pin-modal-overlay" id="pinModalOverlay" style="display:none;">
+  <div class="pin-modal">
+    <div class="pin-modal-title" id="pinModalTitle">Enter PIN</div>
+    <input class="pin-modal-input" id="pinModalInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
+    <div class="pin-modal-error" id="pinModalError"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="sheet-btn" id="pinModalCancel">Cancel</button>
+      <button class="sheet-btn primary" id="pinModalConfirm">Confirm</button>
+    </div>
   </div>
 </div>
 
-<script>
-  // Flash-of-wrong-theme prevention
-  (function(){
-    try {
-      var t = localStorage.getItem('kw_theme_v2') || 'auto';
-      if (t === 'aurora' || t === 'neon' || t === 'ios-dark') document.body.classList.add('theme-dark');
-      else if (t === 'halcyon' || t === 'newsprint') document.body.classList.add('theme-light');
-    } catch(e) {}
-  })();
-</script>
-<script src="/lib/marked.min.js" defer></script>
-<script type="module" src="app.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-  }
-</script>
+<div id="anchorOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(17, 20, 24, 0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
+  <div id="anchorHoldView" style="display:flex; flex-direction:column; align-items:center; width: 100%; max-width: 320px;">
+    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:32px; letter-spacing:0.1em; text-transform:uppercase;">Pattern Interrupt</div>
+    <div id="anchorSliderTrack" style="width:100%; height:64px; background:var(--bg-card, #1c2026); border:1px solid var(--border-divider, #3a3b42); border-radius:32px; position:relative; overflow:hidden; display:flex; align-items:center; padding:0 4px;">
+      <div style="position:absolute; width:100%; text-align:center; color:var(--text-muted, #8e8e93); font-size:14px; pointer-events:none; font-family:'DM Sans', sans-serif;">Slide to ground ➔</div>
+      <div id="anchorSliderThumb" style="width:56px; height:56px; background:var(--accent, #4ABCE0); border-radius:50%; box-shadow:0 2px 10px rgba(0,0,0,0.3); position:relative; z-index:2; cursor:grab; display:flex; align-items:center; justify-content:center; touch-action:none;">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="#111418" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </div>
+    </div>
+  </div>
+  <div id="anchorTriage" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
+    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:24px; letter-spacing:0.1em; text-transform:uppercase;">State Check</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%;">
+      <button class="anchor-btn" data-state="under" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Bored</button>
+      <button class="anchor-btn" data-state="over" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Stuck</button>
+      <button class="anchor-btn" data-state="depleted" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Drained</button>
+      <button class="anchor-btn" data-state="disconnected" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Lonely</button>
+    </div>
+  </div>
+  <div id="anchorPromptView" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
+    <div id="anchorPromptText" style="font-size:20px; font-weight:500; line-height:1.4; margin-bottom:40px; color:#fff;"></div>
+    <input type="text" id="anchorInput" style="background:transparent; border:none; border-bottom:1px solid var(--border-divider, #3a3b42); text-align:center; font-size:18px; width:100%; padding-bottom:12px; color:#fff; display:none; outline:none;" placeholder="Type here..." autocomplete="off">
+    <button id="anchorDepletedBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--bg-card); color:#fff; border:1px solid var(--border-divider); border-radius:12px;">Log 15m of Deep Leisure</button>
+    <button id="anchorStuckBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--accent); color:#111418; border:none; border-radius:12px; font-weight:600;">I have the physical movement in my head</button>
+  </div>
+</div>
+  
 </body>
 </html>
