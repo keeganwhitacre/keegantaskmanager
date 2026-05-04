@@ -2621,7 +2621,7 @@
   ],
   "dash": {
     "intention": "",
-    "intentionWeek": "2026-W18",
+    "intentionWeek": "2026-W19",
     "quoteIdx": 8,
     "countdown": {
       "name": "Leaving San Diego :(",
@@ -2924,6 +2924,53 @@
         ]
       },
       "2026-W18": {
+        "sleep": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "read": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "lift": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "doom": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "phone": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "2026-W19": {
         "sleep": [
           false,
           false,
@@ -4295,5 +4342,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T11:56:13.293Z"
+  "updated": "2026-05-04T12:00:35.610Z"
 }
