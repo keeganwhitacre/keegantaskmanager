@@ -21,6 +21,19 @@ import { initTimeline, onTimelineEnter } from './timeline.js';
 import { initBel, renderBel } from './bel.js';
 import { renderCNList } from './confnotes.js';
 
+
+// ══════════════════════════════════════════════════════════════════
+// catCls — exported for confnotes.js
+// In the new design categories are plain text, no color injection.
+// We keep the function signature so confnotes doesn't break.
+// ══════════════════════════════════════════════════════════════════
+
+export function catCls(cat) {
+  // New design: categories are just mono text, no color classes.
+  // Return a generic class that confnotes can use safely.
+  return 'cat-tag';
+}
+
 // ══════════════════════════════════════════════════════════════════
 // UTILITIES
 // ══════════════════════════════════════════════════════════════════
