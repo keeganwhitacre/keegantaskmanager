@@ -1,4 +1,4 @@
-var CACHE_VERSION = 'kw-v8';
+var CACHE_VERSION = 'kw-v9';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
