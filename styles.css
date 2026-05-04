@@ -1775,3 +1775,276 @@ body.bel-mode           .hide-bel      { display: none !important; }
 
 /* Hide bottom nav in bel mode */
 body.bel-mode .bottom-nav { display: none; }
+
+/* ══════════════════════════════════════════════════════════════════
+   DESKTOP LAYOUT
+══════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 600px) {
+  body {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .bottom-nav {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: 480px;
+  }
+
+  .fab {
+    right: calc(50% - 240px + 24px);
+  }
+
+  .sheet {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    right: auto;
+    width: 480px;
+  }
+  .sheet.open {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .settings-sheet {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    right: auto;
+    width: 480px;
+  }
+  .settings-sheet.open {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast, .toast-undo {
+    max-width: 420px;
+  }
+
+  .sync-bar {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: 480px;
+  }
+}
+
+/* cat-tag — generic tag style used by catCls stub in new design */
+.cat-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   CONFNOTES COMPATIBILITY STYLES
+   confnotes.js uses its own class names — styled to match new design
+══════════════════════════════════════════════════════════════════ */
+
+/* Full-screen note editor */
+.cn-detail-fullscreen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cn-detail-topbar {
+  display: flex;
+  align-items: center;
+  padding: max(env(safe-area-inset-top, 0px), 14px) 16px 10px;
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.cn-detail-topbar-title {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  color: var(--text-tertiary);
+}
+
+/* Note cards in list */
+.cn-note-card {
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.cn-note-card:last-child { border-bottom: none; }
+.cn-note-card:active { opacity: 0.6; }
+
+.cn-card-title {
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cn-card-preview {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cn-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.cn-card-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.cn-card-type {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* Idea status badge */
+.cn-idea-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+.cn-idea-badge.ready { color: var(--text-secondary); }
+.cn-idea-badge.stale { color: var(--warning); }
+
+/* Note type chips in editor */
+.cn-type-chip.active {
+  color: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+}
+
+.cn-status-chip.active {
+  color: var(--text-primary) !important;
+  border-color: var(--text-primary) !important;
+}
+
+/* Mono toggle active state */
+.cn-scratch-mono.mono-active {
+  color: var(--text-primary);
+}
+
+/* Pin/lock button active states */
+.cn-pin-btn.pinned svg { fill: var(--text-primary); }
+.cn-lock-btn.locked svg { stroke: var(--warning); }
+
+/* Empty state */
+.cn-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  font-style: italic;
+}
+.cn-empty-icon { font-size: 32px; margin-bottom: 12px; }
+
+/* Backlinks */
+.cn-backlink-item {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  cursor: pointer;
+  border-bottom: 0.5px solid var(--border);
+}
+.cn-backlink-item:last-child { border-bottom: none; }
+.cn-backlink-context {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* Backlinks drawer */
+#cnBacklinksDrawer {
+  display: none;
+}
+#cnBacklinksDrawer.open {
+  display: block;
+}
+
+/* Tag chips in editor (s-chip class used by confnotes) */
+.s-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  border: 0.5px solid var(--border-strong);
+  border-radius: 99px;
+  padding: 3px 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.s-chip.active {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+/* Markdown preview in note editor */
+.cn-md-preview {
+  flex: 1;
+  padding: 14px 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-y: auto;
+  color: var(--text-primary);
+}
+.cn-md-preview h1 { font-size: 18px; font-weight: 500; margin: 16px 0 8px; }
+.cn-md-preview h2 { font-size: 16px; font-weight: 500; margin: 14px 0 6px; }
+.cn-md-preview h3 { font-size: 15px; font-weight: 500; margin: 12px 0 4px; }
+.cn-md-preview p  { margin-bottom: 10px; }
+.cn-md-preview ul, .cn-md-preview ol { padding-left: 18px; margin-bottom: 10px; }
+.cn-md-preview li { margin-bottom: 4px; }
+.cn-md-preview code { font-family: var(--font-mono); font-size: 12px; background: var(--bg-secondary); padding: 1px 5px; border-radius: 3px; }
+.cn-md-preview pre { background: var(--bg-secondary); padding: 12px; border-radius: 6px; overflow-x: auto; margin-bottom: 10px; }
+.cn-md-preview pre code { background: none; padding: 0; }
+.cn-md-preview blockquote { border-left: 2px solid var(--border-strong); padding-left: 12px; color: var(--text-secondary); margin: 10px 0; }
+.cn-md-preview strong { font-weight: 500; }
+.cn-md-preview a { color: var(--text-secondary); text-decoration: underline; }
+.cn-md-preview hr { border: none; border-top: 0.5px solid var(--border-strong); margin: 16px 0; }
+
+/* Note animations */
+@keyframes cnDetailIn  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+@keyframes cnDetailOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px); } }
+@keyframes cnListIn    { from { opacity: 0; } to { opacity: 1; } }
+.cn-detail-enter { animation: cnDetailIn  0.18s ease forwards; }
+.cn-detail-exit  { animation: cnDetailOut 0.15s ease forwards; }
+.cn-list-enter   { animation: cnListIn    0.18s ease forwards; }
+
+/* cn-filter-row for notes */
+.cn-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+.cn-filter-row::-webkit-scrollbar { display: none; }
+
+/* confnotes-styles.css variables compatibility */
+.cn-note-card.cn-type-paper .cn-card-type { color: var(--text-secondary); }
+.cn-note-card.cn-type-idea  .cn-card-type { color: var(--text-secondary); }
