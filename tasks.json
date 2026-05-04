@@ -3491,6 +3491,21 @@
   },
   "cnNotes": [
     {
+      "id": "mor589eh6qg7",
+      "title": "Revamp tasks",
+      "speaker": "",
+      "body": "Revamp tasks app\nKeep fixing shelf",
+      "tags": [],
+      "projectId": "",
+      "bodyIsMono": false,
+      "pinned": false,
+      "type": "memo",
+      "url": "",
+      "ideaStatus": "",
+      "createdAt": "2026-05-04T11:55:56.441Z",
+      "updatedAt": "2026-05-04T11:56:10.232Z"
+    },
+    {
       "id": "mokcaq2hrfvl",
       "title": "Apotris songs",
       "speaker": "",
@@ -4280,5 +4295,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-03T19:36:29.431Z"
+  "updated": "2026-05-04T11:56:13.293Z"
 }
