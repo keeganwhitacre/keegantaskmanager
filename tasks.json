@@ -4305,7 +4305,7 @@
       {
         "id": "doom",
         "label": "Doom scrolled",
-        "bad": true,
+        "bad": false,
         "days": [
           0,
           1,
@@ -4352,5 +4352,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T15:33:18.191Z"
+  "updated": "2026-05-04T15:33:51.442Z"
 }
