@@ -217,7 +217,7 @@
       "title": "Slack Features + Organization",
       "text": "Slack Features + Organization",
       "status": "active",
-      "priority": "lo",
+      "priority": "hi",
       "section": "upcoming",
       "note": "",
       "due": "",
@@ -458,7 +458,7 @@
         "lab"
       ],
       "status": "active",
-      "priority": "lo",
+      "priority": "md",
       "pinnedToday": false,
       "note": "",
       "due": "",
@@ -4362,5 +4362,5 @@
       "text": "Back"
     }
   ],
-  "updated": "2026-05-04T15:34:48.552Z"
+  "updated": "2026-05-04T15:40:48.649Z"
 }
