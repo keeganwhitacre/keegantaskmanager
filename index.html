@@ -95,112 +95,105 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════
-     NOTES VIEW  (confnotes.js manages content)
+     NOTES VIEW  (confnotes.js manages content — IDs must match)
 ══════════════════════════════════════════════════════════ -->
 <div class="notes-view" id="confNotesView">
 
-  <!-- Filter row -->
-  <div class="cn-filter-row" style="padding: 8px 24px 0; flex-shrink:0;">
-    <div class="chip active" data-cn-filter="all">all</div>
-    <div class="chip" data-cn-filter="memo">notes</div>
-    <div class="chip" data-cn-filter="paper">papers</div>
-    <div class="chip" data-cn-filter="idea">ideas</div>
-    <div class="chip" data-cn-filter="pinned">pinned</div>
+  <!-- List view — confnotes.js toggles between this and detail -->
+  <div id="cnListView" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+
+    <!-- Search -->
+    <div class="cn-search-wrap" id="cnSearchWrap" style="padding:8px 24px 0; flex-shrink:0; display:none;">
+      <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes…">
+    </div>
+
+    <!-- Filter chips — rebuilt by rebuildCNChips() -->
+    <div class="cn-filter-row" id="cnFilterRow" style="padding:8px 24px 0; flex-shrink:0;"></div>
+
+    <!-- Note cards list -->
+    <div class="main-scroll" id="cnNotesList"></div>
+
+    <!-- New note type menu (long-press FAB) -->
+    <div id="cnNewMenu" class="cn-new-menu" style="display:none; position:fixed; bottom:80px; right:24px; background:var(--bg); border:0.5px solid var(--border-strong); border-radius:var(--radius-lg); padding:8px 0; z-index:60; min-width:140px;">
+      <div class="cn-new-menu-item" data-newtype="memo" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">note</div>
+      <div class="cn-new-menu-item" data-newtype="paper" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">paper</div>
+      <div class="cn-new-menu-item" data-newtype="idea" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">idea</div>
+    </div>
   </div>
 
-  <!-- Note list -->
-  <div class="main-scroll" id="cnNoteList"></div>
-
-  <!-- Note detail (full-screen overlay) -->
-  <div class="cn-detail-view" id="cnDetailView">
-    <div class="cn-detail-header">
-      <span class="cn-detail-back" id="cnDetailBack">← notes</span>
-      <div class="cn-detail-actions">
-        <span class="cn-detail-action" id="cnDetailPreviewToggle">preview</span>
-        <span class="cn-detail-action" id="cnDetailMonoToggle">mono</span>
-        <span class="cn-detail-action" id="cnDetailMenuBtn">···</span>
-      </div>
-    </div>
-
-    <!-- Note type / URL row — shown contextually by JS -->
-    <div style="padding: 0 24px; flex-shrink:0;" id="cnNoteMetaBar">
-      <div style="display:flex; align-items:center; gap:8px; padding: 8px 0; border-bottom: 0.5px solid var(--border);">
-        <div class="cn-filter-row" id="cnTypeRow" style="padding:0; gap:6px;">
-          <div class="cn-type-chip active" data-type="memo">note</div>
-          <div class="cn-type-chip" data-type="paper">paper</div>
-          <div class="cn-type-chip" data-type="idea">idea</div>
+  <!-- Detail view — confnotes.js shows/hides this -->
+  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none;">
+    <div class="cn-detail-topbar">
+      <button id="cnBackBtn" class="icon-btn" style="margin-right:8px; background:transparent; border:none; font-size:20px; color:var(--text-tertiary); cursor:pointer;">‹</button>
+      <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
+      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+        <span id="cnMdToggle" class="cn-scratch-mono" style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); cursor:pointer; letter-spacing:0.04em;">preview</span>
+        <span id="cnMonoToggle" class="cn-scratch-mono" style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); cursor:pointer; letter-spacing:0.04em;">mono off</span>
+        <div class="icon-btn cn-lock-btn" id="cnLockBtn" title="Lock note" style="display:none; background:transparent; border:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         </div>
-        <div id="cnIdeaStatusRow" style="display:none; gap:6px; flex-shrink:0;" class="cn-filter-row">
-          <div class="cn-status-chip active" data-status="raw">raw</div>
-          <div class="cn-status-chip" data-status="developing">developing</div>
-          <div class="cn-status-chip" data-status="ready to pitch">ready</div>
+        <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note" style="background:transparent; border:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
+        </div>
+        <div class="icon-btn" id="cnDeleteBtn" style="background:transparent; border:none;">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#e57373" fill="none" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
         </div>
       </div>
     </div>
 
-    <div class="cn-detail-body" id="cnDetailBody">
-      <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…" autocomplete="off" autocorrect="on" autocapitalize="sentences">
-
-      <!-- URL row (paper type) -->
-      <div class="cn-url-row" id="cnUrlRow" style="display:none;">
-        <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocomplete="off" autocapitalize="none">
-        <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">open ↗</a>
-      </div>
-
-      <!-- Body textarea / md preview -->
-      <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write…" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
-      <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
-
-      <!-- Metadata drawer -->
-      <details class="cn-meta-drawer" id="cnMetaDrawer">
-        <summary class="cn-meta-toggle">tags &amp; info</summary>
-        <div class="cn-meta-content">
-          <div class="cn-tag-row" id="cnTagRow"></div>
-          <div class="cn-detail-meta" id="cnDetailMeta"></div>
+    <!-- Type selector row -->
+    <div style="padding:0 20px; border-bottom:0.5px solid var(--border); flex-shrink:0;">
+      <div style="display:flex; gap:12px; padding:8px 0; align-items:center;">
+        <div id="cnTypeRow" style="display:flex; gap:8px;">
+          <div class="cn-type-chip active" data-type="memo" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">note</div>
+          <div class="cn-type-chip" data-type="paper" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">paper</div>
+          <div class="cn-type-chip" data-type="idea" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">idea</div>
         </div>
-      </details>
-
-      <!-- Backlinks -->
-      <div class="cn-backlinks" id="cnBacklinks" style="display:none;">
-        <div class="cn-backlink-label">linked from</div>
-        <div id="cnBacklinkList"></div>
+        <div id="cnIdeaStatusRow" style="display:none; gap:6px;">
+          <div class="cn-status-chip active" data-status="raw" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">raw</div>
+          <div class="cn-status-chip" data-status="developing" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">developing</div>
+          <div class="cn-status-chip" data-status="ready to pitch" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">ready</div>
+        </div>
       </div>
     </div>
 
-    <!-- PIN overlay -->
-    <div class="cn-pin-overlay" id="cnPinOverlay" style="display:none;">
-      <div class="cn-pin-label">enter pin</div>
-      <div class="cn-pin-dots" id="cnPinDots">
-        <div class="cn-pin-dot"></div>
-        <div class="cn-pin-dot"></div>
-        <div class="cn-pin-dot"></div>
-        <div class="cn-pin-dot"></div>
-      </div>
-      <div class="cn-pin-pad" id="cnPinPad">
-        <div class="cn-pin-key" data-key="1">1</div>
-        <div class="cn-pin-key" data-key="2">2</div>
-        <div class="cn-pin-key" data-key="3">3</div>
-        <div class="cn-pin-key" data-key="4">4</div>
-        <div class="cn-pin-key" data-key="5">5</div>
-        <div class="cn-pin-key" data-key="6">6</div>
-        <div class="cn-pin-key" data-key="7">7</div>
-        <div class="cn-pin-key" data-key="8">8</div>
-        <div class="cn-pin-key" data-key="9">9</div>
-        <div class="cn-pin-key" data-key="del">⌫</div>
-        <div class="cn-pin-key" data-key="0">0</div>
-        <div class="cn-pin-key" data-key="cancel" style="font-size:12px; color:var(--text-tertiary);">cancel</div>
-      </div>
+    <!-- Title -->
+    <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…" autocomplete="off" autocorrect="on" autocapitalize="sentences" style="display:block; width:100%; font-size:18px; padding:14px 20px 10px; border-bottom:0.5px solid var(--border); border-top:none; border-left:none; border-right:none; background:transparent; color:var(--text-primary); font-family:var(--font-sans);">
+
+    <!-- Speaker/source (paper type) -->
+    <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" autocomplete="off" autocapitalize="sentences" style="display:block; width:100%; font-size:13px; padding:8px 20px; border-bottom:0.5px solid var(--border); border-top:none; border-left:none; border-right:none; background:transparent; color:var(--text-secondary); font-family:var(--font-sans);">
+
+    <!-- URL row (paper type) -->
+    <div id="cnUrlRow" style="display:none; padding:6px 20px; border-bottom:0.5px solid var(--border); align-items:center; gap:8px;">
+      <input id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocomplete="off" autocapitalize="none" style="flex:1; font-family:var(--font-mono); font-size:12px; border:none; background:transparent; color:var(--text-secondary);">
+      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">open ↗</a>
     </div>
 
-    <!-- Note action menu -->
-    <div class="sheet-backdrop" id="cnMenuBackdrop"></div>
-    <div class="sheet" id="cnMenuSheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-actions" style="flex-direction:column; gap:8px; margin-top:0;">
-        <button class="sheet-btn" id="cnMenuPin">pin note</button>
-        <button class="sheet-btn" id="cnMenuLock">lock note</button>
-        <button class="sheet-btn" id="cnMenuDuplicate">duplicate</button>
-        <button class="sheet-btn danger" id="cnMenuDelete">delete note</button>
+    <!-- Body -->
+    <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write…" autocorrect="on" autocapitalize="sentences" spellcheck="true" style="flex:1; width:100%; padding:14px 20px; font-size:15px; line-height:1.7; border:none; background:transparent; color:var(--text-primary); resize:none; font-family:var(--font-sans);"></textarea>
+    <div class="cn-md-preview" id="cnMdPreview" style="display:none; flex:1; padding:14px 20px; font-size:15px; line-height:1.7; overflow-y:auto;"></div>
+
+    <!-- Meta drawer -->
+    <details id="cnMetaDrawer" style="border-top:0.5px solid var(--border); flex-shrink:0;">
+      <summary style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.07em; color:var(--text-tertiary); text-transform:uppercase; cursor:pointer; padding:10px 20px; list-style:none;">tags &amp; info</summary>
+      <div style="padding:8px 20px 12px;">
+        <div id="cnTagRow" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
+        <div style="margin-bottom:8px;">
+          <select id="cnProjectInput" style="font-size:12px; color:var(--text-secondary); border:0.5px solid var(--border-strong); border-radius:4px; padding:4px 8px; background:var(--bg); font-family:var(--font-mono);">
+            <option value="">no project</option>
+          </select>
+        </div>
+        <div id="cnDetailMeta" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary);"></div>
+      </div>
+    </details>
+
+    <!-- Backlinks -->
+    <div style="border-top:0.5px solid var(--border); flex-shrink:0;">
+      <div id="cnBacklinksToggle" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.07em; color:var(--text-tertiary); text-transform:uppercase; cursor:pointer; padding:10px 20px; display:flex; align-items:center; gap:6px;">
+        backlinks <span id="cnBacklinksArrow" style="transition:transform 0.15s;">▸</span>
+      </div>
+      <div id="cnBacklinksDrawer" style="display:none; padding:0 20px 12px;">
+        <div id="cnBacklinksList"></div>
       </div>
     </div>
   </div>
