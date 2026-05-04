@@ -34,7 +34,7 @@ function switchView(viewName) {
   currentView = viewName;
 
   // Update tab bar active state
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bottom-tab').forEach(b => b.classList.remove('active'));
   const tabMap = { tasks: 'tabTasks', notes: 'tabNotes', reflect: 'tabReflect' };
   const tabId = tabMap[viewName];
   if (tabId) document.getElementById(tabId)?.classList.add('active');
