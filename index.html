@@ -10,301 +10,412 @@
   <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <title>Tasks</title>
+  <style>
+    @font-face { font-display: swap; font-family: 'DM Mono'; font-style: normal; font-weight: 400; src: url('/fonts/dm-mono-v16-latin-regular.woff2') format('woff2'); }
+    @font-face { font-display: swap; font-family: 'DM Mono'; font-style: normal; font-weight: 500; src: url('/fonts/dm-mono-v16-latin-500.woff2') format('woff2'); }
 
-  <!-- Flash-of-wrong-theme prevention -->
-  <script>
-    (function(){
-      try {
-        var t = localStorage.getItem('kw_theme_v2') || '';
-        if (t === 'aurora' || t === 'neon' || t === 'ios-dark') {
-          document.documentElement.style.background = '#0a0a0a';
-          document.body && document.body.classList.add('theme-dark');
-        }
-      } catch(e) {}
-    })();
-  </script>
-
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="confnotes-styles.css">
-
-  <link rel="modulepreload" href="state.js">
-  <link rel="modulepreload" href="sync.js">
-  <link rel="modulepreload" href="router.js">
-  <link rel="modulepreload" href="bel.js">
-  <link rel="modulepreload" href="dashboard.js">
-  <link rel="modulepreload" href="timeline.js">
-  <link rel="modulepreload" href="confnotes.js">
-  <link rel="modulepreload" href="app.js">
-
-  <script type="module" src="app.js"></script>
-  <script src="/lib/marked.min.js" defer></script>
-  <script type="module" src="confnotes.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js');
-      });
+    :root {
+      --bg: #ffffff; --bg-secondary: #f7f7f5;
+      --text-primary: #0a0a0a; --text-secondary: #5a5a5a; --text-tertiary: #999999;
+      --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.14);
+      --danger: #c0392b; --warning: #d35400; --success: #27ae60;
+      --color-manuscript: #8e44ad; --color-lab: #2980b9; --color-phd: #e67e22;
+      --color-conf: #c0392b; --color-bel: #fd79a8; --color-personal: #27ae60; --color-hobby: #00cec9;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+      --font-mono: 'DM Mono', ui-monospace, "SF Mono", Menlo, monospace;
+      --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
     }
-  </script>
-</head>
-<body>
+    body.theme-dark { --bg: #0a0a0a; --bg-secondary: #161616; --text-primary: #f0f0f0; --text-secondary: #8a8a8a; --text-tertiary: #555555; --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14); --danger: #e57373; --warning: #e6a020; --success: #4caf78; --color-manuscript: #af52de; --color-lab: #007aff; --color-phd: #ff9f0a; --color-conf: #ff3b30; --color-bel: #ff6b9d; --color-personal: #32d74b; --color-hobby: #64d2ff; }
+    @media (prefers-color-scheme: dark) { body:not(.theme-light) { --bg: #0a0a0a; --bg-secondary: #161616; --text-primary: #f0f0f0; --text-secondary: #8a8a8a; --text-tertiary: #555555; --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.14); --danger: #e57373; --warning: #e6a020; --success: #4caf78; --color-manuscript: #af52de; --color-lab: #007aff; --color-phd: #ff9f0a; --color-conf: #ff3b30; --color-bel: #ff6b9d; --color-personal: #32d74b; --color-hobby: #64d2ff; } }
 
-<!-- ══════════════════════════════════════════════════════════
-     SYNC BAR
-══════════════════════════════════════════════════════════ -->
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { height: 100dvh; overflow: hidden; background: var(--bg); }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--text-primary); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+    button, input, textarea, select { font: inherit; color: inherit; background: transparent; border: none; outline: none; appearance: none; -webkit-appearance: none; }
+    button { cursor: pointer; } a { color: inherit; text-decoration: none; }
+    input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
+
+    /* HEADER */
+    .header { display: flex; justify-content: space-between; align-items: baseline; padding: max(env(safe-area-inset-top,0px),16px) 24px 0; flex-shrink: 0; background: var(--bg); z-index: 10; }
+    .header-wordmark { font-size: 17px; font-weight: 400; color: var(--text-tertiary); letter-spacing: 0.01em; cursor: pointer; user-select: none; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-action { font-size: 15px; color: var(--text-tertiary); cursor: pointer; padding: 4px 0; user-select: none; }
+    .header-action:active { opacity: 0.5; }
+
+    /* BOTTOM NAV */
+    .bottom-nav { display: flex; align-items: center; justify-content: space-around; padding: 0 0 max(env(safe-area-inset-bottom,0px),8px); border-top: 0.5px solid var(--border); background: var(--bg); flex-shrink: 0; position: fixed; bottom: 0; left: 0; right: 0; z-index: 40; }
+    .bottom-tab { flex: 1; font-size: 12px; color: var(--text-tertiary); letter-spacing: 0.04em; padding: 12px 0 8px; cursor: pointer; user-select: none; text-align: center; transition: color 0.12s; background: transparent; border: none; }
+    .bottom-tab.active { color: var(--text-primary); }
+
+    /* SCROLL */
+    .main-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 0 24px; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+    .main-scroll::-webkit-scrollbar { display: none; }
+
+    /* SECTION LABELS */
+    .section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--text-tertiary); text-transform: uppercase; padding: 20px 0 8px; border-bottom: 0.5px solid var(--border); margin-bottom: 4px; }
+
+    /* FAB */
+    .fab { position: fixed; bottom: calc(max(env(safe-area-inset-bottom,0px),8px) + 56px); right: 24px; width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); display: flex; align-items: center; justify-content: center; z-index: 50; transition: transform 0.1s; border: none; }
+    .fab:active { transform: scale(0.92); }
+    .fab svg { width: 20px; height: 20px; stroke: var(--bg); stroke-width: 2; fill: none; }
+
+    /* SYNC BAR */
+    .sync-bar { position: fixed; top: 0; left: 0; right: 0; padding: 8px 24px; padding-top: calc(8px + env(safe-area-inset-top)); font-family: var(--font-mono); font-size: 11px; text-align: center; opacity: 0; transition: opacity 0.2s; z-index: 300; pointer-events: none; }
+    .sync-bar.show { opacity: 1; }
+    .sync-bar.error { color: var(--danger); }
+    .sync-bar.offline { color: var(--warning); }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(8px); background: var(--text-primary); color: var(--bg); font-size: 13px; padding: 8px 16px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.22s ease; pointer-events: none; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast-undo { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(8px); background: var(--text-primary); color: var(--bg); font-size: 13px; padding: 8px 8px 8px 16px; border-radius: 99px; z-index: 400; opacity: 0; transition: all 0.22s ease; pointer-events: none; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .toast-undo.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+    .toast-undo-btn { background: var(--bg); color: var(--text-primary); font-family: var(--font-mono); font-size: 11px; padding: 4px 10px; border-radius: 99px; cursor: pointer; }
+
+    /* TASKS */
+    .task { position: relative; border-bottom: 0.5px solid var(--border); cursor: pointer; user-select: none; touch-action: pan-y; overflow: hidden; }
+    .task.done { opacity: 0.38; }
+    .task.dimmed { opacity: 0.5; }
+    .task-content { display: flex; align-items: baseline; gap: 12px; padding: 11px 0; background: var(--bg); position: relative; z-index: 2; width: 100%; transition: transform 0.18s ease, background 0.1s; }
+    .task-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; border: 1.5px solid var(--border-strong); background: transparent; transition: all 0.15s; }
+    .task-body { flex: 1; min-width: 0; }
+    .task-title { font-size: 15px; font-weight: 400; color: var(--text-primary); line-height: 1.4; }
+    .task.done .task-title { text-decoration: line-through; color: var(--text-tertiary); }
+    .task-meta-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+    .cat { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.02em; padding: 2px 6px; border-radius: 4px; }
+    .status { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+    .status.waiting { color: var(--warning); } .status.blocked { color: var(--danger); }
+    .task-due { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); flex-shrink: 0; align-self: flex-start; padding-top: 2px; }
+    .task-due.overdue { color: var(--danger); } .task-due.soon { color: var(--warning); }
+    .swipe-action-left, .swipe-action-right { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 20px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; opacity: 0; z-index: 1; }
+    .swipe-action-left { left: 0; color: var(--danger); }
+    .swipe-action-right { right: 0; color: var(--warning); }
+
+    /* FILTER */
+    .filter-scroll { display: flex; padding: 12px 24px 0; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .chip { flex-shrink: 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 4px 0; margin-right: 18px; border-bottom: 1.5px solid transparent; cursor: pointer; user-select: none; transition: color 0.12s, border-color 0.12s; text-transform: uppercase; }
+    .chip.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+
+    /* SEARCH */
+    .search-wrap { padding: 10px 0 0; display: none; }
+    .search-wrap.open { display: block; }
+    .search-input { width: 100%; font-size: 15px; padding: 8px 0; border-bottom: 0.5px solid var(--border-strong); background: transparent; color: var(--text-primary); }
+    .search-input::placeholder { color: var(--text-tertiary); }
+    .empty-state { text-align: center; padding: 48px 0; color: var(--text-tertiary); font-style: italic; font-size: 14px; }
+
+    /* SHEETS */
+    .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; display: none; opacity: 0; transition: opacity 0.22s; }
+    .sheet-backdrop.open { display: block; opacity: 1; }
+    .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 0.5px solid var(--border-strong); border-radius: var(--radius-lg) var(--radius-lg) 0 0; z-index: 110; padding: 20px 24px; padding-bottom: max(env(safe-area-inset-bottom,0px),24px); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); max-height: 92dvh; overflow-y: auto; }
+    .sheet.open { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 0 auto 20px; }
+    .sheet-title-input { font-size: 17px; color: var(--text-primary); width: 100%; padding: 0 0 12px; border-bottom: 0.5px solid var(--border); margin-bottom: 16px; }
+    .sheet-title-input::placeholder { color: var(--text-tertiary); }
+    .sheet-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .sheet-row-label { font-size: 14px; color: var(--text-secondary); }
+    .seg-control { display: flex; gap: 2px; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 2px; }
+    .seg-btn { flex: 1; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 6px 8px; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.12s; }
+    .seg-btn.active { background: var(--bg); color: var(--text-primary); }
+    .date-input { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); border: 0.5px solid var(--border-strong); border-radius: var(--radius-sm); padding: 6px 10px; }
+    .cat-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; }
+    .cat-toggle { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 4px 10px; border: 0.5px solid var(--border-strong); border-radius: 99px; cursor: pointer; transition: all 0.12s; }
+    .cat-toggle.active { color: var(--text-primary); border-color: var(--text-primary); background: var(--bg-secondary); }
+    .sheet-note { font-size: 14px; color: var(--text-secondary); line-height: 1.6; width: 100%; min-height: 80px; padding: 10px 0; resize: none; margin-top: 8px; }
+    .sheet-note::placeholder { color: var(--text-tertiary); }
+    .sheet-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .sheet-btn { flex: 1; padding: 11px; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); text-align: center; cursor: pointer; background: transparent; }
+    .sheet-btn.primary { color: var(--text-primary); border-color: var(--text-primary); }
+    .sheet-btn.danger { color: var(--danger); border-color: var(--danger); }
+
+    /* NOTES */
+    .cn-note-card { padding: 13px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .cn-note-card:active { opacity: 0.6; }
+    .cn-card-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+    .cn-card-title { font-size: 15px; font-weight: 400; color: var(--text-primary); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cn-type-badge { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.05em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+    .cn-card-preview { font-size: 13px; color: var(--text-tertiary); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    .cn-card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .cn-card-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
+    .cn-card-status { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+    .cn-card-status.ready { color: var(--text-secondary); }
+    .cn-filter-row { display: flex; padding: 10px 24px 0; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
+    .cn-filter-row::-webkit-scrollbar { display: none; }
+
+    /* NOTE DETAIL */
+    .cn-detail-fullscreen { position: fixed; inset: 0; background: var(--bg); z-index: 60; display: flex; flex-direction: column; }
+    .cn-detail-topbar { display: flex; align-items: center; padding: max(env(safe-area-inset-top,0px),14px) 16px 10px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; gap: 8px; }
+    .cn-detail-topbar-actions { margin-left: auto; display: flex; gap: 14px; align-items: center; }
+    .cn-detail-action { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; letter-spacing: 0.03em; }
+    .cn-detail-action:active { opacity: 0.5; }
+    .cn-type-row { display: flex; gap: 6px; padding: 8px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+    .cn-type-chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 2px 8px; cursor: pointer; }
+    .cn-type-chip.active { color: var(--text-primary); border-color: var(--text-primary); }
+    .cn-status-row { display: flex; gap: 6px; padding: 6px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; display: none; }
+    .cn-status-chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; color: var(--text-tertiary); border: 0.5px solid var(--border-strong); border-radius: 3px; padding: 2px 8px; cursor: pointer; }
+    .cn-status-chip.active { color: var(--text-primary); border-color: var(--text-primary); }
+    .cn-detail-title { font-size: 20px; font-weight: 400; color: var(--text-primary); width: 100%; padding: 14px 20px 10px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+    .cn-detail-title::placeholder { color: var(--text-tertiary); }
+    .cn-detail-source { font-size: 13px; color: var(--text-secondary); width: 100%; padding: 8px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+    .cn-detail-source::placeholder { color: var(--text-tertiary); }
+    .cn-url-row { display: none; padding: 6px 20px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; align-items: center; gap: 8px; }
+    .cn-url-row.visible { display: flex; }
+    .cn-url-input { flex: 1; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); border: none; background: transparent; }
+    .cn-url-input::placeholder { color: var(--text-tertiary); }
+    .cn-url-open { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; flex-shrink: 0; }
+    .cn-detail-body { font-size: 15px; color: var(--text-primary); line-height: 1.7; width: 100%; flex: 1; resize: none; border: none; background: transparent; padding: 14px 20px; font-family: var(--font-sans); caret-color: var(--text-primary); }
+    .cn-detail-body::placeholder { color: var(--text-tertiary); }
+    .cn-detail-body.mono { font-family: var(--font-mono); font-size: 13px; line-height: 1.65; }
+    .cn-md-preview { flex: 1; padding: 14px 20px; font-size: 15px; line-height: 1.7; overflow-y: auto; color: var(--text-primary); display: none; }
+    .cn-md-preview h1 { font-size: 18px; font-weight: 500; margin: 12px 0 6px; }
+    .cn-md-preview h2 { font-size: 16px; font-weight: 500; margin: 10px 0 5px; }
+    .cn-md-preview h3 { font-size: 15px; font-weight: 500; margin: 8px 0 4px; }
+    .cn-md-preview p { margin-bottom: 10px; }
+    .cn-md-preview ul, .cn-md-preview ol { padding-left: 20px; margin-bottom: 10px; }
+    .cn-md-preview li { margin-bottom: 3px; }
+    .cn-md-preview code { font-family: var(--font-mono); font-size: 12px; background: var(--bg-secondary); padding: 1px 5px; border-radius: 3px; }
+    .cn-md-preview pre { background: var(--bg-secondary); padding: 12px; border-radius: 6px; overflow-x: auto; margin-bottom: 10px; }
+    .cn-md-preview pre code { background: none; padding: 0; }
+    .cn-md-preview blockquote { border-left: 2px solid var(--border-strong); padding-left: 12px; color: var(--text-secondary); margin: 8px 0; }
+    .cn-md-preview strong { font-weight: 500; }
+    .cn-md-preview a { color: var(--text-secondary); text-decoration: underline; }
+    .wiki-link { color: var(--color-lab); text-decoration: underline; cursor: pointer; }
+    .wiki-link-broken { color: var(--text-tertiary); text-decoration: underline dotted; cursor: pointer; }
+    .cn-backlinks { border-top: 0.5px solid var(--border); flex-shrink: 0; }
+    .cn-backlinks-toggle { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); padding: 10px 20px; cursor: pointer; }
+    .cn-backlinks-list { padding: 0 20px 10px; }
+    .cn-backlink-item { font-size: 13px; color: var(--text-secondary); padding: 5px 0; cursor: pointer; border-bottom: 0.5px solid var(--border); }
+    .cn-backlink-item:last-child { border-bottom: none; }
+
+    /* PIN MODAL */
+    .pin-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .pin-overlay.open { display: flex; }
+    .pin-dots { display: flex; gap: 12px; }
+    .pin-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; transition: background 0.1s; }
+    .pin-dot.filled { background: var(--text-primary); border-color: var(--text-primary); }
+    .pin-pad { display: grid; grid-template-columns: repeat(3, 56px); gap: 10px; }
+    .pin-key { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-secondary); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: background 0.1s; user-select: none; }
+    .pin-key:active { background: var(--border-strong); }
+
+    /* REFLECT */
+    .affect-grid-wrap { position: relative; padding: 16px 0; }
+    .affect-axis { position: absolute; font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary); }
+    .affect-grid { width: 100%; aspect-ratio: 1; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); position: relative; cursor: crosshair; touch-action: none; background: var(--bg-secondary); overflow: hidden; }
+    .affect-crosshair-h { position: absolute; left: 0; right: 0; top: 50%; height: 0.5px; background: var(--border); pointer-events: none; }
+    .affect-crosshair-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 0.5px; background: var(--border); pointer-events: none; }
+    .affect-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; display: none; }
+    .affect-dot.placed { display: block; }
+    .affect-history { display: flex; gap: 4px; flex-wrap: wrap; padding: 8px 0 4px; }
+    .affect-mini-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); cursor: pointer; flex-shrink: 0; }
+    .affect-status { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding: 4px 0 8px; }
+    .habit-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 0.5px solid var(--border); }
+    .habit-name { font-size: 15px; color: var(--text-primary); }
+    .habit-streak { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-right: 8px; }
+    .habit-check { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.12s; flex-shrink: 0; }
+    .habit-check.done { background: var(--success); border-color: var(--success); }
+    .habit-check svg { width: 13px; height: 13px; stroke: var(--bg); fill: none; stroke-width: 2.5; display: none; }
+    .habit-check.done svg { display: block; }
+    .reflect-seg { display: flex; gap: 16px; padding: 12px 24px 0; flex-shrink: 0; }
+    .reflect-seg-btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--text-tertiary); padding: 0 0 8px; border-bottom: 1px solid transparent; cursor: pointer; background: transparent; border-radius: 0; transition: color 0.12s, border-color 0.12s; }
+    .reflect-seg-btn.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+    .ins-section { padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+    .ins-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; }
+
+    /* BEL */
+    .bel-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+    .bel-cb { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border-strong); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .bel-cb.checked { background: var(--color-bel); border-color: var(--color-bel); }
+    .bel-cb.checked::after { content: '✓'; font-size: 10px; color: #fff; }
+    .bel-text { flex: 1; font-size: 14px; color: var(--text-primary); }
+    .bel-text.checked { text-decoration: line-through; opacity: 0.5; }
+    .bel-del { font-size: 16px; color: var(--text-tertiary); cursor: pointer; padding: 0 4px; }
+    .bel-add-row { display: flex; gap: 8px; padding: 10px 0; }
+    .bel-add-input { flex: 1; font-size: 15px; border-bottom: 0.5px solid var(--border); padding: 4px 0; color: var(--text-primary); }
+    .bel-add-input::placeholder { color: var(--text-tertiary); }
+    .bel-add-btn { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; padding: 4px 0; }
+    .bel-notes { font-size: 15px; color: var(--text-primary); line-height: 1.6; min-height: 48px; border-bottom: 0.5px solid var(--border); padding: 4px 0 8px; outline: none; }
+    .bel-notes:empty::before { content: attr(placeholder); color: var(--text-tertiary); }
+
+    /* SETTINGS */
+    .settings-sheet { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: none; flex-direction: column; transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0,1); }
+    .settings-sheet.open { display: flex; transform: translateY(0); }
+    .settings-header { display: flex; justify-content: space-between; align-items: center; padding: max(env(safe-area-inset-top,0px),16px) 24px 12px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+    .settings-scroll { flex: 1; overflow-y: auto; padding: 20px 24px; padding-bottom: max(env(safe-area-inset-bottom,0px),32px); }
+    .settings-section { margin-bottom: 28px; }
+    .settings-section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 12px; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .settings-row-label { font-size: 15px; color: var(--text-primary); }
+    .settings-input { width: 100%; font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); padding: 10px 12px; background: transparent; margin-bottom: 10px; }
+    .settings-input::placeholder { color: var(--text-tertiary); }
+    .settings-btn { width: 100%; padding: 11px; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); font-size: 13px; color: var(--text-secondary); cursor: pointer; margin-top: 6px; background: transparent; text-align: center; }
+    .settings-btn.primary { color: var(--text-primary); border-color: var(--text-primary); }
+    .settings-btn.danger { color: var(--danger); border-color: var(--danger); }
+    .settings-status { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); padding: 6px 0 10px; }
+    .settings-status.connected { color: var(--success); }
+    .theme-toggle { display: flex; gap: 2px; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 2px; }
+    .theme-option { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--text-tertiary); padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: all 0.12s; }
+    .theme-option.active { background: var(--bg); color: var(--text-primary); }
+    .habit-settings-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+    .habit-del { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); cursor: pointer; }
+
+    /* VIEW MANAGEMENT */
+    .tasks-view, .notes-view, .reflect-view, .bel-view { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    body.tasks-mode .tasks-view { display: flex; }
+    body.notes-mode .notes-view { display: flex; }
+    body.reflect-mode .reflect-view { display: flex; }
+    body.bel-mode .bel-view { display: flex; }
+    body.bel-mode .bottom-nav, body.bel-mode .fab { display: none; }
+
+    /* DESKTOP */
+    @media (min-width: 600px) {
+      body { max-width: 480px; margin: 0 auto; }
+      .bottom-nav { max-width: 480px; left: 50%; transform: translateX(-50%); right: auto; }
+      .sheet { max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); right: auto; width: 480px; }
+      .sheet.open { transform: translateX(-50%) translateY(0); }
+      .settings-sheet { max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); right: auto; width: 480px; }
+      .settings-sheet.open { transform: translateX(-50%) translateY(0); }
+      .fab { right: calc(50% - 240px + 24px); }
+      .sync-bar, .toast, .toast-undo { max-width: 480px; }
+      .cn-detail-fullscreen, .pin-overlay { max-width: 480px; left: 50%; transform: translateX(-50%); right: auto; width: 480px; }
+    }
+  </style>
+</head>
+<body class="tasks-mode">
+
 <div class="sync-bar" id="syncBar"><span id="syncMsg"></span></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     HEADER
-══════════════════════════════════════════════════════════ -->
 <div class="header">
   <span class="header-wordmark" id="secretBelTrigger">tasks.</span>
   <div class="header-right">
-    <span class="header-action hide-reflect hide-notes hide-bel" id="searchTrigger">search</span>
+    <span class="header-action" id="searchTrigger" style="display:none;">search</span>
     <span class="header-action" id="settingsBtn">settings</span>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TASKS VIEW
-══════════════════════════════════════════════════════════ -->
+<!-- TASKS VIEW -->
 <div class="tasks-view">
-
-  <!-- Search -->
+  <div class="filter-scroll" id="filterRow"></div>
   <div class="search-wrap" id="searchWrap" style="padding: 0 24px;">
     <input class="search-input" id="searchInput" type="search" placeholder="Search tasks…" autocomplete="off">
   </div>
-
-  <!-- Category filter chips -->
-  <div class="filter-scroll" id="filterRow" style="padding: 0 24px 0;">
-    <div class="chip active" data-filter="all">all</div>
-    <div class="chip" data-filter="today">today</div>
-    <div class="chip" data-filter="manuscript">manuscript</div>
-    <div class="chip" data-filter="lab">lab</div>
-    <div class="chip" data-filter="phd">phd</div>
-    <div class="chip" data-filter="conf">conf</div>
-    <div class="chip" data-filter="personal">personal</div>
-    <div class="chip" data-filter="hobby">hobby</div>
-    <div class="chip" data-filter="blocked">blocked</div>
-    <div class="chip" data-filter="archive">archive</div>
-  </div>
-
-  <!-- Task list -->
   <div class="main-scroll" id="taskList"></div>
-
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     NOTES VIEW  (confnotes.js manages content — IDs must match)
-══════════════════════════════════════════════════════════ -->
+<!-- NOTES VIEW -->
 <div class="notes-view" id="confNotesView">
-
-  <!-- List view — confnotes.js toggles between this and detail -->
+  <div class="cn-filter-row" id="cnFilterRow"></div>
   <div id="cnListView" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
-
-    <!-- Search -->
-    <div class="cn-search-wrap" id="cnSearchWrap" style="padding:8px 24px 0; flex-shrink:0; display:none;">
-      <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes…">
-    </div>
-
-    <!-- Filter chips — rebuilt by rebuildCNChips() -->
-    <div class="cn-filter-row" id="cnFilterRow" style="padding:8px 24px 0; flex-shrink:0;"></div>
-
-    <!-- Note cards list -->
     <div class="main-scroll" id="cnNotesList"></div>
-
-    <!-- New note type menu (long-press FAB) -->
-    <div id="cnNewMenu" class="cn-new-menu" style="display:none; position:fixed; bottom:80px; right:24px; background:var(--bg); border:0.5px solid var(--border-strong); border-radius:var(--radius-lg); padding:8px 0; z-index:60; min-width:140px;">
-      <div class="cn-new-menu-item" data-newtype="memo" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">note</div>
-      <div class="cn-new-menu-item" data-newtype="paper" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">paper</div>
-      <div class="cn-new-menu-item" data-newtype="idea" style="padding:10px 16px; font-size:14px; cursor:pointer; color:var(--text-primary);">idea</div>
-    </div>
   </div>
-
-  <!-- Detail view — confnotes.js shows/hides this -->
-  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none;">
+  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none; flex-direction:column;">
     <div class="cn-detail-topbar">
-      <button id="cnBackBtn" class="icon-btn" style="margin-right:8px; background:transparent; border:none; font-size:20px; color:var(--text-tertiary); cursor:pointer;">‹</button>
-      <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
-      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-        <span id="cnMdToggle" class="cn-scratch-mono" style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); cursor:pointer; letter-spacing:0.04em;">preview</span>
-        <span id="cnMonoToggle" class="cn-scratch-mono" style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); cursor:pointer; letter-spacing:0.04em;">mono off</span>
-        <div class="icon-btn cn-lock-btn" id="cnLockBtn" title="Lock note" style="display:none; background:transparent; border:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note" style="background:transparent; border:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
-        </div>
-        <div class="icon-btn" id="cnDeleteBtn" style="background:transparent; border:none;">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#e57373" fill="none" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-        </div>
+      <button id="cnBackBtn" style="font-size:22px; color:var(--text-tertiary); background:transparent; border:none; cursor:pointer; line-height:1;">‹</button>
+      <div class="cn-detail-topbar-actions">
+        <span class="cn-detail-action" id="cnMonoToggle">mono</span>
+        <span class="cn-detail-action" id="cnMdToggle">preview</span>
+        <span class="cn-detail-action" id="cnPinToggle">pin</span>
+        <span class="cn-detail-action" id="cnLockToggle" style="display:none;">lock</span>
+        <span class="cn-detail-action" style="color:var(--danger);" id="cnDeleteBtn">delete</span>
       </div>
     </div>
-
-    <!-- Type selector row -->
-    <div style="padding:0 20px; border-bottom:0.5px solid var(--border); flex-shrink:0;">
-      <div style="display:flex; gap:12px; padding:8px 0; align-items:center;">
-        <div id="cnTypeRow" style="display:flex; gap:8px;">
-          <div class="cn-type-chip active" data-type="memo" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">note</div>
-          <div class="cn-type-chip" data-type="paper" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">paper</div>
-          <div class="cn-type-chip" data-type="idea" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">idea</div>
-        </div>
-        <div id="cnIdeaStatusRow" style="display:none; gap:6px;">
-          <div class="cn-status-chip active" data-status="raw" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">raw</div>
-          <div class="cn-status-chip" data-status="developing" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">developing</div>
-          <div class="cn-status-chip" data-status="ready to pitch" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); cursor:pointer; padding:3px 8px; border:0.5px solid var(--border-strong); border-radius:4px;">ready</div>
-        </div>
-      </div>
+    <div class="cn-type-row" id="cnTypeRow">
+      <div class="cn-type-chip active" data-type="memo">note</div>
+      <div class="cn-type-chip" data-type="paper">paper</div>
+      <div class="cn-type-chip" data-type="idea">idea</div>
     </div>
-
-    <!-- Title -->
-    <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…" autocomplete="off" autocorrect="on" autocapitalize="sentences" style="display:block; width:100%; font-size:18px; padding:14px 20px 10px; border-bottom:0.5px solid var(--border); border-top:none; border-left:none; border-right:none; background:transparent; color:var(--text-primary); font-family:var(--font-sans);">
-
-    <!-- Speaker/source (paper type) -->
-    <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" autocomplete="off" autocapitalize="sentences" style="display:block; width:100%; font-size:13px; padding:8px 20px; border-bottom:0.5px solid var(--border); border-top:none; border-left:none; border-right:none; background:transparent; color:var(--text-secondary); font-family:var(--font-sans);">
-
-    <!-- URL row (paper type) -->
-    <div id="cnUrlRow" style="display:none; padding:6px 20px; border-bottom:0.5px solid var(--border); align-items:center; gap:8px;">
-      <input id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocomplete="off" autocapitalize="none" style="flex:1; font-family:var(--font-mono); font-size:12px; border:none; background:transparent; color:var(--text-secondary);">
-      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">open ↗</a>
+    <div class="cn-status-row" id="cnStatusRow">
+      <div class="cn-status-chip active" data-status="raw">raw</div>
+      <div class="cn-status-chip" data-status="developing">developing</div>
+      <div class="cn-status-chip" data-status="ready to pitch">ready</div>
     </div>
-
-    <!-- Body -->
-    <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write…" autocorrect="on" autocapitalize="sentences" spellcheck="true" style="flex:1; width:100%; padding:14px 20px; font-size:15px; line-height:1.7; border:none; background:transparent; color:var(--text-primary); resize:none; font-family:var(--font-sans);"></textarea>
-    <div class="cn-md-preview" id="cnMdPreview" style="display:none; flex:1; padding:14px 20px; font-size:15px; line-height:1.7; overflow-y:auto;"></div>
-
-    <!-- Meta drawer -->
-    <details id="cnMetaDrawer" style="border-top:0.5px solid var(--border); flex-shrink:0;">
-      <summary style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.07em; color:var(--text-tertiary); text-transform:uppercase; cursor:pointer; padding:10px 20px; list-style:none;">tags &amp; info</summary>
-      <div style="padding:8px 20px 12px;">
-        <div id="cnTagRow" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
-        <div style="margin-bottom:8px;">
-          <select id="cnProjectInput" style="font-size:12px; color:var(--text-secondary); border:0.5px solid var(--border-strong); border-radius:4px; padding:4px 8px; background:var(--bg); font-family:var(--font-mono);">
-            <option value="">no project</option>
-          </select>
-        </div>
-        <div id="cnDetailMeta" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary);"></div>
-      </div>
-    </details>
-
-    <!-- Backlinks -->
-    <div style="border-top:0.5px solid var(--border); flex-shrink:0;">
-      <div id="cnBacklinksToggle" style="font-family:var(--font-mono); font-size:10px; letter-spacing:0.07em; color:var(--text-tertiary); text-transform:uppercase; cursor:pointer; padding:10px 20px; display:flex; align-items:center; gap:6px;">
-        backlinks <span id="cnBacklinksArrow" style="transition:transform 0.15s;">▸</span>
-      </div>
-      <div id="cnBacklinksDrawer" style="display:none; padding:0 20px 12px;">
-        <div id="cnBacklinksList"></div>
-      </div>
+    <input class="cn-detail-title" id="cnTitleInput" type="text" placeholder="Title…" autocorrect="on" autocapitalize="sentences">
+    <input class="cn-detail-source" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" autocapitalize="sentences">
+    <div class="cn-url-row" id="cnUrlRow">
+      <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="Paper URL or DOI…" autocapitalize="none">
+      <a href="#" id="cnUrlOpen" class="cn-url-open" target="_blank">open ↗</a>
+    </div>
+    <textarea class="cn-detail-body" id="cnBodyInput" placeholder="Write… (use [[brackets]] for backlinks)" autocorrect="on" autocapitalize="sentences" spellcheck="true"></textarea>
+    <div class="cn-md-preview" id="cnMdPreview"></div>
+    <div class="cn-backlinks" id="cnBacklinks" style="display:none;">
+      <div class="cn-backlinks-toggle" id="cnBacklinksToggle">backlinks ▸ <span id="cnBacklinksCount"></span></div>
+      <div class="cn-backlinks-list" id="cnBacklinksList" style="display:none;"></div>
     </div>
   </div>
-
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     REFLECT VIEW  (dashboard.js manages content)
-══════════════════════════════════════════════════════════ -->
-<div class="reflect-view" id="reflectView">
-
-  <!-- Today / Review segmented control -->
-  <div class="reflect-seg-wrap">
-    <div class="reflect-seg">
-      <button class="reflect-seg-btn active" id="reflectSegToday">today</button>
-      <button class="reflect-seg-btn" id="reflectSegReview">review</button>
-    </div>
+<!-- REFLECT VIEW -->
+<div class="reflect-view">
+  <div class="reflect-seg">
+    <button class="reflect-seg-btn active" id="reflectSegToday">today</button>
+    <button class="reflect-seg-btn" id="reflectSegReview">review</button>
   </div>
-
-  <!-- TODAY MODE -->
-  <div class="reflect-scroll" id="reflectToday">
-
-    <!-- Affect grid -->
-    <div class="affect-section-label">affect</div>
-    <div class="affect-grid-wrap" style="padding: 16px 0 8px;">
-      <div class="affect-axis-label affect-y-top">wired</div>
-      <div class="affect-axis-label affect-y-bot">drained</div>
-      <div class="affect-axis-label affect-x-left">rough</div>
-      <div class="affect-axis-label affect-x-right">good</div>
+  <div id="reflectTodayPane" class="main-scroll">
+    <div class="section-label">affect</div>
+    <div class="affect-grid-wrap">
+      <div class="affect-axis" style="top:-2px; left:50%; transform:translateX(-50%);">wired</div>
+      <div class="affect-axis" style="bottom:-14px; left:50%; transform:translateX(-50%);">drained</div>
+      <div class="affect-axis" style="left:-4px; top:50%; transform:translateY(-50%);">rough</div>
+      <div class="affect-axis" style="right:-4px; top:50%; transform:translateY(-50%);">good</div>
       <div class="affect-grid" id="dAffectGrid">
-        <div class="affect-grid-bg"></div>
         <div class="affect-crosshair-h"></div>
         <div class="affect-crosshair-v"></div>
         <div class="affect-dot" id="dAffectDot"></div>
       </div>
     </div>
-
-    <!-- Affect status / log count -->
-    <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); padding: 4px 0 8px;" id="dAffectStatus"></div>
-
-    <!-- Context chips -->
-    <div class="affect-ctx-row" id="dAffectContextRow"></div>
-
-    <!-- Affect history strip -->
+    <div class="affect-status" id="dAffectStatus">tap to log</div>
     <div class="affect-history" id="dAffectHistory"></div>
-
-    <!-- Habits -->
-    <div class="habits-section-label">habits</div>
+    <div class="section-label" style="margin-top:8px;">habits</div>
     <div id="dHabits"></div>
-
-    <!-- Insights (lazy-rendered on open) -->
-    <details id="dInsightsDetails" style="margin-top:16px; border-top:0.5px solid var(--border); padding-top:4px;">
-      <summary style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;color:var(--text-tertiary);text-transform:uppercase;cursor:pointer;list-style:none;padding:12px 0 8px;">insights</summary>
-      <div id="dInsightsContent"></div>
-    </details>
-
-    <div class="spacer"></div>
+    <div class="spacer" style="height:20px;"></div>
   </div>
-
-  <!-- REVIEW MODE -->
-  <div class="reflect-scroll" id="reflectReview" style="display:none;">
+  <div id="reflectReviewPane" class="main-scroll" style="display:none;">
     <div id="timelineNav"></div>
     <div id="timelineBody"></div>
-    <div class="spacer"></div>
   </div>
-
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     BEL VIEW  (bel.js manages content)
-══════════════════════════════════════════════════════════ -->
+<!-- BEL VIEW -->
 <div class="bel-view" id="belView">
-  <div class="header" style="border-bottom: 0.5px solid var(--border);">
-    <span class="header-wordmark">bel.</span>
+  <div class="header" style="border-bottom:0.5px solid var(--border);">
+    <span class="header-wordmark" style="color:var(--color-bel);">bel.</span>
     <span class="header-action" id="belClose">← tasks</span>
   </div>
-  <div class="bel-scroll">
-
-    <div class="bel-section-label">dates &amp; plans</div>
-    <div id="belDatesList" class="bel-list"></div>
+  <div class="main-scroll">
+    <div style="font-family:var(--font-mono); font-size:30px; font-weight:400; color:var(--text-primary); padding:16px 0 4px;" id="belTimeCount">--</div>
+    <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); padding-bottom:16px; border-bottom:0.5px solid var(--border);" id="belNextAnniv"></div>
+    <div class="section-label">dates & plans</div>
+    <div id="belDatesList"></div>
     <div class="bel-add-row">
       <input class="bel-add-input" id="belDateInput" type="text" placeholder="Places to go…" autocapitalize="sentences">
       <span class="bel-add-btn" id="belDateAddBtn">add</span>
     </div>
-
-    <div class="bel-section-label">her favorites</div>
-    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks…"></div>
-
-    <div class="bel-section-label">things i love about her</div>
-    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things…"></div>
-
-    <div class="spacer"></div>
+    <div class="section-label">her favorites</div>
+    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks…" style="min-height:60px;"></div>
+    <div class="section-label">things i love about her</div>
+    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things…" style="min-height:60px;"></div>
+    <div style="padding:16px 0;">
+      <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); letter-spacing:0.07em; text-transform:uppercase; margin-bottom:8px;">anniversary date</div>
+      <input type="date" id="belAnnivInput" style="font-family:var(--font-mono); font-size:13px; color:var(--text-primary); border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); padding:6px 10px; background:transparent;">
+    </div>
+    <div style="height:32px;"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     FAB  (add task / add note)
-══════════════════════════════════════════════════════════ -->
-<button class="fab hide-bel hide-reflect" id="fab" aria-label="Add">
+<!-- BOTTOM NAV & FAB -->
+<nav class="bottom-nav">
+  <button class="bottom-tab active" id="tabTasks">tasks</button>
+  <button class="bottom-tab" id="tabNotes">notes</button>
+  <button class="bottom-tab" id="tabReflect">reflect</button>
+</nav>
+<button class="fab" id="fab" aria-label="Add">
   <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
-<!-- ══════════════════════════════════════════════════════════
-     TASK DETAIL SHEET
-══════════════════════════════════════════════════════════ -->
+<!-- TASK SHEET -->
 <div class="sheet-backdrop" id="taskSheetBackdrop"></div>
 <div class="sheet" id="taskSheet">
   <div class="sheet-handle"></div>
   <input class="sheet-title-input" id="taskSheetTitle" type="text" placeholder="Task name…" autocorrect="on" autocapitalize="sentences">
-
-  <!-- Priority -->
   <div class="sheet-row">
     <span class="sheet-row-label">priority</span>
     <div class="seg-control" id="taskSheetPriority">
@@ -313,193 +424,131 @@
       <div class="seg-btn" data-val="lo">low</div>
     </div>
   </div>
-
-  <!-- Status -->
   <div class="sheet-row">
     <span class="sheet-row-label">status</span>
     <div class="seg-control" id="taskSheetStatus">
       <div class="seg-btn active" data-val="active">active</div>
       <div class="seg-btn" data-val="waiting">waiting</div>
       <div class="seg-btn" data-val="blocked">blocked</div>
-      <div class="seg-btn" data-val="review">review</div>
     </div>
   </div>
-
-  <!-- Due date -->
   <div class="sheet-row">
     <span class="sheet-row-label">due</span>
     <input class="date-input" id="taskSheetDue" type="date">
   </div>
-
-  <!-- Categories -->
   <div class="sheet-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
     <span class="sheet-row-label">category</span>
     <div class="cat-grid" id="taskSheetCats"></div>
   </div>
-
-  <!-- Note -->
-  <div style="padding: 8px 0;">
-    <textarea class="sheet-note" id="taskSheetNote" placeholder="Add a note…" autocorrect="on" autocapitalize="sentences"></textarea>
+  <div class="sheet-row" style="border-bottom:none;">
+    <span class="sheet-row-label">pin today</span>
+    <div class="seg-control" id="taskSheetPin" style="min-width:100px;">
+      <div class="seg-btn active" data-val="0">no</div>
+      <div class="seg-btn" data-val="1">yes</div>
+    </div>
   </div>
-
+  <textarea class="sheet-note" id="taskSheetNote" placeholder="Add a note…"></textarea>
   <div class="sheet-actions">
-    <button class="sheet-btn danger" id="taskSheetDelete">delete</button>
-    <button class="sheet-btn" id="taskSheetPin">pin today</button>
+    <button class="sheet-btn danger" id="taskSheetDelete" style="display:none;">delete</button>
     <button class="sheet-btn primary" id="taskSheetSave">save</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     SETTINGS SHEET
-══════════════════════════════════════════════════════════ -->
+<!-- SETTINGS SHEET -->
 <div class="settings-sheet" id="settingsSheet">
   <div class="settings-header">
-    <span class="settings-close" id="settingsClose">close</span>
-    <span class="settings-title">settings</span>
+    <span style="font-size:13px; font-family:var(--font-mono); color:var(--text-tertiary); letter-spacing:0.04em;">settings</span>
+    <span class="header-action" id="settingsClose">close</span>
   </div>
   <div class="settings-scroll">
-
-    <!-- Appearance -->
     <div class="settings-section">
       <div class="settings-section-label">appearance</div>
       <div class="settings-row">
         <span class="settings-row-label">theme</span>
         <div class="theme-toggle" id="themeToggle">
-          <div class="theme-option active" data-theme="light">light</div>
+          <div class="theme-option active" data-theme="auto">auto</div>
+          <div class="theme-option" data-theme="light">light</div>
           <div class="theme-option" data-theme="dark">dark</div>
-          <div class="theme-option" data-theme="auto">auto</div>
         </div>
       </div>
     </div>
-
-    <!-- GitHub sync -->
     <div class="settings-section">
       <div class="settings-section-label">github sync</div>
-      <div class="settings-status" id="ghStatus">
-        <div class="status-dot"></div>
-        <span id="ghStatusText">not connected</span>
-      </div>
-      <div class="settings-field">
-        <label>username</label>
-        <input class="settings-input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off">
-      </div>
-      <div class="settings-field">
-        <label>repository</label>
-        <input class="settings-input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off">
-      </div>
-      <div class="settings-field">
-        <label>personal access token</label>
-        <input class="settings-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off">
-      </div>
-      <button class="settings-btn primary" id="saveSettingsBtn">save &amp; test connection</button>
+      <div class="settings-status" id="ghStatus">not connected</div>
+      <input class="settings-input" id="ghUser" type="text" placeholder="username" autocapitalize="none" autocorrect="off">
+      <input class="settings-input" id="ghRepo" type="text" placeholder="repository" autocapitalize="none" autocorrect="off">
+      <input class="settings-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off">
+      <button class="settings-btn primary" id="saveGhBtn">save & test connection</button>
     </div>
-
-    <!-- Categories -->
-    <div class="settings-section">
-      <div class="settings-section-label">categories</div>
-      <div id="catSettingsList"></div>
-      <div style="display:flex; gap:8px; margin-top:10px;">
-        <input class="settings-input" id="newCatInput" type="text" placeholder="New category…" autocapitalize="none" style="flex:1;">
-        <button class="settings-btn" id="addCatBtn" style="width:auto; padding:8px 14px;">add</button>
-      </div>
-    </div>
-
-    <!-- Habits -->
     <div class="settings-section">
       <div class="settings-section-label">habits</div>
       <div id="habitSettingsList"></div>
       <div style="display:flex; gap:8px; margin-top:10px;">
-        <input class="settings-input" id="newHabitInput" type="text" placeholder="New habit…" autocapitalize="sentences" style="flex:1;">
-        <button class="settings-btn" id="addHabitBtn" style="width:auto; padding:8px 14px;">add</button>
+        <input class="settings-input" id="newHabitInput" type="text" placeholder="New habit…" autocapitalize="sentences" style="flex:1; margin-bottom:0;">
+        <button class="settings-btn" id="addHabitBtn" style="width:auto; padding:8px 14px; margin-top:0;">add</button>
       </div>
     </div>
-
-    <!-- Notes PIN -->
     <div class="settings-section">
       <div class="settings-section-label">notes pin</div>
-      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); margin-bottom:10px; line-height:1.6;">
-        set a 4-digit pin to lock individual notes. stored locally only.
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); margin-bottom:10px; line-height:1.6;">4-digit pin to lock individual notes.</div>
+      <div style="display:flex; gap:6px; margin-bottom:10px;">
+        <input id="pinD0" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
+        <input id="pinD1" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
+        <input id="pinD2" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
+        <input id="pinD3" type="number" min="0" max="9" inputmode="numeric" style="width:40px; height:40px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:16px; text-align:center; background:transparent; color:var(--text-primary);">
       </div>
-      <div class="settings-pin-row" id="pinInputRow">
-        <input class="settings-pin-digit" id="pinD0" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
-        <input class="settings-pin-digit" id="pinD1" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
-        <input class="settings-pin-digit" id="pinD2" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
-        <input class="settings-pin-digit" id="pinD3" type="number" min="0" max="9" maxlength="1" inputmode="numeric">
-      </div>
-      <button class="settings-btn" id="savePinBtn" style="margin-top:10px;">save pin</button>
-      <button class="settings-btn danger" id="clearPinBtn" style="margin-top:6px;">clear pin</button>
+      <button class="settings-btn" id="savePinBtn">save pin</button>
+      <button class="settings-btn danger" id="clearPinBtn" style="display:none; margin-top:4px;">clear pin</button>
     </div>
-
-    <!-- Data -->
     <div class="settings-section">
       <div class="settings-section-label">data</div>
-      <div class="settings-row" id="exportDataBtn" style="cursor:pointer;">
-        <span class="settings-row-label">export data</span>
-        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">json ↓</span>
-      </div>
-      <div class="settings-row" id="importDataRow" style="cursor:pointer;">
-        <span class="settings-row-label">import data</span>
-        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">json ↑</span>
-      </div>
-      <input type="file" id="importFileInput" accept=".json" class="hidden">
-      <button class="settings-btn danger" id="clearDataBtn" style="margin-top:12px;">clear all local data</button>
+      <button class="settings-btn" id="exportBtn">export json</button>
+      <button class="settings-btn danger" id="clearDataBtn" style="margin-top:4px;">clear all local data</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;">
     </div>
-
-    <div class="spacer"></div>
+    <div style="height:32px;"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     BOTTOM NAV
-══════════════════════════════════════════════════════════ -->
-<nav class="bottom-nav hide-bel">
-  <button class="bottom-tab active" id="tabTasks">tasks</button>
-  <button class="bottom-tab" id="tabNotes">notes</button>
-  <button class="bottom-tab" id="tabReflect">reflect</button>
-</nav>
-
-<!-- ══════════════════════════════════════════════════════════
-     TOASTS
-══════════════════════════════════════════════════════════ -->
+<!-- TOASTS -->
 <div class="toast" id="toast"></div>
 <div class="toast-undo" id="toastUndo">
   <span id="toastUndoMsg"></span>
   <button class="toast-undo-btn" id="toastUndoBtn">undo</button>
 </div>
 
-
-<!-- ══════════════════════════════════════════════════════════
-     CONFNOTES STUBS — elements confnotes.js wires up
-     (hidden elements that confnotes.js expects to exist)
-══════════════════════════════════════════════════════════ -->
-
-<!-- Search toggle button (wired by confnotes, triggered from notes header) -->
-<button id="cnSearchToggle" style="display:none;"></button>
-
-<!-- View toggle (grid/list) -->
-<button id="cnViewToggle" style="display:none;"></button>
-
-<!-- Backlinks count badge -->
-<span id="cnBacklinksCount" style="display:none;"></span>
-
-<!-- Scratchpad (legacy — confnotes.js wires this up but we don't show it) -->
-<textarea id="cnScratchpad" style="display:none;"></textarea>
-<button id="cnScratchMono" style="display:none;"></button>
-<span id="cnScratchSync" style="display:none;"></span>
-
-<!-- PIN modal — used by confnotes for locked notes -->
-<div id="pinModalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; align-items:center; justify-content:center; padding:24px;">
-  <div style="background:var(--bg); border-radius:var(--radius-lg); padding:24px; max-width:280px; width:100%;">
-    <div id="pinModalTitle" style="font-size:16px; font-weight:500; color:var(--text-primary); margin-bottom:16px; text-align:center;">Enter PIN</div>
-    <input id="pinModalInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off"
-      style="width:100%; font-size:24px; text-align:center; border:none; border-bottom:1px solid var(--border-strong); padding:8px 0; background:transparent; color:var(--text-primary); margin-bottom:8px; font-family:var(--font-mono); letter-spacing:0.3em;">
-    <div id="pinModalError" style="font-size:12px; color:var(--danger); text-align:center; min-height:18px; margin-bottom:16px;"></div>
-    <div style="display:flex; gap:10px;">
-      <button id="pinModalCancel" style="flex:1; padding:10px; border:0.5px solid var(--border-strong); border-radius:var(--radius-md); font-size:14px; color:var(--text-secondary); background:transparent; cursor:pointer;">cancel</button>
-      <button id="pinModalConfirm" style="flex:1; padding:10px; border:0.5px solid var(--text-primary); border-radius:var(--radius-md); font-size:14px; color:var(--text-primary); background:transparent; cursor:pointer; font-weight:500;">confirm</button>
-    </div>
+<!-- PIN OVERLAY -->
+<div class="pin-overlay" id="pinOverlay">
+  <div style="font-size:13px; color:var(--text-tertiary); font-family:var(--font-mono); letter-spacing:0.04em;" id="pinOverlayLabel">enter pin</div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" data-k="1">1</div><div class="pin-key" data-k="2">2</div><div class="pin-key" data-k="3">3</div>
+    <div class="pin-key" data-k="4">4</div><div class="pin-key" data-k="5">5</div><div class="pin-key" data-k="6">6</div>
+    <div class="pin-key" data-k="7">7</div><div class="pin-key" data-k="8">8</div><div class="pin-key" data-k="9">9</div>
+    <div class="pin-key" data-k="cancel" style="font-size:12px; color:var(--text-tertiary);">cancel</div>
+    <div class="pin-key" data-k="0">0</div>
+    <div class="pin-key" data-k="del" style="font-size:16px;">⌫</div>
   </div>
 </div>
 
+<script>
+  // Flash-of-wrong-theme prevention
+  (function(){
+    try {
+      var t = localStorage.getItem('kw_theme_v2') || 'auto';
+      if (t === 'aurora' || t === 'neon' || t === 'ios-dark') document.body.classList.add('theme-dark');
+      else if (t === 'halcyon' || t === 'newsprint') document.body.classList.add('theme-light');
+    } catch(e) {}
+  })();
+</script>
+<script src="/lib/marked.min.js" defer></script>
+<script type="module" src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+  }
+</script>
 </body>
 </html>
