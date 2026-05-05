@@ -283,8 +283,13 @@ function _doOpenDetail(n) {
   _cnOpenSnapshot = { title: n.title || '', body: n.body || '' };
   cnMdPreview = false;
 
-  // On mobile: hide nav pill + quick-add so they don't overlap the editor
-  document.body.classList.add('cn-note-open');
+  // On mobile: directly hide nav pill and quick-add so they don't overlap the editor
+  if (!window.matchMedia('(min-width: 768px)').matches) {
+    const nav = document.querySelector('.glass-nav-wrap');
+    const pill = document.getElementById('quickAddWrap');
+    if (nav) nav.style.display = 'none';
+    if (pill) pill.style.display = 'none';
+  }
 
   hideDesktopEmptyState(); // FIX #5
 
@@ -428,8 +433,13 @@ function closeCNDetail() {
   cnActiveId = null;
   _cnOpenSnapshot = null;
 
-  // Restore nav pill + quick-add
-  document.body.classList.remove('cn-note-open');
+  // Restore nav pill and quick-add
+  if (!window.matchMedia('(min-width: 768px)').matches) {
+    const nav = document.querySelector('.glass-nav-wrap');
+    const pill = document.getElementById('quickAddWrap');
+    if (nav) nav.style.display = '';
+    if (pill) pill.style.display = '';
+  }
 
   const isDesktopLayout = window.matchMedia('(min-width: 768px)').matches;
   const detailEl = document.getElementById('cnDetailView');
