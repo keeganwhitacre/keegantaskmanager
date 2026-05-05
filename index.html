@@ -533,11 +533,17 @@
       pointer-events: none;
     }
 
+    body.cn-note-open .glass-nav-wrap,
+    body.cn-note-open #quickAddWrap { display: none !important; }
+
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
       body { padding-left: 120px; } /* Room for left dock */
 
       #cnEditorInner { display: none; }
+
+      body.cn-note-open .glass-nav-wrap,
+      body.cn-note-open #quickAddWrap { display: flex !important; }
       
       .glass-nav-wrap {
         bottom: 0; top: 0; left: 24px; width: auto; align-items: center;
