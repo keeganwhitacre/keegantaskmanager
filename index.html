@@ -233,6 +233,38 @@
     .icon-btn:active { opacity: 0.6; }
     .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
 
+    /* ══════════════════════════════════════════════════════════════════
+       CUSTOM SCROLLBARS
+    ══════════════════════════════════════════════════════════════════ */
+    /* Firefox compatibility */
+    .scroll-container, #cnListView, .sheet, #cnDetailView {
+      scrollbar-width: thin;
+      scrollbar-color: var(--text-4) transparent;
+    }
+    
+    /* WebKit (Safari/Chrome/iOS) */
+    ::-webkit-scrollbar {
+      width: 6px;  /* Make the vertical scrollbar slim */
+      height: 6px; /* Make horizontal scrollbars slim */
+    }
+    
+    /* The track (background) */
+    ::-webkit-scrollbar-track {
+      background: transparent; 
+      border-radius: 10px;
+    }
+    
+    /* The draggable thumb */
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-4); /* Uses your existing subtle gray variable */
+      border-radius: 10px;       /* Pill shape */
+    }
+    
+    /* Hover state for the thumb */
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-3); /* Darkens slightly when hovered */
+    }
+    
     /* ── FILTER CHIPS ── */
     .filter-scroll {
       display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
