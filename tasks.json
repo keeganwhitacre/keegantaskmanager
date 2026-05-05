@@ -3202,20 +3202,6 @@
   },
   "cnNotes": [
     {
-      "id": "mosl9yzq94ey",
-      "title": "",
-      "body": "",
-      "tags": [],
-      "bodyIsMono": false,
-      "pinned": false,
-      "locked": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-05-05T12:12:56.294Z",
-      "updatedAt": "2026-05-05T12:12:56.298Z"
-    },
-    {
       "id": "mokcaq2hrfvl",
       "title": "Apotris songs",
       "speaker": "",
@@ -3984,5 +3970,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T12:12:58.801Z"
+  "updated": "2026-05-05T12:13:16.722Z"
 }
