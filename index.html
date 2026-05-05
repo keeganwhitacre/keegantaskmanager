@@ -145,7 +145,8 @@
     /* ── GLASS HUB NAVIGATION (Mobile + Desktop Dock) ── */
     .glass-nav-wrap {
       position: fixed; z-index: 90; pointer-events: none;
-      bottom: calc(24px + var(--safe-bottom)); left: 0; width: 100%;
+      /* LOWERED FROM 24px TO 12px */
+      bottom: calc(12px + var(--safe-bottom)); left: 0; width: 100%;
       display: flex; justify-content: center;
     }
     .glass-panel {
@@ -325,7 +326,9 @@
 
     /* ── FLOATING QUICK ADD ── */
     #quickAddWrap {
-      position: fixed; bottom: calc(108px + var(--safe-bottom)); left: 20px; right: 20px;
+      position: fixed; 
+      /* LOWERED: 12px padding + 76px nav height = 88px */
+      bottom: calc(88px + var(--safe-bottom)); left: 20px; right: 20px;
       max-width: 720px; margin: 0 auto; background: var(--bg-surface); border-radius: 99px;
       padding: 12px 20px; display: flex !important; align-items: center; gap: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 0.5px solid var(--border); z-index: 40;
@@ -460,7 +463,7 @@
     .cn-detail-topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; text-align: center; }
     
     .cn-editor-body { flex: 1; padding: 20px; overflow-y: auto; max-width: 800px; margin: 0 auto; width: 100%; }
-    .cn-detail-title-input { width: 100%; border: none; outline: none; background: transparent; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 24px; line-height: 1.2; }
+    .cn-detail-title-input { width: 100%; border: none; outline: none; background: transparent; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 16px; line-height: 1.2; }
     .cn-detail-title-input::placeholder { color: var(--text-4); }
     
     .cn-type-row, .cn-idea-status-row, .cn-tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
@@ -470,7 +473,7 @@
     .cn-url-input { width: 100%; background: var(--bg-surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; outline: none; color: var(--text-1); }
     .cn-url-input:focus { border-color: var(--accent); }
     
-    .cn-editor-divider { height: 1px; background: var(--border); margin: 32px 0; opacity: 0.5; }
+    .cn-editor-divider { height: 1px; background: var(--border); margin: 0 0 24px 0; opacity: 0.5; }
     
     .cn-detail-body-input { width: 100%; min-height: 400px; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; }
     
@@ -501,7 +504,8 @@
     /* ── FAB (Only for Notes) ── */
     #fab { display: none !important; }
     body.notes-mode #fab {
-      display: flex !important; position: fixed; bottom: calc(108px + var(--safe-bottom)); right: 20px;
+      /* LOWERED FAB TO MATCH NAV */
+      display: flex !important; position: fixed; bottom: calc(88px + var(--safe-bottom)); right: 20px;
       width: 56px; height: 56px; border-radius: 28px; background: var(--accent); color: #fff;
       align-items: center; justify-content: center; font-size: 28px; font-weight: 300;
       box-shadow: 0 8px 24px rgba(0,122,255,0.4); z-index: 90; cursor: pointer; transition: transform 0.15s;
@@ -544,7 +548,6 @@
 
     .cat-settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
     .bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0;}
-
 
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
@@ -604,7 +607,7 @@
       #cnDetailView.cn-no-note { opacity: 1; pointer-events: auto; }
       .cn-detail-topbar { padding: 24px 60px 0px; }
       .cn-editor-body { padding: 0px 60px 60px; max-width: 900px; }
-      .cn-detail-title-input { font-size: 40px; margin-top: 0; margin-bottom: 24px; letter-spacing: -0.04em; }
+      .cn-detail-title-input { font-size: 40px; margin-top: 0; margin-bottom: 16px; letter-spacing: -0.04em; }
       .cn-back-btn { display: none; } /* No back button needed on split view */
       
       /* Desktop Sheet fixed to survive JS transform overwrites */
@@ -765,12 +768,11 @@
       <div class="cn-editor-body">
         <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…">
         
-        <div id="cnTypeRow" class="cn-type-row"></div>
-        <div id="cnIdeaStatusRow" class="cn-idea-status-row" style="display:none;"></div>
-        <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="URL or DOI…" style="display:none;">
-        <div id="cnTagRow" class="cn-tag-row"></div>
-        
-        <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" style="width:100%; border:none; background:transparent; font-size:14px; color:var(--text-3); font-weight:500; margin-bottom:16px; outline:none;">
+        <!-- NEW SLEEK PROPERTIES TRIGGER -->
+        <button id="cnPropsTriggerBtn" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:12px; background:var(--bg-input); border:none; color:var(--text-2); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:24px; transition: all 0.2s;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span id="cnPropsTriggerLabel">Note · 0 tags</span>
+        </button>
         
         <div class="cn-editor-divider"></div>
         <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write something…"></textarea>
@@ -842,13 +844,28 @@
   </nav>
 </div>
 
-<!-- FAB (Only shows up in Notes view now) -->
-<div class="fab" id="fab">+</div>
-
 <!-- ════════════════════════════════════════════════
      OVERLAY + SHEETS
 ════════════════════════════════════════════════ -->
 <div class="overlay" id="overlay"></div>
+
+<!-- NEW: Note Properties Sheet (Hidden Type/Tags logic) -->
+<div class="sheet" id="notePropsSheet">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;">Note Properties</div>
+    <div id="closeNotePropsBtn" class="icon-btn" style="width:28px; height:28px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  
+  <div class="sheet-label">Type</div>
+  <div id="cnTypeRow" class="cn-type-row"></div>
+  
+  <div id="cnIdeaStatusRow" class="cn-idea-status-row" style="display:none; margin-top: 16px;"></div>
+  <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="URL or DOI…" style="display:none; margin-top:16px;">
+  
+  <div class="sheet-label" style="margin-top: 24px;">Categories</div>
+  <div id="cnTagRow" class="cn-tag-row"></div>
+</div>
 
 <!-- Add / Edit Task sheet -->
 <div class="sheet" id="addSheet">
