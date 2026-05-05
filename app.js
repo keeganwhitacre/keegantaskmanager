@@ -24,10 +24,40 @@ import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } f
 // IOS SAFARI VIEWPORT HEIGHT FIX
 // Prevents permanent white space by perfectly tracking window bounds
 // ══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// IOS SAFARI VIEWPORT HEIGHT FIX
+// Prevents permanent white space by perfectly tracking window bounds
+// ══════════════════════════════════════════════════════════════════
 function setViewportHeight() {
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  const vv = window.visualViewport;
+  // Fallback to innerHeight if VisualViewport isn't supported
+  const currentHeight = vv ? vv.height : window.innerHeight;
+  document.documentElement.style.setProperty('--vh', `${currentHeight * 0.01}px`);
+  
+  // Aggressively prevent iOS from pushing the whole layout up
+  if (vv && vv.offsetTop > 0) {
+    window.scrollTo(0, 0);
+  }
 }
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setViewportHeight);
+  window.visualViewport.addEventListener('scroll', setViewportHeight);
+} else {
+  window.addEventListener('resize', setViewportHeight);
+}
+setViewportHeight();
+
+// Additional fallback for keyboard dismissal bugs
+document.addEventListener('focusout', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    setTimeout(() => {
+      window.scrollTo(0, 0); 
+      document.body.scrollTop = 0; 
+      setViewportHeight();
+    }, 50);
+  }
+});
 window.addEventListener('resize', setViewportHeight);
 setViewportHeight();
 
