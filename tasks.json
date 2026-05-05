@@ -3202,20 +3202,6 @@
   },
   "cnNotes": [
     {
-      "id": "moslbuzq7fca",
-      "title": "",
-      "body": "",
-      "tags": [],
-      "bodyIsMono": false,
-      "pinned": false,
-      "locked": false,
-      "type": "memo",
-      "url": "",
-      "ideaStatus": "",
-      "createdAt": "2026-05-05T12:14:24.422Z",
-      "updatedAt": "2026-05-05T15:15:12.481Z"
-    },
-    {
       "id": "mokcaq2hrfvl",
       "title": "Apotris songs",
       "speaker": "",
@@ -3260,7 +3246,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-29T15:12:18.430Z",
-      "updatedAt": "2026-05-05T15:15:11.922Z"
+      "updatedAt": "2026-05-05T15:15:18.586Z"
     },
     {
       "id": "mobw4rnhy40h",
@@ -3275,7 +3261,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-23T19:44:44.285Z",
-      "updatedAt": "2026-05-05T15:01:22.402Z"
+      "updatedAt": "2026-05-05T15:15:20.257Z"
     },
     {
       "id": "mobmrmds0eqb",
@@ -3983,5 +3969,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T15:15:14.983Z"
+  "updated": "2026-05-05T15:15:22.759Z"
 }
