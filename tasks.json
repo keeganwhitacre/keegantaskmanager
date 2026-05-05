@@ -1,19 +1,6 @@
 {
   "tasks": [
     {
-      "id": "mosqwvicymwm",
-      "title": "Hhhghh",
-      "categories": [],
-      "status": "active",
-      "priority": "md",
-      "due": "",
-      "note": "",
-      "noteIsMono": false,
-      "pinnedToday": false,
-      "done": false,
-      "pomodoros": 0
-    },
-    {
       "id": "mm7swxj4qgv6",
       "title": "Finalize SAS poster methods section",
       "status": "active",
@@ -4011,5 +3998,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T14:50:45.451Z"
+  "updated": "2026-05-05T14:50:49.017Z"
 }
