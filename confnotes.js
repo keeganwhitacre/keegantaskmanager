@@ -799,5 +799,17 @@ document.addEventListener('keydown', function(e) {
   else if (e.key === 'Escape' && cnActiveId) closeCNDetail();
 });
 
+// ── INIT — show empty state immediately on desktop so the blank editor never appears ──
+(function initNotesView() {
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+  if (isDesktop) {
+    showDesktopEmptyState();
+  } else {
+    // Mobile: detail view should be fully hidden until a note is opened
+    const detailEl = document.getElementById('cnDetailView');
+    if (detailEl) detailEl.style.display = 'none';
+  }
+})();
+
 // ── EXPORTS ──
 export { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf };
