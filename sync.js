@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════
-// SYNC MODULE — GitHub persistence
-// Fetch, push (debounced), conflict resolution, offline queue
+// SYNC MODULE — Gist persistence
+// Fetch, push (debounced), offline queue
 // ══════════════════════════════════════════════════════════════════
 
 import {
@@ -20,15 +20,14 @@ function ghHeaders() {
   };
 }
 
-function ghPath() {
-  return GH_API + '/repos/' + state.settings.ghUser + '/' + state.settings.ghRepo + '/contents/tasks.json';
+function gistUrl() {
+  return GH_API + '/gists/' + state.settings.ghGistId;
 }
 
 // ── SYNC STATUS UI ──
 let syncTimer = null;
 
 function showSync(type, msg) {
-  // Suppress syncing/success to reduce noise (original behavior)
   if (type === 'syncing' || type === 'success') return;
   const bar = document.getElementById('syncBar');
   bar.className = 'sync-bar show ' + type;
@@ -37,14 +36,14 @@ function showSync(type, msg) {
   syncTimer = setTimeout(() => { bar.classList.remove('show'); }, 4000);
 }
 
-// ── FETCH (pull from GitHub) ──
+// ── FETCH (pull from Gist) ──
 let ghPushQueued = false;
 
 function ghFetch(retries) {
-  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) return;
+  if (!state.settings.ghToken || !state.settings.ghGistId) return;
   retries = retries || 0;
 
-  fetch(ghPath(), { headers: ghHeaders() })
+  fetch(gistUrl(), { headers: ghHeaders() })
     .then(r => {
       if (r.status === 404) { state._shaLoaded = true; ghPush(); return null; }
       if (r.status === 401 || r.status === 403) { state._shaLoaded = true; showSync('error', 'Auth failed — check token'); return null; }
@@ -53,17 +52,14 @@ function ghFetch(retries) {
     })
     .then(d => {
       if (!d) return;
-      state.sha = d.sha;
       state._shaLoaded = true;
 
-      const dec = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
+      const dec = JSON.parse(d.files['tasks.json'].content);
       applySyncPayload(dec);
 
-      // Update scratchpad UI if not focused
       const sp = document.getElementById('scratchpad');
       if (sp && document.activeElement !== sp) sp.value = state.scratchpad;
 
-      // Tell the world data changed — the router/renderers will pick it up
       emit('data-pulled');
 
       if (ghPushQueued) { ghPush(); } else { savePending(false); }
@@ -81,10 +77,9 @@ function ghFetch(retries) {
     });
 }
 
-// ── PUSH (write to GitHub) ──
-// Raw push — called only by the debounced wrapper
+// ── PUSH (write to Gist) ──
 function ghPushNow() {
-  if (!state.settings.ghToken || !state.settings.ghUser || !state.settings.ghRepo) {
+  if (!state.settings.ghToken || !state.settings.ghGistId) {
     savePending(true);
     return;
   }
@@ -98,41 +93,20 @@ function ghPushNow() {
     return;
   }
   ghPushQueued = false;
-  showSync('syncing', 'Saving to GitHub…');
+  showSync('syncing', 'Saving…');
 
   const payload = buildSyncPayload();
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-  const body = { message: 'Update tasks ' + new Date().toLocaleTimeString(), content: content };
-  if (state.sha) body.sha = state.sha;
+  const body = JSON.stringify({
+    files: { 'tasks.json': { content: JSON.stringify(payload, null, 2) } }
+  });
 
-  fetch(ghPath(), { method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body) })
-    .then(r => {
-      if (r.status === 409 || r.status === 422) {
-        // Conflict: re-fetch SHA and retry
-        return fetch(ghPath(), { headers: ghHeaders() })
-          .then(r2 => r2.json())
-          .then(d2 => {
-            state.sha = d2.sha;
-            body.sha = state.sha;
-            return fetch(ghPath(), { method: 'PUT', headers: ghHeaders(), body: JSON.stringify(body) });
-          })
-          .then(r3 => { if (!r3.ok) throw new Error(r3.status); return r3.json(); });
-      }
-      if (!r.ok) throw new Error(r.status);
-      return r.json();
-    })
-    .then(d => {
-      state.sha = d.content.sha;
-      savePending(false);
-      showSync('success', 'Saved');
-    })
-    .catch(() => {
-      savePending(true);
-      showSync('error', 'Save failed — stored locally');
-    });
+  fetch(gistUrl(), { method: 'PATCH', headers: ghHeaders(), body })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(() => { savePending(false); showSync('success', 'Saved'); })
+    .catch(() => { savePending(true); showSync('error', 'Save failed — stored locally'); });
 }
 
-// Debounced public entry point — all callers use this (or emit 'request-sync')
+// Debounced public entry point
 let ghPushDebounceTimer = null;
 
 function ghPush(immediate) {
@@ -147,18 +121,14 @@ function ghPush(immediate) {
 
 // ── CONNECTION TEST ──
 function testGhConnection() {
-  const s = state.settings;
-  if (!s.ghToken || !s.ghUser || !s.ghRepo) return Promise.resolve(false);
-  return fetch(GH_API + '/repos/' + s.ghUser + '/' + s.ghRepo, { headers: ghHeaders() })
+  if (!state.settings.ghToken || !state.settings.ghGistId) return Promise.resolve(false);
+  return fetch(gistUrl(), { headers: ghHeaders() })
     .then(r => r.ok)
     .catch(() => false);
 }
 
 // ── WIRE UP ──
-// Listen for sync requests from state module
 on('request-sync', () => { ghPush(); });
-
-// Auto-push when coming back online
 window.addEventListener('online', () => { if (state.pendingSync) ghPush(true); });
 
 // ── EXPORTS ──
