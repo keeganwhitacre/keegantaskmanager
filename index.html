@@ -115,8 +115,11 @@
 
     html {
       background-color: var(--bg-canvas);
-      position: fixed;
-      inset: 0; /* Shorthand for top:0; right:0; bottom:0; left:0; */
+      
+      /* Fallback for standard browsers */
+      height: 100vh; 
+      /* The Apple Hack: Forces WebKit to stretch exactly to the available window */
+      height: -webkit-fill-available; 
     }
     
     body {
@@ -128,12 +131,13 @@
       display: flex;
       flex-direction: column;
     
-      /* THE LOCK: Forbids iOS from panning the window */
+      /* Keep the lock to prevent iOS rubber-banding */
       position: fixed;
       inset: 0;
       
-      /* THE MAGIC: Dynamically resizes the app when the keyboard opens */
-      height: 100dvh; 
+      /* Use the fill-available hack for the body as well */
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
     
       overflow: hidden;
       overscroll-behavior-y: none;
@@ -514,6 +518,17 @@
     .cat-settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; box-sizing: border-box;}
     .bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0;}
 
+    /* ── SLIDE TO HIDE LOGIC ── */
+    .glass-nav-wrap, #quickAddWrap {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
+    }
+    body.scrolling-down .glass-nav-wrap,
+    body.scrolling-down #quickAddWrap {
+      transform: translateY(120px) translateZ(0); 
+      opacity: 0;
+      pointer-events: none;
+    }
+
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
       body { padding-left: 120px; } /* Room for left dock */
@@ -584,17 +599,12 @@
 
 <body>
 
-<!-- ── SYNC BAR ── -->
 <div class="sync-bar" id="syncBar" style="display:none;">
   <div class="sync-dot"></div><span id="syncMsg"></span>
 </div>
 
-<!-- ── TOAST ── -->
 <div class="toast" id="toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-1);color:var(--bg-canvas);padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;z-index:999;transition:opacity 0.2s;"></div>
 
-<!-- ════════════════════════════════════════════════
-     TASKS VIEW
-════════════════════════════════════════════════ -->
 <div id="tasksView" class="app-view active">
   <div class="header content-centerer hide-in-reflect hide-in-notes hide-in-bel">
     <div class="header-top">
@@ -623,7 +633,6 @@
     </div>
   </div>
 
-  <!-- FIXED QUICK ADD + SHEET HOOK -->
   <div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel" id="quickAddWrap">
     <div class="quick-add-row">
       <button id="quickAddFullBtn" class="quick-add-btn-trigger">
@@ -634,9 +643,6 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     REFLECT VIEW
-════════════════════════════════════════════════ -->
 <div id="reflectView" class="app-view">
   <div class="header content-centerer">
     <div class="header-top"><div class="app-title">Reflect</div></div>
@@ -644,7 +650,6 @@
   <div class="scroll-container"><div class="content-centerer">
     
     <div class="reflect-desktop-grid">
-      <!-- Affect Grid Card -->
       <div class="reflect-card">
         <div class="reflect-card-label">
           <span>How are you feeling?</span>
@@ -678,7 +683,6 @@
         </div>
       </div>
 
-      <!-- Habits Card -->
       <div class="reflect-card">
         <div class="reflect-card-label">Habits</div>
         <div style="display:flex; gap:4px; justify-content:flex-end; margin-bottom:8px;" id="dHabitDayLabels"></div>
@@ -686,7 +690,6 @@
       </div>
     </div>
 
-    <!-- Insights Card -->
     <details class="reflect-card" style="margin-top:16px;">
       <summary style="list-style:none; display:flex; align-items:center; cursor:pointer;" class="reflect-card-label">
         <span>Insights</span>
@@ -698,16 +701,12 @@
   </div></div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     NOTES VIEW (Split Pane)
-════════════════════════════════════════════════ -->
 <div id="confNotesView" class="app-view">
   <div class="header">
     <div class="header-top">
       <div class="app-title">Notes</div>
       <div style="display: flex; gap: 8px;">
         <button class="icon-btn" id="cnSearchBtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-        <!-- COMPOSE BUTTON NOW UNIVERSALLY IN THE HEADER -->
         <button class="icon-btn" id="cnNewBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
       </div>
     </div>
@@ -716,12 +715,10 @@
   </div>
 
   <div class="notes-split">
-    <!-- List Pane -->
     <div id="cnListView">
       <div id="cnNotesList"></div>
     </div>
 
-    <!-- Editor Pane -->
     <div id="cnDetailView" class="cn-no-note">
       <div class="cn-detail-topbar">
         <button class="cn-back-btn" id="cnBackBtn">
@@ -739,7 +736,6 @@
       <div class="cn-editor-body">
         <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…">
         
-        <!-- NEW SLEEK PROPERTIES TRIGGER -->
         <button id="cnPropsTriggerBtn" style="display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:12px; background:var(--bg-input); border:none; color:var(--text-2); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:24px; transition: all 0.2s;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span id="cnPropsTriggerLabel">Note · 0 tags</span>
@@ -756,9 +752,6 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     BEL VIEW
-════════════════════════════════════════════════ -->
 <div id="belView" class="app-view">
   <div class="header content-centerer">
     <div class="header-top">
@@ -769,20 +762,15 @@
   <div class="scroll-container"><div class="content-centerer" id="belContent"></div></div>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     GLASS HUB NAVIGATION
-════════════════════════════════════════════════ -->
 <div class="glass-nav-wrap">
   <nav class="glass-panel">
     
-    <!-- 1. REFLECT -->
     <button class="nav-item tab-btn" id="tabReflect" data-tab="reflect">
       <svg class="nav-icon fill-active" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
       <span class="nav-label">Reflect</span>
       <div class="nav-shortcut">⌘1</div>
     </button>
 
-    <!-- 2. TASKS (HUB) -->
     <div class="hub-container">
       <button class="hub-btn tab-btn active" id="tabTasks" data-tab="tasks">
         <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -791,14 +779,12 @@
       <div class="hub-line"></div>
     </div>
 
-    <!-- 3. NOTES -->
     <button class="nav-item tab-btn" id="tabNotes" data-tab="notes">
       <svg class="nav-icon fill-active" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span class="nav-label">Notes</span>
       <div class="nav-shortcut">⌘3</div>
     </button>
 
-    <!-- Desktop Only: Settings / Profile -->
     <div class="dock-bottom-actions">
       <button class="dock-icon-btn" id="dockSettingsBtn" title="Settings">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -808,12 +794,8 @@
   </nav>
 </div>
 
-<!-- ════════════════════════════════════════════════
-     OVERLAY + SHEETS
-════════════════════════════════════════════════ -->
 <div class="overlay" id="overlay"></div>
 
-<!-- Note Properties Sheet (Hidden Type/Tags logic) -->
 <div class="sheet" id="notePropsSheet">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
@@ -831,7 +813,6 @@
   <div id="cnTagRow" class="cn-tag-row"></div>
 </div>
 
-<!-- Add / Edit Task sheet -->
 <div class="sheet" id="addSheet">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
@@ -866,7 +847,6 @@
   <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none;">Delete Task</button>
 </div>
 
-<!-- Settings sheet -->
 <div class="sheet" id="settingsSheet">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
@@ -907,7 +887,6 @@
   <div id="habitSettingsList" style="display:flex; flex-direction:column; gap:8px;"></div>
   <button id="saveHabitsBtn" class="sheet-btn primary" style="margin-top:12px; padding:12px; background:var(--bg-canvas); color:var(--text-1); border:0.5px solid var(--border);">Save Habits</button>
   
-  <!-- Fallback IDs to prevent further JS crashes just in case your old app.js looks for them -->
   <div style="display:none;">
     <button id="exportBtn"></button>
     <button id="importBtn"></button>
@@ -916,6 +895,26 @@
   
   <div id="ghStatusDot" style="display:none;"></div><div id="ghStatusText" style="display:none;"></div>
 </div>
+
+<script>
+  // Slide-to-hide nav logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const scrollContainers = document.querySelectorAll('.scroll-container');
+    let lastScrollY = 0;
+
+    scrollContainers.forEach(container => {
+      container.addEventListener('scroll', (e) => {
+        const currentY = e.target.scrollTop;
+        if (currentY > lastScrollY && currentY > 50) {
+          document.body.classList.add('scrolling-down');
+        } else if (currentY < lastScrollY || currentY <= 50) {
+          document.body.classList.remove('scrolling-down');
+        }
+        lastScrollY = currentY;
+      }, { passive: true });
+    });
+  });
+</script>
 
 <script type="module" src="app.js"></script>
 </body>
