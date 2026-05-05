@@ -555,7 +555,7 @@ function updateGhUI(connected) {
   const txt = document.getElementById('ghStatusText');
   if (connected) {
     if (dot) dot.className = 'status-dot ok';
-    if (txt) txt.textContent = 'Connected: ' + state.settings.ghUser + '/' + state.settings.ghRepo;
+    if (txt) txt.textContent = 'Connected (Gist: ' + state.settings.ghGistId.slice(0, 8) + '…)';
   } else {
     if (dot) dot.className = 'status-dot';
     if (txt) txt.textContent = 'Not connected';
@@ -647,9 +647,8 @@ function updatePinUI() {
 }
 
 function loadSettingsUI() {
-  document.getElementById('ghUser').value = state.settings.ghUser || '';
-  document.getElementById('ghRepo').value = state.settings.ghRepo || '';
-  document.getElementById('ghToken').value = state.settings.ghToken || '';
+  document.getElementById('ghGistId').value = state.settings.ghGistId || '';
+document.getElementById('ghToken').value = state.settings.ghToken || '';
   updateGhUI(!!state.settings.ghToken);
   loadCategoriesUI();
   loadHabitsUI();
@@ -809,10 +808,9 @@ if (dockSettingsBtn) {
 }
 
 document.getElementById('saveSettingsBtn').addEventListener('click', function() {
-  const u = document.getElementById('ghUser').value.trim();
-  const r = document.getElementById('ghRepo').value.trim();
-  const t = document.getElementById('ghToken').value.trim();
-  state.settings = { ghUser: u, ghRepo: r, ghToken: t };
+ const g = document.getElementById('ghGistId').value.trim();
+const t = document.getElementById('ghToken').value.trim();
+state.settings = Object.assign({}, state.settings, { ghGistId: g, ghToken: t });
   saveSettings();
   this.textContent = 'Testing…';
   saveCategoriesFromUI();
