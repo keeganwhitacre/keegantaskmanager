@@ -418,18 +418,18 @@
     .cn-empty-text { font-size: 14px; line-height: 1.6; font-weight: 500;}
 
     /* Note Editor */
-    #cnDetailView {
-      position: fixed; inset: 0; background: var(--bg-canvas); z-index: 100;
-      display: none; flex-direction: column;
-    }
-    #cnDetailView.cn-no-note { opacity: 0; pointer-events: none; }
+     #cnDetailView {
+       position: fixed; inset: 0; background: var(--bg-canvas); z-index: 100;
+      display: none; flex-direction: column; overflow-y: auto;
+     }
+    /* cn-no-note: managed by JS via showDesktopEmptyState() */
     
     .cn-detail-topbar { padding: calc(var(--safe-top) + 16px) 20px 8px; display: flex; align-items: center; gap: 12px; }
     .cn-back-btn { background: none; border: none; color: var(--accent); display: flex; align-items: center; gap: 4px; font-size: 16px; cursor: pointer;}
     .cn-back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .cn-detail-topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; text-align: center; }
     
-    .cn-editor-body { flex: 1; padding: 20px; overflow-y: auto; max-width: 800px; margin: 0 auto; width: 100%; }
+    .cn-editor-body { flex: 1; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
     .cn-detail-title-input { width: 100%; border: none; outline: none; background: transparent; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 16px; line-height: 1.2; }
     .cn-detail-title-input::placeholder { color: var(--text-4); }
     
@@ -451,6 +451,16 @@
     .cn-md-preview li { margin-bottom: 4px; display: list-item; list-style-position: outside;}
     .cn-md-preview a { color: var(--accent); text-decoration: underline; }
     .internal-note-link { color: var(--accent); text-decoration: none; font-weight: 500; background: var(--accent-faded); padding: 2px 6px; border-radius: 6px;}
+
+    /* ── NOTES EMPTY STATE (desktop) ── */
+    #cnDetailEmpty {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      flex: 1; color: var(--text-4); gap: 12px; user-select: none; pointer-events: none;
+      padding: 40px;
+    }
+    #cnDetailEmpty svg { width: 48px; height: 48px; stroke: var(--text-4); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    #cnDetailEmpty span { font-size: 14px; font-weight: 500; letter-spacing: 0.01em; }
+    #cnEditorInner { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
     /* ── ANIMATIONS ── */
     @keyframes taskIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -575,10 +585,10 @@
       .notes-split.focus-mode #cnListView { display: none; }
       #cnFocusToggle { display: flex !important; }
       #cnListView { width: 380px; flex: none; border-right: 0.5px solid var(--border); padding-bottom: 0;}
-      #cnDetailView { position: static; flex: 1; z-index: auto; border-radius: 24px 0 0 0; box-shadow: -4px 0 24px rgba(0,0,0,0.03); display: flex !important;}
+      #cnDetailView { position: static; flex: 1; z-index: auto; border-radius: 24px 0 0 0; box-shadow: -4px 0 24px rgba(0,0,0,0.03); display: flex !important; overflow: hidden; }
       #cnDetailView.cn-no-note { opacity: 1; pointer-events: auto; }
       .cn-detail-topbar { padding: 24px 60px 0px; }
-      .cn-editor-body { padding: 0px 60px 60px; max-width: 900px; }
+      .cn-editor-body { padding: 0px 60px 60px; max-width: 900px; overflow-y: auto; }
       .cn-detail-title-input { font-size: 40px; margin-top: 0; margin-bottom: 16px; letter-spacing: -0.04em; }
       .cn-back-btn { display: none; } /* No back button needed on split view */
       
@@ -733,6 +743,12 @@
         </div>
       </div>
 
+      <div id="cnDetailEmpty">
+         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+         <span>Select a note or press N to create one</span>
+      </div>
+
+      <div id="cnEditorInner">
       <div class="cn-editor-body">
         <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…">
         
@@ -749,6 +765,7 @@
         <div id="cnBacklinksDrawer" style="margin-top:24px;"></div>
       </div>
     </div>
+      </div>
   </div>
 </div>
 
@@ -768,7 +785,7 @@
     <button class="nav-item tab-btn" id="tabReflect" data-tab="reflect">
       <svg class="nav-icon fill-active" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
       <span class="nav-label">Reflect</span>
-      <div class="nav-shortcut">⌘1</div>
+      <div class="nav-shortcut">^1</div>
     </button>
 
     <div class="hub-container">
@@ -782,7 +799,7 @@
     <button class="nav-item tab-btn" id="tabNotes" data-tab="notes">
       <svg class="nav-icon fill-active" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span class="nav-label">Notes</span>
-      <div class="nav-shortcut">⌘3</div>
+      <div class="nav-shortcut">^3</div>
     </button>
 
     <div class="dock-bottom-actions">
