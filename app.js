@@ -526,6 +526,19 @@ if (quickAddInput) {
   quickAddInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') submitQuickAdd();
   });
+
+  // On mobile, hide the nav pill while typing so it doesn't overlap content
+  quickAddInput.addEventListener('focus', function() {
+    if (window.matchMedia('(min-width: 768px)').matches) return;
+    const nav = document.querySelector('.glass-nav-wrap');
+    if (nav) nav.style.display = 'none';
+  });
+
+  quickAddInput.addEventListener('blur', function() {
+    if (window.matchMedia('(min-width: 768px)').matches) return;
+    const nav = document.querySelector('.glass-nav-wrap');
+    if (nav) nav.style.display = '';
+  });
 }
 
 const quickAddFullBtn = document.getElementById('quickAddFullBtn');
@@ -920,50 +933,5 @@ render();
 // FIX: Removed desktop "New Task" button injection — quick add pill already does this.
 
 
-// ══════════════════════════════════════════════════════════════════
-// QUICK-ADD KEYBOARD DOCKING
-// On iOS, when the keyboard opens the visual viewport shrinks.
-// We reposition the pill to sit just above the keyboard instead of
-// letting the layout jump. Uses visualViewport API (Safari 13+).
-// ══════════════════════════════════════════════════════════════════
-
-(function initQuickAddKeyboardDock() {
-  const pill = document.getElementById('quickAddWrap');
-  const input = document.getElementById('quickAddInput');
-  if (!pill || !input || !window.visualViewport) return;
-
-  // Only active on mobile (desktop pill is always visible in the dock area)
-  function isMobile() { return !window.matchMedia('(min-width: 768px)').matches; }
-
-  let _docked = false;
-
-  function dock() {
-    if (!isMobile()) return;
-    _docked = true;
-    const vv = window.visualViewport;
-    // Position pill so its bottom sits 8px above the keyboard
-    const offsetFromBottom = window.innerHeight - vv.height - vv.offsetTop;
-    pill.style.transition = 'bottom 0.15s ease, transform 0.15s ease';
-    pill.style.bottom = (offsetFromBottom + 8) + 'px';
-    // Also clear any transform so slide-to-hide doesn't fight us
-    pill.style.transform = 'none';
-  }
-
-  function undock() {
-    if (!_docked) return;
-    _docked = false;
-    pill.style.transition = 'bottom 0.25s ease';
-    pill.style.bottom = '';      // restore CSS value (100px mobile)
-    pill.style.transform = '';   // restore slide-to-hide capability
-    setTimeout(function() { pill.style.transition = ''; }, 260);
-  }
-
-  window.visualViewport.addEventListener('resize', function() {
-    if (_docked) dock(); // re-run on every resize so it tracks keyboard height changes
-  });
-
-  input.addEventListener('focus', dock);
-  input.addEventListener('blur', undock);
-})();
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
