@@ -142,24 +142,65 @@
     body.notes-mode #confNotesView { display: flex !important; }
     body.bel-mode #belView { display: flex !important; }
 
-    /* ── NAVIGATION (Responsive) ── */
-    .tab-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: calc(64px + var(--safe-bottom));
-      background: var(--bg-material);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-top: 0.5px solid var(--border);
-      display: flex; flex-direction: row; padding-bottom: var(--safe-bottom);
-      z-index: 90;
+    /* ── GLASS HUB NAVIGATION (Mobile + Desktop Dock) ── */
+    .glass-nav-wrap {
+      position: fixed; z-index: 90; pointer-events: none;
+      bottom: calc(24px + var(--safe-bottom)); left: 0; width: 100%;
+      display: flex; justify-content: center;
     }
-    .sidebar-profile { display: none; }
-    .tab-btn {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 4px; background: none; border: none; cursor: pointer; color: var(--text-3); transition: color 0.15s;
+    .glass-panel {
+      pointer-events: auto;
+      width: 90%; max-width: 320px;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 32px; padding: 6px;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .tab-btn.active { color: var(--text-1); }
-    .tab-icon { font-size: 24px; line-height: 1; }
-    .tab-label { font-size: 11px; font-weight: 600; }
+    [data-theme="dark"] .glass-panel {
+      background: rgba(30, 30, 30, 0.65);
+      box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      padding: 8px 0; background: transparent; border: none; color: var(--text-3); cursor: pointer;
+      border-radius: 20px; transition: all 0.3s;
+    }
+    .nav-item:active { transform: scale(0.95); }
+    .nav-item.active { color: var(--text-1); }
+    .nav-item.active svg { transform: scale(1.1); }
+    .nav-icon { width: 22px; height: 22px; transition: transform 0.3s; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .nav-item.active .nav-icon.fill-active { fill: currentColor; fill-opacity: 0.1; }
+    .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.02em; }
+    .nav-shortcut { display: none; font-size: 9px; font-weight: 800; color: var(--text-4); margin-top: 2px; }
+
+    .hub-container { position: relative; width: 80px; height: 40px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .hub-btn {
+      position: absolute; top: -16px; width: 48px; height: 48px;
+      background: var(--bg-surface); color: var(--text-3); border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
+    }
+    .hub-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
+
+    /* Active Tasks State (Morphs when Tasks view is active) */
+    body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
+      top: -28px; width: 64px; height: 64px;
+      background: var(--text-1); color: var(--bg-canvas);
+      border-radius: 20px; transform: rotate(3deg);
+      border-color: transparent; box-shadow: 0 8px 24px -6px rgba(0,0,0,0.3);
+    }
+    body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn:active { transform: scale(0.9) rotate(3deg); }
+    body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn svg { width: 30px; height: 30px; transform: rotate(-3deg); }
+
+    .hub-dot { position: absolute; bottom: 0px; width: 4px; height: 4px; background: var(--text-1); border-radius: 50%; opacity: 0; transition: opacity 0.3s; }
+    body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-dot { opacity: 1; }
+    .hub-line { display: none; }
+    .dock-bottom-actions { display: none; }
 
     /* ── GLOBAL LAYOUT HELPERS ── */
     .scroll-container { flex: 1; overflow-y: auto; padding: 0 20px calc(120px + var(--safe-bottom)); }
@@ -284,7 +325,7 @@
 
     /* ── FLOATING QUICK ADD ── */
     #quickAddWrap {
-      position: fixed; bottom: calc(84px + var(--safe-bottom)); left: 20px; right: 20px;
+      position: fixed; bottom: calc(108px + var(--safe-bottom)); left: 20px; right: 20px;
       max-width: 720px; margin: 0 auto; background: var(--bg-surface); border-radius: 99px;
       padding: 12px 20px; display: flex !important; align-items: center; gap: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 0.5px solid var(--border); z-index: 40;
@@ -460,7 +501,7 @@
     /* ── FAB (Only for Notes) ── */
     #fab { display: none !important; }
     body.notes-mode #fab {
-      display: flex !important; position: fixed; bottom: calc(84px + var(--safe-bottom)); right: 20px;
+      display: flex !important; position: fixed; bottom: calc(108px + var(--safe-bottom)); right: 20px;
       width: 56px; height: 56px; border-radius: 28px; background: var(--accent); color: #fff;
       align-items: center; justify-content: center; font-size: 28px; font-weight: 300;
       box-shadow: 0 8px 24px rgba(0,122,255,0.4); z-index: 90; cursor: pointer; transition: transform 0.15s;
@@ -505,25 +546,54 @@
     .bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0;}
 
 
-    /* ── DESKTOP RESPONSIVENESS (macOS Style) ── */
+    /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
-      .tab-bar {
-        position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
-        background: var(--bg-sidebar); border-right: 0.5px solid var(--border); border-top: none;
-        flex-direction: column; padding: 32px 16px; align-items: flex-start; z-index: 50;
-      }
-      .tab-btn { flex: none; width: 100%; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 14px; border-radius: 12px; }
-      .tab-btn.active { background: var(--text-1); color: var(--bg-canvas); }
-      .tab-btn.active .tab-icon { color: var(--bg-canvas); }
-      .tab-label { font-size: 15px; font-weight: 600; }
-      .sidebar-profile { display: block; font-size: 22px; font-weight: 800; margin-bottom: 32px; padding: 0 12px; }
+      body { padding-left: 120px; } /* Room for left dock */
       
-      body { padding-left: 260px; }
+      .glass-nav-wrap {
+        bottom: 0; top: 0; left: 24px; width: auto; align-items: center;
+      }
+      .glass-panel {
+        width: 72px; height: auto; flex-direction: column; padding: 12px; border-radius: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+      }
+      .nav-item { width: 100%; aspect-ratio: 1; padding: 0; border-radius: 20px; }
+      .nav-item:hover { background: rgba(0,0,0,0.04); }
+      [data-theme="dark"] .nav-item:hover { background: rgba(255,255,255,0.04); }
+      .nav-label { display: none; }
+      .nav-shortcut { display: block; }
+      
+      .hub-container { width: 100%; height: 64px; }
+      .hub-btn { top: 8px; left: 8px; } /* Inactive desktop center */
+      
+      /* Active state pops out right instead of up */
+      body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
+        top: 0; left: 0; transform: translateX(12px) rotate(3deg);
+      }
+      body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn:active { 
+        transform: translateX(12px) scale(0.9) rotate(3deg); 
+      }
+      
+      .hub-dot { display: none !important; }
+      .hub-line {
+        display: block; position: absolute; left: -12px; top: 16px; width: 4px; height: 32px;
+        background: var(--text-1); border-radius: 0 4px 4px 0; opacity: 0; transition: opacity 0.3s;
+      }
+      body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-line { opacity: 1; }
+
+      .dock-bottom-actions {
+        display: flex; flex-direction: column; align-items: center; gap: 16px;
+        margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); width: 100%;
+      }
+      .dock-icon-btn { color: var(--text-4); cursor: pointer; transition: color 0.2s; background: none; border: none; display: flex;}
+      .dock-icon-btn:hover { color: var(--text-1); }
+      .dock-icon-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
       .header { background: transparent; }
       .scroll-container { padding-bottom: 40px; }
       
       /* Desktop Quick Add Pill */
-      #quickAddWrap { bottom: 32px; left: calc(260px + 20px); }
+      #quickAddWrap { bottom: 32px; left: 120px; }
       
       /* Desktop Split Notes */
       .notes-split { flex-direction: row; transition: all 0.3s ease; }
@@ -734,23 +804,43 @@
 </div>
 
 <!-- ════════════════════════════════════════════════
-     UNIVERSAL NAV (Mobile Bottom / Desktop Left)
+     GLASS HUB NAVIGATION
 ════════════════════════════════════════════════ -->
-<nav class="tab-bar">
-  <div class="sidebar-profile">Keegan</div>
-  <button class="tab-btn active" id="tabTasks" data-tab="tasks">
-    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
-    <span class="tab-label">Tasks</span>
-  </button>
-  <button class="tab-btn" id="tabReflect" data-tab="reflect">
-    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
-    <span class="tab-label">Reflect</span>
-  </button>
-  <button class="tab-btn" id="tabNotes" data-tab="notes">
-    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-    <span class="tab-label">Notes</span>
-  </button>
-</nav>
+<div class="glass-nav-wrap">
+  <nav class="glass-panel">
+    
+    <!-- 1. REFLECT -->
+    <button class="nav-item tab-btn" id="tabReflect" data-tab="reflect">
+      <svg class="nav-icon fill-active" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <span class="nav-label">Reflect</span>
+      <div class="nav-shortcut">⌘1</div>
+    </button>
+
+    <!-- 2. TASKS (HUB) -->
+    <div class="hub-container">
+      <button class="hub-btn tab-btn active" id="tabTasks" data-tab="tasks">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </button>
+      <div class="hub-dot"></div>
+      <div class="hub-line"></div>
+    </div>
+
+    <!-- 3. NOTES -->
+    <button class="nav-item tab-btn" id="tabNotes" data-tab="notes">
+      <svg class="nav-icon fill-active" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span class="nav-label">Notes</span>
+      <div class="nav-shortcut">⌘3</div>
+    </button>
+
+    <!-- Desktop Only: Settings / Profile -->
+    <div class="dock-bottom-actions">
+      <button class="dock-icon-btn" id="dockSettingsBtn" title="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
+    </div>
+
+  </nav>
+</div>
 
 <!-- FAB (Only shows up in Notes view now) -->
 <div class="fab" id="fab">+</div>
