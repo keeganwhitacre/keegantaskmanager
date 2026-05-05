@@ -20,57 +20,22 @@ import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflect, onReflectEnter, onReflectExit } from './dashboard.js';
 import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } from './confnotes.js';
 
-// ══════════════════════════════════════════════════════════════════
-// IOS SAFARI VIEWPORT HEIGHT FIX
-// Prevents permanent white space by perfectly tracking window bounds
-// ══════════════════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════════════════════
-// IOS SAFARI VIEWPORT HEIGHT FIX
-// Prevents permanent white space by perfectly tracking window bounds
-// ══════════════════════════════════════════════════════════════════
-function setViewportHeight() {
-  const vv = window.visualViewport;
-  // Fallback to innerHeight if VisualViewport isn't supported
-  const currentHeight = vv ? vv.height : window.innerHeight;
-  document.documentElement.style.setProperty('--vh', `${currentHeight * 0.01}px`);
-  
-  // Aggressively prevent iOS from pushing the whole layout up
-  if (vv && vv.offsetTop > 0) {
-    window.scrollTo(0, 0);
-  }
-}
 
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', setViewportHeight);
-  window.visualViewport.addEventListener('scroll', setViewportHeight);
-} else {
-  window.addEventListener('resize', setViewportHeight);
-}
-setViewportHeight();
-
-// Additional fallback for keyboard dismissal bugs
-document.addEventListener('focusout', function(e) {
+// Bulletproof keyboard dismissal reset
+document.addEventListener('focusout', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    // Fire immediately
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.body.scrollTop = 0;
+    
+    // Fire again after iOS animations finish as a failsafe
     setTimeout(() => {
-      window.scrollTo(0, 0); 
-      document.body.scrollTop = 0; 
-      setViewportHeight();
-    }, 50);
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.body.scrollTop = 0;
+    }, 100);
   }
 });
-window.addEventListener('resize', setViewportHeight);
-setViewportHeight();
 
-// Additional fallback for keyboard dismissal bugs
-document.addEventListener('focusout', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    setTimeout(() => {
-      window.scrollTo(0, 0); 
-      document.body.scrollTop = 0; 
-      setViewportHeight();
-    }, 50);
-  }
-});
 
 // ══════════════════════════════════════════════════════════════════
 // TIME / DATE HELPERS
