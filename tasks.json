@@ -2097,283 +2097,6 @@
       "pomodoros": 0
     }
   ],
-  "projects": [
-    {
-      "id": "mmc9gxu8tdgk",
-      "title": "Applied Cognitive Psychology Paper",
-      "stage": "Waiting",
-      "due": "2026-03-31",
-      "note": "<p style=\"font-size: 16px; cursor: text; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; caret-color: rgb(227, 227, 227); color: rgb(227, 227, 227); font-family: &quot;Google Sans Flex&quot;, &quot;Google Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif;\"><br></p>",
-      "milestones": [],
-      "history": [
-        {
-          "type": "stage",
-          "label": "Stage → Done",
-          "date": "2026-03-24T18:31:49.304Z"
-        },
-        {
-          "type": "stage",
-          "label": "Stage → Review",
-          "date": "2026-03-24T18:31:49.975Z"
-        },
-        {
-          "type": "stage",
-          "label": "Stage → Waiting",
-          "date": "2026-03-24T18:31:50.983Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Submit paper",
-          "date": "2026-04-01T02:01:48.050Z"
-        },
-        {
-          "type": "milestone",
-          "label": "✓ Submit paper",
-          "date": "2026-04-01T02:01:48.920Z"
-        },
-        {
-          "type": "milestone-del",
-          "label": "Removed: Submit paper",
-          "date": "2026-04-01T02:01:51.610Z"
-        }
-      ],
-      "description": ""
-    },
-    {
-      "id": "mmdklg8dgrze",
-      "title": "AFSP Research Outreach",
-      "stage": "Active",
-      "due": "",
-      "note": "",
-      "milestones": [
-        {
-          "id": "mnfehxephbug",
-          "title": "Choose specific researcher",
-          "due": "",
-          "done": false
-        },
-        {
-          "id": "mnfei5y2evlr",
-          "title": "Contact Ashley w/ request",
-          "due": "",
-          "done": true,
-          "completedAt": "2026-04-08T17:23:56.196Z"
-        }
-      ],
-      "history": [
-        {
-          "type": "stage",
-          "label": "Stage → Active",
-          "date": "2026-03-24T18:32:04.174Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ AFSP Update for Research",
-          "date": "2026-03-27T17:26:39.913Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Choose specific researxher",
-          "date": "2026-04-01T02:02:21.079Z"
-        },
-        {
-          "type": "milestone-del",
-          "label": "Removed: Choose specific researxher",
-          "date": "2026-04-01T02:02:22.763Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Choose specific researcher",
-          "date": "2026-04-01T02:02:27.553Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Contact Ashley w/ request",
-          "date": "2026-04-01T02:02:38.618Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ Check out researchers + get list for AFSP meeting",
-          "date": "2026-04-08T17:23:30.765Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ AFSP Meeting for Research @1:00",
-          "date": "2026-04-08T17:23:31.468Z"
-        },
-        {
-          "type": "milestone",
-          "label": "✓ Contact Ashley w/ request",
-          "date": "2026-04-08T17:23:56.196Z"
-        }
-      ],
-      "description": "Host a researcher for AFSP"
-    },
-    {
-      "id": "mmgcg8sqamq9",
-      "title": "Personal Research Project",
-      "stage": "Active",
-      "due": "",
-      "note": "EMA app?<div><br></div><div>Need to start thinking about personal research projects integrating SAS information, talking with Kristen, and future interests <br></div><div><br></div><div>EMA App with built in PAT complete, talk to Jingyi </div>",
-      "milestones": [
-        {
-          "id": "mnfehhieonti",
-          "title": "Talk to Kristen",
-          "due": "",
-          "done": false
-        },
-        {
-          "id": "mni99r3pym5l",
-          "title": "Build app",
-          "due": "",
-          "done": true,
-          "completedAt": "2026-04-03T01:59:27.280Z"
-        }
-      ],
-      "history": [
-        {
-          "type": "milestone-add",
-          "label": "Added: Talk to Kristen",
-          "date": "2026-04-01T02:02:06.950Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Build app",
-          "date": "2026-04-03T01:59:26.581Z"
-        },
-        {
-          "type": "milestone",
-          "label": "✓ Build app",
-          "date": "2026-04-03T01:59:27.280Z"
-        },
-        {
-          "type": "stage",
-          "label": "Stage → Active",
-          "date": "2026-04-03T01:59:37.317Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ Write up documentation for EMA",
-          "date": "2026-04-03T14:00:44.935Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ ePAT adjustments",
-          "date": "2026-04-06T17:46:36.057Z"
-        }
-      ],
-      "description": ""
-    },
-    {
-      "id": "mn4ychs8u3os",
-      "title": "EPIC Data",
-      "description": "Finalize and organize EPIC data + work on own ideas",
-      "stage": "Active",
-      "due": "",
-      "note": "",
-      "milestones": [
-        {
-          "id": "mn4zp18cltx1",
-          "title": "Import sleep data",
-          "due": "",
-          "done": false
-        }
-      ],
-      "history": [
-        {
-          "type": "created",
-          "label": "Project created",
-          "date": "2026-03-24T18:32:38.408Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Import sleep data",
-          "date": "2026-03-24T19:10:23.100Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ Start wrangling and organizing",
-          "date": "2026-04-01T17:23:44.586Z"
-        },
-        {
-          "type": "task",
-          "label": "✓ EMA Initial Wrangling",
-          "date": "2026-04-03T15:13:33.172Z"
-        }
-      ]
-    },
-    {
-      "id": "mn7s464o3vwp",
-      "title": "Learning to sew clothes",
-      "description": "I want to learn how to buy clothes and sew them to fit me perfectly",
-      "stage": "Waiting",
-      "due": "",
-      "note": "",
-      "milestones": [
-        {
-          "id": "mnfefohzfein",
-          "title": "Use Sewing Machine",
-          "due": "",
-          "done": false
-        },
-        {
-          "id": "mnfefxk1x684",
-          "title": "Play with basic fabric or old shirt",
-          "due": "",
-          "done": false
-        },
-        {
-          "id": "mnfeg6dfepxx",
-          "title": "Hem a pair of pants",
-          "due": "",
-          "done": false
-        },
-        {
-          "id": "mnfegavohmk6",
-          "title": "Attempt to change a shirts fit",
-          "due": "",
-          "done": false
-        }
-      ],
-      "history": [
-        {
-          "type": "created",
-          "label": "Project created",
-          "date": "2026-03-26T18:01:30.888Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Use Sewing Machine",
-          "date": "2026-04-01T02:00:42.696Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Play with basic fabric or old shirt",
-          "date": "2026-04-01T02:00:54.433Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Hem pair of pands",
-          "date": "2026-04-01T02:00:59.371Z"
-        },
-        {
-          "type": "milestone-del",
-          "label": "Removed: Hem pair of pands",
-          "date": "2026-04-01T02:01:00.984Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Hem a pair of pants",
-          "date": "2026-04-01T02:01:05.859Z"
-        },
-        {
-          "type": "milestone-add",
-          "label": "Added: Attempt to change a shirts fit",
-          "date": "2026-04-01T02:01:11.700Z"
-        }
-      ]
-    }
-  ],
   "bel": {
     "annivDate": "2025-11-23",
     "gifts": "",
@@ -2550,75 +2273,7 @@
       }
     ]
   },
-  "scratchpad": "This week\n- start using journal + shoebox + tasks\n- mindfulness",
-  "shop": [
-    {
-      "id": 1772723159518.5393,
-      "text": "Tofu",
-      "done": true
-    },
-    {
-      "id": 1772723162391.1802,
-      "text": "Sweet potatoes",
-      "done": true
-    },
-    {
-      "id": 1772723169560.764,
-      "text": "chicken thighs",
-      "done": false
-    },
-    {
-      "id": 1772723175070.2598,
-      "text": "turkey",
-      "done": false
-    },
-    {
-      "id": 1772723177255.0535,
-      "text": "bagels?",
-      "done": false
-    },
-    {
-      "id": 1772723182454.5166,
-      "text": "snacks",
-      "done": false
-    },
-    {
-      "id": 1773852866877.056,
-      "text": "Chips",
-      "done": false
-    },
-    {
-      "id": 1774538024619.1235,
-      "text": "cheese",
-      "done": false
-    },
-    {
-      "id": 1774642369115.8655,
-      "text": "Toothbrush",
-      "done": false
-    },
-    {
-      "id": 1774865988631.8616,
-      "text": "Bandaid",
-      "done": false
-    }
-  ],
   "dash": {
-    "intention": "",
-    "intentionWeek": "2026-W19",
-    "quoteIdx": 8,
-    "countdown": {
-      "name": "Leaving San Diego :(",
-      "date": "2026-03-20"
-    },
-    "reflection": "",
-    "reflectionDate": "2026-03-19",
-    "book": {
-      "title": "Grapes of Wrath",
-      "author": "Steinbeck",
-      "current": 200,
-      "total": 450
-    },
     "habits": {
       "2026-W11": {
         "sleep": [
@@ -2962,7 +2617,7 @@
       },
       "2026-W19": {
         "sleep": [
-          false,
+          true,
           false,
           false,
           false,
@@ -2971,7 +2626,7 @@
           false
         ],
         "read": [
-          false,
+          true,
           false,
           false,
           false,
@@ -2980,7 +2635,7 @@
           false
         ],
         "lift": [
-          false,
+          true,
           false,
           false,
           false,
@@ -3466,6 +3121,21 @@
           "t": "2026-04-27T00:36:26.966Z"
         }
       ]
+    },
+    "intention": "",
+    "intentionWeek": "2026-W19",
+    "quoteIdx": 8,
+    "countdown": {
+      "name": "Leaving San Diego :(",
+      "date": "2026-03-20"
+    },
+    "reflection": "",
+    "reflectionDate": "2026-03-19",
+    "book": {
+      "title": "Grapes of Wrath",
+      "author": "Steinbeck",
+      "current": 200,
+      "total": 450
     },
     "weeklyReflections": {
       "2026-W12": "Exciting!",
@@ -4291,25 +3961,5 @@
       }
     ]
   },
-  "anchorLogs": [
-    {
-      "id": "mn9bzzrx5ry3",
-      "date": "2026-03-27T20:05:54.533Z",
-      "state": "under",
-      "text": "I think it’s in my hands like they need something to do. Feels warm?"
-    },
-    {
-      "id": "mnajmxstbzjo",
-      "date": "2026-03-28T16:27:28.541Z",
-      "state": "over",
-      "text": "[Task Avoidance Broken]"
-    },
-    {
-      "id": "mnfcbmcfh8fd",
-      "date": "2026-04-01T01:01:34.047Z",
-      "state": "under",
-      "text": "Back"
-    }
-  ],
-  "updated": "2026-05-04T18:14:01.752Z"
+  "updated": "2026-05-05T01:11:39.607Z"
 }
