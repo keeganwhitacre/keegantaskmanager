@@ -798,7 +798,51 @@
       <button class="icon-btn" id="closeBelBtn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
   </div>
-  <div class="scroll-container"><div class="content-centerer" id="belContent"></div></div>
+  <div class="scroll-container">
+    
+    <div class="content-centerer" id="belContent">
+      
+      <div class="bel-section">
+        <div id="belTimeCount" style="font-size: 24px; font-weight: bold;">--</div>
+        <div id="belNextAnniv" style="color: var(--text-3); margin-bottom: 8px;">Tap Edit Date below to start</div>
+        <button id="editBelDateBtn" class="sheet-btn primary" style="width: auto; padding: 4px 12px; font-size: 12px;">Edit Date</button>
+        
+        <div id="belDateEditWrap" style="display: none; gap: 8px; margin-top: 8px;">
+          <input class="input" id="belAnnivInput" type="date" style="margin: 0;">
+          <button class="sheet-btn primary" id="saveBelDateBtn" style="margin: 0; width: auto;">Save</button>
+        </div>
+      </div>
+
+      <div class="bel-section" style="margin-top: 24px;">
+        <div class="sec-title" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Favorites</div>
+        <div id="belFavs" contenteditable="true" style="min-height: 50px; border: 1px dashed var(--border); padding: 8px; border-radius: 8px; outline: none;"></div>
+      </div>
+
+      <div class="bel-section" style="margin-top: 24px;">
+        <div class="sec-title" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Love Notes</div>
+        <div id="belLove" contenteditable="true" style="min-height: 50px; border: 1px dashed var(--border); padding: 8px; border-radius: 8px; outline: none;"></div>
+      </div>
+
+      <div class="bel-section" style="margin-top: 24px;">
+        <div class="sec-title" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Gift Ideas</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input class="input" id="belGiftInput" type="text" placeholder="New gift idea..." style="margin: 0;">
+          <button class="sheet-btn primary" id="belGiftAddBtn" style="margin: 0; width: auto; padding: 0 16px;">Add</button>
+        </div>
+        <div id="belGiftsList"></div>
+      </div>
+
+      <div class="bel-section" style="margin-top: 24px; margin-bottom: 40px;">
+        <div class="sec-title" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Date Ideas</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input class="input" id="belDateInput" type="text" placeholder="New date idea..." style="margin: 0;">
+          <button class="sheet-btn primary" id="belDateAddBtn" style="margin: 0; width: auto; padding: 0 16px;">Add</button>
+        </div>
+        <div id="belDatesList"></div>
+      </div>
+
+    </div>
+    </div>
 </div>
 
 <div class="glass-nav-wrap">
