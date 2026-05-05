@@ -120,7 +120,7 @@ function renderCNList() {
   filtered.forEach(function(n, i) {
     const nType = noteTypeOf(n);
     const card = document.createElement('div');
-    card.className = 'cn-note-card';
+    card.className = 'cn-note-card' + (n.id === cnActiveId ? ' cn-active-note' : '');
     card.style.animationDelay = (i * 25) + 'ms';
     card.dataset.id = n.id;
 
@@ -158,8 +158,6 @@ function renderCNList() {
       card.classList.add('cn-active-note');
       openCNDetail(n.id);
     });
-    // Fade in
-    requestAnimationFrame(function() { requestAnimationFrame(function() { card.style.opacity = '1'; }); });
     list.appendChild(card);
   });
 }
@@ -173,8 +171,10 @@ function autoResizeBody() {
 }
 
 // ── MARKDOWN PREVIEW ──
+// FIX #3: Do NOT call saveCNDetailNow from here — previewing a note
+// should never touch updatedAt. Save is only triggered by actual input events.
 function toggleMdPreview(mode) {
-  const bodyEl   = document.getElementById('cnBodyInput');
+  const bodyEl    = document.getElementById('cnBodyInput');
   const previewEl = document.getElementById('cnMdPreview');
   const toggleBtn = document.getElementById('cnMdToggle');
   if (!bodyEl || !previewEl || !toggleBtn) return;
@@ -183,7 +183,7 @@ function toggleMdPreview(mode) {
 
   if (mode !== 'off') {
     cnMdPreview = true;
-    saveCNDetailNow();
+    // NOTE: removed saveCNDetailNow() call here — opening preview is read-only
 
     // 1. Process [[Internal Links]]
     const rawContent = bodyEl.value || '';
@@ -246,6 +246,26 @@ function updatePropsSummary() {
   btn.textContent = text;
 }
 
+// ── SHOW / HIDE DESKTOP EMPTY STATE ──
+// FIX #5: Instead of using opacity on cn-no-note, show an explicit empty state overlay.
+function showDesktopEmptyState() {
+  const detailEl = document.getElementById('cnDetailView');
+  const emptyEl  = document.getElementById('cnDetailEmpty');
+  const editorEl = document.getElementById('cnEditorInner');
+  if (emptyEl)  emptyEl.style.display  = 'flex';
+  if (editorEl) editorEl.style.display = 'none';
+  if (detailEl) detailEl.classList.add('cn-no-note');
+}
+
+function hideDesktopEmptyState() {
+  const detailEl = document.getElementById('cnDetailView');
+  const emptyEl  = document.getElementById('cnDetailEmpty');
+  const editorEl = document.getElementById('cnEditorInner');
+  if (emptyEl)  emptyEl.style.display  = 'none';
+  if (editorEl) editorEl.style.display = '';
+  if (detailEl) detailEl.classList.remove('cn-no-note');
+}
+
 // ── OPEN NOTE DETAIL ──
 function openCNDetail(id) {
   const cnNotes = getCnNotes();
@@ -265,7 +285,9 @@ function _doOpenDetail(n) {
   _cnOpenSnapshot = { title: n.title || '', body: n.body || '' };
   cnMdPreview = false;
 
-  // Populate type row (now hidden in the sheet)
+  hideDesktopEmptyState(); // FIX #5
+
+  // Populate type row
   const typeRow = document.getElementById('cnTypeRow');
   if (typeRow) {
     typeRow.innerHTML = '';
@@ -328,7 +350,7 @@ function _doOpenDetail(n) {
   }
 
   updateMetaVisibility();
-  updatePropsSummary(); // Sets the main button text
+  updatePropsSummary();
 
   // Title bar label
   const titleLabel = document.getElementById('cnDetailTitle');
@@ -369,14 +391,12 @@ function _doOpenDetail(n) {
     metaEl.textContent = parts.join(' · ');
   }
 
-  // Show detail, hide list
-  // On mobile: hide list and show detail. On desktop: both panels stay visible.
+  // Show detail, hide list (mobile only)
   const isDesktopLayout = window.matchMedia('(min-width: 768px)').matches;
   if (!isDesktopLayout) {
     document.getElementById('cnListView').style.display = 'none';
   }
   const detailEl = document.getElementById('cnDetailView');
-  detailEl.classList.remove('cn-no-note');
   detailEl.style.display = 'flex';
   detailEl.classList.remove('cn-detail-exit');
   detailEl.classList.add('cn-detail-enter');
@@ -387,7 +407,7 @@ function _doOpenDetail(n) {
 
   renderBacklinks(n.title || '');
 
-  // Default: preview if content exists, edit if empty
+  // FIX #3: toggleMdPreview no longer saves on open, so this is safe
   toggleMdPreview((n.body || '').trim() ? 'on' : 'off_no_focus');
   autoResizeBody();
 }
@@ -412,17 +432,14 @@ function closeCNDetail() {
   const listEl = document.getElementById('cnListView');
 
   if (isDesktopLayout) {
-    // Desktop: keep both panels visible, just show empty state in editor
     detailEl.classList.remove('cn-detail-enter');
-    detailEl.classList.add('cn-no-note');
-    // Clear the editor fields
     const titleInput = document.getElementById('cnTitleInput');
     const bodyInput = document.getElementById('cnBodyInput');
     if (titleInput) titleInput.value = '';
     if (bodyInput) bodyInput.value = '';
+    showDesktopEmptyState(); // FIX #5
     renderCNList();
   } else {
-    // Mobile: animate back to list
     detailEl.classList.remove('cn-detail-enter');
     detailEl.classList.add('cn-detail-exit');
     detailEl.addEventListener('animationend', function handler() {
@@ -453,6 +470,11 @@ function saveCNDetailNow() {
   if (!n) return;
 
   const newTitle = document.getElementById('cnTitleInput').value.trim();
+  const newBody  = document.getElementById('cnBodyInput').value;
+
+  // FIX #3: Only touch updatedAt if content actually changed
+  const titleChanged = newTitle !== (n.title || '');
+  const bodyChanged  = newBody  !== (n.body  || '');
 
   // Rename backlinks if title changed
   if (_cnOpenSnapshot && newTitle && newTitle !== _cnOpenSnapshot.title && _cnOpenSnapshot.title) {
@@ -460,8 +482,8 @@ function saveCNDetailNow() {
     _cnOpenSnapshot.title = newTitle;
   }
 
-  n.title   = newTitle;
-  n.body    = document.getElementById('cnBodyInput').value;
+  n.title      = newTitle;
+  n.body       = newBody;
   n.bodyIsMono = document.getElementById('cnBodyInput').classList.contains('mono');
 
   // Type
@@ -479,11 +501,16 @@ function saveCNDetailNow() {
   // Tags
   n.tags = Array.from(document.querySelectorAll('#cnTagRow .cn-tag-chip.active')).map(c => c.dataset.val);
 
-  // Pin / lock preserved — toggled separately
-  n.updatedAt = new Date().toISOString();
-  if (!n.createdAt) n.createdAt = n.updatedAt;
+  // Only update timestamp if something actually changed
+  if (titleChanged || bodyChanged) {
+    n.updatedAt = new Date().toISOString();
+  }
+  if (!n.createdAt) n.createdAt = new Date().toISOString();
 
   saveCN(true);
+
+  // FIX #4: Re-render the list so cards reflect latest title/preview/timestamp
+  renderCNList();
 
   // Update topbar label
   const titleLabel = document.getElementById('cnDetailTitle');
@@ -650,7 +677,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ── PREVIEW CLICK (internal links handled above; tap preview area to dismiss) ──
+// ── PREVIEW CLICK ──
 const mdPreviewEl = document.getElementById('cnMdPreview');
 if (mdPreviewEl) {
   mdPreviewEl.addEventListener('click', function(e) {
@@ -760,6 +787,9 @@ if (cnFilterRow) {
 }
 
 // ── KEYBOARD SHORTCUTS (desktop) ──
+// FIX #1: Don't use Cmd+number (conflicts with Mac tab switching).
+// Use Ctrl+number for view switching (handled in router/app.js).
+// Local note shortcuts use plain letters when not in an input.
 document.addEventListener('keydown', function(e) {
   if (!document.body.classList.contains('notes-mode')) return;
   const tag = (document.activeElement || {}).tagName || '';
