@@ -3299,7 +3299,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-16T23:23:02.061Z",
-      "updatedAt": "2026-04-24T16:13:31.657Z"
+      "updatedAt": "2026-05-05T01:11:57.856Z"
     },
     {
       "id": "mo1l9ye1hy1w",
@@ -3325,8 +3325,7 @@
       "speaker": "",
       "body": "## Section 1, the theoretical question, ~250 words. \nOpen with the contested question: is interoceptive accuracy a stable individual-difference trait or a state that varies within-person with momentary context? Cite Murphy and Bird (2024) for the trait position — their \"auditing measures\" paper explicitly argues for classification stability across situations as the meaningful construct. \nCite Barrett's constructionist work and Lindquist's papers on emotion construction for the state position — interoceptive perception as constructed in the moment from bodily signals plus conceptual scaffolding plus context. Frame the disagreement as theoretically substantive (not just methodological), with each position making specific predictions about what within-person variability across ecological contexts should look like. \nEnd the section with the meta-claim: this disagreement has been unresolvable empirically because no measurement tool has existed that combines PAT-family validity with within-person ecological repeatability.\n\n## Section 2, predictions under each account, ~250 words. \nUnder the trait account: within-person variance should be near measurement-noise floor, between-person variance should dominate, EMA state variables should be uncorrelated with classification. Under the state/constructionist account: within-person variance should be substantial, EMA state variables should systematically predict classification, specific predictions like arousal decreases accuracy (sensory flooding), focus increases it, comfort is orthogonal, social context matters via attentional competition.\n Be specific. Vague predictions are unfalsifiable, and unfalsifiable predictions are how state-account papers get correctly criticized for unfalsifiable theorizing. The more specific you can be, the more your eventual finding means something.\n\n## Section 3, why ePAT uniquely enables this test, ~250 words. \nPrior interoception work in EMA used HCT (invalid). PAT 2.0 exists but requires native app installation, validates only at rest, and is not designed for repeated within-person assessment. ePAT inherits PAT 2.0's task validity (you implement the same paradigm with the same dual-method scoring) while adding browser-based zero-install deployment, URL-personalized session links, and a session structure designed for repeated ecological administration. \nThe methodological contribution is justified by the theoretical contribution — ePAT exists because the theoretical question requires it, not as an end in itself.\n",
       "tags": [
-        "lab",
-        "paper"
+        "lab"
       ],
       "projectId": "mmgcg8sqamq9",
       "bodyIsMono": false,
@@ -3335,7 +3334,7 @@
       "url": "",
       "ideaStatus": "",
       "createdAt": "2026-04-14T13:34:26.825Z",
-      "updatedAt": "2026-04-14T13:35:59.192Z"
+      "updatedAt": "2026-05-05T01:11:59.656Z"
     },
     {
       "id": "mnykptt4axys",
@@ -3961,5 +3960,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T01:11:54.430Z"
+  "updated": "2026-05-05T01:12:02.158Z"
 }
