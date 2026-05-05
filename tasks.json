@@ -2619,7 +2619,7 @@
       "2026-W19": {
         "sleep": [
           true,
-          false,
+          true,
           false,
           false,
           false,
@@ -3961,5 +3961,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T01:33:17.993Z"
+  "updated": "2026-05-05T10:46:45.997Z"
 }
