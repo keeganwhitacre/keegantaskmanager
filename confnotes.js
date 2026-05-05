@@ -283,6 +283,9 @@ function _doOpenDetail(n) {
   _cnOpenSnapshot = { title: n.title || '', body: n.body || '' };
   cnMdPreview = false;
 
+  // On mobile: hide nav pill + quick-add so they don't overlap the editor
+  document.body.classList.add('cn-note-open');
+
   hideDesktopEmptyState(); // FIX #5
 
   // Populate type row
@@ -424,6 +427,9 @@ function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
   _cnOpenSnapshot = null;
+
+  // Restore nav pill + quick-add
+  document.body.classList.remove('cn-note-open');
 
   const isDesktopLayout = window.matchMedia('(min-width: 768px)').matches;
   const detailEl = document.getElementById('cnDetailView');
