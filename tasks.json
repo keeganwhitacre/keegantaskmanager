@@ -1536,7 +1536,7 @@
       "priority": "md",
       "pinnedToday": false,
       "note": "",
-      "due": "2026-05-01",
+      "due": "2026-05-05",
       "projectId": "mmdklg8dgrze",
       "milestoneId": "mnfehxephbug",
       "noteIsMono": false,
@@ -2007,7 +2007,7 @@
       "status": "active",
       "priority": "md",
       "note": "",
-      "due": "2026-05-01",
+      "due": "2026-05-05",
       "noteIsMono": false,
       "pinnedToday": false,
       "done": false,
@@ -2092,9 +2092,10 @@
       "note": "",
       "due": "2026-05-03",
       "noteIsMono": false,
-      "pinnedToday": true,
-      "done": false,
-      "pomodoros": 0
+      "pinnedToday": false,
+      "done": true,
+      "pomodoros": 0,
+      "completedAt": "2026-05-05T01:33:15.488Z"
     }
   ],
   "bel": {
@@ -3960,5 +3961,5 @@
       }
     ]
   },
-  "updated": "2026-05-05T01:12:31.439Z"
+  "updated": "2026-05-05T01:33:17.993Z"
 }
