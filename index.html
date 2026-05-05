@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Tasks">
@@ -113,13 +113,8 @@
     * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
     input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
 
-    html {
-      background-color: var(--bg-canvas);
-      
-      /* Fallback for standard browsers */
-      height: 100vh; 
-      /* The Apple Hack: Forces WebKit to stretch exactly to the available window */
-      height: -webkit-fill-available; 
+   html { 
+      background-color: var(--bg-canvas); 
     }
     
     body {
@@ -130,15 +125,15 @@
       color: var(--text-1);
       display: flex;
       flex-direction: column;
-    
-      /* Keep the lock to prevent iOS rubber-banding */
+      
+      /* The Shelf method: */
+      height: 100vh; 
+      height: calc(var(--vh, 1vh) * 100); 
+      width: 100%; 
+      
+      /* Lock it down */
       position: fixed;
       inset: 0;
-      
-      /* Use the fill-available hack for the body as well */
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-    
       overflow: hidden;
       overscroll-behavior-y: none;
       -webkit-font-smoothing: antialiased;
@@ -906,6 +901,40 @@
 
 <script>
   // Slide-to-hide nav logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const scrollContainers = document.querySelectorAll('.scroll-container, #cnListView, .cn-editor-body');
+    let lastScrollY = 0;
+
+    scrollContainers.forEach(container => {
+      container.addEventListener('scroll', (e) => {
+        const currentY = e.target.scrollTop;
+        if (currentY > lastScrollY && currentY > 50) {
+          document.body.classList.add('scrolling-down');
+        } else if (currentY < lastScrollY || currentY <= 50) {
+          document.body.classList.remove('scrolling-down');
+        }
+        lastScrollY = currentY;
+      }, { passive: true });
+    });
+  });
+</script>
+
+  <script>
+  // 1. IOS SAFARI VIEWPORT HEIGHT FIX (Ported from Shelf)
+  function setViewportHeight() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  window.addEventListener('resize', setViewportHeight);
+  setViewportHeight();
+
+  document.addEventListener('focusout', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; setViewportHeight(); }, 50);
+    }
+  });
+
+  // 2. Slide-to-hide nav logic
   document.addEventListener('DOMContentLoaded', () => {
     const scrollContainers = document.querySelectorAll('.scroll-container, #cnListView, .cn-editor-body');
     let lastScrollY = 0;
