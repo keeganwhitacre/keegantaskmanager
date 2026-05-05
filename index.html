@@ -162,7 +162,7 @@
     .glass-nav-wrap {
       position: fixed; z-index: 90; pointer-events: none;
       /* Extremely low profile as requested */
-      bottom: calc(10px + var(--safe-bottom)); left: 0; width: 100%;
+      bottom: 23px; left: 0; width: 100%;
       display: flex; justify-content: center;
     }
     .glass-panel {
@@ -197,7 +197,7 @@
     .hub-container { position: relative; width: 80px; height: 40px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
     .hub-btn {
       position: absolute; top: -16px; width: 48px; height: 48px;
-      background: var(--bg-surface); color: var(--text-3); border-radius: 16px;
+      background: var(--bg-surface); color: var(--text-3); border-radius: 100px;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
       border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
@@ -207,7 +207,7 @@
     body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
       top: -28px; width: 64px; height: 64px;
       background: var(--text-1); color: var(--bg-canvas);
-      border-radius: 20px; transform: rotate(3deg);
+      border-radius: 100px; transform: rotate(3deg);
       border-color: transparent; box-shadow: 0 8px 24px -6px rgba(0,0,0,0.3);
     }
     body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn:active { transform: scale(0.9) rotate(3deg); }
@@ -340,7 +340,7 @@
     /* ── FLOATING QUICK ADD ── */
     #quickAddWrap {
       position: fixed; 
-      bottom: calc(76px + var(--safe-bottom)); left: 20px; right: 20px;
+      bottom: 100px; left: 20px; right: 20px;
       max-width: 720px; margin: 0 auto; background: var(--bg-surface); border-radius: 99px;
       padding: 10px 16px; display: flex !important; align-items: center; gap: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 0.5px solid var(--border); z-index: 40;
@@ -593,6 +593,14 @@
       /* Desktop Sheet fixed to survive JS transform overwrites */
       .sheet { left: 50%; right: auto; margin-left: -240px; width: 480px; transform: translateY(100%); }
       .sheet.open { transform: translateY(0) !important; }
+
+      /* Disable Slide-to-Hide on Desktop */
+      body.scrolling-down .glass-nav-wrap,
+      body.scrolling-down #quickAddWrap {
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+      }
     }
   </style>
 </head>
@@ -897,9 +905,10 @@
 </div>
 
 <script>
+  <script>
   // Slide-to-hide nav logic
   document.addEventListener('DOMContentLoaded', () => {
-    const scrollContainers = document.querySelectorAll('.scroll-container');
+    const scrollContainers = document.querySelectorAll('.scroll-container, #cnListView, .cn-editor-body');
     let lastScrollY = 0;
 
     scrollContainers.forEach(container => {
@@ -914,6 +923,7 @@
       }, { passive: true });
     });
   });
+</script>
 </script>
 
 <script type="module" src="app.js"></script>
