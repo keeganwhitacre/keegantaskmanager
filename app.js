@@ -854,6 +854,14 @@ document.getElementById('settingsBtn').addEventListener('click', function() {
 });
 document.getElementById('closeSettingsSheet').addEventListener('click', closeSheets);
 
+// Dock Settings (Desktop Left-Nav)
+const dockSettingsBtn = document.getElementById('dockSettingsBtn');
+if (dockSettingsBtn) {
+  dockSettingsBtn.addEventListener('click', function() {
+    loadSettingsUI(); openSheet('settingsSheet');
+  });
+}
+
 document.getElementById('saveSettingsBtn').addEventListener('click', function() {
   const u = document.getElementById('ghUser').value.trim();
   const r = document.getElementById('ghRepo').value.trim();
@@ -925,14 +933,24 @@ document.getElementById('clearPinBtn').addEventListener('click', function() {
   showToast('PIN cleared');
 });
 
-// Desktop keyboard shortcut
+// Global Keyboard Shortcuts (Including Desktop Navigation)
 document.addEventListener('keydown', function(e) {
-  const view = currentViewName();
-  if (view !== 'tasks') return;
   const tag = (document.activeElement || {}).tagName || '';
   const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
   if (inInput) return;
-  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); }
+
+  // Global App Navigation (Cmd/Ctrl + 1, 2, 3)
+  if (e.metaKey || e.ctrlKey) {
+    if (e.key === '1') { e.preventDefault(); switchView('reflect'); }
+    if (e.key === '2') { e.preventDefault(); switchView('tasks'); }
+    if (e.key === '3') { e.preventDefault(); switchView('notes'); }
+  }
+
+  // View Specific Shortcuts
+  const view = currentViewName();
+  if (view === 'tasks') {
+    if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); }
+  }
 });
 
 // Focus Mode Toggle
