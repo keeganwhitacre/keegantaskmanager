@@ -41,7 +41,7 @@ let HABITS = HABIT_DEFAULTS.map(h => Object.assign({}, h, { days: h.days.slice()
 // ── STATE OBJECTS ──
 const state = {
   tasks:       [],
-  settings:    { ghUser: '', ghRepo: '', ghToken: '' },
+  settings:    { ghToken: '', ghGistId: '' },
   filter:      'all',
   editingId:   null,
   pendingSync: false,
@@ -119,7 +119,9 @@ function _tryParse(key, fallback) {
 
 function loadLocal() {
   state.tasks      = _tryParse(KEYS.tasks, []);
-  state.settings   = _tryParse(KEYS.settings, { ghUser: '', ghRepo: '', ghToken: '' });
+  const savedSettings = _tryParse(KEYS.settings, {});
+  // Merge saved settings over defaults, dropping old ghUser/ghRepo if present
+  state.settings = Object.assign({ ghToken: '', ghGistId: '' }, savedSettings);
   state.pendingSync = _tryParse(KEYS.pending, false);
   state.collapsed  = _tryParse(KEYS.collapsed, {});
 
@@ -135,7 +137,7 @@ function loadLocal() {
 
   if (!state.tasks) state.tasks = [];
 
-  if (state.settings.ghToken && state.settings.ghUser && state.settings.ghRepo) {
+  if (state.settings.ghToken && state.settings.ghGistId) {
     state._shaLoaded = false;
   }
 
