@@ -108,31 +108,39 @@
       --cat-hobby: #64d2ff;
     }
 
-    /* ── BASE RESETS ── */
+    /* ── BASE RESETS & IOS FIXES ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
     input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
 
+    /* Bulletproof iOS Safari 100vh height fix */
+    html {
+      background-color: var(--bg-canvas);
+    }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Text", system-ui, sans-serif;
       font-size: 16px;
       line-height: 1.4;
-      background: var(--bg-canvas);
+      background-color: var(--bg-canvas);
       color: var(--text-1);
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      height: 100dvh;
+      
+      /* Use JS calculated viewport height to prevent keyboard clipping gaps */
+      height: 100vh; 
+      height: calc(var(--vh, 1vh) * 100); 
+      
       overflow: hidden;
+      overscroll-behavior-y: none;
       -webkit-font-smoothing: antialiased;
       -webkit-user-select: none; user-select: none;
     }
     body:has(.overlay.open) { overflow: hidden; }
 
-    /* ── ROUTING LOGIC (Fixed for default load) ── */
+    /* ── ROUTING LOGIC ── */
     .app-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
     
-    /* Tasks is visible by default unless another mode is explicitly active */
     #tasksView { display: flex; } 
     body.reflect-mode #tasksView { display: none !important; }
     body.notes-mode #tasksView { display: none !important; }
@@ -142,11 +150,11 @@
     body.notes-mode #confNotesView { display: flex !important; }
     body.bel-mode #belView { display: flex !important; }
 
-    /* ── GLASS HUB NAVIGATION (Mobile + Desktop Dock) ── */
+    /* ── GLASS HUB NAVIGATION ── */
     .glass-nav-wrap {
       position: fixed; z-index: 90; pointer-events: none;
-      /* LOWERED FROM 24px TO 12px */
-      bottom: calc(12px + var(--safe-bottom)); left: 0; width: 100%;
+      /* Extremely low profile as requested */
+      bottom: calc(10px + var(--safe-bottom)); left: 0; width: 100%;
       display: flex; justify-content: center;
     }
     .glass-panel {
@@ -188,7 +196,6 @@
     }
     .hub-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
 
-    /* Active Tasks State (Morphs when Tasks view is active) */
     body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
       top: -28px; width: 64px; height: 64px;
       background: var(--text-1); color: var(--bg-canvas);
@@ -249,7 +256,7 @@
     }
     .search-input::placeholder { color: var(--text-3); }
 
-    /* ── TASKS VIEW (INSET GROUPED LISTS) ── */
+    /* ── TASKS VIEW ── */
     .section { margin-bottom: 24px; }
     .sec-header {
       margin: 20px 0 10px 4px; display: flex; align-items: center; gap: 8px; cursor: pointer;
@@ -297,9 +304,7 @@
       background: transparent !important; color: var(--text-3) !important;
       display: inline-flex; align-items: center; gap: 5px; padding: 0; letter-spacing: 0; font-size: 13px;
     }
-    .cat::before {
-      content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
+    .cat::before { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .cat-manuscript::before { background: var(--cat-manuscript); box-shadow: 0 0 6px var(--cat-manuscript); }
     .cat-lab::before       { background: var(--cat-lab);        box-shadow: 0 0 6px var(--cat-lab); }
     .cat-phd::before       { background: var(--cat-phd);        box-shadow: 0 0 6px var(--cat-phd); }
@@ -327,17 +332,22 @@
     /* ── FLOATING QUICK ADD ── */
     #quickAddWrap {
       position: fixed; 
-      /* LOWERED: 12px padding + 76px nav height = 88px */
-      bottom: calc(88px + var(--safe-bottom)); left: 20px; right: 20px;
+      bottom: calc(76px + var(--safe-bottom)); left: 20px; right: 20px;
       max-width: 720px; margin: 0 auto; background: var(--bg-surface); border-radius: 99px;
-      padding: 12px 20px; display: flex !important; align-items: center; gap: 12px;
+      padding: 10px 16px; display: flex !important; align-items: center; gap: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 0.5px solid var(--border); z-index: 40;
     }
-    #quickAddWrap .quick-add-row { flex: 1; display: flex; gap: 12px; background: transparent; border: none; padding: 0; }
-    #quickAddWrap::before { content: '+'; font-size: 24px; color: var(--text-3); font-weight: 300; margin-top: -2px; }
-    .quick-add-input { flex: 1; border: none; background: transparent; font-size: 16px; color: var(--text-1); outline: none; }
+    #quickAddWrap .quick-add-row { flex: 1; display: flex; align-items: center; gap: 12px; background: transparent; border: none; padding: 0; }
+    .quick-add-btn-trigger {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(0,0,0,0.04); border: none; color: var(--text-3); cursor: pointer;
+    }
+    [data-theme="dark"] .quick-add-btn-trigger { background: rgba(255,255,255,0.08); }
+    .quick-add-btn-trigger svg { width: 16px; height: 16px; stroke-width: 2.5; stroke: currentColor; }
+    
+    .quick-add-input { flex: 1; border: none; background: transparent; font-size: 16px; color: var(--text-1); outline: none; min-width: 0; }
     .quick-add-input::placeholder { color: var(--text-3); font-weight: 500;}
-    .quick-add-btn { display: none; }
 
     /* ── REFLECT (Dashboard) STYLES ── */
     .reflect-card { background: var(--bg-surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 0.5px solid var(--border); }
@@ -373,54 +383,11 @@
     .habit-cb.future { opacity: 0.3; pointer-events: none; }
     .d-day-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-align: center; width: 28px; font-family: ui-monospace, monospace;}
     .d-day-label.today-col { color: var(--accent); }
-    
-    /* Insights specific */
-    .ins-section { margin-bottom: 24px; }
-    .ins-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); margin-bottom: 12px; }
-    .ins-sub { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-4); }
-    .ins-empty { font-size: 14px; color: var(--text-3); font-style: italic; padding: 16px 0; text-align: center;}
-    
-    .ins-cal-wrap { overflow-x: auto; padding-bottom: 8px;}
-    .ins-cal-day-labels { display: flex; gap: 3px; margin-bottom: 4px; padding-left: 36px; }
-    .ins-cal-day-labels span { width: 16px; font-size: 9px; font-weight: 600; color: var(--text-3); text-align: center; font-family: ui-monospace, monospace; }
-    .ins-cal-grid { display: flex; flex-direction: column; gap: 3px; }
-    .ins-cal-month { font-size: 10px; font-weight: 600; color: var(--text-3); font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.04em; margin: 8px 0 4px; }
-    .ins-cal-row { display: flex; gap: 3px; }
-    .ins-cal-cell { width: 16px; height: 16px; border-radius: 4px; transition: transform 0.1s; cursor: pointer; }
-    .ins-cal-cell.today { box-shadow: 0 0 0 2px var(--accent); }
-    .ins-cal-cell.future { opacity: 0.2; }
-    
-    .ins-scatter-wrap { position: relative; width: 100%; height: 160px; border-radius: 12px; border: 0.5px solid var(--border-md); overflow: hidden; background: var(--bg-canvas);}
-    .ins-scatter-point { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0.7; }
-    .ins-scatter-axis-h { position: absolute; top: 50%; left: 0; right: 0; height: 0.5px; background: var(--border); }
-    .ins-scatter-axis-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 0.5px; background: var(--border); }
-    
-    .ins-trend-wrap { position: relative; width: 100%; height: 100px; background: var(--bg-canvas); border-radius: 12px; padding: 8px;}
-    .ins-trend-wrap svg { width: 100%; height: 100%; overflow: visible; }
-    
-    .ins-habit-rates { display: flex; flex-direction: column; gap: 12px; }
-    .ins-habit-row { margin-bottom: 0; }
-    .ins-habit-info { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .ins-habit-name { font-size: 14px; font-weight: 500; color: var(--text-1); }
-    .ins-habit-pct { font-size: 13px; font-weight: 600; color: var(--text-3); font-family: ui-monospace, monospace; }
-    .ins-habit-bar { height: 6px; background: var(--bg-canvas); border-radius: 3px; overflow: hidden; }
-    .ins-habit-bar-fill { height: 100%; border-radius: 3px; }
 
     /* ── NOTES VIEW (Split Pane Desktop, List Mobile) ── */
     .notes-split { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
     #cnListView { flex: 1; overflow-y: auto; padding: 0 20px calc(120px + var(--safe-bottom)); }
     #cnNotesList { display: flex; flex-direction: column; gap: 12px; }
-    
-    /* Desktop New Note Button */
-    .cn-desktop-new-btn {
-      width: 100%; padding: 12px; border-radius: 16px;
-      background: var(--bg-surface); color: var(--accent); font-weight: 600;
-      border: 1px dashed var(--accent); cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin-bottom: 16px; font-size: 15px; transition: all 0.15s;
-    }
-    .cn-desktop-new-btn:hover { background: var(--accent); color: #fff; border-style: solid; }
-    .cn-desktop-new-btn svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
     .cn-note-card {
       background: var(--bg-surface); border-radius: 16px; padding: 16px;
@@ -470,47 +437,30 @@
     .cn-type-chip, .cn-idea-chip, .cn-tag-chip { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--bg-canvas); color: var(--text-3); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s;}
     .cn-type-chip.active, .cn-idea-chip.active, .cn-tag-chip.active { background: var(--text-2); color: var(--bg-canvas); border-color: transparent;}
     
-    .cn-url-input { width: 100%; background: var(--bg-surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; outline: none; color: var(--text-1); }
+    .cn-url-input { width: 100%; background: var(--bg-surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; outline: none; color: var(--text-1); box-sizing: border-box; }
     .cn-url-input:focus { border-color: var(--accent); }
     
     .cn-editor-divider { height: 1px; background: var(--border); margin: 0 0 24px 0; opacity: 0.5; }
     
-    .cn-detail-body-input { width: 100%; min-height: 400px; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; }
+    .cn-detail-body-input { width: 100%; min-height: 400px; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; box-sizing: border-box; }
     
     /* Markdown Preview Overrides */
     .cn-md-preview { font-size: 18px; line-height: 1.7; color: var(--text-1); padding-bottom: 60px;}
     .cn-md-preview h1, .cn-md-preview h2 { color: var(--text-1); font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em;}
     .cn-md-preview ul, .cn-md-preview ol { padding-left: 24px; margin-bottom: 16px; margin-top: 8px;}
     .cn-md-preview li { margin-bottom: 4px; display: list-item; list-style-position: outside;}
-    .cn-md-preview ul { list-style-type: disc; }
-    .cn-md-preview ol { list-style-type: decimal; }
-    .cn-md-preview p { margin-bottom: 16px; }
     .cn-md-preview a { color: var(--accent); text-decoration: underline; }
-    
     .internal-note-link { color: var(--accent); text-decoration: none; font-weight: 500; background: var(--accent-faded); padding: 2px 6px; border-radius: 6px;}
 
-    /* ── ANIMATIONS (REQUIRED FOR JS HOOKS) ── */
+    /* ── ANIMATIONS ── */
     @keyframes taskIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     .task-wrap.entering { animation: taskIn 0.25s cubic-bezier(0.2,0.9,0.3,1) both; }
-    
     @keyframes cnDetailIn  { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
     @keyframes cnDetailOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(30px); } }
     @keyframes cnListIn    { from { opacity: 0; } to { opacity: 1; } }
-    
     .cn-detail-enter { animation: cnDetailIn  0.25s cubic-bezier(0.2,0.9,0.3,1) both; }
     .cn-detail-exit  { animation: cnDetailOut 0.18s ease both; }
     .cn-list-enter   { animation: cnListIn    0.2s ease both; }
-
-    /* ── FAB (Only for Notes) ── */
-    #fab { display: none !important; }
-    body.notes-mode #fab {
-      /* LOWERED FAB TO MATCH NAV */
-      display: flex !important; position: fixed; bottom: calc(88px + var(--safe-bottom)); right: 20px;
-      width: 56px; height: 56px; border-radius: 28px; background: var(--accent); color: #fff;
-      align-items: center; justify-content: center; font-size: 28px; font-weight: 300;
-      box-shadow: 0 8px 24px rgba(0,122,255,0.4); z-index: 90; cursor: pointer; transition: transform 0.15s;
-    }
-    #fab:active { transform: scale(0.92); }
 
     /* ── OVERLAY & SHEETS ── */
     .overlay { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
@@ -522,22 +472,33 @@
       padding: 24px 24px calc(24px + var(--safe-bottom)); z-index: 200;
       transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1);
       box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;
+      
+      /* IMPORTANT: Prevents horizontal scrolling on mobile */
+      width: 100%; max-width: 100vw; overflow-x: hidden; box-sizing: border-box;
     }
     .sheet.open { transform: translateY(0); }
     .handle { width: 40px; height: 5px; border-radius: 3px; background: var(--border-md); margin: 0 auto 24px; }
     .sheet-title { font-size: 20px; font-weight: 700; color: var(--text-1); margin-bottom: 20px; }
     .sheet-label { font-size: 13px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin: 20px 0 8px; }
-    .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 0.5px solid var(--border); background: var(--bg-canvas); font-size: 16px; color: var(--text-1); outline: none; margin-bottom: 12px; }
+    
+    /* Safely constrain input widths */
+    .input { 
+      display: block; width: 100%; max-width: 100%; box-sizing: border-box; 
+      padding: 14px 16px; border-radius: 12px; border: 0.5px solid var(--border); 
+      background: var(--bg-canvas); font-size: 16px; color: var(--text-1); outline: none; margin-bottom: 12px; 
+    }
     .input:focus { border-color: var(--accent); }
-    .sheet-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 12px; background: var(--bg-canvas); color: var(--text-1); }
+    
+    .sheet-btn { width: 100%; box-sizing: border-box; padding: 16px; border-radius: 14px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 12px; background: var(--bg-canvas); color: var(--text-1); }
     .sheet-btn.primary { background: var(--accent); color: #fff; }
     .sheet-btn.danger { background: rgba(255,59,48,0.1); color: var(--danger); }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;}
+    
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; max-width: 100%; box-sizing: border-box;}
     .s-chip { padding: 8px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer;}
     .s-chip.active { background: var(--text-1); color: var(--bg-surface); border-color: transparent;}
     
     /* Settings Form UI */
-    .habit-settings-row { margin-bottom: 12px; padding: 12px; background: var(--bg-canvas); border-radius: 12px; border: 0.5px solid var(--border); }
+    .habit-settings-row { margin-bottom: 12px; padding: 12px; background: var(--bg-canvas); border-radius: 12px; border: 0.5px solid var(--border); box-sizing: border-box; }
     .habit-settings-top { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
     .habit-bad-toggle { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: var(--bg-surface); color: var(--text-3); cursor: pointer; border: 0.5px solid var(--border); white-space: nowrap; transition: all 0.15s;}
     .habit-bad-toggle.active { background: rgba(255,59,48,0.1); color: var(--danger); border-color: transparent; }
@@ -546,7 +507,7 @@
     .habit-day-toggle { flex: 1; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-3); background: var(--bg-surface); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; font-family: ui-monospace, monospace;}
     .habit-day-toggle.active { background: var(--accent); color: #fff; border-color: transparent; }
 
-    .cat-settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .cat-settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; box-sizing: border-box;}
     .bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0;}
 
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
@@ -613,7 +574,6 @@
       /* Desktop Sheet fixed to survive JS transform overwrites */
       .sheet { left: 50%; right: auto; margin-left: -240px; width: 480px; transform: translateY(100%); }
       .sheet.open { transform: translateY(0) !important; }
-      body.notes-mode #fab { bottom: 32px; right: 32px; }
     }
   </style>
 </head>
@@ -659,10 +619,13 @@
     </div>
   </div>
 
+  <!-- FIXED QUICK ADD + SHEET HOOK -->
   <div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel" id="quickAddWrap">
     <div class="quick-add-row">
+      <button id="quickAddFullBtn" class="quick-add-btn-trigger">
+        <svg viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
       <input class="quick-add-input" id="quickAddInput" type="text" placeholder="I need to..." autocapitalize="sentences">
-      <button class="quick-add-btn" id="quickAddSubmit">Add</button>
     </div>
   </div>
 </div>
@@ -738,7 +701,11 @@
   <div class="header">
     <div class="header-top">
       <div class="app-title">Notes</div>
-      <button class="icon-btn" id="cnSearchBtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <div style="display: flex; gap: 8px;">
+        <button class="icon-btn" id="cnSearchBtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <!-- COMPOSE BUTTON NOW UNIVERSALLY IN THE HEADER -->
+        <button class="icon-btn" id="cnNewBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      </div>
     </div>
     <div id="cnSearchWrap" class="search-wrap"><input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes…"></div>
     <div class="filter-scroll" id="cnFilterRow"></div>
@@ -782,13 +749,6 @@
         <div id="cnBacklinksDrawer" style="margin-top:24px;"></div>
       </div>
     </div>
-  </div>
-
-  <!-- Note Type Quick Menu -->
-  <div id="cnNewMenu" style="display:none; position:fixed; bottom:calc(150px + var(--safe-bottom)); right:20px; background:var(--bg-surface); border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.12); z-index:200; overflow:hidden; border:0.5px solid var(--border);">
-    <div class="cn-new-menu-item" data-newtype="memo" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer; border-bottom:0.5px solid var(--border);">✎ Note</div>
-    <div class="cn-new-menu-item" data-newtype="paper" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer; border-bottom:0.5px solid var(--border);">📄 Paper</div>
-    <div class="cn-new-menu-item" data-newtype="idea" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer;">💡 Idea</div>
   </div>
 </div>
 
@@ -849,7 +809,7 @@
 ════════════════════════════════════════════════ -->
 <div class="overlay" id="overlay"></div>
 
-<!-- NEW: Note Properties Sheet (Hidden Type/Tags logic) -->
+<!-- Note Properties Sheet (Hidden Type/Tags logic) -->
 <div class="sheet" id="notePropsSheet">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
