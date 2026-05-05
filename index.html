@@ -1,776 +1,851 @@
 <!DOCTYPE html>
-
-<html lang="en" style="background:#000">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Tasks">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="manifest.json">
   <title>Tasks</title>
 
-<script>
-  (function(){
-    var bg={aurora:'#111418',halcyon:'#dce8f4'};
-    try{var t=localStorage.getItem('kw_theme_v2')||'halcyon'; if(t==='neon')t='aurora'; if(t==='ios26'||t==='bel-bel'||t==='newsprint')t='halcyon'; if(t==='ios-dark')t='aurora'; if(!bg[t])t='halcyon'; document.documentElement.style.background=bg[t];}catch(e){}
-  })();
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('kw_theme_v3') || 'light';
+        if (t === 'halcyon' || t === 'newsprint' || t === 'ios26' || t === 'bel-bel') t = 'light';
+        if (t === 'aurora' || t === 'neon' || t === 'ios-dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
   </script>
 
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="confnotes-styles.css">
-  <link rel="stylesheet" href="weekly-review.css">
-
-   <link rel="modulepreload" href="state.js">
+  <link rel="modulepreload" href="state.js">
   <link rel="modulepreload" href="sync.js">
   <link rel="modulepreload" href="router.js">
-  <link rel="modulepreload" href="pomo.js">
-  <link rel="modulepreload" href="shopping.js">
   <link rel="modulepreload" href="bel.js">
   <link rel="modulepreload" href="dashboard.js">
-  <link rel="modulepreload" href="timeline.js">
   <link rel="modulepreload" href="confnotes.js">
-
   
+  <script src="lib/marked.min.js" onerror="
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js';
+    document.head.appendChild(s);
+  "></script>
+
   <style>
-    .cat-settings-row { display:flex; align-items:center; gap:8px; }
-    .cat-settings-row .input { margin-bottom:0; }
-    .habit-settings-row { display:flex; flex-direction:column; gap:6px; padding:10px; border:1px solid var(--border-divider, #3a3b42); border-radius:10px; }
-    .habit-settings-top { display:flex; align-items:center; gap:8px; }
-    .habit-settings-top .input { margin-bottom:0; }
-    .habit-day-toggles { display:flex; gap:4px; }
-    .habit-day-toggle { width:28px; height:24px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); font-size:10px; font-family:var(--font-mono, monospace); cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-user-select:none; user-select:none; }
-    .habit-day-toggle.active { background:var(--accent, #007aff); color:#fff; border-color:var(--accent, #007aff); }
-    .habit-bad-toggle { font-size:10px; padding:3px 8px; border-radius:6px; border:1px solid var(--border-divider, #3a3b42); background:transparent; color:var(--text-muted, #62636f); cursor:pointer; -webkit-user-select:none; user-select:none; font-family:var(--font-mono, monospace); }
-    .habit-bad-toggle.active { background:rgba(255,58,48,0.15); color:#ff3a30; border-color:rgba(255,58,48,0.3); }
+    /* ══════════════════════════════════════════════════════════════════
+       MODERN APPLE DESIGN SYSTEM (iOS 18+ / macOS Sequoia)
+    ══════════════════════════════════════════════════════════════════ */
+    :root {
+      /* Backgrounds */
+      --bg-canvas: #f2f2f7; 
+      --bg-surface: #ffffff; 
+      --bg-sidebar: #f5f5f7;
+      --bg-material: rgba(242, 242, 247, 0.85);
+      --bg-input: rgba(0,0,0,0.04);
+      --bg-overlay: rgba(0,0,0,0.4);
+      
+      /* Text */
+      --text-1: #000000;
+      --text-2: #3c3c43;
+      --text-3: #8e8e93;
+      --text-4: #c7c7cc;
+      
+      /* Borders & Accents */
+      --border: rgba(60, 60, 67, 0.12);
+      --border-md: rgba(60, 60, 67, 0.18);
+      --accent: #007aff;
+      --accent-faded: rgba(0, 122, 255, 0.12);
+      
+      --danger: #ff3b30;
+      --warning: #ff9500;
+      --success: #34c759;
+      
+      /* Standard Category Colors */
+      --cat-manuscript: #af52de;
+      --cat-lab: #007aff;
+      --cat-phd: #ff9500;
+      --cat-conf: #ff3b30;
+      --cat-bel: #ff2d55;
+      --cat-personal: #34c759;
+      --cat-hobby: #5ac8fa;
+      
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    [data-theme="dark"] {
+      --bg-canvas: #000000;
+      --bg-surface: #1c1c1e;
+      --bg-sidebar: #111112;
+      --bg-material: rgba(28, 28, 30, 0.85);
+      --bg-input: rgba(255,255,255,0.08);
+      --bg-overlay: rgba(0,0,0,0.6);
+      
+      --text-1: #ffffff;
+      --text-2: #ebebf5;
+      --text-3: #8e8e93;
+      --text-4: #3a3a3c;
+      
+      --border: rgba(255, 255, 255, 0.1);
+      --border-md: rgba(255, 255, 255, 0.15);
+      --accent: #0a84ff;
+      --accent-faded: rgba(10, 132, 255, 0.15);
+
+      --danger: #ff453a;
+      --warning: #ff9f0a;
+      --success: #30d158;
+
+      --cat-manuscript: #bf5af2;
+      --cat-lab: #0a84ff;
+      --cat-phd: #ff9f0a;
+      --cat-conf: #ff453a;
+      --cat-bel: #ff375f;
+      --cat-personal: #30d158;
+      --cat-hobby: #64d2ff;
+    }
+
+    /* ── BASE RESETS ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Text", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.4;
+      background: var(--bg-canvas);
+      color: var(--text-1);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-user-select: none; user-select: none;
+    }
+    body:has(.overlay.open) { overflow: hidden; }
+
+    /* ── ROUTING LOGIC (Fixed for default load) ── */
+    .app-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    
+    /* Tasks is visible by default unless another mode is explicitly active */
+    #tasksView { display: flex; } 
+    body.reflect-mode #tasksView { display: none !important; }
+    body.notes-mode #tasksView { display: none !important; }
+    body.bel-mode #tasksView { display: none !important; }
+
+    body.reflect-mode #reflectView { display: flex !important; }
+    body.notes-mode #confNotesView { display: flex !important; }
+    body.bel-mode #belView { display: flex !important; }
+
+    /* ── NAVIGATION (Responsive) ── */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(64px + var(--safe-bottom));
+      background: var(--bg-material);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 0.5px solid var(--border);
+      display: flex; flex-direction: row; padding-bottom: var(--safe-bottom);
+      z-index: 90;
+    }
+    .sidebar-profile { display: none; }
+    .tab-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; background: none; border: none; cursor: pointer; color: var(--text-3); transition: color 0.15s;
+    }
+    .tab-btn.active { color: var(--text-1); }
+    .tab-icon { font-size: 24px; line-height: 1; }
+    .tab-label { font-size: 11px; font-weight: 600; }
+
+    /* ── GLOBAL LAYOUT HELPERS ── */
+    .scroll-container { flex: 1; overflow-y: auto; padding: 0 20px calc(120px + var(--safe-bottom)); }
+    .content-centerer { max-width: 760px; margin: 0 auto; width: 100%; position: relative; }
+    
+    .header {
+      padding: calc(var(--safe-top) + 20px) 20px 8px;
+      background: var(--bg-canvas); z-index: 10;
+      flex-shrink: 0;
+    }
+    .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
+    .app-title { font-size: 34px; font-weight: 800; letter-spacing: -0.04em; color: var(--text-1); line-height: 1.1; }
+    
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-surface); border: 0.5px solid var(--border);
+      color: var(--text-1); cursor: pointer; transition: opacity 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .icon-btn:active { opacity: 0.6; }
+    .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    /* ── FILTER CHIPS ── */
+    .filter-scroll {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .chip {
+      padding: 6px 16px; background: var(--bg-surface); border-radius: 16px;
+      font-size: 14px; font-weight: 600; color: var(--text-2);
+      white-space: nowrap; cursor: pointer; border: 0.5px solid var(--border);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.15s;
+    }
+    .chip.active { background: var(--text-1); color: var(--bg-canvas); border-color: transparent; }
+
+    /* ── SEARCH ── */
+    .search-wrap { display: none; margin-bottom: 16px; }
+    .search-wrap.open { display: block; }
+    .search-input {
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      border: none; background: var(--bg-surface); color: var(--text-1);
+      font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .search-input::placeholder { color: var(--text-3); }
+
+    /* ── TASKS VIEW (INSET GROUPED LISTS) ── */
+    .section { margin-bottom: 24px; }
+    .sec-header {
+      margin: 20px 0 10px 4px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .sec-title { font-size: 18px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; }
+    .sec-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 12px; }
+    .sec-toggle { font-size: 12px; color: var(--text-3); margin-left: auto; transition: transform 0.2s; padding-right: 8px;}
+    .section.collapsed .sec-toggle { transform: rotate(-90deg); }
+    .section.collapsed > div:not(.sec-header) { display: none; }
+
+    .section > div:not(.sec-header) {
+      background: var(--bg-surface); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 0.5px solid var(--border);
+    }
+    
+    .task-wrap { margin-bottom: 0; border-radius: 0; border-bottom: 0.5px solid var(--border); position: relative;}
+    .task-wrap:last-child { border-bottom: none; }
+    
+    .task {
+      background: transparent; border: none; padding: 14px 16px; gap: 14px;
+      display: flex; align-items: flex-start; cursor: pointer;
+    }
+    .task:active { background: rgba(0,0,0,0.03); }
+    @media (prefers-color-scheme: dark) { .task:active { background: rgba(255,255,255,0.04); } }
+    
+    .task-cb {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-md);
+      margin-top: 1px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .task.hi .task-cb { border-color: var(--danger); }
+    .task.done .task-cb { background: var(--text-3); border-color: transparent; }
+    .task.done .task-cb::after {
+      content: ''; width: 6px; height: 10px; border: solid var(--bg-canvas); border-width: 0 2px 2px 0;
+      transform: rotate(45deg) translateY(-1px);
+    }
+
+    .task-body { flex: 1; min-width: 0; }
+    .task-title { font-size: 16px; font-weight: 500; color: var(--text-1); margin-bottom: 4px; word-break: break-word;}
+    .task.done .task-title { color: var(--text-3); text-decoration: line-through; }
+    
+    .task-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-3); }
+    
+    .cat {
+      background: transparent !important; color: var(--text-3) !important;
+      display: inline-flex; align-items: center; gap: 5px; padding: 0; letter-spacing: 0; font-size: 13px;
+    }
+    .cat::before {
+      content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cat-manuscript::before { background: var(--cat-manuscript); box-shadow: 0 0 6px var(--cat-manuscript); }
+    .cat-lab::before       { background: var(--cat-lab);        box-shadow: 0 0 6px var(--cat-lab); }
+    .cat-phd::before       { background: var(--cat-phd);        box-shadow: 0 0 6px var(--cat-phd); }
+    .cat-conf::before      { background: var(--cat-conf);       box-shadow: 0 0 6px var(--cat-conf); }
+    .cat-bel::before       { background: var(--cat-bel);        box-shadow: 0 0 6px var(--cat-bel); }
+    .cat-personal::before  { background: var(--cat-personal);   box-shadow: 0 0 6px var(--cat-personal); }
+    .cat-hobby::before     { background: var(--cat-hobby);      box-shadow: 0 0 6px var(--cat-hobby); }
+    
+    .status { padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;}
+    .status.waiting { background: rgba(255,149,0,0.1); color: var(--warning); }
+    .status.blocked { background: rgba(255,59,48,0.1); color: var(--danger); }
+    
+    .due { margin-left: auto; font-family: ui-monospace, monospace; font-size: 12px; }
+    .due.overdue { color: var(--danger); }
+    .due.today { color: var(--warning); }
+
+    .note { font-size: 14px; color: var(--text-3); margin-top: 4px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .swipe-bg { position: absolute; inset: 0; background: rgba(255,59,48,0.12); display: flex; align-items: center; justify-content: flex-end; padding-right: 18px; opacity: 0; pointer-events: none; }
+    .swipe-bg svg { width: 17px; height: 17px; stroke: var(--danger); fill: none; stroke-width: 2; stroke-linecap: round; }
+    .swipe-bg-defer { position: absolute; inset: 0; background: rgba(52,199,89,0.12); display: flex; align-items: center; justify-content: flex-start; padding-left: 18px; gap: 6px; opacity: 0; pointer-events: none; }
+    .swipe-bg-defer svg { width: 15px; height: 15px; stroke: var(--success); fill: none; stroke-width: 2; stroke-linecap: round; }
+    .swipe-bg-defer span { font-size: 12px; font-weight: 600; color: var(--success); }
+
+    /* ── FLOATING QUICK ADD ── */
+    #quickAddWrap {
+      position: fixed; bottom: calc(84px + var(--safe-bottom)); left: 20px; right: 20px;
+      max-width: 720px; margin: 0 auto; background: var(--bg-surface); border-radius: 99px;
+      padding: 12px 20px; display: flex !important; align-items: center; gap: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 0.5px solid var(--border); z-index: 40;
+    }
+    #quickAddWrap .quick-add-row { flex: 1; display: flex; gap: 12px; background: transparent; border: none; padding: 0; }
+    #quickAddWrap::before { content: '+'; font-size: 24px; color: var(--text-3); font-weight: 300; margin-top: -2px; }
+    .quick-add-input { flex: 1; border: none; background: transparent; font-size: 16px; color: var(--text-1); outline: none; }
+    .quick-add-input::placeholder { color: var(--text-3); font-weight: 500;}
+    .quick-add-btn { display: none; }
+
+    /* ── REFLECT (Dashboard) STYLES ── */
+    .reflect-card { background: var(--bg-surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 0.5px solid var(--border); }
+    .reflect-card-label { font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;}
+    
+    .affect-grid-wrap { display: flex; align-items: flex-start; gap: 16px; }
+    .affect-grid { position: relative; width: 140px; height: 140px; border-radius: 12px; border: 0.5px solid var(--border-md); touch-action: none; cursor: crosshair; flex-shrink: 0;}
+    .affect-grid-bg { position: absolute; inset: 0; border-radius: 12px; overflow: hidden; }
+    .affect-crosshair-h { position: absolute; top: 50%; left: 0; right: 0; height: 0.5px; background: var(--border); pointer-events: none; }
+    .affect-crosshair-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 0.5px; background: var(--border); pointer-events: none; }
+    .affect-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); pointer-events: none; box-shadow: 0 0 0 3px rgba(0,122,255,0.2); transition: left 0.1s, top 0.1s; }
+    .affect-axis-label { position: absolute; font-size: 10px; font-weight: 600; color: var(--text-4); pointer-events: none; text-transform: uppercase; letter-spacing: 0.04em; }
+    .affect-y-top { top: 6px; left: 50%; transform: translateX(-50%); }
+    .affect-y-bot { bottom: 6px; left: 50%; transform: translateX(-50%); }
+    .affect-x-left { left: 6px; top: 50%; transform: translateY(-50%); }
+    .affect-x-right { right: 6px; top: 50%; transform: translateY(-50%); }
+    
+    .affect-right { flex: 1; min-width: 0; }
+    .affect-ctx-chip { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 12px; border: 0.5px solid var(--border-md); color: var(--text-3); cursor: pointer; transition: all 0.15s; background: var(--bg-canvas);}
+    .affect-ctx-chip.active { background: var(--text-1); border-color: transparent; color: var(--bg-surface); }
+    .affect-mini-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .affect-mini-dot.today { box-shadow: 0 0 0 2px var(--accent); }
+    
+    .habit-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+    .habit-row:last-child { border-bottom: none; }
+    .habit-label { font-size: 15px; font-weight: 500; color: var(--text-1); flex: 1; }
+    .habit-checks { display: flex; gap: 4px; }
+    .habit-cb { width: 28px; height: 26px; border-radius: 8px; border: 1px solid var(--border-md); background: var(--bg-canvas); font-size: 10px; font-weight:600; font-family: ui-monospace, monospace; color: var(--text-3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; }
+    .habit-cb.checked { background: rgba(52,199,89,0.15); color: var(--success); border-color: transparent; }
+    .habit-cb.checked-bad { background: rgba(255,59,48,0.1); color: var(--danger); border-color: transparent; }
+    .habit-cb.off { background: transparent; border-style: dashed; color: transparent; }
+    .habit-cb.today-col { border-color: var(--accent); }
+    .habit-cb.future { opacity: 0.3; pointer-events: none; }
+    .d-day-label { font-size: 11px; font-weight: 600; color: var(--text-3); text-align: center; width: 28px; font-family: ui-monospace, monospace;}
+    .d-day-label.today-col { color: var(--accent); }
+    
+    /* Insights specific */
+    .ins-section { margin-bottom: 24px; }
+    .ins-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); margin-bottom: 12px; }
+    .ins-sub { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-4); }
+    .ins-empty { font-size: 14px; color: var(--text-3); font-style: italic; padding: 16px 0; text-align: center;}
+    
+    .ins-cal-wrap { overflow-x: auto; padding-bottom: 8px;}
+    .ins-cal-day-labels { display: flex; gap: 3px; margin-bottom: 4px; padding-left: 36px; }
+    .ins-cal-day-labels span { width: 16px; font-size: 9px; font-weight: 600; color: var(--text-3); text-align: center; font-family: ui-monospace, monospace; }
+    .ins-cal-grid { display: flex; flex-direction: column; gap: 3px; }
+    .ins-cal-month { font-size: 10px; font-weight: 600; color: var(--text-3); font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 0.04em; margin: 8px 0 4px; }
+    .ins-cal-row { display: flex; gap: 3px; }
+    .ins-cal-cell { width: 16px; height: 16px; border-radius: 4px; transition: transform 0.1s; cursor: pointer; }
+    .ins-cal-cell.today { box-shadow: 0 0 0 2px var(--accent); }
+    .ins-cal-cell.future { opacity: 0.2; }
+    
+    .ins-scatter-wrap { position: relative; width: 100%; height: 160px; border-radius: 12px; border: 0.5px solid var(--border-md); overflow: hidden; background: var(--bg-canvas);}
+    .ins-scatter-point { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0.7; }
+    .ins-scatter-axis-h { position: absolute; top: 50%; left: 0; right: 0; height: 0.5px; background: var(--border); }
+    .ins-scatter-axis-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 0.5px; background: var(--border); }
+    
+    .ins-trend-wrap { position: relative; width: 100%; height: 100px; background: var(--bg-canvas); border-radius: 12px; padding: 8px;}
+    .ins-trend-wrap svg { width: 100%; height: 100%; overflow: visible; }
+    
+    .ins-habit-rates { display: flex; flex-direction: column; gap: 12px; }
+    .ins-habit-row { margin-bottom: 0; }
+    .ins-habit-info { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .ins-habit-name { font-size: 14px; font-weight: 500; color: var(--text-1); }
+    .ins-habit-pct { font-size: 13px; font-weight: 600; color: var(--text-3); font-family: ui-monospace, monospace; }
+    .ins-habit-bar { height: 6px; background: var(--bg-canvas); border-radius: 3px; overflow: hidden; }
+    .ins-habit-bar-fill { height: 100%; border-radius: 3px; }
+
+    /* ── NOTES VIEW (Split Pane Desktop, List Mobile) ── */
+    .notes-split { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+    #cnListView { flex: 1; overflow-y: auto; padding: 0 20px calc(120px + var(--safe-bottom)); }
+    #cnNotesList { display: flex; flex-direction: column; gap: 12px; }
+    
+    /* Desktop New Note Button */
+    .cn-desktop-new-btn {
+      width: 100%; padding: 12px; border-radius: 16px;
+      background: var(--bg-surface); color: var(--accent); font-weight: 600;
+      border: 1px dashed var(--accent); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-bottom: 16px; font-size: 15px; transition: all 0.15s;
+    }
+    .cn-desktop-new-btn:hover { background: var(--accent); color: #fff; border-style: solid; }
+    .cn-desktop-new-btn svg { width: 18px; height: 18px; stroke-width: 2.5; }
+
+    .cn-note-card {
+      background: var(--bg-surface); border-radius: 16px; padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03); cursor: pointer; border: 2px solid transparent;
+      opacity: 1 !important; transition: border 0.15s, background 0.15s;
+    }
+    .cn-note-card.cn-active-note { border-color: var(--accent); }
+    
+    .cn-card-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .cn-type-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+    .cn-type-badge.memo { color: var(--text-3); }
+    .cn-type-badge.paper { color: var(--cat-manuscript); }
+    .cn-type-badge.idea { color: var(--cat-phd); }
+    .cn-card-time { font-size: 11px; color: var(--text-4); margin-left: auto; }
+    
+    .cn-card-title { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cn-card-preview { font-size: 14px; color: var(--text-3); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4;}
+    
+    .cn-card-meta { display: flex; gap: 8px; margin-top: 8px; align-items: center;}
+    .idea-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 8px; }
+    .idea-status.raw { background: rgba(0,0,0,0.05); color: var(--text-2); }
+    .idea-status.developing { background: rgba(255,149,0,0.1); color: var(--warning); }
+    .idea-status.ready-to-pitch { background: rgba(52,199,89,0.1); color: var(--success); }
+
+    /* Notes Empty State */
+    .cn-empty { text-align: center; padding: 48px 20px; color: var(--text-3); }
+    .cn-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.3; }
+    .cn-empty-text { font-size: 14px; line-height: 1.6; font-weight: 500;}
+
+    /* Note Editor */
+    #cnDetailView {
+      position: fixed; inset: 0; background: var(--bg-canvas); z-index: 100;
+      display: none; flex-direction: column;
+    }
+    #cnDetailView.cn-no-note { opacity: 0; pointer-events: none; }
+    
+    .cn-detail-topbar { padding: calc(var(--safe-top) + 16px) 20px 8px; display: flex; align-items: center; gap: 12px; }
+    .cn-back-btn { background: none; border: none; color: var(--accent); display: flex; align-items: center; gap: 4px; font-size: 16px; cursor: pointer;}
+    .cn-back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+    .cn-detail-topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; text-align: center; }
+    
+    .cn-editor-body { flex: 1; padding: 20px; overflow-y: auto; max-width: 800px; margin: 0 auto; width: 100%; }
+    .cn-detail-title-input { width: 100%; border: none; outline: none; background: transparent; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 24px; line-height: 1.2; }
+    .cn-detail-title-input::placeholder { color: var(--text-4); }
+    
+    .cn-type-row, .cn-idea-status-row, .cn-tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .cn-type-chip, .cn-idea-chip, .cn-tag-chip { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--bg-canvas); color: var(--text-3); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s;}
+    .cn-type-chip.active, .cn-idea-chip.active, .cn-tag-chip.active { background: var(--text-2); color: var(--bg-canvas); border-color: transparent;}
+    
+    .cn-url-input { width: 100%; background: var(--bg-surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; margin-bottom: 16px; outline: none; color: var(--text-1); }
+    .cn-url-input:focus { border-color: var(--accent); }
+    
+    .cn-editor-divider { height: 1px; background: var(--border); margin: 32px 0; opacity: 0.5; }
+    
+    .cn-detail-body-input { width: 100%; min-height: 400px; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; }
+    
+    /* Markdown Preview Overrides */
+    .cn-md-preview { font-size: 18px; line-height: 1.7; color: var(--text-1); padding-bottom: 60px;}
+    .cn-md-preview h1, .cn-md-preview h2 { color: var(--text-1); font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em;}
+    .cn-md-preview ul, .cn-md-preview ol { padding-left: 24px; margin-bottom: 16px; margin-top: 8px;}
+    .cn-md-preview li { margin-bottom: 4px; display: list-item; list-style-position: outside;}
+    .cn-md-preview ul { list-style-type: disc; }
+    .cn-md-preview ol { list-style-type: decimal; }
+    .cn-md-preview p { margin-bottom: 16px; }
+    .cn-md-preview a { color: var(--accent); text-decoration: underline; }
+    
+    .internal-note-link { color: var(--accent); text-decoration: none; font-weight: 500; background: var(--accent-faded); padding: 2px 6px; border-radius: 6px;}
+
+    /* ── ANIMATIONS (REQUIRED FOR JS HOOKS) ── */
+    @keyframes taskIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .task-wrap.entering { animation: taskIn 0.25s cubic-bezier(0.2,0.9,0.3,1) both; }
+    
+    @keyframes cnDetailIn  { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+    @keyframes cnDetailOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(30px); } }
+    @keyframes cnListIn    { from { opacity: 0; } to { opacity: 1; } }
+    
+    .cn-detail-enter { animation: cnDetailIn  0.25s cubic-bezier(0.2,0.9,0.3,1) both; }
+    .cn-detail-exit  { animation: cnDetailOut 0.18s ease both; }
+    .cn-list-enter   { animation: cnListIn    0.2s ease both; }
+
+    /* ── FAB (Only for Notes) ── */
+    #fab { display: none !important; }
+    body.notes-mode #fab {
+      display: flex !important; position: fixed; bottom: calc(84px + var(--safe-bottom)); right: 20px;
+      width: 56px; height: 56px; border-radius: 28px; background: var(--accent); color: #fff;
+      align-items: center; justify-content: center; font-size: 28px; font-weight: 300;
+      box-shadow: 0 8px 24px rgba(0,122,255,0.4); z-index: 90; cursor: pointer; transition: transform 0.15s;
+    }
+    #fab:active { transform: scale(0.92); }
+
+    /* ── OVERLAY & SHEETS ── */
+    .overlay { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .overlay.open { opacity: 1; pointer-events: all; }
+
+    .sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--bg-surface); border-radius: 24px 24px 0 0;
+      padding: 24px 24px calc(24px + var(--safe-bottom)); z-index: 200;
+      transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;
+    }
+    .sheet.open { transform: translateY(0); }
+    .handle { width: 40px; height: 5px; border-radius: 3px; background: var(--border-md); margin: 0 auto 24px; }
+    .sheet-title { font-size: 20px; font-weight: 700; color: var(--text-1); margin-bottom: 20px; }
+    .sheet-label { font-size: 13px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin: 20px 0 8px; }
+    .input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 0.5px solid var(--border); background: var(--bg-canvas); font-size: 16px; color: var(--text-1); outline: none; margin-bottom: 12px; }
+    .input:focus { border-color: var(--accent); }
+    .sheet-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 12px; background: var(--bg-canvas); color: var(--text-1); }
+    .sheet-btn.primary { background: var(--accent); color: #fff; }
+    .sheet-btn.danger { background: rgba(255,59,48,0.1); color: var(--danger); }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;}
+    .s-chip { padding: 8px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer;}
+    .s-chip.active { background: var(--text-1); color: var(--bg-surface); border-color: transparent;}
+    
+    /* Settings Form UI */
+    .habit-settings-row { margin-bottom: 12px; padding: 12px; background: var(--bg-canvas); border-radius: 12px; border: 0.5px solid var(--border); }
+    .habit-settings-top { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .habit-bad-toggle { font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; background: var(--bg-surface); color: var(--text-3); cursor: pointer; border: 0.5px solid var(--border); white-space: nowrap; transition: all 0.15s;}
+    .habit-bad-toggle.active { background: rgba(255,59,48,0.1); color: var(--danger); border-color: transparent; }
+    .habit-del-btn { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0; }
+    .habit-day-toggles { display: flex; gap: 4px; justify-content: space-between; }
+    .habit-day-toggle { flex: 1; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-3); background: var(--bg-surface); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; font-family: ui-monospace, monospace;}
+    .habit-day-toggle.active { background: var(--accent); color: #fff; border-color: transparent; }
+
+    .cat-settings-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0;}
+
+
+    /* ── DESKTOP RESPONSIVENESS (macOS Style) ── */
+    @media (min-width: 768px) {
+      .tab-bar {
+        position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
+        background: var(--bg-sidebar); border-right: 0.5px solid var(--border); border-top: none;
+        flex-direction: column; padding: 32px 16px; align-items: flex-start; z-index: 50;
+      }
+      .tab-btn { flex: none; width: 100%; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 10px 14px; border-radius: 12px; }
+      .tab-btn.active { background: var(--text-1); color: var(--bg-canvas); }
+      .tab-btn.active .tab-icon { color: var(--bg-canvas); }
+      .tab-label { font-size: 15px; font-weight: 600; }
+      .sidebar-profile { display: block; font-size: 22px; font-weight: 800; margin-bottom: 32px; padding: 0 12px; }
+      
+      body { padding-left: 260px; }
+      .header { background: transparent; }
+      .scroll-container { padding-bottom: 40px; }
+      
+      /* Desktop Quick Add Pill */
+      #quickAddWrap { bottom: 32px; left: calc(260px + 20px); }
+      
+      /* Desktop Split Notes */
+      .notes-split { flex-direction: row; transition: all 0.3s ease; }
+      .notes-split.focus-mode #cnListView { display: none; }
+      #cnFocusToggle { display: flex !important; }
+      #cnListView { width: 380px; flex: none; border-right: 0.5px solid var(--border); padding-bottom: 0;}
+      #cnDetailView { position: static; flex: 1; z-index: auto; border-radius: 24px 0 0 0; box-shadow: -4px 0 24px rgba(0,0,0,0.03); display: flex !important;}
+      #cnDetailView.cn-no-note { opacity: 1; pointer-events: auto; }
+      .cn-detail-topbar { padding: 24px 60px 0px; }
+      .cn-editor-body { padding: 0px 60px 60px; max-width: 900px; }
+      .cn-detail-title-input { font-size: 40px; margin-top: 0; margin-bottom: 24px; letter-spacing: -0.04em; }
+      .cn-back-btn { display: none; } /* No back button needed on split view */
+      
+      /* Desktop Sheet fixed to survive JS transform overwrites */
+      .sheet { left: 50%; right: auto; margin-left: -240px; width: 480px; transform: translateY(100%); }
+      .sheet.open { transform: translateY(0) !important; }
+      body.notes-mode #fab { bottom: 32px; right: 32px; }
+    }
   </style>
-  <script type="module" src="app.js"></script>
-  <script src="/lib/marked.min.js" defer></script>
-  <script type="module" src="confnotes.js"></script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js');
-    });
-  }
-</script>
 </head>
+
 <body>
 
-<div class="sync-bar" id="syncBar"><div class="sync-dot"></div><span id="syncMsg"></span></div>
+<!-- ── SYNC BAR ── -->
+<div class="sync-bar" id="syncBar" style="display:none;">
+  <div class="sync-dot"></div><span id="syncMsg"></span>
+</div>
 
-<div class="header">
-  <div class="header-top">
-    <div>
-      <div class="greeting" id="secretBelTrigger" style="display:inline-block; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; outline:none;">Hey Keegan</div>
-      <div class="date-line" id="dateDisplay"></div>
-      <div class="date-sub" id="dateSub"></div>
-    </div>
-    <div class="header-right">
-      <div class="icon-btn" id="anchorBtn" title="Grounding Anchor">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="5" r="3"></circle>
-          <line x1="12" y1="22" x2="12" y2="8"></line>
-          <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
-        </svg>
-      </div>
-      <div class="icon-btn" id="shopBtn" title="Shopping List">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/></svg>
-      </div>
-      <div class="icon-btn" id="settingsBtn">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+<!-- ── TOAST ── -->
+<div class="toast" id="toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-1);color:var(--bg-canvas);padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;z-index:999;transition:opacity 0.2s;"></div>
+
+<!-- ════════════════════════════════════════════════
+     TASKS VIEW
+════════════════════════════════════════════════ -->
+<div id="tasksView" class="app-view active">
+  <div class="header content-centerer hide-in-reflect hide-in-notes hide-in-bel">
+    <div class="header-top">
+      <div class="app-title" id="secretBelTrigger">Tasks</div>
+      <div class="header-actions" id="tasksListHeaderActions" style="display:flex;gap:8px;">
+        <button class="icon-btn" id="searchBtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button class="icon-btn" id="settingsBtn"><svg viewBox="0 0 24 24" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1h.09a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="tab-bar hide-in-bel hide-in-project-detail">
-  <button class="tab-btn active" id="tabTasks" data-tab="tasks">Tasks</button>
-  <button class="tab-btn" id="tabProjects" data-tab="projects">Projects</button>
-  <button class="tab-btn" id="tabReflect" data-tab="reflect">Reflect</button>
-  <button class="tab-btn" id="tabNotes" data-tab="notes">Notes</button>
-</div>
-
-<div class="search-trigger hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchTrigger" title="Search">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-  <span>Search</span>
-</div>
-
-<div class="search-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="searchWrap">
-  <input class="search-input" id="searchInput" type="search" placeholder="Search tasks...">
-</div>
-
-<div class="focus-banner hide-in-bel hide-in-project hide-in-project-detail" id="focusBanner">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-     <span style="font-weight:700; letter-spacing:0.1em; font-size:11px; text-transform:uppercase;">Focus Mode</span>
-     <span id="pomoTaskLabel" style="font-size:11px; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60%;">No task pinned</span>
-  </div>
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-     <div id="pomoDisplay" style="font-family:'DM Mono',monospace; font-size:36px; font-weight:500; line-height:1;">25:00</div>
-     <div style="display:flex; gap:8px;">
-       <button id="pomoSkipBtn" class="pomo-btn alt">Skip</button>
-       <button id="pomoStartBtn" class="pomo-btn">Start</button>
-     </div>
-  </div>
-  <div id="pomoStatus" style="font-size:10px; opacity:0.7; margin-top:12px; text-transform:uppercase; letter-spacing:0.05em;">Work Session • 0 completed</div>
-</div>
-
-<div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="quickAddWrap">
-  <div class="quick-add-row">
-    <input class="quick-add-input" id="quickAddInput" type="text" placeholder="Quick add to Today…" autocomplete="off" autocorrect="off" autocapitalize="sentences">
-    <button class="quick-add-send" id="quickAddSend">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-    </button>
-  </div>
-</div>
-
-<div class="focus-strip hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="focusStrip">
-  <div class="focus-dot"></div>
-  <div class="focus-text" style="-webkit-flex:1;flex:1;min-width:0;">
-    <div class="focus-eye">Pinned Focus</div>
-    <div class="focus-title" id="focusTitle">No task pinned</div>
-    <div class="focus-sub" id="focusSub">Long-press any task to pin</div>
-  </div>
-  <div id="focusDoneBtn" style="display:none;font-size:18px;padding:6px 10px;cursor:pointer;color:#52d9a0;-webkit-user-select:none;user-select:none;" title="Complete focus task">✓</div>
-  <div class="focus-arr" id="focusArr">›</div>
-</div>
-
-<div class="filter-scroll hide-in-focus hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="filterRow">
-  <div class="chip active" data-filter="all">All</div>
-  <div class="chip" data-filter="today">Today</div>
-  <div class="chip" data-filter="manuscript">Manuscript</div>
-  <div class="chip" data-filter="lab">Lab Ops</div>
-  <div class="chip" data-filter="phd">PhD Apps</div>
-  <div class="chip" data-filter="conf">Conference</div>
-  <div class="chip" data-filter="bel">Bel ♡</div>
-  <div class="chip" data-filter="personal">Personal</div>
-  <div class="chip" data-filter="hobby">Hobbies</div>
-  <div class="chip" data-filter="blocked">Blocked</div>
-  <div class="chip" data-filter="archive">Archive</div>
-</div>
-
-<div id="taskList" class="hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" style="min-height:calc(100vh - 320px);"></div>
-<div class="spacer hide-in-reflect hide-in-notes hide-in-bel hide-in-project hide-in-project-detail" id="spacerEl"></div>
-
-<div id="projectsView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-    <div class="sheet-title" style="margin-bottom:0;">Active Projects</div>
-    <button class="sheet-btn primary" id="newProjectBtn" style="width:auto; padding:6px 16px; margin:0; font-size:12px;">+ New</button>
-  </div>
-  <div id="projectsList"></div>
-</div>
-
-<div id="projectDetailView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; align-items:center; margin-bottom:16px;">
-    <button id="closeProjectDetailBtn" class="icon-btn" style="margin-right:12px;">✕</button>
-    <div class="sheet-title" style="margin-bottom:0; flex:1;">Project details</div>
-    <div class="icon-btn" id="delProjectDetailBtn" style="border-color:transparent; background:transparent;">
-  <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-</div>
-  </div>
-
-  <textarea class="input" id="pdTitleInput" placeholder="Project Name" rows="2" style="font-size:22px; font-weight:600; background:transparent; border-color:transparent; padding:0; box-shadow:none; margin-bottom:4px; resize:none; line-height:1.2;"></textarea>
-
-  <input class="pd-description-input" id="pdDescInput" type="text" placeholder="One-line goal or purpose..." autocomplete="off">
-
-  <!-- Progress bar -->
-  <div class="pd-progress-wrap" id="pdProgressWrap">
-    <div class="pd-progress-bar"><div class="pd-progress-fill" id="pdProgressFill"></div></div>
-    <div class="pd-progress-label" id="pdProgressLabel"></div>
-  </div>
-
-  <!-- Next up card -->
-  <div class="pd-next-card" id="pdNextCard" style="display:none;">
-    <div class="pd-next-label">Next Up</div>
-    <div id="pdNextContent"></div>
-  </div>
-
-  <div style="display:block; margin-bottom:8px;">
-  <div style="margin-bottom: 16px;">
-    <div class="sheet-label">Stage</div>
-    <div class="chip-row" id="pdStageRow" style="margin-bottom:0;">
-      <div class="s-chip" data-val="Planning">Plan</div>
-      <div class="s-chip" data-val="Active">Active</div>
-      <div class="s-chip" data-val="Waiting">Wait</div>
-      <div class="s-chip" data-val="Review">Review</div>
-      <div class="s-chip" data-val="Done">Done</div>
+    <div class="search-wrap" id="searchWrap">
+      <input class="search-input" id="searchInput" type="search" placeholder="Search tasks…">
     </div>
-  </div>
-  <div>
-    <div class="sheet-label">Deadline</div>
-    <input class="input" id="pdDueInput" type="date" style="color-scheme:dark; margin-bottom:0; padding:6px 10px; font-size:13px; border-radius:12px;">
-  </div>
-</div>
-
-  <!-- Activity log -->
-  <details class="pd-activity-card" id="pdActivityCard" style="display:none;">
-    <summary class="pd-activity-toggle">
-      <span class="d-card-label" style="margin-bottom:0;">Activity</span>
-      <span class="pd-activity-chevron">▸</span>
-    </summary>
-    <div class="pd-activity-list" id="pdActivityList"></div>
-  </details>
-
-  <!-- Milestones -->
-  <div class="pd-milestones-section">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <div class="sheet-label" style="margin-bottom:0;">Milestones</div>
-      <button id="pdAddMilestoneBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add</button>
-    </div>
-    <div id="pdMilestonesList"></div>
-    <div id="pdMilestoneAddRow" class="pd-milestone-add-row" style="display:none;">
-      <input class="input pd-ms-input" id="pdMilestoneInput" type="text" placeholder="e.g. Draft intro section" autocomplete="off" style="margin-bottom:0; flex:1;">
-      <input class="input pd-ms-date-input" id="pdMilestoneDueInput" type="date" style="color-scheme:dark; margin-bottom:0; width:auto;">
-      <button class="pd-ms-save-btn" id="pdMilestoneSaveBtn">Add</button>
+    <div class="filter-scroll" id="filterRow">
+      <div class="chip active" data-filter="all">All</div>
+      <div class="chip" data-filter="manuscript">Manuscript</div>
+      <div class="chip" data-filter="lab">Lab Ops</div>
+      <div class="chip" data-filter="phd">PhD</div>
+      <div class="chip" data-filter="blocked">Blocked</div>
+      <div class="chip" data-filter="archive">Archive</div>
     </div>
   </div>
 
-  <div class="d-card">
-    <div class="d-card-label">Project Notes</div>
-    <div id="pdNotesInput" class="bel-notes" contenteditable="true" placeholder="Dump all ideas, links, and status updates here..."></div>
+  <div class="scroll-container">
+    <div class="content-centerer">
+      <div id="taskList" class="hide-in-reflect hide-in-notes hide-in-bel"></div>
+    </div>
   </div>
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; margin-bottom:12px;">
-    <div class="sheet-label" style="margin-bottom:0;">Active Tasks</div>
-    <button id="pdAddTaskBtn" style="background:transparent; border:none; color:var(--accent, #007aff); font-family:var(--font-mono); font-size:11px; cursor:pointer;">+ Add Task</button>
+  <div class="quick-add-wrap hide-in-reflect hide-in-notes hide-in-bel" id="quickAddWrap">
+    <div class="quick-add-row">
+      <input class="quick-add-input" id="quickAddInput" type="text" placeholder="I need to..." autocapitalize="sentences">
+      <button class="quick-add-btn" id="quickAddSubmit">Add</button>
+    </div>
   </div>
-  <div id="pdTasksList"></div>
-
-  <!-- Completed tasks -->
-  <details class="pd-completed-section" id="pdCompletedSection" style="display:none;">
-    <summary class="pd-completed-toggle">
-      <span class="sheet-label" style="margin-bottom:0;">Completed</span>
-      <span class="pd-completed-count" id="pdCompletedCount"></span>
-      <span class="pd-activity-chevron">▸</span>
-    </summary>
-    <div id="pdCompletedList"></div>
-  </details>
 </div>
 
-<div id="confNotesView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div id="cnListView">
-    <div style="display:flex; align-items:center; margin-bottom:16px;">
-      <div class="sheet-title" style="margin-bottom:0; flex:1;">Notes</div>
-      
-      <div class="icon-btn" id="cnViewToggle" style="margin-right:8px;" title="Toggle View">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      </div>
-      
-      <div class="icon-btn" id="cnSearchToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-    </div>
-
-    <!-- Scratchpad area -->
-    <div class="cn-scratch-card">
-      <div class="cn-scratch-header">
-        <div class="cn-scratch-label">Scratchpad</div>
-        <div class="cn-scratch-right">
-          <span id="cnScratchSync" class="cn-scratch-sync"></span>
-          <span id="cnScratchMono" class="cn-scratch-mono">mono off</span>
-        </div>
-      </div>
-      <textarea id="cnScratchpad" class="cn-scratch-textarea" placeholder="Dump thoughts here... ideas, R output, half-formed hypotheses." rows="4"></textarea>
-    </div>
-
-    <div id="cnSearchWrap" class="cn-search-wrap">
-      <input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes...">
-    </div>
-    <div class="cn-filter-row" id="cnFilterRow"></div>
-    <div id="cnNotesList"></div>
-
-    <!-- New note type menu (shown when FAB is long-pressed in notes mode) -->
-    <div id="cnNewMenu" class="cn-new-menu" style="display:none;">
-      <div class="cn-new-menu-item" data-newtype="memo"><span class="cn-new-icon">✎</span> Note</div>
-      <div class="cn-new-menu-item" data-newtype="paper"><span class="cn-new-icon">📄</span> Paper</div>
-      <div class="cn-new-menu-item" data-newtype="idea"><span class="cn-new-icon">💡</span> Idea</div>
-    </div>
+<!-- ════════════════════════════════════════════════
+     REFLECT VIEW
+════════════════════════════════════════════════ -->
+<div id="reflectView" class="app-view">
+  <div class="header content-centerer">
+    <div class="header-top"><div class="app-title">Reflect</div></div>
   </div>
-
-  <!-- Distraction-free note editor -->
-  <div id="cnDetailView" class="cn-detail-fullscreen" style="display:none;">
-    <div class="cn-detail-topbar">
-      <button id="cnBackBtn" class="icon-btn" style="margin-right:8px;">&#8249;</button>
-      <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
-      <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
-        <span id="cnMdToggle" class="cn-scratch-mono" title="Preview markdown">preview</span>
-        <span id="cnMonoToggle" class="cn-scratch-mono">mono off</span>
-        <div class="icon-btn cn-lock-btn" id="cnLockBtn" title="Lock note" style="display:none;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
-        <div class="icon-btn cn-pin-btn" id="cnPinBtn" title="Pin note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 2h6l-1.5 5H18l-6 8-6-8h4.5z"/></svg>
-        </div>
-        <div class="icon-btn" id="cnDeleteBtn" style="border-color:transparent; background:transparent;">
-          <svg viewBox="0 0 24 24" style="stroke:#ff3a30; fill:none; stroke-width:2;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Type selector -->
-    <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title..." autocomplete="off">
-    <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context..." autocomplete="off">
-
-    <div class="cn-url-row" id="cnUrlRow" style="display:none; padding: 0 0 12px 0; align-items: center; gap: 8px;">
-      <span class="cn-url-label" style="font-size:14px; opacity:0.6;">🔗</span>
-      <input class="cn-detail-source-input" id="cnUrlInput" type="text" placeholder="Paper URL or DOI..." autocomplete="off" style="margin-bottom:0; flex:1;">
-      
-      <a href="#" id="cnUrlLaunchBtn" target="_blank" style="display:none; align-items:center; justify-content:center; width:28px; height:28px; background:rgba(175, 82, 222, 0.1); border-radius:8px; color:#af52de; transition: transform 0.15s ease;" title="Open Source">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-      </a>
-    </div>
+  <div class="scroll-container"><div class="content-centerer">
     
-    <details class="cn-detail-meta-drawer" id="cnTypeSettingsDrawer" style="margin-bottom: 8px; border-bottom: none; padding-bottom: 0;">
-      <summary class="cn-detail-meta-toggle">Note Type Settings</summary>
-      <div class="cn-detail-meta-content">
-        <div class="cn-type-selector" id="cnTypeRow" style="padding: 0 0 10px 0;">
-          <div class="cn-type-chip active" data-type="memo">✎ Note</div>
-          <div class="cn-type-chip" data-type="paper">📄 Paper</div>
-          <div class="cn-type-chip" data-type="idea">💡 Idea</div>
+    <div class="reflect-desktop-grid">
+      <!-- Affect Grid Card -->
+      <div class="reflect-card">
+        <div class="reflect-card-label">
+          <span>How are you feeling?</span>
+          <span id="dAffectStatus" style="text-transform:none; letter-spacing:0; color:var(--text-3); font-weight:500;"></span>
         </div>
-
-        <div class="cn-idea-status-row" id="cnIdeaStatusRow" style="display:none; padding: 0 0 10px 0;">
-          <div class="cn-status-chip active" data-status="raw">raw</div>
-          <div class="cn-status-chip" data-status="developing">developing</div>
-          <div class="cn-status-chip" data-status="ready to pitch">ready to pitch</div>
-        </div>
-      </div>
-    </details>
-
-    <!-- Collapsible metadata -->
-    <details class="cn-detail-meta-drawer" id="cnMetaDrawer">
-      <summary class="cn-detail-meta-toggle">Tags, project & info</summary>
-      <div class="cn-detail-meta-content">
-        <div class="sheet-label">Tags</div>
-        <div class="chip-row" id="cnTagRow"></div>
-        <div class="sheet-label">Link to Project</div>
-        <select class="input" id="cnProjectInput" style="appearance:auto; margin-bottom:8px;">
-          <option value="">None</option>
-        </select>
-        <div class="cn-detail-meta" id="cnDetailMeta"></div>
-      </div>
-    </details>
-
-    <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write anything..."></textarea>
-    <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
-
-    <!-- Backlinks drawer — rendered by confnotes.js -->
-    <div class="cn-backlinks-drawer" id="cnBacklinksDrawer" style="display:none;">
-      <button class="cn-backlinks-toggle" id="cnBacklinksToggle">
-        <span class="cn-backlinks-arrow" id="cnBacklinksArrow">▸</span>
-        <span class="cn-backlinks-label-text">Linked from</span>
-        <span class="cn-backlinks-count" id="cnBacklinksCount"></span>
-      </button>
-      <div class="cn-backlinks-list" id="cnBacklinksList"></div>
-    </div>
-  </div>
-</div>
-
-<div id="belView" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-  <div style="display:flex; align-items:center; margin-bottom:16px;">
-    <button id="closeBelBtn" class="icon-btn" style="margin-right:12px;">&#8249;</button>
-    <div class="sheet-title" style="margin-bottom:0;">Beegan!</div>
-  </div>
-
-  <div class="d-card" style="position:relative; overflow:hidden;">
-    <div style="position:absolute; top:-20px; right:-20px; font-size:100px; opacity:0.04;">♡</div>
-    <div class="d-card-label">Time Together</div>
-    <div id="belTimeCount" style="font-family:'DM Sans', sans-serif; font-size:32px; font-weight:600; line-height:1; margin-bottom:6px;">--</div>
-    <div id="belNextAnniv" style="font-size:11px; opacity:0.6; font-family:'DM Mono', monospace;">Set anniversary date below</div>
-    <div id="editBelDateBtn" style="font-size:10px; color:var(--accent); margin-top:12px; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; font-weight:600;">Edit Date</div>
-
-<div id="belDateEditWrap" style="display:none; margin-top:10px; gap:8px; align-items:center;">
-  <input type="date" id="belAnnivInput" class="input" style="margin-bottom:0; flex:1;">
-  <button id="saveBelDateBtn" class="sheet-btn primary" style="margin:0; width:auto; padding:11px 16px;">Save</button>
-</div>
-
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Gift Ideas</div>
-    <div id="belGiftsList" class="bel-list"></div>
-    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-      <input class="input" id="belGiftInput" type="text" placeholder="Jot down an idea..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belGiftAddBtn">Add</button>
-    </div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Date Ideas</div>
-    <div id="belDatesList" class="bel-list"></div>
-    <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-      <input class="input" id="belDateInput" type="text" placeholder="Places to go..." style="margin-bottom:0;flex:1;">
-      <button class="shop-add-btn" id="belDateAddBtn">Add</button>
-    </div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Her Favorites</div>
-    <div id="belFavs" class="bel-notes" contenteditable="true" placeholder="Coffee orders, flowers, snacks..."></div>
-  </div>
-
-  <div class="d-card">
-    <div class="d-card-label">Things I Love About Her</div>
-    <div id="belLove" class="bel-notes" contenteditable="true" placeholder="The little things..."></div>
-  </div>
-</div>
-
-<div id="reflectView" style="display:none;">
-
-  <!-- Today / Review segmented control -->
-  <div class="reflect-seg-wrap">
-    <div class="reflect-seg">
-      <button class="reflect-seg-btn active" id="reflectSegToday" data-mode="today">Today</button>
-      <button class="reflect-seg-btn" id="reflectSegReview" data-mode="review">Review</button>
-    </div>
-  </div>
-
-  <!-- TODAY MODE -->
-  <div id="reflectToday" style="padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-    <div class="wr-prompt-card" id="wrPromptCard" style="display:none;"></div>
-    <div class="d-card">
-      <div class="d-week-meta" id="dWeekMeta"></div>
-      <textarea class="d-intention-input" id="dIntention" rows="2" placeholder="Set this week's intention…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
-
-    <div class="d-card snapshot-card" id="dSnapshotCard" style="display:none;">
-      <div class="d-card-label">Today So Far</div>
-      <div class="snapshot-body" id="dSnapshotBody"></div>
-    </div>
-
-    <div class="d-card affect-card">
-      <div class="d-card-label" style="display:flex; justify-content:space-between;">
-        <span>How are you feeling?</span>
-        <span id="dAffectStatus" style="text-transform:none; opacity:0.8;"></span>
-      </div>
-      <div class="affect-grid-wrap">
-        <div class="affect-axis-label affect-y-top">wired</div>
-        <div class="affect-axis-label affect-y-bot">drained</div>
-        <div class="affect-axis-label affect-x-left">rough</div>
-        <div class="affect-axis-label affect-x-right">good</div>
-        <div class="affect-grid" id="dAffectGrid">
-          <div class="affect-grid-bg"></div>
-          <div class="affect-crosshair-h"></div>
-          <div class="affect-crosshair-v"></div>
-          <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
+        <div class="affect-grid-wrap">
+          <div style="position:relative; flex-shrink:0;">
+            <div class="affect-axis-label affect-y-top">wired</div>
+            <div class="affect-axis-label affect-y-bot">calm</div>
+            <div class="affect-axis-label affect-x-left">rough</div>
+            <div class="affect-axis-label affect-x-right">good</div>
+            <div class="affect-grid" id="dAffectGrid">
+              <div class="affect-grid-bg"></div>
+              <div class="affect-crosshair-h"></div>
+              <div class="affect-crosshair-v"></div>
+              <div class="affect-dot" id="dAffectDot" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="affect-right">
+            <div id="dAffectLogCount" style="display:none; font-size:12px; color:var(--text-3); font-weight:500; margin-bottom:8px;"></div>
+            <div id="dAffectHistory" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;"></div>
+            <div id="dAffectContextRow" style="display:flex; gap:6px; flex-wrap:wrap;">
+              <div class="affect-ctx-chip" data-ctx="work">work</div>
+              <div class="affect-ctx-chip" data-ctx="writing">writing</div>
+              <div class="affect-ctx-chip" data-ctx="social">social</div>
+              <div class="affect-ctx-chip" data-ctx="rest">rest</div>
+              <div class="affect-ctx-chip" data-ctx="exercise">exercise</div>
+              <div class="affect-ctx-chip" data-ctx="lab">lab</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="affect-context-row" id="dAffectContextRow">
-        <div class="affect-ctx-chip" data-ctx="work">Work</div>
-        <div class="affect-ctx-chip" data-ctx="writing">Writing</div>
-        <div class="affect-ctx-chip" data-ctx="social">Social</div>
-        <div class="affect-ctx-chip" data-ctx="rest">Rest</div>
-        <div class="affect-ctx-chip" data-ctx="exercise">Exercise</div>
-        <div class="affect-ctx-chip" data-ctx="lab">Lab</div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="affect-mini-history" id="dAffectHistory"></div>
-        <div class="affect-log-count" id="dAffectLogCount" style="display:none;"></div>
+
+      <!-- Habits Card -->
+      <div class="reflect-card">
+        <div class="reflect-card-label">Habits</div>
+        <div style="display:flex; gap:4px; justify-content:flex-end; margin-bottom:8px;" id="dHabitDayLabels"></div>
+        <div id="dHabitRows"></div>
       </div>
     </div>
 
-    <div class="d-card">
-      <div class="d-card-label">Habits — This Week</div>
-      <div class="d-habit-header">
-        <div class="d-habit-name-col">Habit</div>
-        <div class="d-habit-days-col" id="dHabitDayLabels"></div>
-      </div>
-      <div id="dHabitRows"></div>
-    </div>
-
-    <div class="d-card">
-      <div class="d-card-label">Today's Tasks</div>
-      <div id="dTaskList"></div>
-      <div class="d-open-tasks" id="dOpenTasks"></div>
-    </div>
-
-    <div class="d-card">
-      <div class="d-card-label">Daily Reflection</div>
-      <div class="d-prompt" id="dPrompt"></div>
-      <textarea class="d-reflect-input" id="dReflect" rows="3" placeholder="Write something…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
-
-    <div class="d-card cn-research-card">
-      <div class="d-card-label">Research Prompt <span style="font-weight:400;opacity:0.5;font-size:9px;letter-spacing:0.04em;">💡</span></div>
-      <div class="d-prompt" id="dResearchPrompt"></div>
-      <textarea class="d-reflect-input" id="dResearchReflect" rows="3" placeholder="Think like a researcher…" autocorrect="off" autocapitalize="sentences"></textarea>
-    </div>
-
-    <div class="d-card ins-card" id="dWeeklyReflectCard" style="display:none;">
-      <div class="d-card-label">Weekly Affect Reflection</div>
-      <div class="ins-weekly-prompt" id="dWeeklyPrompt"></div>
-      <textarea class="d-reflect-input" id="dWeeklyReflect" rows="2" placeholder="Describe the emotional theme of this week..." autocorrect="off" autocapitalize="sentences"></textarea>
-      <div class="ins-past-labels" id="dPastLabels"></div>
-    </div>
-
-    <details class="d-card ins-card" id="dInsightsCard">
-      <summary class="ins-toggle">
-        <span class="d-card-label" style="margin-bottom:0;">Insights</span>
-        <span class="ins-chevron">▸</span>
+    <!-- Insights Card -->
+    <details class="reflect-card" style="margin-top:16px;">
+      <summary style="list-style:none; display:flex; align-items:center; cursor:pointer;" class="reflect-card-label">
+        <span>Insights</span>
+        <span class="ins-chevron" style="margin-left:auto;">▸</span>
       </summary>
-      <div class="ins-content" id="dInsightsContent"></div>
+      <div id="dInsightsContent" style="margin-top:16px;"></div>
     </details>
-  </div>
-
-  <!-- REVIEW MODE -->
-  <div id="reflectReview" style="display:none; padding: 0 20px; padding-bottom: calc(120px + env(safe-area-inset-bottom));">
-    <div id="wrContainer"></div>
-    <div id="timelineNav"></div>
-    <div id="timelineBody"></div>
-  </div>
-
+    
+  </div></div>
 </div>
 
-<div id="focusModeBtn" class="hide-in-bel hide-in-project-detail">
-  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-  <span id="focusBtnLabel">Focus</span>
-</div>
-<div class="fab hide-in-bel hide-in-project-detail" id="fab">+</div>
+<!-- ════════════════════════════════════════════════
+     NOTES VIEW (Split Pane)
+════════════════════════════════════════════════ -->
+<div id="confNotesView" class="app-view">
+  <div class="header">
+    <div class="header-top">
+      <div class="app-title">Notes</div>
+      <button class="icon-btn" id="cnSearchBtn"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+    </div>
+    <div id="cnSearchWrap" class="search-wrap"><input class="search-input" id="cnSearchInput" type="search" placeholder="Search notes…"></div>
+    <div class="filter-scroll" id="cnFilterRow"></div>
+  </div>
 
-<div class="sheet" id="shopSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" style="margin-bottom:0">Shopping List</div>
-    <div id="closeShopSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  <div class="notes-split">
+    <!-- List Pane -->
+    <div id="cnListView">
+      <div id="cnNotesList"></div>
+    </div>
+
+    <!-- Editor Pane -->
+    <div id="cnDetailView" class="cn-no-note">
+      <div class="cn-detail-topbar">
+        <button class="cn-back-btn" id="cnBackBtn">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back
+        </button>
+        <span class="cn-detail-topbar-title" id="cnDetailTitle">Note</span>
+        <div style="margin-left:auto; display:flex; gap:6px;">
+          <button class="icon-btn" id="cnFocusToggle" style="display:none; border-color:transparent;" title="Toggle Focus Mode"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+          <button class="icon-btn" id="cnMdToggle" style="font-size:12px; font-weight:600; width:auto; padding:0 12px; border-radius:16px;">Preview</button>
+          <button class="icon-btn" id="cnMonoToggle" style="font-size:12px; font-weight:600; width:auto; padding:0 12px; border-radius:16px;">Mono</button>
+          <button class="icon-btn" id="cnDeleteBtn" style="border-color:transparent; color:var(--danger);"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="cn-editor-body">
+        <input class="cn-detail-title-input" id="cnTitleInput" type="text" placeholder="Title…">
+        
+        <div id="cnTypeRow" class="cn-type-row"></div>
+        <div id="cnIdeaStatusRow" class="cn-idea-status-row" style="display:none;"></div>
+        <input class="cn-url-input" id="cnUrlInput" type="url" placeholder="URL or DOI…" style="display:none;">
+        <div id="cnTagRow" class="cn-tag-row"></div>
+        
+        <input class="cn-detail-source-input" id="cnSpeakerInput" type="text" placeholder="Source, speaker, context…" style="width:100%; border:none; background:transparent; font-size:14px; color:var(--text-3); font-weight:500; margin-bottom:16px; outline:none;">
+        
+        <div class="cn-editor-divider"></div>
+        <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write something…"></textarea>
+        <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
+        
+        <div class="cn-detail-meta" id="cnDetailMeta" style="margin-top:24px; font-size:12px; color:var(--text-4); font-weight:500;"></div>
+        <div id="cnBacklinksDrawer" style="margin-top:24px;"></div>
+      </div>
+    </div>
   </div>
-  <div id="shopList" class="shop-list"></div>
-  <div style="margin-top:14px;display:-webkit-flex;display:flex;justify-content:flex-end;">
-    <div id="shopClearDone" class="sheet-btn" style="width:auto;padding:8px 16px;font-size:12px;opacity:0.6;">Clear checked</div>
-  </div>
-  <div class="shop-add-row" style="margin-top:14px;margin-bottom:0;">
-    <input class="input shop-input" id="shopInput" type="text" placeholder="Add item…" autocapitalize="sentences" autocorrect="off" style="margin-bottom:0;flex:1;">
-    <button class="shop-add-btn" id="shopAddBtn">Add</button>
+
+  <!-- Note Type Quick Menu -->
+  <div id="cnNewMenu" style="display:none; position:fixed; bottom:calc(150px + var(--safe-bottom)); right:20px; background:var(--bg-surface); border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,0.12); z-index:200; overflow:hidden; border:0.5px solid var(--border);">
+    <div class="cn-new-menu-item" data-newtype="memo" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer; border-bottom:0.5px solid var(--border);">✎ Note</div>
+    <div class="cn-new-menu-item" data-newtype="paper" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer; border-bottom:0.5px solid var(--border);">📄 Paper</div>
+    <div class="cn-new-menu-item" data-newtype="idea" style="padding:14px 20px; font-size:15px; font-weight:600; cursor:pointer;">💡 Idea</div>
   </div>
 </div>
 
+<!-- ════════════════════════════════════════════════
+     BEL VIEW
+════════════════════════════════════════════════ -->
+<div id="belView" class="app-view">
+  <div class="header content-centerer">
+    <div class="header-top">
+      <div class="app-title">Bel ♡</div>
+      <button class="icon-btn" id="closeBelBtn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>
+  <div class="scroll-container"><div class="content-centerer" id="belContent"></div></div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     UNIVERSAL NAV (Mobile Bottom / Desktop Left)
+════════════════════════════════════════════════ -->
+<nav class="tab-bar">
+  <div class="sidebar-profile">Keegan</div>
+  <button class="tab-btn active" id="tabTasks" data-tab="tasks">
+    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+    <span class="tab-label">Tasks</span>
+  </button>
+  <button class="tab-btn" id="tabReflect" data-tab="reflect">
+    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></span>
+    <span class="tab-label">Reflect</span>
+  </button>
+  <button class="tab-btn" id="tabNotes" data-tab="notes">
+    <span class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+    <span class="tab-label">Notes</span>
+  </button>
+</nav>
+
+<!-- FAB (Only shows up in Notes view now) -->
+<div class="fab" id="fab">+</div>
+
+<!-- ════════════════════════════════════════════════
+     OVERLAY + SHEETS
+════════════════════════════════════════════════ -->
 <div class="overlay" id="overlay"></div>
 
-<div class="sheet" id="projectSheet">
-  <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" id="projectSheetTitle" style="margin-bottom:0">New Project</div>
-    <div id="closeProjectSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Project Name</div>
-  <input class="input" id="projTitleInput" type="text" placeholder="E.g., Applied Cog Psych Paper" style="margin-bottom:8px;">
-
-  <div class="sheet-label">Goal / Purpose</div>
-  <input class="input" id="projDescInput" type="text" placeholder="One-line description..." style="margin-bottom:14px;">
-
-  <div class="sheet-label">Stage</div>
-  <div class="chip-row" id="projStageRow">
-    <div class="s-chip active" data-val="Planning">Planning</div>
-    <div class="s-chip" data-val="Active">Active</div>
-    <div class="s-chip" data-val="Waiting">Waiting</div>
-    <div class="s-chip" data-val="Review">Review</div>
-    <div class="s-chip" data-val="Done">Done</div>
-  </div>
-
-  <div class="sheet-label">Deadline (Optional)</div>
-  <input class="input" id="projDueInput" type="date" style="color-scheme:dark; margin-bottom:14px;">
-
-  <div class="sheet-label">Project Notes</div>
-  <textarea class="input" id="projNoteInput" placeholder="Overall status, next steps..." rows="3" style="resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-
-<button class="sheet-btn primary" id="saveProjBtn">Save Project</button>
-<button class="sheet-btn danger" id="deleteProjBtn" style="display:none">Delete Project</button>
-
-</div>
-
+<!-- Add / Edit Task sheet -->
 <div class="sheet" id="addSheet">
   <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" id="addSheetTitle" style="margin-bottom:0">New Task</div>
-    <div id="closeAddSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
-  </div>
-  <div class="sheet-label">Task</div>
-  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing..." style="margin-bottom:8px;">
-
-  <div id="pomoCountDisplay" style="display:none; font-size:11px; margin-bottom:14px; color:#888; font-family:'DM Mono',monospace; letter-spacing:0.04em;"></div>
-
-  <div class="sheet-label" style="display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;">
-    Note
-    <span id="monoToggle" style="font-size:10px;color:#62636f;cursor:pointer;padding:2px 8px;border:1px solid #3a3b42;border-radius:6px;font-family:'DM Mono',monospace;-webkit-user-select:none;user-select:none;">mono off</span>
-  </div>
-  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links..." rows="4" style="resize:vertical;min-height:80px;max-height:220px;font-family:'DM Sans',sans-serif;line-height:1.5;margin-bottom:14px;"></textarea>
-
-  <div class="sheet-label" style="display:-webkit-flex;display:flex;justify-content:space-between;align-items:center;">
-    Due Date
-    <div id="pinTodayChip" class="s-chip" style="font-size:10px;padding:3px 10px;">&#128204; Pin to Today</div>
-  </div>
-  <input class="input" id="taskDueInput" type="date" style="color-scheme:dark;">
-
-  <div class="sheet-label">Link to Project</div>
-  <select class="input" id="taskProjectInput" style="appearance:auto; margin-bottom:8px;">
-    <option value="">None</option>
-  </select>
-
-  <div id="taskMilestoneWrap" style="display:none;">
-    <div class="sheet-label">Milestone</div>
-    <select class="input" id="taskMilestoneInput" style="appearance:auto; margin-bottom:14px;">
-      <option value="">None</option>
-    </select>
+  <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+    <div class="sheet-title" id="addSheetTitle" style="margin:0;">New Task</div>
+    <div id="closeAddSheet" class="icon-btn" style="width:28px; height:28px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
   </div>
 
-  <div class="sheet-label">Categories (Multi-Select)</div>
-  <div class="chip-row" id="catRow">
-    <div class="s-chip" data-val="manuscript">Manuscript</div>
-    <div class="s-chip" data-val="lab">Lab Ops</div>
-    <div class="s-chip" data-val="phd">PhD Apps</div>
-    <div class="s-chip" data-val="conf">Conference</div>
-    <div class="s-chip" data-val="bel">Bel ♡</div>
-    <div class="s-chip" data-val="personal">Personal</div>
-    <div class="s-chip" data-val="hobby">Hobby</div>
-  </div>
+  <input class="input" id="taskTitleInput" type="text" placeholder="What needs doing…" style="font-size:18px; font-weight:600;">
+  
+  <div class="sheet-label" style="display:flex; justify-content:space-between;">Note <span id="monoToggle" style="color:var(--accent); cursor:pointer; font-size:11px;">mono</span></div>
+  <textarea class="input" id="taskNoteInput" placeholder="Context, blockers, links…" rows="3"></textarea>
+
+  <div class="sheet-label" style="display:flex; justify-content:space-between;">Due Date <div id="pinTodayChip" class="s-chip" style="font-size:11px; padding:2px 8px;">📌 Pin to Today</div></div>
+  <input class="input" id="taskDueInput" type="date">
+
+  <div class="sheet-label">Categories</div>
+  <div class="chip-row" id="catRow"></div>
 
   <div class="sheet-label">Status</div>
   <div class="chip-row" id="statusRow">
     <div class="s-chip active" data-val="active">Active</div>
     <div class="s-chip" data-val="waiting">Waiting on</div>
     <div class="s-chip" data-val="blocked">Blocked</div>
-    <div class="s-chip" data-val="review">In Review</div>
   </div>
 
   <div class="sheet-label">Priority</div>
   <div class="chip-row" id="priRow">
-    <div class="s-chip" data-val="hi">High</div>
-    <div class="s-chip active" data-val="md">Med</div>
-    <div class="s-chip" data-val="lo">Low</div>
+    <div class="s-chip" data-val="hi">High</div><div class="s-chip active" data-val="md">Med</div><div class="s-chip" data-val="lo">Low</div>
   </div>
 
-<button class="sheet-btn primary" id="saveTaskBtn">Add Task</button>
-<button class="sheet-btn danger" id="deleteTaskBtn" style="display:none">Delete Task</button>
-<button class="sheet-btn" id="focusPinBtn" style="display:none;margin-top:8px">Set as Focus</button>
-
+  <button class="sheet-btn primary" id="saveTaskBtn">Save Task</button>
+  <button class="sheet-btn danger" id="deleteTaskBtn" style="display:none;">Delete Task</button>
 </div>
 
+<!-- Settings sheet -->
 <div class="sheet" id="settingsSheet">
   <div class="handle"></div>
-  <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:16px;">
-    <div class="sheet-title" style="margin-bottom:0">Settings</div>
-    <div id="closeSettingsSheet" class="close-btn" style="flex-shrink:0;">&#x2715;</div>
+  <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;">Settings</div>
+    <div id="closeSettingsSheet" class="icon-btn" style="width:28px; height:28px;"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
   </div>
-  <div class="sheet-label">Appearance</div>
-  <div style="display:-webkit-flex;display:flex;gap:10px;margin-bottom:16px;-webkit-flex-wrap:wrap;flex-wrap:wrap;">
-
-<div class="theme-swatch" data-theme="halcyon" title="Light" style="background:linear-gradient(175deg,#d8e6f6,#e0e8f2,#e6e6ec);border:2px solid rgba(16,96,160,0.2);">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#1060a0;margin-top:auto;">LIGHT</div>
-</div>
-<div class="theme-swatch" data-theme="aurora" title="Dark" style="background:linear-gradient(135deg,#111418,#161A1F);border:2px solid rgba(74,188,224,0.3);">
-  <div style="font-size:8px;letter-spacing:0.06em;text-transform:uppercase;color:#4ABCE0;margin-top:auto;">DARK</div>
-</div>
-
-  </div>
-
-  <div id="accentPickerSection" style="display:none;">
-    <div class="sheet-label">Accent Color</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;" id="accentPresets"></div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-      <div id="accentPreview" style="width:32px;height:32px;border-radius:8px;border:2px solid var(--border-divider);flex-shrink:0;"></div>
-      <input class="input" id="accentHexInput" type="text" placeholder="#4ABCE0" maxlength="7" style="margin-bottom:0;flex:1;font-family:var(--font-mono);font-size:13px;letter-spacing:0.04em;">
-      <button class="sheet-btn primary" id="accentApplyBtn" style="width:auto;padding:10px 16px;margin-top:0;font-size:12px;">Apply</button>
-    </div>
-    <button class="sheet-btn" id="accentResetBtn" style="font-size:12px;padding:8px 16px;">Reset to Default</button>
-  </div>
-
-  <div class="divider"></div>
-  <div class="sheet-label">GitHub Sync</div>
-  <div class="settings-status" id="ghStatus"><div class="status-dot"></div><span id="ghStatusText">Not connected to GitHub</span></div>
-  <div class="settings-field">
-    <label>GitHub Username</label>
-    <input class="input" id="ghUser" type="text" placeholder="yourusername" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div class="settings-field">
-    <label>Repository Name</label>
-    <input class="input" id="ghRepo" type="text" placeholder="keegantaskmanager" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div class="settings-field">
-    <label>Personal Access Token</label>
-    <input class="input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxx" autocapitalize="none" autocorrect="off" style="margin-bottom:0">
-  </div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:14px; line-height:1.7;">
-    Token needs <strong style="color:#9a9aaa">repo</strong> scope. Stored only in localStorage — never sent anywhere except GitHub's API.
-  </div>
-  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
-  <div class="divider"></div>
-  <div class="sheet-label">Notes PIN</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Set a PIN to lock individual notes. This is a visual lock — note content is still stored in plaintext.
-  </div>
-  <div id="pinStatus" style="font-size:12px; margin-bottom:10px; font-family:var(--font-mono);"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="setPinBtn" style="flex:1;margin-top:0;">Set PIN</button>
-    <button class="sheet-btn danger" id="clearPinBtn" style="flex:1;margin-top:0;display:none;">Remove PIN</button>
-  </div>
-  <div class="divider"></div>
-  <div class="sheet-label">Danger Zone</div>
-  <button class="sheet-btn danger" id="clearDataBtn">Clear All Local Data</button>
-  <div class="divider"></div>
-  <div class="sheet-label">Categories</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Edit keys and display labels. Key is used internally (lowercase, no spaces) — changing it will unlink existing tasks using that key.
-  </div>
-  <div id="catSettingsRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="addCatBtn" style="flex:1;margin-top:0;">+ Add Category</button>
-    <button class="sheet-btn primary" id="saveCatsBtn" style="flex:1;margin-top:0;">Save Categories</button>
-  </div>
-  <div class="divider"></div>
-  <div class="sheet-label">Habits</div>
-  <div style="font-size:11px; color:#62636f; margin-bottom:10px; line-height:1.7;">
-    Customize tracked habits. Mark bad habits to flag them red. Set which days each habit applies to (M=0 … S=6).
-  </div>
-  <div id="habitSettingsRows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
-  <div style="display:flex;gap:8px;">
-    <button class="sheet-btn" id="addHabitBtn" style="flex:1;margin-top:0;">+ Add Habit</button>
-    <button class="sheet-btn primary" id="saveHabitsBtn" style="flex:1;margin-top:0;">Save Habits</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-<div class="toast-undo" id="toastUndo"><span id="toastUndoMsg">Task deleted</span><button class="toast-undo-btn" id="toastUndoBtn">UNDO</button></div>
-
-<!-- <div class="bottom-fade hide-in-bel hide-in-project-detail"></div> -->
-
-<div class="pin-modal-overlay" id="pinModalOverlay" style="display:none;">
-  <div class="pin-modal">
-    <div class="pin-modal-title" id="pinModalTitle">Enter PIN</div>
-    <input class="pin-modal-input" id="pinModalInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off">
-    <div class="pin-modal-error" id="pinModalError"></div>
-    <div style="display:flex;gap:8px;">
-      <button class="sheet-btn" id="pinModalCancel">Cancel</button>
-      <button class="sheet-btn primary" id="pinModalConfirm">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<div id="anchorOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(17, 20, 24, 0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
-  <div id="anchorHoldView" style="display:flex; flex-direction:column; align-items:center; width: 100%; max-width: 320px;">
-    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:32px; letter-spacing:0.1em; text-transform:uppercase;">Pattern Interrupt</div>
-    <div id="anchorSliderTrack" style="width:100%; height:64px; background:var(--bg-card, #1c2026); border:1px solid var(--border-divider, #3a3b42); border-radius:32px; position:relative; overflow:hidden; display:flex; align-items:center; padding:0 4px;">
-      <div style="position:absolute; width:100%; text-align:center; color:var(--text-muted, #8e8e93); font-size:14px; pointer-events:none; font-family:'DM Sans', sans-serif;">Slide to ground ➔</div>
-      <div id="anchorSliderThumb" style="width:56px; height:56px; background:var(--accent, #4ABCE0); border-radius:50%; box-shadow:0 2px 10px rgba(0,0,0,0.3); position:relative; z-index:2; cursor:grab; display:flex; align-items:center; justify-content:center; touch-action:none;">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="#111418" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-      </div>
-    </div>
-  </div>
-  <div id="anchorTriage" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
-    <div style="color:var(--text-muted, #8e8e93); font-family:'DM Mono', monospace; font-size:11px; margin-bottom:24px; letter-spacing:0.1em; text-transform:uppercase;">State Check</div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%;">
-      <button class="anchor-btn" data-state="under" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Bored</button>
-      <button class="anchor-btn" data-state="over" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Stuck</button>
-      <button class="anchor-btn" data-state="depleted" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Drained</button>
-      <button class="anchor-btn" data-state="disconnected" style="background:var(--bg-card); border:1px solid var(--border-divider); color:#fff; border-radius:12px; height:80px; font-size:18px;">Lonely</button>
-    </div>
-  </div>
-  <div id="anchorPromptView" style="display:none; width:100%; max-width:400px; flex-direction:column; align-items:center;">
-    <div id="anchorPromptText" style="font-size:20px; font-weight:500; line-height:1.4; margin-bottom:40px; color:#fff;"></div>
-    <input type="text" id="anchorInput" style="background:transparent; border:none; border-bottom:1px solid var(--border-divider, #3a3b42); text-align:center; font-size:18px; width:100%; padding-bottom:12px; color:#fff; display:none; outline:none;" placeholder="Type here..." autocomplete="off">
-    <button id="anchorDepletedBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--bg-card); color:#fff; border:1px solid var(--border-divider); border-radius:12px;">Log 15m of Deep Leisure</button>
-    <button id="anchorStuckBtn" style="display:none; width:100%; padding:16px; font-size:16px; background:var(--accent); color:#111418; border:none; border-radius:12px; font-weight:600;">I have the physical movement in my head</button>
-  </div>
-</div>
   
+  <div class="sheet-label">Theme</div>
+  <div style="display:flex; gap:12px; margin-bottom:24px;">
+    <div class="theme-swatch" data-theme="light" style="width:60px; height:40px; border-radius:8px; background:#fff; border:2px solid var(--border); cursor:pointer;"></div>
+    <div class="theme-swatch" data-theme="dark" style="width:60px; height:40px; border-radius:8px; background:#1c1c1e; border:2px solid var(--border); cursor:pointer;"></div>
+  </div>
+
+  <div class="sheet-label">GitHub Sync</div>
+  <input class="input" id="ghUser" type="text" placeholder="GitHub Username">
+  <input class="input" id="ghRepo" type="text" placeholder="Repository Name">
+  <input class="input" id="ghToken" type="password" placeholder="Personal Access Token">
+  <button class="sheet-btn primary" id="saveSettingsBtn">Save &amp; Test Connection</button>
+
+  <div class="sheet-label" style="margin-top:32px;">Notes PIN</div>
+  <div style="display:flex; gap:8px;">
+    <input class="input" id="pinInput" type="password" inputmode="numeric" placeholder="New PIN…" style="margin:0;">
+    <button class="sheet-btn primary" id="setPinBtn" style="margin:0; width:auto; padding:0 24px;">Set</button>
+    <button class="sheet-btn danger" id="clearPinBtn" style="margin:0; width:auto; padding:0 24px; display:none;">Clear</button>
+  </div>
+  
+  <div class="sheet-label" style="margin-top:32px; display:flex; justify-content:space-between; align-items:center;">
+    Categories
+    <button id="addCatBtn" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; padding:0;">+ Add</button>
+  </div>
+  <div id="catSettingsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+  <button id="saveCatsBtn" class="sheet-btn primary" style="margin-top:12px; padding:12px; background:var(--bg-canvas); color:var(--text-1); border:0.5px solid var(--border);">Save Categories</button>
+  
+  <div class="sheet-label" style="margin-top:24px; display:flex; justify-content:space-between; align-items:center;">
+    Habits
+    <button id="addHabitBtn" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; padding:0;">+ Add</button>
+  </div>
+  <div id="habitSettingsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+  <button id="saveHabitsBtn" class="sheet-btn primary" style="margin-top:12px; padding:12px; background:var(--bg-canvas); color:var(--text-1); border:0.5px solid var(--border);">Save Habits</button>
+  
+  <!-- Fallback IDs to prevent further JS crashes just in case your old app.js looks for them -->
+  <div style="display:none;">
+    <button id="exportBtn"></button>
+    <button id="importBtn"></button>
+    <input type="file" id="importInput">
+  </div>
+  
+  <div id="ghStatusDot" style="display:none;"></div><div id="ghStatusText" style="display:none;"></div>
+</div>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>

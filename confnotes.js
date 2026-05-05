@@ -1,527 +1,363 @@
 // ══════════════════════════════════════════════════════════════════
-// UNIFIED NOTES MODULE — confnotes.js (ES module)
-// Scratchpad + structured notes in one view.
+// CONFNOTES MODULE — zettelkasten notes
+// Types: memo, paper, idea
+// Features: markdown preview, [[backlinks]], PIN lock, full-bleed editor
 // ══════════════════════════════════════════════════════════════════
 
 import {
-  state, CAT_LABEL, uid, esc, fmtShort, showToast,
-  saveCN, getCnNotes, setCnNotes,
+  uid, esc, showToast,
+  getCnNotes, setCnNotes, saveCN,
+  CAT_LABEL, state,
 } from './state.js';
-import { ghPush } from './sync.js';
-import { catCls } from './app.js';
-
-let cnActiveId = null;
-let cnFilter = 'all';
-let cnTypeFilter = 'all'; // 'all' | 'paper' | 'idea' | 'memo'
-let cnSaveTimer = null;
-let scratchSyncTimer = null;
-let cnMdPreview = false;
-let _cnOpenSnapshot = null; // snapshot of note state on open, for dirty detection
 
 // ── NOTE TYPES ──
 const NOTE_TYPES = {
-  memo:  { label: 'Note',  icon: '✎', color: 'var(--text-muted)' },
-  paper: { label: 'Paper', icon: '📄', color: '#af52de' },
-  idea:  { label: 'Idea',  icon: '💡', color: '#ff9500' },
+  memo:  { label: 'Note',  icon: '✎', color: 'memo' },
+  paper: { label: 'Paper', icon: '📄', color: 'paper' },
+  idea:  { label: 'Idea',  icon: '💡', color: 'idea' },
 };
 
-const PAPER_TEMPLATE = '**One-line summary:**\n\n\n**What I\'d challenge:**\n\n\n**What I\'d steal for my own work:**\n\n';
+const TAGS = ['manuscript', 'lab', 'phd', 'conf', 'personal', 'hobby'];
 
-const IDEA_STATUSES = ['raw', 'developing', 'ready to pitch'];
+const PAPER_TEMPLATE = `## Summary
+What does this paper argue?
 
-function noteTypeOf(n) { return n.type || 'memo'; }
+## Challenge
+What are the methodological or theoretical weaknesses?
 
-function ideaDaysSinceUpdate(n) {
-  var ref = n.updatedAt || n.createdAt;
-  if (!ref) return 0;
-  return Math.floor((Date.now() - new Date(ref).getTime()) / 86400000);
+## Steal
+What idea or technique is worth borrowing?
+`;
+
+function noteTypeOf(n) {
+  const t = n.type || 'memo';
+  return NOTE_TYPES[t] ? t : 'memo';
 }
 
-function getIdeasForReview() {
-  return getCnNotes().filter(function(n) {
-    return noteTypeOf(n) === 'idea' && !n.archived;
-  });
-}
+// ── FILTER STATE ──
+let cnFilter = 'all';
+let cnTypeFilter = 'all';
 
-// ── BACKLINKS ──
+// ── ACTIVE NOTE ──
+let cnActiveId = null;
+let _cnOpenSnapshot = null;
+let cnMdPreview = false;
+let _cnSaveTimer = null;
 
-// Returns all notes (excluding current) whose body contains [[noteTitle]]
-function getBacklinks(noteTitle) {
-  if (!noteTitle) return [];
-  var escaped = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'i');
-  return getCnNotes().filter(function(n) {
-    return n.id !== cnActiveId && pattern.test(n.body || '');
-  });
-}
-
-// Extracts ~120 chars of context around the [[link]] match, with word-boundary truncation
-function getBacklinkContext(body, noteTitle) {
-  var escaped = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'i');
-  var idx = body.search(pattern);
-  if (idx === -1) return '';
-  var start = Math.max(0, idx - 60);
-  var end = Math.min(body.length, idx + noteTitle.length + 2 + 60);
-  // Trim to word boundaries
-  if (start > 0) {
-    var wordStart = body.indexOf(' ', start);
-    if (wordStart !== -1 && wordStart < idx) start = wordStart + 1;
-  }
-  if (end < body.length) {
-    var wordEnd = body.lastIndexOf(' ', end);
-    if (wordEnd > idx) end = wordEnd;
-  }
-  var snippet = body.slice(start, end);
-  if (start > 0) snippet = '…' + snippet;
-  if (end < body.length) snippet = snippet + '…';
-  return snippet;
-}
-
-function renderBacklinks(noteTitle) {
-  var drawer = document.getElementById('cnBacklinksDrawer');
-  var list = document.getElementById('cnBacklinksList');
-  var countEl = document.getElementById('cnBacklinksCount');
-  var arrow = document.getElementById('cnBacklinksArrow');
-  if (!drawer || !list || !countEl) return;
-
-  var links = getBacklinks(noteTitle);
-
-  // Hide entirely if note has no title yet (new note) or no backlinks
-  if (!noteTitle || links.length === 0) { drawer.style.display = 'none'; return; }
-  drawer.style.display = '';
-
-  countEl.textContent = links.length > 0 ? String(links.length) : '';
-  countEl.style.display = links.length > 0 ? '' : 'none';
-
-  // Reset to closed state on each open
-  drawer.classList.remove('open');
-  if (arrow) arrow.style.transform = '';
-
-  list.innerHTML = links.map(function(n) {
-      var nType = noteTypeOf(n);
-      var typeInfo = NOTE_TYPES[nType] || NOTE_TYPES.memo;
-      var context = getBacklinkContext(n.body || '', noteTitle);
-      // Highlight [[NoteTitle]] in the context snippet
-      var escapedTitle = noteTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      var highlightPat = new RegExp('(\\[\\[' + escapedTitle + '\\]\\])', 'gi');
-      var contextHtml = esc(context).replace(
-        new RegExp('\\[\\[' + esc(noteTitle).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\]\\]', 'gi'),
-        '<mark>[[' + esc(noteTitle) + ']]</mark>'
-      );
-      return '<div class="cn-backlink-item cn-backlink-type-' + nType + '" data-blid="' + esc(n.id) + '">' +
-        '<span class="cn-backlink-icon">' + typeInfo.icon + '</span>' +
-        '<div class="cn-backlink-body">' +
-          '<div class="cn-backlink-title">' + esc(n.title || 'Untitled') + '</div>' +
-          (context ? '<div class="cn-backlink-context">' + contextHtml + '</div>' : '') +
-        '</div>' +
-        '<span class="cn-backlink-type-badge cn-bl-badge-' + nType + '">' + typeInfo.label.toLowerCase() + '</span>' +
-      '</div>';
-    }).join('');
-}
-
-// Rename: find-and-replace [[OldTitle]] -> [[NewTitle]] across all notes
-function renameLinkReferences(oldTitle, newTitle) {
-  if (!oldTitle || oldTitle === newTitle) return;
-  var escaped = oldTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  var pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'gi');
-  var replacement = '[[' + newTitle + ']]';
-  var changed = false;
-  getCnNotes().forEach(function(n) {
-    if (n.id === cnActiveId) return;
-    var updated = (n.body || '').replace(pattern, replacement);
-    if (updated !== n.body) {
-      n.body = updated;
-      changed = true;
-    }
-  });
-  if (changed) saveCN(true);
-}
-
-// ── LOCK SYSTEM ──
-let _pinUnlocked = false; // session-only, resets on reload
-
-async function hashPin(pin) {
-  const encoded = new TextEncoder().encode(pin);
-  const hash = await crypto.subtle.digest('SHA-256', encoded);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function getStoredPinHash() {
-  try { return localStorage.getItem('kw_notes_pin_hash') || ''; } catch(e) { return ''; }
-}
-
-function hasPinSet() {
-  return !!getStoredPinHash();
-}
-
-function showPinModal(title, callback) {
-  var overlay = document.getElementById('pinModalOverlay');
-  var input = document.getElementById('pinModalInput');
-  var error = document.getElementById('pinModalError');
-  var titleEl = document.getElementById('pinModalTitle');
-  titleEl.textContent = title || 'Enter PIN';
-  input.value = '';
-  error.textContent = '';
-  overlay.style.display = 'flex';
-  setTimeout(function() { input.focus(); }, 100);
-
-  // Clean up old listeners
-  var confirmBtn = document.getElementById('pinModalConfirm');
-  var cancelBtn = document.getElementById('pinModalCancel');
-  var newConfirm = confirmBtn.cloneNode(true);
-  var newCancel = cancelBtn.cloneNode(true);
-  confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
-  cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-
-  function dismiss() { overlay.style.display = 'none'; input.value = ''; }
-
-  newCancel.addEventListener('click', function() { dismiss(); callback(null); });
-  newConfirm.addEventListener('click', function() {
-    var val = input.value;
-    if (!val) { error.textContent = 'Enter a PIN'; return; }
-    callback(val, error, dismiss);
-  });
-  input.addEventListener('keydown', function handler(e) {
-    if (e.key === 'Enter') { newConfirm.click(); }
-    if (e.key === 'Escape') { dismiss(); callback(null); }
-  });
-}
-
-// ── HELPERS ──
+// ── TIME AGO ──
 function cnTimeAgo(iso) {
   if (!iso) return '';
-  const now = new Date(), then = new Date(iso);
-  const diffMin = Math.floor((now - then) / 60000);
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return diffMin + 'm ago';
-  const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return diffHr + 'h ago';
-  const diffDay = Math.floor(diffHr / 24);
-  if (diffDay < 7) return diffDay + 'd ago';
-  return fmtShort(then);
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 2)  return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)  return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days < 7)  return days + 'd ago';
+  const wks = Math.floor(days / 7);
+  if (wks < 5)   return wks + 'w ago';
+  return Math.floor(days / 30) + 'mo ago';
 }
 
-// ══════════════════════════════════════════════════════════════════
-// SCRATCHPAD
-// ══════════════════════════════════════════════════════════════════
+// ── FILTER CHIP REBUILD ──
+function rebuildCNChips() {
+  const row = document.getElementById('cnFilterRow');
+  if (!row) return;
+  row.innerHTML = '';
 
-function initScratchpad() {
-  const sp = document.getElementById('cnScratchpad');
-  const monoBtn = document.getElementById('cnScratchMono');
-  if (!sp || !monoBtn) return;
+  const allChip = document.createElement('div');
+  allChip.className = 'chip' + (cnFilter === 'all' && cnTypeFilter === 'all' ? ' active' : '');
+  allChip.dataset.cnfilter = 'all'; allChip.textContent = 'All';
+  row.appendChild(allChip);
 
-  sp.value = state.scratchpad || '';
-
-  const isMono = localStorage.getItem('kw_notes_mono_v3') === 'true';
-  sp.classList.toggle('mono', isMono);
-  monoBtn.textContent = isMono ? 'mono on' : 'mono off';
-  monoBtn.classList.toggle('mono-active', isMono);
-
-  sp.addEventListener('input', function() {
-    state.scratchpad = this.value;
-    localStorage.setItem('kw_notes_v3', state.scratchpad);
-    const syncEl = document.getElementById('cnScratchSync');
-    if (syncEl) syncEl.textContent = 'unsaved';
-    if (scratchSyncTimer) clearTimeout(scratchSyncTimer);
-    scratchSyncTimer = setTimeout(function() {
-      ghPush();
-      if (syncEl) syncEl.textContent = '';
-    }, 1500);
-  });
-
-  monoBtn.addEventListener('click', function() {
-    const isMono = !sp.classList.contains('mono');
-    sp.classList.toggle('mono', isMono);
-    this.textContent = isMono ? 'mono on' : 'mono off';
-    this.classList.toggle('mono-active', isMono);
-    localStorage.setItem('kw_notes_mono_v3', isMono ? 'true' : 'false');
+  Object.keys(NOTE_TYPES).forEach(function(type) {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (cnTypeFilter === type ? ' active' : '');
+    chip.dataset.cnfilter = '_type_' + type;
+    chip.textContent = NOTE_TYPES[type].label;
+    row.appendChild(chip);
   });
 }
 
-function refreshScratchpad() {
-  const sp = document.getElementById('cnScratchpad');
-  if (sp && document.activeElement !== sp) {
-    sp.value = state.scratchpad || '';
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════
-// NOTE LIST
-// ══════════════════════════════════════════════════════════════════
-
+// ── LIST RENDER ──
 function renderCNList() {
   const cnNotes = getCnNotes();
   const list = document.getElementById('cnNotesList');
   if (!list) return;
   list.innerHTML = '';
 
-  refreshScratchpad();
-
   let searchQ = '';
   const searchEl = document.getElementById('cnSearchInput');
   if (searchEl) searchQ = searchEl.value.trim().toLowerCase();
 
   const filtered = cnNotes.filter(function(n) {
-    // Type filter
-    if (cnTypeFilter !== 'all') {
-      if (noteTypeOf(n) !== cnTypeFilter) return false;
-    }
-    // Category filter
+    if (cnTypeFilter !== 'all' && noteTypeOf(n) !== cnTypeFilter) return false;
     if (cnFilter !== 'all') {
-      const tags = n.tags || [];
-      if (tags.indexOf(cnFilter) === -1) return false;
+      if (!(n.tags || []).includes(cnFilter)) return false;
     }
     if (searchQ) {
-      const haystack = ((n.title||'') + ' ' + (n.speaker||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
-      if (haystack.indexOf(searchQ) === -1) return false;
+      const hay = ((n.title||'') + ' ' + (n.speaker||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
+      if (!hay.includes(searchQ)) return false;
     }
     return true;
   });
 
   filtered.sort(function(a, b) {
-    // Pinned notes always first
     const ap = a.pinned ? 1 : 0, bp = b.pinned ? 1 : 0;
     if (ap !== bp) return bp - ap;
     return (b.updatedAt || b.createdAt || '') > (a.updatedAt || a.createdAt || '') ? 1 : -1;
   });
 
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="cn-empty"><div class="cn-empty-icon">\u{1F4DD}</div><div class="cn-empty-text">' +
-      (cnNotes.length === 0 ? 'No notes yet.<br>Tap + to start writing.' : 'No notes match this filter.') +
-      '</div></div>';
+    list.innerHTML = '<div class="cn-empty">' +
+      '<div class="cn-empty-icon">📝</div>' +
+      '<div class="cn-empty-text">' + (cnNotes.length === 0 ? 'No notes yet.<br>Tap + to start.' : 'No notes match.') + '</div>' +
+      '</div>';
     return;
   }
 
-  var cards = [];
   filtered.forEach(function(n, i) {
     const nType = noteTypeOf(n);
-    const typeInfo = NOTE_TYPES[nType] || NOTE_TYPES.memo;
     const card = document.createElement('div');
-    card.className = 'cn-note-card cn-type-' + nType + (n.locked ? ' locked-card' : '');
-    card.style.animationDelay = (i * 30) + 'ms';
+    card.className = 'cn-note-card';
+    card.style.animationDelay = (i * 25) + 'ms';
     card.dataset.id = n.id;
 
-    const tagsHtml = (n.tags || []).map(function(t) {
-      return '<span class="cat ' + catCls(t) + '">' + esc(CAT_LABEL[t] || t) + '</span>';
-    }).join('');
+    const pinHtml  = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
+    const lockHtml = n.locked ? '<span class="cn-card-pin">🔒</span>' : '';
+    const ageText  = cnTimeAgo(n.updatedAt || n.createdAt);
 
-    let projHtml = '';
-    if (n.projectId) {
-      const p = (state.projects || []).find(function(x) { return x.id === n.projectId; });
-      if (p) projHtml = '<span class="proj-link-label">\u26CC ' + esc(p.title) + '</span>';
-    }
-
-    const pinHtml = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
-    const lockHtml = n.locked ? '<span class="cn-card-lock-icon">🔒</span>' : '';
-
-    // Type badge
-    const typeBadge = '<span class="cn-type-badge cn-type-badge-' + nType + '">' + typeInfo.icon + ' ' + typeInfo.label + '</span>';
-
-    // Stale indicator for ideas
-    let staleHtml = '';
-    if (nType === 'idea') {
-      const staleDays = ideaDaysSinceUpdate(n);
-      if (staleDays >= 30) {
-        staleHtml = '<span class="cn-idea-stale">dormant ' + staleDays + 'd</span>';
-      } else if (staleDays >= 14) {
-        staleHtml = '<span class="cn-idea-cooling">cooling ' + staleDays + 'd</span>';
-      }
-    }
-
-    // Idea status badge
     let statusHtml = '';
     if (nType === 'idea' && n.ideaStatus) {
-      statusHtml = '<span class="cn-idea-status cn-idea-status-' + n.ideaStatus.replace(/\s+/g, '-') + '">' + esc(n.ideaStatus) + '</span>';
+      const sc = n.ideaStatus.replace(/\s+/g, '-').toLowerCase();
+      statusHtml = '<span class="idea-status ' + sc + '">' + esc(n.ideaStatus) + '</span>';
     }
 
-    // Paper URL indicator
-    let urlHtml = '';
-    if (nType === 'paper' && n.url) {
-      urlHtml = '<span class="cn-paper-url-badge">🔗</span>';
+    // Stale ideas
+    let staleHtml = '';
+    if (nType === 'idea' && n.updatedAt) {
+      const daysSince = Math.floor((Date.now() - new Date(n.updatedAt).getTime()) / 86400000);
+      if (daysSince > 14 && n.ideaStatus !== 'ready to pitch') {
+        staleHtml = '<span class="cn-stale-badge">stale ' + daysSince + 'd</span>';
+      }
     }
-
-    var displayDate = n.updatedAt || n.createdAt;
-    var timeHtml = displayDate ? '<span class="cn-card-time">' + cnTimeAgo(displayDate) + '</span>' : '';
-
-    // Speaker label changes by type
-    var speakerDisplay = n.speaker || '';
-    var speakerHtml = speakerDisplay ? '<div class="cn-card-speaker">' + esc(speakerDisplay) + '</div>' : '';
 
     card.innerHTML =
-      '<div class="cn-card-title">' + lockHtml + pinHtml + urlHtml + esc(n.title || 'Untitled') + '</div>' +
-      speakerHtml +
-      (n.body ? '<div class="cn-card-preview">' + esc(n.body) + '</div>' : '') +
-      '<div class="cn-card-meta">' + typeBadge + statusHtml + staleHtml + tagsHtml + projHtml + timeHtml + '</div>';
+      '<div class="cn-card-eyebrow">' +
+        '<span class="cn-type-badge ' + nType + '">' + NOTE_TYPES[nType].label + '</span>' +
+        pinHtml + lockHtml +
+        '<span class="cn-card-time">' + esc(ageText) + '</span>' +
+      '</div>' +
+      '<div class="cn-card-title">' + esc(n.title || 'Untitled') + '</div>' +
+      (n.speaker ? '<div class="cn-card-speaker">' + esc(n.speaker) + '</div>' : '') +
+      (n.body ? '<div class="cn-card-preview">' + esc((n.body || '').slice(0, 120)) + '</div>' : '') +
+      '<div class="cn-card-meta">' + statusHtml + staleHtml + '</div>';
 
     card.addEventListener('click', function() {
-      if (n.locked && !_pinUnlocked) {
-        showPinModal('Enter PIN to unlock', function(pin, errorEl, dismiss) {
-          if (!pin) return;
-          hashPin(pin).then(function(h) {
-            if (h === getStoredPinHash()) {
-              _pinUnlocked = true;
-              dismiss();
-              openCNDetail(n.id);
-            } else {
-              errorEl.textContent = 'Wrong PIN';
-            }
-          });
-        });
-        return;
-      }
+      document.querySelectorAll('.cn-note-card').forEach(c => c.classList.remove('cn-active-note'));
+      card.classList.add('cn-active-note');
       openCNDetail(n.id);
     });
+    // Fade in
+    requestAnimationFrame(function() { requestAnimationFrame(function() { card.style.opacity = '1'; }); });
     list.appendChild(card);
-    cards.push(card);
   });
+}
 
-  // Defer animation start until Safari has committed display:block
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      cards.forEach(function(c) { c.classList.add('entering'); });
+// ── AUTO-RESIZE BODY ──
+function autoResizeBody() {
+  const el = document.getElementById('cnBodyInput');
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+// ── MARKDOWN PREVIEW ──
+function toggleMdPreview(mode) {
+  const bodyEl   = document.getElementById('cnBodyInput');
+  const previewEl = document.getElementById('cnMdPreview');
+  const toggleBtn = document.getElementById('cnMdToggle');
+  if (!bodyEl || !previewEl || !toggleBtn) return;
+
+  if (mode === undefined) mode = cnMdPreview ? 'off' : 'on';
+
+  if (mode !== 'off') {
+    cnMdPreview = true;
+    saveCNDetailNow();
+
+    // 1. Process [[Internal Links]]
+    const rawContent = bodyEl.value || '';
+    const processedContent = rawContent.replace(
+      /\[\[(.*?)\]\]/g,
+      '<a href="#" class="internal-note-link" data-notetitle="$1">[[ $1 ]]</a>'
+    );
+
+    // 2. Parse markdown
+    let finalHtml = (typeof marked !== 'undefined')
+      ? marked.parse(processedContent, { breaks: true, gfm: true })
+      : processedContent.replace(/\n/g, '<br>');
+
+    // 3. Paper URL card
+    const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+    const isPaper = activeType && activeType.dataset.type === 'paper';
+    const urlInput = document.getElementById('cnUrlInput');
+    const urlVal = urlInput ? urlInput.value.trim() : '';
+    if (isPaper && urlVal) {
+      const linkHref = urlVal.startsWith('http') ? urlVal : 'https://doi.org/' + urlVal;
+      finalHtml = '<a href="' + esc(linkHref) + '" target="_blank" class="cn-md-paper-link">' +
+        '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+        '<span>Source Document</span></a>' + finalHtml;
+    }
+
+    previewEl.innerHTML = finalHtml;
+    previewEl.querySelectorAll('a:not(.internal-note-link)').forEach(function(a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
     });
-  });
+
+    bodyEl.style.display = 'none';
+    previewEl.style.display = 'block';
+    toggleBtn.textContent = 'edit';
+    toggleBtn.classList.add('md-active');
+  } else {
+    cnMdPreview = false;
+    previewEl.style.display = 'none';
+    previewEl.innerHTML = '';
+    bodyEl.style.display = '';
+    toggleBtn.textContent = 'preview';
+    toggleBtn.classList.remove('md-active');
+    if (mode !== 'off_no_focus') bodyEl.focus();
+    autoResizeBody();
+  }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// DISTRACTION-FREE EDITOR
-// ══════════════════════════════════════════════════════════════════
-
-function populateCNProjectSelect() {
-  const sel = document.getElementById('cnProjectInput');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">None</option>';
-  (state.projects || []).forEach(function(p) {
-    const opt = document.createElement('option');
-    opt.value = p.id;
-    opt.textContent = p.title;
-    sel.appendChild(opt);
-  });
-}
-
+// ── OPEN NOTE DETAIL ──
 function openCNDetail(id) {
   const cnNotes = getCnNotes();
-  let n = null;
-  for (let i = 0; i < cnNotes.length; i++) {
-    if (cnNotes[i].id === id) { n = cnNotes[i]; break; }
-  }
+  const n = cnNotes.find(function(x) { return x.id === id; });
   if (!n) return;
-  cnActiveId = id;
-  populateCNProjectSelect();
 
-  var nType = noteTypeOf(n);
+  // Check PIN lock
+  if (n.locked) {
+    requestPinUnlock(function() { _doOpenDetail(n); });
+    return;
+  }
+  _doOpenDetail(n);
+}
 
-  // Snapshot current state so we can detect actual edits on save
-  _cnOpenSnapshot = {
-    title: n.title || '',
-    speaker: n.speaker || '',
-    body: n.body || '',
-    projectId: n.projectId || '',
-    bodyIsMono: !!(n.bodyIsMono),
-    tags: (n.tags || []).slice().sort().join(','),
-    type: nType,
-    url: n.url || '',
-    ideaStatus: n.ideaStatus || '',
-  };
+function _doOpenDetail(n) {
+  cnActiveId = n.id;
+  _cnOpenSnapshot = { title: n.title || '', body: n.body || '' };
+  cnMdPreview = false;
 
+  // Populate type row
+  const typeRow = document.getElementById('cnTypeRow');
+  if (typeRow) {
+    typeRow.innerHTML = '';
+    Object.keys(NOTE_TYPES).forEach(function(type) {
+      const chip = document.createElement('div');
+      chip.className = 'cn-type-chip' + (noteTypeOf(n) === type ? ' active' : '');
+      chip.dataset.type = type;
+      chip.textContent = NOTE_TYPES[type].label;
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        updateMetaVisibility();
+        queueCNSave();
+      });
+      typeRow.appendChild(chip);
+    });
+  }
+
+  // Idea status row
+  const ideaRow = document.getElementById('cnIdeaStatusRow');
+  if (ideaRow) {
+    ideaRow.innerHTML = '';
+    ['raw', 'developing', 'ready to pitch'].forEach(function(s) {
+      const chip = document.createElement('div');
+      chip.className = 'cn-idea-chip' + (n.ideaStatus === s ? ' active' : '');
+      chip.textContent = s;
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('#cnIdeaStatusRow .cn-idea-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        queueCNSave();
+      });
+      ideaRow.appendChild(chip);
+    });
+  }
+
+  // Tag row
+  const tagRow = document.getElementById('cnTagRow');
+  if (tagRow) {
+    tagRow.innerHTML = '';
+    TAGS.forEach(function(t) {
+      const chip = document.createElement('div');
+      chip.className = 'cn-tag-chip s-chip' + ((n.tags || []).includes(t) ? ' active' : '');
+      chip.dataset.val = t;
+      chip.textContent = CAT_LABEL[t] || t;
+      chip.addEventListener('click', function() { chip.classList.toggle('active'); queueCNSave(); });
+      tagRow.appendChild(chip);
+    });
+  }
+
+  // URL input visibility
+  const urlInput = document.getElementById('cnUrlInput');
+  if (urlInput) {
+    urlInput.value = n.url || '';
+    urlInput.style.display = noteTypeOf(n) === 'paper' ? 'block' : 'none';
+  }
+
+  updateMetaVisibility();
+
+  // Title bar label
+  const titleLabel = document.getElementById('cnDetailTitle');
+  if (titleLabel) titleLabel.textContent = NOTE_TYPES[noteTypeOf(n)].label;
+
+  // Inputs
   document.getElementById('cnTitleInput').value = n.title || '';
   document.getElementById('cnSpeakerInput').value = n.speaker || '';
-  document.getElementById('cnBodyInput').value = n.body || '';
-  const projInp = document.getElementById('cnProjectInput');
-  if (projInp) projInp.value = n.projectId || '';
-
-  // Type-specific UI
-  var titleInput = document.getElementById('cnTitleInput');
-  var speakerInput = document.getElementById('cnSpeakerInput');
-  var bodyInput = document.getElementById('cnBodyInput');
-  var urlRow = document.getElementById('cnUrlRow');
-  var urlInput = document.getElementById('cnUrlInput');
-  var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
-  var topbarTitle = document.getElementById('cnDetailTitle');
-  // Clear any ghost URLs from previously opened notes!
-  if (urlInput) urlInput.value = nType === 'paper' ? (n.url || '') : '';
-
-  // Type selector chips
-  document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(function(c) {
-    c.classList.toggle('active', c.dataset.type === nType);
-  });
-
-  if (nType === 'paper') {
-    titleInput.placeholder = 'Paper title...';
-    speakerInput.placeholder = 'Authors (e.g., Barrett & Simmons, 2015)...';
-    bodyInput.placeholder = PAPER_TEMPLATE;
-    topbarTitle.textContent = '📄 Paper';
-    
-    if (urlRow) { 
-      urlRow.style.display = 'flex'; 
-      urlInput.value = n.url || ''; 
-      const launchBtn = document.getElementById('cnUrlLaunchBtn');
-      if (launchBtn) {
-          launchBtn.style.display = n.url ? 'flex' : 'none';
-          launchBtn.href = n.url && !n.url.startsWith('http') ? 'https://doi.org/' + n.url : n.url;
-      }
-    }
-    
-    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
-  } else if (nType === 'idea') {
-    titleInput.placeholder = 'Research question or study concept...';
-    speakerInput.placeholder = 'Related area, method, or population...';
-    bodyInput.placeholder = 'Flesh out the idea... what would the study look like? What\'s the hypothesis?';
-    topbarTitle.textContent = '💡 Idea';
-    if (urlRow) urlRow.style.display = 'none';
-    if (ideaStatusRow) {
-      ideaStatusRow.style.display = 'flex';
-      document.querySelectorAll('#cnIdeaStatusRow .cn-status-chip').forEach(function(c) {
-        c.classList.toggle('active', c.dataset.status === (n.ideaStatus || 'raw'));
-      });
-    }
-  } else {
-    titleInput.placeholder = 'Title...';
-    speakerInput.placeholder = 'Source, speaker, context...';
-    bodyInput.placeholder = 'Write anything...';
-    topbarTitle.textContent = 'Note';
-    if (urlRow) urlRow.style.display = 'none';
-    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
-  }
 
   const bodyEl = document.getElementById('cnBodyInput');
+  bodyEl.value = n.body || '';
   const isMono = !!(n.bodyIsMono);
   bodyEl.classList.toggle('mono', isMono);
+
   const monoBtn = document.getElementById('cnMonoToggle');
-  monoBtn.textContent = isMono ? 'mono on' : 'mono off';
-  monoBtn.classList.toggle('mono-active', isMono);
+  if (monoBtn) monoBtn.classList.toggle('mono-active', isMono);
 
-  const tags = n.tags || [];
-  document.querySelectorAll('#cnTagRow .s-chip').forEach(function(c) {
-    c.classList.toggle('active', tags.indexOf(c.dataset.val) !== -1);
-  });
-
-  // Close meta drawer by default for clean editor feel
+  // Meta drawer — closed by default
   const drawer = document.getElementById('cnMetaDrawer');
   if (drawer) drawer.removeAttribute('open');
 
-  // Pin button state
+  // Pin button
   const pinBtn = document.getElementById('cnPinBtn');
   if (pinBtn) pinBtn.classList.toggle('pinned', !!(n.pinned));
 
-  // Lock button state
+  // Lock button
   const lockBtn = document.getElementById('cnLockBtn');
   if (lockBtn) {
     lockBtn.style.display = hasPinSet() ? '' : 'none';
     lockBtn.classList.toggle('locked', !!(n.locked));
   }
 
+  // Created/updated meta
   const metaEl = document.getElementById('cnDetailMeta');
   if (metaEl) {
     const parts = [];
     if (n.createdAt) parts.push('Created ' + cnTimeAgo(n.createdAt));
     if (n.updatedAt && n.updatedAt !== n.createdAt) parts.push('Updated ' + cnTimeAgo(n.updatedAt));
-    metaEl.textContent = parts.join(' \u00B7 ');
+    metaEl.textContent = parts.join(' · ');
   }
 
-  document.getElementById('cnListView').style.display = 'none';
-  var detailEl = document.getElementById('cnDetailView');
+  // Show detail, hide list
+  // On mobile: hide list and show detail. On desktop: both panels stay visible.
+  const isDesktopLayout = window.matchMedia('(min-width: 768px)').matches;
+  if (!isDesktopLayout) {
+    document.getElementById('cnListView').style.display = 'none';
+  }
+  const detailEl = document.getElementById('cnDetailView');
+  detailEl.classList.remove('cn-no-note');
   detailEl.style.display = 'flex';
   detailEl.classList.remove('cn-detail-exit');
   detailEl.classList.add('cn-detail-enter');
@@ -530,587 +366,395 @@ function openCNDetail(id) {
     detailEl.removeEventListener('animationend', handler);
   });
 
-  // Render backlinks for this note
   renderBacklinks(n.title || '');
 
-  // Default to preview if note has content, edit if empty
-  toggleMdPreview((n.body || '').trim() ? 'on' : 'off');
-
-  // Size textarea to content so page scrolls instead of textarea
+  // Default: preview if content exists, edit if empty
+  toggleMdPreview((n.body || '').trim() ? 'on' : 'off_no_focus');
   autoResizeBody();
 }
 
+function updateMetaVisibility() {
+  const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+  const type = activeType ? activeType.dataset.type : 'memo';
+  const urlInput = document.getElementById('cnUrlInput');
+  const ideaRow  = document.getElementById('cnIdeaStatusRow');
+  if (urlInput) urlInput.style.display = type === 'paper' ? 'block' : 'none';
+  if (ideaRow)  ideaRow.style.display  = type === 'idea'  ? 'flex'  : 'none';
+}
+
+// ── CLOSE DETAIL ──
 function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
   _cnOpenSnapshot = null;
 
-  var detailEl = document.getElementById('cnDetailView');
-  detailEl.classList.remove('cn-detail-enter');
-  detailEl.classList.add('cn-detail-exit');
-  detailEl.addEventListener('animationend', function handler() {
-    detailEl.classList.remove('cn-detail-exit');
-    detailEl.style.display = 'none';
-    detailEl.removeEventListener('animationend', handler);
-    var listEl = document.getElementById('cnListView');
-    listEl.style.display = 'block';
-    listEl.classList.add('cn-list-enter');
-    listEl.addEventListener('animationend', function lh() {
-      listEl.classList.remove('cn-list-enter');
-      listEl.removeEventListener('animationend', lh);
-    });
+  const isDesktopLayout = window.matchMedia('(min-width: 768px)').matches;
+  const detailEl = document.getElementById('cnDetailView');
+  const listEl = document.getElementById('cnListView');
+
+  if (isDesktopLayout) {
+    // Desktop: keep both panels visible, just show empty state in editor
+    detailEl.classList.remove('cn-detail-enter');
+    detailEl.classList.add('cn-no-note');
+    // Clear the editor fields
+    const titleInput = document.getElementById('cnTitleInput');
+    const bodyInput = document.getElementById('cnBodyInput');
+    if (titleInput) titleInput.value = '';
+    if (bodyInput) bodyInput.value = '';
     renderCNList();
-  });
+  } else {
+    // Mobile: animate back to list
+    detailEl.classList.remove('cn-detail-enter');
+    detailEl.classList.add('cn-detail-exit');
+    detailEl.addEventListener('animationend', function handler() {
+      detailEl.classList.remove('cn-detail-exit');
+      detailEl.style.display = 'none';
+      detailEl.removeEventListener('animationend', handler);
+      listEl.style.display = 'block';
+      listEl.classList.add('cn-list-enter');
+      listEl.addEventListener('animationend', function lh() {
+        listEl.classList.remove('cn-list-enter');
+        listEl.removeEventListener('animationend', lh);
+      });
+      renderCNList();
+    });
+  }
+}
+
+// ── SAVE ──
+function queueCNSave() {
+  if (_cnSaveTimer) clearTimeout(_cnSaveTimer);
+  _cnSaveTimer = setTimeout(saveCNDetailNow, 800);
 }
 
 function saveCNDetailNow() {
   if (!cnActiveId) return;
   const cnNotes = getCnNotes();
-  let n = null;
-  for (let i = 0; i < cnNotes.length; i++) {
-    if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
-  }
+  const n = cnNotes.find(x => x.id === cnActiveId);
   if (!n) return;
 
-  n.title = document.getElementById('cnTitleInput').value.trim();
-  n.speaker = document.getElementById('cnSpeakerInput').value.trim();
+  const newTitle = document.getElementById('cnTitleInput').value.trim();
 
-  // Rename [[links]] in other notes if title changed
-  if (_cnOpenSnapshot && n.title !== _cnOpenSnapshot.title && _cnOpenSnapshot.title) {
-    renameLinkReferences(_cnOpenSnapshot.title, n.title);
+  // Rename backlinks if title changed
+  if (_cnOpenSnapshot && newTitle && newTitle !== _cnOpenSnapshot.title && _cnOpenSnapshot.title) {
+    renameLinkReferences(_cnOpenSnapshot.title, newTitle);
+    _cnOpenSnapshot.title = newTitle;
   }
-  n.body = document.getElementById('cnBodyInput').value;
-  const projInp = document.getElementById('cnProjectInput');
-  n.projectId = projInp ? projInp.value : '';
+
+  n.title   = newTitle;
+  n.speaker = document.getElementById('cnSpeakerInput').value.trim();
+  n.body    = document.getElementById('cnBodyInput').value;
   n.bodyIsMono = document.getElementById('cnBodyInput').classList.contains('mono');
 
-  // Type — only set if changed from existing
-  var activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
-  var newType = activeType ? activeType.dataset.type : (n.type || 'memo');
-  if (n.type !== newType) n.type = newType;
+  // Type
+  const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+  n.type = activeType ? activeType.dataset.type : (n.type || 'memo');
 
-  // URL (papers) — only save if it's actually a paper note
-  var urlInput = document.getElementById('cnUrlInput');
-  if (urlInput) {
-    var newUrl = newType === 'paper' ? urlInput.value.trim() : '';
-    if ((n.url || '') !== newUrl) n.url = newUrl;
-  }
+  // URL
+  const urlInput = document.getElementById('cnUrlInput');
+  n.url = (n.type === 'paper' && urlInput) ? urlInput.value.trim() : '';
 
-  // Idea status — only save if it's actually an idea note
-  var activeStatus = document.querySelector('#cnIdeaStatusRow .cn-status-chip.active');
-  if (activeStatus && newType === 'idea') {
-    var newStatus = activeStatus.dataset.status;
-    if ((n.ideaStatus || '') !== newStatus) n.ideaStatus = newStatus;
-  } else if (newType !== 'idea') {
-    if ((n.ideaStatus || '') !== '') n.ideaStatus = '';
-  }
+  // Idea status
+  const activeIdea = document.querySelector('#cnIdeaStatusRow .cn-idea-chip.active');
+  if (activeIdea) n.ideaStatus = activeIdea.textContent;
 
-  const tags = [];
-  document.querySelectorAll('#cnTagRow .s-chip.active').forEach(function(c) {
-    tags.push(c.dataset.val);
-  });
-  n.tags = tags;
+  // Tags
+  n.tags = Array.from(document.querySelectorAll('#cnTagRow .cn-tag-chip.active')).map(c => c.dataset.val);
 
-  // Only stamp updatedAt if something actually changed
-  var currentState = {
-    title: n.title,
-    speaker: n.speaker,
-    body: n.body,
-    projectId: n.projectId,
-    bodyIsMono: n.bodyIsMono,
-    tags: tags.slice().sort().join(','),
-    type: n.type || 'memo',
-    url: n.url || '',
-    ideaStatus: n.ideaStatus || '',
-  };
-  var dirty = !_cnOpenSnapshot
-    || currentState.title !== _cnOpenSnapshot.title
-    || currentState.speaker !== _cnOpenSnapshot.speaker
-    || currentState.body !== _cnOpenSnapshot.body
-    || currentState.projectId !== _cnOpenSnapshot.projectId
-    || currentState.bodyIsMono !== _cnOpenSnapshot.bodyIsMono
-    || currentState.tags !== _cnOpenSnapshot.tags
-    || currentState.type !== _cnOpenSnapshot.type
-    || currentState.url !== _cnOpenSnapshot.url
-    || currentState.ideaStatus !== _cnOpenSnapshot.ideaStatus;
-
-  if (dirty) {
-    n.updatedAt = new Date().toISOString();
-    _cnOpenSnapshot = currentState;
-  }
+  // Pin / lock preserved — toggled separately
+  n.updatedAt = new Date().toISOString();
+  if (!n.createdAt) n.createdAt = n.updatedAt;
 
   saveCN(true);
+
+  // Update topbar label
+  const titleLabel = document.getElementById('cnDetailTitle');
+  if (titleLabel) titleLabel.textContent = NOTE_TYPES[n.type || 'memo'].label;
 }
 
-function queueCNSave() {
-  if (cnSaveTimer) clearTimeout(cnSaveTimer);
-  cnSaveTimer = setTimeout(saveCNDetailNow, 1200);
-}
-
-function toggleMdPreview(mode) {
-  // mode: 'on' = force preview, 'off' = force edit, undefined = toggle
-  var bodyEl = document.getElementById('cnBodyInput');
-  var previewEl = document.getElementById('cnMdPreview');
-  var toggleBtn = document.getElementById('cnMdToggle');
-  if (!bodyEl || !previewEl || !toggleBtn) return;
-
-  var wantPreview;
-  if (mode === 'on') wantPreview = true;
-  else if (mode === 'off') wantPreview = false;
-  else wantPreview = !cnMdPreview;
-
-  if (wantPreview && typeof marked !== 'undefined') {
-    cnMdPreview = true;
-    // Flush any pending edits before rendering
-    saveCNDetailNow();
-    
-    // 1. Process [[Internal Links]] FIRST
-    const rawContent = bodyEl.value || '';
-    const processedContent = rawContent.replace(
-      /\[\[(.*?)\]\]/g, 
-      '<a href="#" class="internal-note-link" data-notetitle="$1">[[ $1 ]]</a>'
-    );
-
-    // 2. Parse markdown
-    let finalHtml = marked.parse(processedContent, { breaks: true, gfm: true });
-    
-    // 3. Auto-inject the Paper URL into the preview!
-    const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
-    const isPaper = activeType && activeType.dataset.type === 'paper';
-    const urlInput = document.getElementById('cnUrlInput');
-    const urlVal = urlInput ? urlInput.value.trim() : '';
-    
-    if (isPaper && urlVal) {
-        // Automatically handle DOIs vs full links
-        const linkHref = urlVal.startsWith('http') ? urlVal : 'https://doi.org/' + urlVal;
-        
-        // Redesigned: Native-looking card component with icon
-        finalHtml = '<div style="margin-bottom: 20px;"><a href="' + linkHref + '" target="_blank" class="cn-md-paper-link"><svg viewBox="0 0 24 24" width="14" height="14" stroke="#af52de" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg><span>Source Document</span></a></div>' + finalHtml;
-    }
-
-    previewEl.innerHTML = finalHtml;
-
-    // Open ALL links in new tab
-    previewEl.querySelectorAll('a').forEach(function(a) {
-      a.setAttribute('target', '_blank');
-      a.setAttribute('rel', 'noopener');
-    });
-
-    // 4. The critical UI toggles that got lost!
-    bodyEl.style.display = 'none';
-    previewEl.style.display = 'block';
-    toggleBtn.textContent = 'edit';
-    toggleBtn.classList.add('md-active');
-
-  } else {
-    cnMdPreview = false;
-    previewEl.style.display = 'none';
-    previewEl.innerHTML = '';
-    bodyEl.style.display = '';
-    toggleBtn.textContent = 'preview';
-    toggleBtn.classList.remove('md-active');
-    if (mode !== 'off') bodyEl.focus();
-    autoResizeBody();
-  }
-}
-
+// ── CREATE NEW ──
 function createNewNote(type) {
   type = type || 'memo';
   const cnNotes = getCnNotes();
   const n = {
-    id: uid(),
-    title: '',
-    speaker: '',
+    id: uid(), title: '', speaker: '',
     body: type === 'paper' ? PAPER_TEMPLATE : '',
-    tags: [],
-    projectId: '',
-    bodyIsMono: false,
-    pinned: false,
-    type: type,
-    url: '',
+    tags: [], bodyIsMono: false, pinned: false, locked: false,
+    type, url: '',
     ideaStatus: type === 'idea' ? 'raw' : '',
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   cnNotes.unshift(n);
   saveCN(false);
   openCNDetail(n.id);
-  setTimeout(function() { document.getElementById('cnTitleInput').focus(); }, 100);
-  var labels = { memo: 'New note', paper: 'New paper note', idea: 'New idea' };
-  showToast(labels[type] || 'New note created');
 }
 
-function deleteCNNote(id) {
-  setCnNotes(getCnNotes().filter(function(n) { return n.id !== id; }));
-  saveCN(true);
-  closeCNDetail();
-  showToast('Note deleted');
-}
+// ── BACKLINKS ──
+function renderBacklinks(noteTitle) {
+  const drawer = document.getElementById('cnBacklinksDrawer');
+  if (!drawer) return;
 
-// ══════════════════════════════════════════════════════════════════
-// DYNAMIC CHIPS
-// ══════════════════════════════════════════════════════════════════
+  if (!noteTitle) { drawer.innerHTML = ''; return; }
 
-function rebuildCNChips() {
-  const tagRow = document.getElementById('cnTagRow');
-  if (tagRow) {
-    const activeVals = [];
-    tagRow.querySelectorAll('.s-chip.active').forEach(function(c) { activeVals.push(c.dataset.val); });
-    tagRow.innerHTML = '';
-    Object.keys(CAT_LABEL).forEach(function(key) {
-      const c = document.createElement('div');
-      c.className = 's-chip' + (activeVals.indexOf(key) !== -1 ? ' active' : '');
-      c.dataset.val = key;
-      c.textContent = CAT_LABEL[key];
-      tagRow.appendChild(c);
+  const cnNotes = getCnNotes();
+  const refs = cnNotes.filter(function(n) {
+    if (n.id === cnActiveId) return false;
+    return (n.body || '').toLowerCase().includes('[[' + noteTitle.toLowerCase() + ']]');
+  });
+
+  if (refs.length === 0) { drawer.innerHTML = ''; return; }
+
+  const toggle = document.createElement('button');
+  toggle.className = 'cn-backlinks-toggle';
+  toggle.innerHTML =
+    '<span class="cn-backlinks-arrow" id="cnBacklinksArrow">▶</span>' +
+    '<span class="cn-backlinks-label-text">Backlinks</span>' +
+    '<span class="cn-backlinks-count">' + refs.length + '</span>';
+
+  const listEl = document.createElement('div');
+  listEl.style.display = 'none';
+
+  refs.forEach(function(n) {
+    const item = document.createElement('div');
+    item.className = 'cn-backlink-item';
+    item.dataset.blid = n.id;
+    item.innerHTML =
+      '<span class="cn-backlink-icon">' + (NOTE_TYPES[noteTypeOf(n)] || NOTE_TYPES.memo).icon + '</span>' +
+      '<div><div class="cn-backlink-title">' + esc(n.title || 'Untitled') + '</div>' +
+      '<div class="cn-backlink-preview">' + esc((n.body || '').slice(0, 80)) + '</div></div>';
+    item.addEventListener('click', function() {
+      saveCNDetailNow();
+      openCNDetail(n.id);
     });
+    listEl.appendChild(item);
+  });
+
+  toggle.addEventListener('click', function() {
+    const open = listEl.style.display !== 'none';
+    listEl.style.display = open ? 'none' : 'block';
+    toggle.classList.toggle('open', !open);
+    const arrow = document.getElementById('cnBacklinksArrow');
+    if (arrow) arrow.style.transform = open ? '' : 'rotate(90deg)';
+  });
+
+  drawer.innerHTML = '';
+  drawer.appendChild(toggle);
+  drawer.appendChild(listEl);
+}
+
+// ── RENAME LINK REFERENCES ──
+function renameLinkReferences(oldTitle, newTitle) {
+  if (!oldTitle || oldTitle === newTitle) return;
+  const escaped = oldTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp('\\[\\[' + escaped + '\\]\\]', 'gi');
+  const replacement = '[[' + newTitle + ']]';
+  let changed = false;
+  getCnNotes().forEach(function(n) {
+    if (n.id === cnActiveId) return;
+    const updated = (n.body || '').replace(pattern, replacement);
+    if (updated !== n.body) { n.body = updated; changed = true; }
+  });
+  if (changed) saveCN(true);
+}
+
+// ── PIN / LOCK SYSTEM ──
+function hasPinSet() {
+  try { return !!localStorage.getItem('kw_pin_v1'); } catch(e) { return false; }
+}
+
+let _pinUnlocked = false;
+
+function requestPinUnlock(onSuccess) {
+  if (_pinUnlocked) { onSuccess(); return; }
+
+  const overlay = document.getElementById('cnPinOverlay');
+  const input   = document.getElementById('cnPinInputField');
+  const error   = document.getElementById('cnPinError');
+  const submit  = document.getElementById('cnPinSubmit');
+  const cancel  = document.getElementById('cnPinCancel');
+  if (!overlay) { onSuccess(); return; }
+
+  overlay.style.display = 'flex';
+  if (input) { input.value = ''; input.focus(); }
+  if (error) error.textContent = '';
+
+  function cleanup() {
+    overlay.style.display = 'none';
+    if (submit) submit.removeEventListener('click', tryUnlock);
+    if (cancel) cancel.removeEventListener('click', doCancel);
+    if (input)  input.removeEventListener('keydown', onKey);
   }
-  const filterRow = document.getElementById('cnFilterRow');
-  if (filterRow) {
-    var currentFilter = cnFilter;
-    var currentTypeFilter = cnTypeFilter;
-    // Determine which chip should be active
-    var activeKey = 'all';
-    if (currentTypeFilter !== 'all') activeKey = '_type_' + currentTypeFilter;
-    else if (currentFilter !== 'all') activeKey = currentFilter;
 
-    filterRow.innerHTML = '';
-
-    // "All" chip
-    var allChip = document.createElement('div');
-    allChip.className = 'chip' + (activeKey === 'all' ? ' active' : '');
-    allChip.dataset.cnfilter = 'all';
-    allChip.textContent = 'All';
-    filterRow.appendChild(allChip);
-
-    // Type chips
-    var types = [
-      { key: 'paper', label: '📄 Papers' },
-      { key: 'idea',  label: '💡 Ideas' },
-      { key: 'memo',  label: '✎ Notes' },
-    ];
-    types.forEach(function(t) {
-      var c = document.createElement('div');
-      c.className = 'chip' + (activeKey === '_type_' + t.key ? ' active' : '');
-      c.dataset.cnfilter = '_type_' + t.key;
-      c.textContent = t.label;
-      filterRow.appendChild(c);
-    });
-
-    // Category chips
-    Object.keys(CAT_LABEL).forEach(function(key) {
-      var c = document.createElement('div');
-      c.className = 'chip' + (activeKey === key ? ' active' : '');
-      c.dataset.cnfilter = key;
-      c.textContent = CAT_LABEL[key];
-      filterRow.appendChild(c);
-    });
+  function tryUnlock() {
+    const val = input ? input.value.trim() : '';
+    const stored = localStorage.getItem('kw_pin_v1') || '';
+    if (val === stored) {
+      _pinUnlocked = true;
+      cleanup();
+      onSuccess();
+    } else {
+      if (error) error.textContent = 'Incorrect PIN';
+      if (input) { input.value = ''; input.focus(); }
+    }
   }
+
+  function doCancel() { cleanup(); }
+  function onKey(e) { if (e.key === 'Enter') tryUnlock(); }
+
+  if (submit) submit.addEventListener('click', tryUnlock);
+  if (cancel) cancel.addEventListener('click', doCancel);
+  if (input)  input.addEventListener('keydown', onKey);
 }
 
-// ══════════════════════════════════════════════════════════════════
-// EVENT WIRING
-// ══════════════════════════════════════════════════════════════════
-
-initScratchpad();
-rebuildCNChips();
-
-// Note: confnotes is now tab-navigated as "Notes" — no icon or close button needed
-
-document.getElementById('cnBackBtn').addEventListener('click', closeCNDetail);
-
-document.getElementById('cnDeleteBtn').addEventListener('click', function() {
-  if (!cnActiveId) return;
-  if (confirm('Delete this note?')) deleteCNNote(cnActiveId);
+// ── INTERNAL LINK NAVIGATION ──
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('.internal-note-link');
+  if (!link) return;
+  e.preventDefault(); e.stopPropagation();
+  const targetTitle = link.getAttribute('data-notetitle');
+  if (!targetTitle) return;
+  const cnNotes = getCnNotes();
+  const target = cnNotes.find(n => (n.title || '').toLowerCase() === targetTitle.toLowerCase());
+  if (target) {
+    saveCNDetailNow();
+    openCNDetail(target.id);
+  } else if (confirm('"' + targetTitle + '" doesn\'t exist. Create it?')) {
+    saveCNDetailNow();
+    const newNote = {
+      id: uid(), title: targetTitle, speaker: '', body: '',
+      tags: [], bodyIsMono: false, pinned: false, locked: false,
+      type: 'memo', url: '', ideaStatus: '',
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+    };
+    getCnNotes().unshift(newNote);
+    saveCN(false);
+    openCNDetail(newNote.id);
+  }
 });
 
-document.getElementById('cnPinBtn').addEventListener('click', function() {
+// ── PREVIEW CLICK (internal links handled above; tap preview area to dismiss) ──
+const mdPreviewEl = document.getElementById('cnMdPreview');
+if (mdPreviewEl) {
+  mdPreviewEl.addEventListener('click', function(e) {
+    if (e.target.closest('a')) return;
+    toggleMdPreview('off');
+  });
+}
+
+// ── TOPBAR BUTTONS ──
+const cnBackBtn = document.getElementById('cnBackBtn');
+if (cnBackBtn) cnBackBtn.addEventListener('click', closeCNDetail);
+
+const cnMdToggleBtn = document.getElementById('cnMdToggle');
+if (cnMdToggleBtn) cnMdToggleBtn.addEventListener('click', function() { toggleMdPreview(); });
+
+const cnMonoToggleBtn = document.getElementById('cnMonoToggle');
+if (cnMonoToggleBtn) cnMonoToggleBtn.addEventListener('click', function() {
+  const bodyEl = document.getElementById('cnBodyInput');
+  const isMono = bodyEl.classList.toggle('mono');
+  cnMonoToggleBtn.classList.toggle('mono-active', isMono);
+  queueCNSave(); autoResizeBody();
+});
+
+const cnPinBtnEl = document.getElementById('cnPinBtn');
+if (cnPinBtnEl) cnPinBtnEl.addEventListener('click', function() {
   if (!cnActiveId) return;
-  const cnNotes = getCnNotes();
-  let n = null;
-  for (let i = 0; i < cnNotes.length; i++) {
-    if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
-  }
+  const n = getCnNotes().find(x => x.id === cnActiveId);
   if (!n) return;
   n.pinned = !n.pinned;
-  this.classList.toggle('pinned', n.pinned);
+  cnPinBtnEl.classList.toggle('pinned', n.pinned);
   saveCN(true);
   showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
 });
 
-document.getElementById('cnLockBtn').addEventListener('click', function() {
-  if (!cnActiveId || !hasPinSet()) return;
-  var cnNotes = getCnNotes();
-  var n = null;
-  for (var i = 0; i < cnNotes.length; i++) {
-    if (cnNotes[i].id === cnActiveId) { n = cnNotes[i]; break; }
-  }
+const cnLockBtnEl = document.getElementById('cnLockBtn');
+if (cnLockBtnEl) cnLockBtnEl.addEventListener('click', function() {
+  if (!cnActiveId) return;
+  const n = getCnNotes().find(x => x.id === cnActiveId);
   if (!n) return;
-  n.locked = !n.locked;
-  this.classList.toggle('locked', n.locked);
-  saveCN(true);
-  showToast(n.locked ? 'Note locked' : 'Note unlocked');
-});
-
-document.getElementById('cnTagRow').addEventListener('click', function(e) {
-  const chip = e.target.closest('.s-chip');
-  if (!chip) return;
-  chip.classList.toggle('active');
-  queueCNSave();
-});
-
-// Type selector in editor
-document.getElementById('cnTypeRow').addEventListener('click', function(e) {
-  var chip = e.target.closest('.cn-type-chip');
-  if (!chip) return;
-  document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(function(c) { c.classList.remove('active'); });
-  chip.classList.add('active');
-  var newType = chip.dataset.type;
-
-  // Update UI for new type
-  var titleInput = document.getElementById('cnTitleInput');
-  var speakerInput = document.getElementById('cnSpeakerInput');
-  var bodyInput = document.getElementById('cnBodyInput');
-  var urlRow = document.getElementById('cnUrlRow');
-  var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
-  var topbarTitle = document.getElementById('cnDetailTitle');
-
-  if (newType === 'paper') {
-    titleInput.placeholder = 'Paper title...';
-    speakerInput.placeholder = 'Authors (e.g., Barrett & Simmons, 2015)...';
-    bodyInput.placeholder = PAPER_TEMPLATE;
-    topbarTitle.textContent = '📄 Paper';
-    if (urlRow) urlRow.style.display = 'flex';
-    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
-    // Pre-fill template if body is empty
-    if (!bodyInput.value.trim()) bodyInput.value = PAPER_TEMPLATE;
-  } else if (newType === 'idea') {
-    titleInput.placeholder = 'Research question or study concept...';
-    speakerInput.placeholder = 'Related area, method, or population...';
-    bodyInput.placeholder = 'Flesh out the idea...';
-    topbarTitle.textContent = '💡 Idea';
-    if (urlRow) urlRow.style.display = 'none';
-    if (ideaStatusRow) ideaStatusRow.style.display = 'flex';
+  if (n.locked) {
+    n.locked = false;
+    cnLockBtnEl.classList.remove('locked');
+    saveCN(true);
+    showToast('Note unlocked');
   } else {
-    titleInput.placeholder = 'Title...';
-    speakerInput.placeholder = 'Source, speaker, context...';
-    bodyInput.placeholder = 'Write anything...';
-    topbarTitle.textContent = 'Note';
-    if (urlRow) urlRow.style.display = 'none';
-    if (ideaStatusRow) ideaStatusRow.style.display = 'none';
+    if (!hasPinSet()) { showToast('Set a PIN in Settings first'); return; }
+    n.locked = true;
+    cnLockBtnEl.classList.add('locked');
+    saveCN(true);
+    showToast('Note locked');
   }
-  queueCNSave();
 });
 
-// Idea status chips
-var ideaStatusRow = document.getElementById('cnIdeaStatusRow');
-if (ideaStatusRow) {
-  ideaStatusRow.addEventListener('click', function(e) {
-    var chip = e.target.closest('.cn-status-chip');
-    if (!chip) return;
-    document.querySelectorAll('#cnIdeaStatusRow .cn-status-chip').forEach(function(c) { c.classList.remove('active'); });
-    chip.classList.add('active');
-    queueCNSave();
-  });
-}
+const cnDeleteBtnEl = document.getElementById('cnDeleteBtn');
+if (cnDeleteBtnEl) cnDeleteBtnEl.addEventListener('click', function() {
+  if (!cnActiveId) return;
+  if (!confirm('Delete this note?')) return;
+  const notes = getCnNotes();
+  const idx = notes.findIndex(x => x.id === cnActiveId);
+  if (idx !== -1) notes.splice(idx, 1);
+  saveCN(true);
+  showToast('Note deleted');
+  closeCNDetail();
+});
 
-// URL input with live-updating Launch Button
-var urlInput = document.getElementById('cnUrlInput');
-if (urlInput) {
-  urlInput.addEventListener('input', function() {
-    queueCNSave();
-    const launchBtn = document.getElementById('cnUrlLaunchBtn');
-    if(launchBtn) {
-      const val = this.value.trim();
-      launchBtn.style.display = val ? 'flex' : 'none';
-      launchBtn.href = val && !val.startsWith('http') ? 'https://doi.org/' + val : val;
+// ── BODY INPUT — auto-save + resize ──
+const cnBodyInputEl = document.getElementById('cnBodyInput');
+if (cnBodyInputEl) {
+  cnBodyInputEl.addEventListener('input', function() { queueCNSave(); autoResizeBody(); });
+}
+const cnTitleInputEl = document.getElementById('cnTitleInput');
+if (cnTitleInputEl) cnTitleInputEl.addEventListener('input', queueCNSave);
+const cnSpeakerInputEl = document.getElementById('cnSpeakerInput');
+if (cnSpeakerInputEl) cnSpeakerInputEl.addEventListener('input', queueCNSave);
+const cnUrlInputEl = document.getElementById('cnUrlInput');
+if (cnUrlInputEl) cnUrlInputEl.addEventListener('input', queueCNSave);
+
+// ── SEARCH TOGGLE ──
+const cnSearchBtn = document.getElementById('cnSearchBtn');
+const cnSearchWrap = document.getElementById('cnSearchWrap');
+if (cnSearchBtn && cnSearchWrap) {
+  cnSearchBtn.addEventListener('click', function() {
+    cnSearchWrap.classList.toggle('open');
+    if (cnSearchWrap.classList.contains('open')) {
+      document.getElementById('cnSearchInput').focus();
+    } else {
+      document.getElementById('cnSearchInput').value = '';
+      renderCNList();
     }
   });
 }
+const cnSearchInput = document.getElementById('cnSearchInput');
+if (cnSearchInput) cnSearchInput.addEventListener('input', renderCNList);
 
-// ── AUTO-RESIZE TEXTAREA ──
-// Makes the body textarea grow with content so the page scrolls instead of the textarea.
-function autoResizeBody() {
-  var el = document.getElementById('cnBodyInput');
-  if (!el) return;
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+// ── FILTER ROW ──
+const cnFilterRow = document.getElementById('cnFilterRow');
+if (cnFilterRow) {
+  cnFilterRow.addEventListener('click', function(e) {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#cnFilterRow .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const val = chip.dataset.cnfilter;
+    if (val === 'all') { cnFilter = 'all'; cnTypeFilter = 'all'; }
+    else if (val && val.startsWith('_type_')) { cnTypeFilter = val.replace('_type_', ''); cnFilter = 'all'; }
+    else { cnFilter = val || 'all'; cnTypeFilter = 'all'; }
+    renderCNList();
+  });
 }
 
-['cnTitleInput', 'cnSpeakerInput', 'cnBodyInput'].forEach(function(id) {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', queueCNSave);
-});
-// Body textarea auto-resize on input
-var _cnBodyEl = document.getElementById('cnBodyInput');
-if (_cnBodyEl) _cnBodyEl.addEventListener('input', autoResizeBody);
-const cnProjInp = document.getElementById('cnProjectInput');
-if (cnProjInp) cnProjInp.addEventListener('change', function() { saveCNDetailNow(); });
-
-document.getElementById('cnMonoToggle').addEventListener('click', function() {
-  const bodyEl = document.getElementById('cnBodyInput');
-  const isMono = !bodyEl.classList.contains('mono');
-  bodyEl.classList.toggle('mono', isMono);
-  this.textContent = isMono ? 'mono on' : 'mono off';
-  this.classList.toggle('mono-active', isMono);
-  queueCNSave();
-  autoResizeBody();
-});
-
-document.getElementById('cnMdToggle').addEventListener('click', function() {
-  toggleMdPreview(); // no arg = toggle
-});
-
-document.getElementById('cnMdPreview').addEventListener('click', function(e) {
-  // Don't swallow link clicks — let them open in new tab
-  if (e.target.closest('a')) return;
-  toggleMdPreview('off');
-});
-
-document.getElementById('cnSearchToggle').addEventListener('click', function() {
-  const wrap = document.getElementById('cnSearchWrap');
-  wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) {
-    document.getElementById('cnSearchInput').focus();
-  } else {
-    document.getElementById('cnSearchInput').value = '';
-    renderCNList();
-  }
-});
-document.getElementById('cnSearchInput').addEventListener('input', renderCNList);
-
-document.getElementById('cnFilterRow').addEventListener('click', function(e) {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  document.querySelectorAll('#cnFilterRow .chip').forEach(function(c) { c.classList.remove('active'); });
-  chip.classList.add('active');
-  var val = chip.dataset.cnfilter;
-  if (val === 'all') {
-    cnFilter = 'all';
-    cnTypeFilter = 'all';
-  } else if (val.indexOf('_type_') === 0) {
-    cnTypeFilter = val.replace('_type_', '');
-    cnFilter = 'all';
-  } else {
-    cnFilter = val;
-    cnTypeFilter = 'all';
-  }
-  renderCNList();
-});
-
+// ── KEYBOARD SHORTCUTS (desktop) ──
 document.addEventListener('keydown', function(e) {
   if (!document.body.classList.contains('notes-mode')) return;
   const tag = (document.activeElement || {}).tagName || '';
   const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
   if (inInput) return;
-  if (e.key === 'n' || e.key === 'N') {
-    e.preventDefault();
-    e.stopPropagation();
-    createNewNote('memo');
-  } else if (e.key === 'p' || e.key === 'P') {
-    e.preventDefault();
-    e.stopPropagation();
-    createNewNote('paper');
-  } else if (e.key === 'i' || e.key === 'I') {
-    e.preventDefault();
-    e.stopPropagation();
-    createNewNote('idea');
-  }
+  if (e.key === 'n' || e.key === 'N') { e.preventDefault(); createNewNote('memo'); }
+  else if (e.key === 'p' || e.key === 'P') { e.preventDefault(); createNewNote('paper'); }
+  else if (e.key === 'i' || e.key === 'I') { e.preventDefault(); createNewNote('idea'); }
+  else if (e.key === 'Escape' && cnActiveId) closeCNDetail();
 });
-// ── ZETTELKASTEN LINKED NOTES LISTENER ──
-document.addEventListener('click', function(e) {
-  const link = e.target.closest('.internal-note-link');
-  if (!link) return;
-
-  e.preventDefault();
-  e.stopPropagation();
-
-  const targetTitle = link.getAttribute('data-notetitle');
-  if (!targetTitle) return;
-
-  const cnNotes = getCnNotes();
-  const targetNote = cnNotes.find(n => (n.title || '').toLowerCase() === targetTitle.toLowerCase());
-
-  if (targetNote) {
-    // Note exists -> Save current work and open it
-    saveCNDetailNow();
-    openCNDetail(targetNote.id);
-  } else {
-    // Note doesn't exist -> Prompt to create it
-    if (confirm(`The note "${targetTitle}" doesn't exist yet. Create it?`)) {
-      saveCNDetailNow();
-      
-      const newNote = {
-        id: uid(),
-        title: targetTitle,
-        speaker: '',
-        body: '',             // Leaves the body blank
-        tags: [],
-        projectId: '',
-        bodyIsMono: false,
-        pinned: false,
-        type: 'memo',         // 'memo' is your app's internal key for a standard Note
-        url: '',
-        ideaStatus: '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      
-      cnNotes.unshift(newNote);
-      saveCN(false);
-      openCNDetail(newNote.id);
-    }
-  }
-});
-
-// ── BACKLINKS TOGGLE & NAVIGATION ──
-var cnBacklinksToggle = document.getElementById('cnBacklinksToggle');
-if (cnBacklinksToggle) {
-  cnBacklinksToggle.addEventListener('click', function() {
-    var drawer = document.getElementById('cnBacklinksDrawer');
-    var arrow = document.getElementById('cnBacklinksArrow');
-    var isOpen = drawer.classList.toggle('open');
-    if (arrow) arrow.style.transform = isOpen ? 'rotate(90deg)' : '';
-  });
-}
-
-document.getElementById('cnBacklinksList').addEventListener('click', function(e) {
-  var item = e.target.closest('.cn-backlink-item');
-  if (!item) return;
-  var targetId = item.dataset.blid;
-  if (!targetId) return;
-  saveCNDetailNow();
-  openCNDetail(targetId);
-});
-
-// ── GRID / LIST VIEW TOGGLE ──
-const notesListEl = document.getElementById('cnNotesList');
-const viewToggleBtn = document.getElementById('cnViewToggle');
-let isGridView = localStorage.getItem('kw_notes_grid_v1') === 'true';
-
-function updateViewToggleUI() {
-  if (!viewToggleBtn || !notesListEl) return;
-  
-  if (isGridView) {
-    notesListEl.classList.add('cn-grid-view');
-    // Change icon to List (horizontal lines)
-    viewToggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>';
-  } else {
-    notesListEl.classList.remove('cn-grid-view');
-    // Change icon to Grid (boxes)
-    viewToggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
-  }
-}
-
-// Initialize on load
-if (viewToggleBtn) {
-  updateViewToggleUI();
-  viewToggleBtn.addEventListener('click', function() {
-    isGridView = !isGridView;
-    localStorage.setItem('kw_notes_grid_v1', isGridView);
-    updateViewToggleUI();
-  });
-}
 
 // ── EXPORTS ──
-export { renderCNList, createNewNote, rebuildCNChips, getIdeasForReview, NOTE_TYPES, noteTypeOf };
+export { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf };
