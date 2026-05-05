@@ -24,11 +24,8 @@ import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } f
 // Bulletproof keyboard dismissal reset
 document.addEventListener('focusout', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    // Fire immediately
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.body.scrollTop = 0;
-    
-    // Fire again after iOS animations finish as a failsafe
     setTimeout(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       document.body.scrollTop = 0;
@@ -92,7 +89,6 @@ function applyTheme(name) {
 function loadTheme() {
   let saved = 'light';
   try { saved = localStorage.getItem(KEYS.theme || 'kw_theme_v3') || 'light'; } catch(e) {}
-  // Migrate old names
   if (saved === 'halcyon' || saved === 'newsprint' || saved === 'ios26' || saved === 'bel-bel') saved = 'light';
   if (saved === 'aurora' || saved === 'neon' || saved === 'ios-dark') saved = 'dark';
   applyTheme(saved);
@@ -107,6 +103,8 @@ document.getElementById('settingsSheet').addEventListener('click', function(e) {
 
 // ══════════════════════════════════════════════════════════════════
 // CATEGORY COLORS — dynamic style injection for custom cats
+// FIX: Was injecting `.cat-X { background; color }` but dots use
+// `.cat-X::before { background }`. Now injects the ::before rule.
 // ══════════════════════════════════════════════════════════════════
 
 const BUILTIN_CAT_CLS = {
@@ -133,7 +131,8 @@ function refreshDynamicCatColors() {
     _assignCatColor(cat);
     const rgb = _catColorMap[cat];
     const cls = 'cat-' + cat.replace(/[^a-z0-9_-]/g, '_');
-    css += '.' + cls + ' { background: rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.1); color: rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); }\n';
+    // FIX: target ::before for the dot, not the wrapper element
+    css += '.' + cls + '::before { background: rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); box-shadow: 0 0 6px rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); }\n';
   });
   styleEl.textContent = css;
 }
@@ -187,13 +186,11 @@ function makeTaskWrap(t, delay) {
       '<div class="task-meta">' + catHtml + statusHtml + dueHtml + '</div>' +
     '</div>';
 
-  // Checkbox tap
   el.querySelector('.task-cb').addEventListener('click', function(e) {
     e.stopPropagation();
     toggleDone(t.id);
   });
 
-  // Card tap = edit
   el.addEventListener('click', function() { openEdit(t.id); });
 
   attachSwipe(wrap, el, bg, t.id);
@@ -358,7 +355,6 @@ function render() {
   let delay = 0;
 
   if (f === 'all') {
-    // Group by urgency: overdue → today → tomorrow → this week → later
     const groups = {};
     URGENCY_ORDER.forEach(k => { groups[k] = []; });
     visibleTasks.forEach(t => {
@@ -373,11 +369,9 @@ function render() {
       list.appendChild(result.el);
     });
   } else if (f === 'archive') {
-    // Archive: flat, sorted by completedAt desc
     visibleTasks.sort((a, b) => (b.completedAt || '') > (a.completedAt || '') ? 1 : -1);
     visibleTasks.forEach(t => { list.appendChild(makeTaskWrap(t, delay)); delay += 30; });
   } else {
-    // Specific category filter: group by urgency within that category
     const groups = {};
     URGENCY_ORDER.forEach(k => { groups[k] = []; });
     visibleTasks.forEach(t => { groups[getUrgencyBucket(t)].push(t); });
@@ -391,7 +385,6 @@ function render() {
       list.appendChild(result.el);
     });
     if (!hasSections) {
-      // Fallback: flat list
       visibleTasks.sort((a, b) => ({ hi: 0, md: 1, lo: 2 }[a.priority] || 1) - ({ hi: 0, md: 1, lo: 2 }[b.priority] || 1));
       visibleTasks.forEach(t => { list.appendChild(makeTaskWrap(t, delay)); delay += 30; });
     }
@@ -421,7 +414,6 @@ function closeSheets() {
   const dv = document.getElementById('deleteTaskBtn'); if (dv) dv.style.display = 'none';
 }
 
-// Sheet drag to dismiss
 document.querySelectorAll('.sheet').forEach(sheet => {
   let startY = 0, dragging = false;
   sheet.addEventListener('touchstart', function(e) {
@@ -453,7 +445,6 @@ function openAddSheet() {
   document.getElementById('taskDueInput').value = '';
   document.getElementById('taskNoteInput').style.fontFamily = 'inherit';
   document.getElementById('monoToggle').classList.remove('mono-active');
-  // Reset chips
   document.querySelectorAll('#catRow .s-chip').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('#statusRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === 'active'));
   document.querySelectorAll('#priRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === 'md'));
@@ -517,7 +508,6 @@ function saveTask() {
   saveLocal(); ghPush(); closeSheets(); render();
 }
 
-// Quick add
 function submitQuickAdd() {
   const inp = document.getElementById('quickAddInput');
   const title = inp.value.trim();
@@ -531,7 +521,6 @@ function submitQuickAdd() {
   saveLocal(); ghPush(); render(); showToast('Task added');
 }
 
-// Quick Add Events
 const quickAddInput = document.getElementById('quickAddInput');
 if (quickAddInput) {
   quickAddInput.addEventListener('keydown', function(e) {
@@ -591,7 +580,6 @@ function saveCategoriesFromUI() {
   rebuildCategoryUI();
   refreshDynamicCatColors();
   render();
-  showToast('Categories saved');
 }
 
 function loadHabitsUI() {
@@ -636,7 +624,6 @@ function saveHabitsFromUI() {
   showToast('Habits saved');
 }
 
-// PIN
 function hasPinSet() {
   try { return !!localStorage.getItem('kw_pin_v1'); } catch(e) { return false; }
 }
@@ -648,12 +635,11 @@ function updatePinUI() {
 
 function loadSettingsUI() {
   document.getElementById('ghGistId').value = state.settings.ghGistId || '';
-document.getElementById('ghToken').value = state.settings.ghToken || '';
+  document.getElementById('ghToken').value = state.settings.ghToken || '';
   updateGhUI(!!state.settings.ghToken);
   loadCategoriesUI();
   loadHabitsUI();
   updatePinUI();
-  // Mark active theme swatch
   const theme = document.documentElement.getAttribute('data-theme') || 'light';
   document.querySelectorAll('.theme-swatch').forEach(sw => {
     sw.classList.toggle('active', sw.dataset.theme === theme);
@@ -665,7 +651,6 @@ document.getElementById('ghToken').value = state.settings.ghToken || '';
 // ══════════════════════════════════════════════════════════════════
 
 function rebuildCategoryUI() {
-  // Filter chips
   const filterRow = document.getElementById('filterRow');
   if (filterRow) {
     const fixed = ['all', 'blocked', 'archive'];
@@ -684,7 +669,6 @@ function rebuildCategoryUI() {
     });
   }
 
-  // Sheet cat row
   const catRow = document.getElementById('catRow');
   if (catRow) {
     catRow.innerHTML = '';
@@ -703,12 +687,10 @@ function rebuildCategoryUI() {
 // EVENT WIRING
 // ══════════════════════════════════════════════════════════════════
 
-// Tabs
 document.getElementById('tabTasks').addEventListener('click', function() { switchView('tasks'); });
 document.getElementById('tabReflect').addEventListener('click', function() { switchView('reflect'); });
 document.getElementById('tabNotes').addEventListener('click', function() { switchView('notes'); });
 
-// Bel — 5-tap on title
 let _belTaps = 0, _belTimer = null;
 document.getElementById('secretBelTrigger').addEventListener('click', function() {
   _belTaps++;
@@ -719,7 +701,6 @@ document.getElementById('secretBelTrigger').addEventListener('click', function()
 const closeBelBtn = document.getElementById('closeBelBtn');
 if (closeBelBtn) closeBelBtn.addEventListener('click', function() { switchView('tasks'); });
 
-// NEW NOTE BUTTON (Mobile + Desktop)
 const cnNewBtn = document.getElementById('cnNewBtn');
 if (cnNewBtn) {
   cnNewBtn.addEventListener('click', function() {
@@ -727,10 +708,8 @@ if (cnNewBtn) {
   });
 }
 
-// Overlay
 document.getElementById('overlay').addEventListener('click', closeSheets);
 
-// Task sheet buttons
 document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
 document.getElementById('deleteTaskBtn').addEventListener('click', function() {
   if (state.editingId) deleteTask(state.editingId);
@@ -738,7 +717,6 @@ document.getElementById('deleteTaskBtn').addEventListener('click', function() {
 });
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
 
-// Note Properties Sheet
 const cnPropsTriggerBtn = document.getElementById('cnPropsTriggerBtn');
 if (cnPropsTriggerBtn) {
   cnPropsTriggerBtn.addEventListener('click', function() { openSheet('notePropsSheet'); });
@@ -748,18 +726,15 @@ if (closeNotePropsBtn) {
   closeNotePropsBtn.addEventListener('click', closeSheets);
 }
 
-// Pin today chip
 document.getElementById('pinTodayChip').addEventListener('click', function() {
   this.classList.toggle('active');
 });
 
-// Mono toggle in task sheet
 document.getElementById('monoToggle').addEventListener('click', function() {
   const isMono = this.classList.toggle('mono-active');
   document.getElementById('taskNoteInput').style.fontFamily = isMono ? 'ui-monospace, monospace' : 'inherit';
 });
 
-// Sheet chips
 document.getElementById('catRow').addEventListener('click', function(e) {
   const c = e.target.closest('.s-chip'); if (!c) return;
   c.classList.toggle('active');
@@ -775,7 +750,6 @@ document.getElementById('priRow').addEventListener('click', function(e) {
   c.classList.add('active');
 });
 
-// Filter chips
 document.getElementById('filterRow').addEventListener('click', function(e) {
   const chip = e.target.closest('.chip'); if (!chip) return;
   document.querySelectorAll('#filterRow .chip').forEach(c => c.classList.remove('active'));
@@ -784,7 +758,6 @@ document.getElementById('filterRow').addEventListener('click', function(e) {
   render();
 });
 
-// Search
 document.getElementById('searchBtn').addEventListener('click', function() {
   const wrap = document.getElementById('searchWrap');
   const isOpen = wrap.classList.toggle('open');
@@ -793,13 +766,11 @@ document.getElementById('searchBtn').addEventListener('click', function() {
 });
 document.getElementById('searchInput').addEventListener('input', render);
 
-// Settings
 document.getElementById('settingsBtn').addEventListener('click', function() {
   loadSettingsUI(); openSheet('settingsSheet');
 });
 document.getElementById('closeSettingsSheet').addEventListener('click', closeSheets);
 
-// Dock Settings (Desktop Left-Nav)
 const dockSettingsBtn = document.getElementById('dockSettingsBtn');
 if (dockSettingsBtn) {
   dockSettingsBtn.addEventListener('click', function() {
@@ -808,9 +779,9 @@ if (dockSettingsBtn) {
 }
 
 document.getElementById('saveSettingsBtn').addEventListener('click', function() {
- const g = document.getElementById('ghGistId').value.trim();
-const t = document.getElementById('ghToken').value.trim();
-state.settings = Object.assign({}, state.settings, { ghGistId: g, ghToken: t });
+  const g = document.getElementById('ghGistId').value.trim();
+  const t = document.getElementById('ghToken').value.trim();
+  state.settings = Object.assign({}, state.settings, { ghGistId: g, ghToken: t });
   saveSettings();
   this.textContent = 'Testing…';
   saveCategoriesFromUI();
@@ -831,6 +802,13 @@ document.getElementById('addCatBtn').addEventListener('click', function() {
     '<div class="bel-del">×</div>';
   row.querySelector('.bel-del').addEventListener('click', function() { row.remove(); });
   container.appendChild(row);
+});
+
+// FIX: saveCatsBtn was wired to nothing — now saves categories and closes sheet
+document.getElementById('saveCatsBtn').addEventListener('click', function() {
+  saveCategoriesFromUI();
+  showToast('Categories saved');
+  closeSheets();
 });
 
 document.getElementById('saveHabitsBtn').addEventListener('click', function() {
@@ -862,7 +840,6 @@ document.getElementById('addHabitBtn').addEventListener('click', function() {
   container.appendChild(row);
 });
 
-// PIN
 document.getElementById('setPinBtn').addEventListener('click', function() {
   const val = document.getElementById('pinInput').value.trim();
   if (!val) return;
@@ -877,7 +854,6 @@ document.getElementById('clearPinBtn').addEventListener('click', function() {
   showToast('PIN cleared');
 });
 
-// Desktop keyboard shortcut
 document.addEventListener('keydown', function(e) {
   const view = currentViewName();
   const tag = (document.activeElement || {}).tagName || '';
@@ -889,7 +865,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Focus Mode Toggle
 const focusToggleBtn = document.getElementById('cnFocusToggle');
 if (focusToggleBtn) {
   focusToggleBtn.addEventListener('click', function() {
@@ -942,18 +917,6 @@ loadSettingsUI();
 
 render();
 
-// Desktop-specific init
-if (isDesktop()) {
-  // Add "New Task" button to header
-  const headerActions = document.getElementById('tasksListHeaderActions');
-  if (headerActions && !document.getElementById('desktopNewTaskBtn')) {
-    const btn = document.createElement('button');
-    btn.id = 'desktopNewTaskBtn';
-    btn.style.cssText = 'display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:inherit;';
-    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Task';
-    btn.addEventListener('click', openAddSheet);
-    headerActions.prepend(btn);
-  }
-}
+// FIX: Removed desktop "New Task" button injection — quick add pill already does this.
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
