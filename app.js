@@ -928,6 +928,8 @@ register('reflect', { onEnter: onReflectEnter, onExit: onReflectExit });
 register('notes',   { onEnter: renderCNList });
 register('bel',     { onEnter: renderBel });
 
+switchView('tasks');
+
 // ══════════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════════
