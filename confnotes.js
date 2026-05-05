@@ -260,7 +260,7 @@ function hideDesktopEmptyState() {
   const emptyEl  = document.getElementById('cnDetailEmpty');
   const editorEl = document.getElementById('cnEditorInner');
   if (emptyEl)  emptyEl.style.display  = 'none';
-  if (editorEl) editorEl.style.display = '';
+  if (editorEl) editorEl.style.display = 'flex';
   if (detailEl) detailEl.classList.remove('cn-no-note');
 }
 
