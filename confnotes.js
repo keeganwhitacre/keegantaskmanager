@@ -97,7 +97,7 @@ function renderCNList() {
       if (!(n.tags || []).includes(cnFilter)) return false;
     }
     if (searchQ) {
-      const hay = ((n.title||'') + ' ' + (n.speaker||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
+      const hay = ((n.title||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
       if (!hay.includes(searchQ)) return false;
     }
     return true;
@@ -150,7 +150,6 @@ function renderCNList() {
         '<span class="cn-card-time">' + esc(ageText) + '</span>' +
       '</div>' +
       '<div class="cn-card-title">' + esc(n.title || 'Untitled') + '</div>' +
-      (n.speaker ? '<div class="cn-card-speaker">' + esc(n.speaker) + '</div>' : '') +
       (n.body ? '<div class="cn-card-preview">' + esc((n.body || '').slice(0, 120)) + '</div>' : '') +
       '<div class="cn-card-meta">' + statusHtml + staleHtml + '</div>';
 
@@ -232,6 +231,21 @@ function toggleMdPreview(mode) {
   }
 }
 
+// ── UPDATE META SUMMARY LABEL ──
+function updatePropsSummary() {
+  const btn = document.getElementById('cnPropsTriggerLabel');
+  if (!btn) return;
+  const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
+  const typeLabel = activeType ? activeType.textContent : 'Note';
+  const tagsCount = document.querySelectorAll('#cnTagRow .cn-tag-chip.active').length;
+  
+  let text = typeLabel;
+  if (tagsCount > 0) {
+    text += ' · ' + tagsCount + (tagsCount === 1 ? ' tag' : ' tags');
+  }
+  btn.textContent = text;
+}
+
 // ── OPEN NOTE DETAIL ──
 function openCNDetail(id) {
   const cnNotes = getCnNotes();
@@ -251,7 +265,7 @@ function _doOpenDetail(n) {
   _cnOpenSnapshot = { title: n.title || '', body: n.body || '' };
   cnMdPreview = false;
 
-  // Populate type row
+  // Populate type row (now hidden in the sheet)
   const typeRow = document.getElementById('cnTypeRow');
   if (typeRow) {
     typeRow.innerHTML = '';
@@ -264,6 +278,7 @@ function _doOpenDetail(n) {
         document.querySelectorAll('#cnTypeRow .cn-type-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         updateMetaVisibility();
+        updatePropsSummary();
         queueCNSave();
       });
       typeRow.appendChild(chip);
@@ -296,7 +311,11 @@ function _doOpenDetail(n) {
       chip.className = 'cn-tag-chip s-chip' + ((n.tags || []).includes(t) ? ' active' : '');
       chip.dataset.val = t;
       chip.textContent = CAT_LABEL[t] || t;
-      chip.addEventListener('click', function() { chip.classList.toggle('active'); queueCNSave(); });
+      chip.addEventListener('click', function() { 
+        chip.classList.toggle('active'); 
+        updatePropsSummary();
+        queueCNSave(); 
+      });
       tagRow.appendChild(chip);
     });
   }
@@ -309,6 +328,7 @@ function _doOpenDetail(n) {
   }
 
   updateMetaVisibility();
+  updatePropsSummary(); // Sets the main button text
 
   // Title bar label
   const titleLabel = document.getElementById('cnDetailTitle');
@@ -316,7 +336,6 @@ function _doOpenDetail(n) {
 
   // Inputs
   document.getElementById('cnTitleInput').value = n.title || '';
-  document.getElementById('cnSpeakerInput').value = n.speaker || '';
 
   const bodyEl = document.getElementById('cnBodyInput');
   bodyEl.value = n.body || '';
@@ -442,7 +461,6 @@ function saveCNDetailNow() {
   }
 
   n.title   = newTitle;
-  n.speaker = document.getElementById('cnSpeakerInput').value.trim();
   n.body    = document.getElementById('cnBodyInput').value;
   n.bodyIsMono = document.getElementById('cnBodyInput').classList.contains('mono');
 
@@ -477,8 +495,7 @@ function createNewNote(type) {
   type = type || 'memo';
   const cnNotes = getCnNotes();
   const n = {
-    id: uid(), title: '', speaker: '',
-    body: type === 'paper' ? PAPER_TEMPLATE : '',
+    id: uid(), title: '', body: type === 'paper' ? PAPER_TEMPLATE : '',
     tags: [], bodyIsMono: false, pinned: false, locked: false,
     type, url: '',
     ideaStatus: type === 'idea' ? 'raw' : '',
@@ -622,7 +639,7 @@ document.addEventListener('click', function(e) {
   } else if (confirm('"' + targetTitle + '" doesn\'t exist. Create it?')) {
     saveCNDetailNow();
     const newNote = {
-      id: uid(), title: targetTitle, speaker: '', body: '',
+      id: uid(), title: targetTitle, body: '',
       tags: [], bodyIsMono: false, pinned: false, locked: false,
       type: 'memo', url: '', ideaStatus: '',
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
@@ -706,8 +723,6 @@ if (cnBodyInputEl) {
 }
 const cnTitleInputEl = document.getElementById('cnTitleInput');
 if (cnTitleInputEl) cnTitleInputEl.addEventListener('input', queueCNSave);
-const cnSpeakerInputEl = document.getElementById('cnSpeakerInput');
-if (cnSpeakerInputEl) cnSpeakerInputEl.addEventListener('input', queueCNSave);
 const cnUrlInputEl = document.getElementById('cnUrlInput');
 if (cnUrlInputEl) cnUrlInputEl.addEventListener('input', queueCNSave);
 
