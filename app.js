@@ -21,6 +21,28 @@ import { initDashboard, renderReflect, onReflectEnter, onReflectExit } from './d
 import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } from './confnotes.js';
 
 // ══════════════════════════════════════════════════════════════════
+// IOS SAFARI VIEWPORT HEIGHT FIX
+// Prevents permanent white space by perfectly tracking window bounds
+// ══════════════════════════════════════════════════════════════════
+function setViewportHeight() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+window.addEventListener('resize', setViewportHeight);
+setViewportHeight();
+
+// Additional fallback for keyboard dismissal bugs
+document.addEventListener('focusout', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    setTimeout(() => {
+      window.scrollTo(0, 0); 
+      document.body.scrollTop = 0; 
+      setViewportHeight();
+    }, 50);
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
 // TIME / DATE HELPERS
 // ══════════════════════════════════════════════════════════════════
 
@@ -332,7 +354,6 @@ function render() {
   const list = document.getElementById('taskList');
   if (!list) return;
   if (currentViewName() !== 'tasks') return;
-  updateSidebarCounts();
 
   const q = (document.getElementById('searchInput') || {}).value || '';
   const f = state.filter || 'all';
@@ -426,18 +447,6 @@ document.querySelectorAll('.sheet').forEach(sheet => {
 });
 
 // ══════════════════════════════════════════════════════════════════
-// IOS SAFARI KEYBOARD FIX
-// ══════════════════════════════════════════════════════════════════
-// When keyboard dismisses on iOS, 100vh height gets misaligned.
-// This generic focusout listener snaps the window back into place.
-document.addEventListener('focusout', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; }, 50);
-  }
-});
-
-
-// ══════════════════════════════════════════════════════════════════
 // ADD / EDIT TASK
 // ══════════════════════════════════════════════════════════════════
 
@@ -527,19 +536,17 @@ function submitQuickAdd() {
   saveLocal(); ghPush(); render(); showToast('Task added');
 }
 
-function toggleQuickAdd() {
-  const wrap = document.getElementById('quickAddWrap');
-  const inp = document.getElementById('quickAddInput');
-  const isOpen = wrap.style.display !== 'none' && wrap.style.display !== '';
-  if (isOpen) { wrap.style.display = 'none'; inp.value = ''; }
-  else { wrap.style.display = 'block'; inp.focus(); }
+// Quick Add Events
+const quickAddInput = document.getElementById('quickAddInput');
+if (quickAddInput) {
+  quickAddInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') submitQuickAdd();
+  });
 }
 
-// ── SIDEBAR TASK COUNT ──
-function updateSidebarCounts() {
-  // Badge intentionally removed per user preference
-  const badge = document.querySelector('#tabTasks .tab-count');
-  if (badge) badge.remove();
+const quickAddFullBtn = document.getElementById('quickAddFullBtn');
+if (quickAddFullBtn) {
+  quickAddFullBtn.addEventListener('click', openAddSheet);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -547,42 +554,6 @@ function updateSidebarCounts() {
 // ══════════════════════════════════════════════════════════════════
 
 function isDesktop() { return window.matchMedia('(min-width: 768px)').matches; }
-
-// ── NOTES PANEL (desktop) ──
-function initDesktopNotesPanel() {
-  const listView = document.getElementById('cnListView');
-  const detailView = document.getElementById('cnDetailView');
-  if (!listView || !detailView) return;
-
-  // On desktop: show editor panel with empty state
-  detailView.style.display = 'flex';
-  detailView.classList.add('cn-no-note');
-
-  // Inject "New Note" compose icon button in the header instead of a massive button
-  const notesHeaderTop = document.querySelector('#confNotesView .header-top');
-  if (notesHeaderTop && !document.getElementById('cnDesktopNew')) {
-    let actionsWrap = notesHeaderTop.querySelector('.header-actions');
-    if (!actionsWrap) {
-      actionsWrap = document.createElement('div');
-      actionsWrap.className = 'header-actions';
-      actionsWrap.style.cssText = 'display:flex;gap:8px;';
-      const searchBtn = document.getElementById('cnSearchBtn');
-      if (searchBtn) {
-        notesHeaderTop.insertBefore(actionsWrap, searchBtn);
-        actionsWrap.appendChild(searchBtn);
-      } else {
-        notesHeaderTop.appendChild(actionsWrap);
-      }
-    }
-
-    const btn = document.createElement('button');
-    btn.className = 'icon-btn';
-    btn.id = 'cnDesktopNew';
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-    btn.addEventListener('click', () => createNewNote('memo'));
-    actionsWrap.appendChild(btn);
-  }
-}
 
 function updateGhUI(connected) {
   const dot = document.getElementById('ghStatusDot');
@@ -754,55 +725,13 @@ document.getElementById('secretBelTrigger').addEventListener('click', function()
 const closeBelBtn = document.getElementById('closeBelBtn');
 if (closeBelBtn) closeBelBtn.addEventListener('click', function() { switchView('tasks'); });
 
-// FAB
-const fabEl = document.getElementById('fab');
-if (fabEl) {
-  let longPressTimer, longPressTriggered = false;
-
-  fabEl.addEventListener('touchstart', function() {
-    longPressTriggered = false;
-    longPressTimer = setTimeout(function() {
-      longPressTriggered = true;
-      if (currentViewName() === 'tasks') openAddSheet();
-      else if (currentViewName() === 'notes') {
-        const menu = document.getElementById('cnNewMenu');
-        if (menu) menu.style.display = 'block';
-      }
-    }, 500);
-  }, { passive: true });
-  fabEl.addEventListener('touchend', function() { clearTimeout(longPressTimer); }, { passive: true });
-  fabEl.addEventListener('touchcancel', function() { clearTimeout(longPressTimer); }, { passive: true });
-
-  fabEl.addEventListener('click', function() {
-    if (longPressTriggered) { longPressTriggered = false; return; }
-    const view = currentViewName();
-    if (view === 'tasks') toggleQuickAdd();
-    else if (view === 'notes') createNewNote('memo');
+// NEW NOTE BUTTON (Mobile + Desktop)
+const cnNewBtn = document.getElementById('cnNewBtn');
+if (cnNewBtn) {
+  cnNewBtn.addEventListener('click', function() {
+    createNewNote('memo');
   });
 }
-
-// Quick add new note type menu
-const cnNewMenuEl = document.getElementById('cnNewMenu');
-if (cnNewMenuEl) {
-  cnNewMenuEl.addEventListener('click', function(e) {
-    const item = e.target.closest('.cn-new-menu-item');
-    if (!item) return;
-    cnNewMenuEl.style.display = 'none';
-    createNewNote(item.dataset.newtype || 'memo');
-  });
-  document.addEventListener('click', function(e) {
-    if (cnNewMenuEl.style.display === 'block' && !cnNewMenuEl.contains(e.target) && e.target !== fabEl) {
-      cnNewMenuEl.style.display = 'none';
-    }
-  });
-}
-
-// Quick add submit
-document.getElementById('quickAddSubmit').addEventListener('click', submitQuickAdd);
-document.getElementById('quickAddInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') submitQuickAdd();
-  if (e.key === 'Escape') toggleQuickAdd();
-});
 
 // Overlay
 document.getElementById('overlay').addEventListener('click', closeSheets);
@@ -955,21 +884,13 @@ document.getElementById('clearPinBtn').addEventListener('click', function() {
   showToast('PIN cleared');
 });
 
-// Global Keyboard Shortcuts (Including Desktop Navigation)
+// Desktop keyboard shortcut
 document.addEventListener('keydown', function(e) {
+  const view = currentViewName();
   const tag = (document.activeElement || {}).tagName || '';
   const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable);
   if (inInput) return;
-
-  // Global App Navigation (Cmd/Ctrl + 1, 2, 3)
-  if (e.metaKey || e.ctrlKey) {
-    if (e.key === '1') { e.preventDefault(); switchView('reflect'); }
-    if (e.key === '2') { e.preventDefault(); switchView('tasks'); }
-    if (e.key === '3') { e.preventDefault(); switchView('notes'); }
-  }
-
-  // View Specific Shortcuts
-  const view = currentViewName();
+  
   if (view === 'tasks') {
     if (e.key === 'n' || e.key === 'N') { e.preventDefault(); openAddSheet(); }
   }
@@ -1038,7 +959,6 @@ if (isDesktop()) {
     btn.addEventListener('click', openAddSheet);
     headerActions.prepend(btn);
   }
-  initDesktopNotesPanel();
 }
 
 setTimeout(function() { if (state.settings.ghToken) ghFetch(); }, 400);
