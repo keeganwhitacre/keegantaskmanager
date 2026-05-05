@@ -140,6 +140,7 @@
 
     /* ── ROUTING LOGIC ── */
     .app-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    #confNotesView { position: relative; }
     
     #tasksView { display: flex; } 
     body.reflect-mode #tasksView { display: none !important; }
@@ -419,8 +420,9 @@
 
     /* Note Editor */
      #cnDetailView {
-       position: fixed; inset: 0; background: var(--bg-canvas); z-index: 100;
+       position: absolute; inset: 0; background: var(--bg-canvas); z-index: 10;
       display: none; flex-direction: column; overflow-y: auto;
+       -webkit-overflow-scrolling: touch;
      }
     /* cn-no-note: managed by JS via showDesktopEmptyState() */
     
@@ -598,8 +600,6 @@
       .sheet { left: 50%; right: auto; margin-left: -240px; width: 480px; transform: translateY(100%); }
       .sheet.open { transform: translateY(0) !important; }
 
-      #tasksView .header { padding-left: 40px; padding-right: 40px; }
-
       /* Add to the @media (min-width: 768px) block: */
       .filter-scroll {
         flex-wrap: nowrap;        /* prevent wrapping on desktop */
@@ -630,7 +630,7 @@
 <div class="toast" id="toast" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-1);color:var(--bg-canvas);padding:8px 16px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;z-index:999;transition:opacity 0.2s;"></div>
 
 <div id="tasksView" class="app-view active">
-  <div class="header hide-in-reflect hide-in-notes hide-in-bel" style="max-width:none;">
+  <div class="header content-centerer hide-in-reflect hide-in-notes hide-in-bel">
     <div class="header-top">
       <div class="app-title" id="secretBelTrigger">Tasks</div>
       <div class="header-actions" id="tasksListHeaderActions" style="display:flex;gap:8px;">
