@@ -426,6 +426,18 @@ document.querySelectorAll('.sheet').forEach(sheet => {
 });
 
 // ══════════════════════════════════════════════════════════════════
+// IOS SAFARI KEYBOARD FIX
+// ══════════════════════════════════════════════════════════════════
+// When keyboard dismisses on iOS, 100vh height gets misaligned.
+// This generic focusout listener snaps the window back into place.
+document.addEventListener('focusout', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; }, 50);
+  }
+});
+
+
+// ══════════════════════════════════════════════════════════════════
 // ADD / EDIT TASK
 // ══════════════════════════════════════════════════════════════════
 
@@ -802,6 +814,16 @@ document.getElementById('deleteTaskBtn').addEventListener('click', function() {
   closeSheets();
 });
 document.getElementById('closeAddSheet').addEventListener('click', closeSheets);
+
+// Note Properties Sheet
+const cnPropsTriggerBtn = document.getElementById('cnPropsTriggerBtn');
+if (cnPropsTriggerBtn) {
+  cnPropsTriggerBtn.addEventListener('click', function() { openSheet('notePropsSheet'); });
+}
+const closeNotePropsBtn = document.getElementById('closeNotePropsBtn');
+if (closeNotePropsBtn) {
+  closeNotePropsBtn.addEventListener('click', closeSheets);
+}
 
 // Pin today chip
 document.getElementById('pinTodayChip').addEventListener('click', function() {
