@@ -415,6 +415,48 @@
     .quick-add-input { flex: 1; border: none; background: transparent; font-size: 16px; color: var(--text-1); outline: none; min-width: 0; }
     .quick-add-input::placeholder { color: var(--text-3); font-weight: 500;}
 
+    /* ── ZETTELKASTEN AUTOCOMPLETE ── */
+    .cn-ac-dropdown {
+      display: none; /* Hidden by default */
+      position: absolute;
+      z-index: 200;
+      width: 280px;
+      max-height: 220px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(28px) saturate(210%); 
+      -webkit-backdrop-filter: blur(28px) saturate(210%);
+      border: 0.5px solid var(--border-md);
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      padding: 6px;
+      flex-direction: column;
+      gap: 2px;
+    }
+    [data-theme="dark"] .cn-ac-dropdown {
+      background: rgba(28, 28, 30, 0.75);
+    }
+    .cn-ac-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: background 0.1s;
+    }
+    .cn-ac-item.selected, .cn-ac-item:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .cn-ac-icon { font-size: 14px; opacity: 0.8; }
+
     /* ── REFLECT (Dashboard) STYLES ── */
 .reflect-card { background: var(--bg-surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 0.5px solid var(--border); }
     .reflect-card-label { font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;}
@@ -1032,6 +1074,8 @@
         </div>
         <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write something…"></textarea>
         <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
+
+        <div id="cnAutocompleteMenu" class="cn-ac-dropdown"></div>
         
         <div class="cn-detail-meta" id="cnDetailMeta" style="margin-top:24px; font-size:12px; color:var(--text-4); font-weight:500;"></div>
         <div id="cnBacklinksDrawer" style="margin-top:24px;"></div>
