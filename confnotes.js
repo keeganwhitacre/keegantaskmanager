@@ -175,6 +175,7 @@ function toggleMdPreview(mode) {
   const bodyEl    = document.getElementById('cnBodyInput');
   const previewEl = document.getElementById('cnMdPreview');
   const toggleBtn = document.getElementById('cnMdToggle');
+  const metaEl    = document.getElementById('cnDetailMeta');
   if (!bodyEl || !previewEl || !toggleBtn) return;
 
   if (mode === undefined) mode = cnMdPreview ? 'off' : 'on';
@@ -215,6 +216,7 @@ function toggleMdPreview(mode) {
 
     bodyEl.style.display = 'none';
     previewEl.style.display = 'block';
+    if (metaEl) metaEl.style.display = 'block';
     toggleBtn.textContent = 'edit';
     toggleBtn.classList.add('md-active');
   } else {
@@ -222,6 +224,7 @@ function toggleMdPreview(mode) {
     previewEl.style.display = 'none';
     previewEl.innerHTML = '';
     bodyEl.style.display = '';
+    if (metaEl) metaEl.style.display = 'none';
     toggleBtn.textContent = 'preview';
     toggleBtn.classList.remove('md-active');
     if (mode !== 'off_no_focus') bodyEl.focus();
