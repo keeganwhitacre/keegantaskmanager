@@ -167,15 +167,22 @@ function autoResizeBody() {
   const bodyEl = document.getElementById('cnBodyInput');
   if (!bodyEl) return;
   
-  // 1. Grab the scrolling container and save its exact position
-  const scrollContainer = document.getElementById('cnDetailView');
+  // 1. Detect which container is scrolling based on screen width
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+  const scrollContainer = isDesktop 
+    ? document.querySelector('.cn-editor-body') 
+    : document.getElementById('cnDetailView');
+
+  if (!scrollContainer) return;
+
+  // 2. Save exact position
   const currentScroll = scrollContainer.scrollTop;
 
-  // 2. Do the resize recalculation
+  // 3. Do the resize
   bodyEl.style.height = 'auto';
   bodyEl.style.height = bodyEl.scrollHeight + 'px';
 
-  // 3. Instantly restore the scroll position before Safari can jump
+  // 4. Restore scroll for the correct container
   scrollContainer.scrollTop = currentScroll;
 }
 
