@@ -4,6 +4,7 @@
 // ══════════════════════════════════════════════════════════════════
 
 import { state, esc, saveDash, getDState, getHabits, showToast, on } from './state.js';
+import { journalPrompts } from './prompts.js'; // <-- Add this line
 
 let _isActuallyDueToday = () => false;
 let _dueClass = () => '';
@@ -28,6 +29,29 @@ function getISOWeek(d) {
 
 function getDayOfWeek() {
   var d = new Date().getDay(); return d === 0 ? 6 : d - 1;
+}
+
+function renderPrompt() {
+  const promptEl = document.getElementById('dDailyPromptText');
+  if (!promptEl || !journalPrompts || journalPrompts.length === 0) return;
+
+  // 1. Get today's date as a string (e.g. "2026-05-06")
+  const now = new Date();
+  const dateString = now.getFullYear() + "-" + now.getMonth() + "-" + now.getDate();
+
+  // 2. Hash the date string so it generates a completely random-looking number
+  let hash = 0;
+  for (let i = 0; i < dateString.length; i++) {
+    hash = (hash << 5) - hash + dateString.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  // 3. Use that random hash to pick an index! 
+  // Because the hash is based on the date, it stays the same all day, 
+  // but it will jump around the array randomly each new day!
+  const promptIndex = Math.abs(hash) % journalPrompts.length;
+
+  promptEl.textContent = journalPrompts[promptIndex];
 }
 
 // ── AFFECT GRID ──
@@ -556,6 +580,7 @@ function renderHabitRates(daily, dates) {
 // ── RENDER ALL ──
 
 function renderReflect() {
+  renderPrompt();
   renderAffect();
   renderHabits();
   renderInsights();

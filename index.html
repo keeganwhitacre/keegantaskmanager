@@ -810,9 +810,7 @@
 
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
-      body { padding-left: 120px; zoom: 1:1; } /* Room for left dock */
-      
-
+      body { padding-left: 120px; zoom: 1.1; } /* Room for left dock */
       .header {
         padding: calc(var(--safe-top) + 20px) 0px 8px;
         background: var(--bg-canvas); z-index: 10;
@@ -951,6 +949,11 @@
   </div>
   <div class="scroll-container"><div class="content-centerer">
     
+    <div class="reflect-card" style="margin-bottom: 16px;">
+      <div class="reflect-card-label">Daily Prompt</div>
+      <div id="dDailyPromptText" style="font-size: 18px; font-weight: 500; color: var(--text-1); font-style: italic; line-height: 1.4;">
+        </div>
+    </div>
     <div class="reflect-desktop-grid">
       <div class="reflect-card">
         <div class="reflect-card-label">
