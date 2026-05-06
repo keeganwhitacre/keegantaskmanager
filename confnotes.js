@@ -164,8 +164,13 @@ function renderCNList() {
 
 // ── AUTO-RESIZE BODY ──
 function autoResizeBody() {
-  // No-op: textarea uses min-height:60vh, #cnDetailView scrolls naturally.
-  // Growing the textarea via JS would fight the parent scroll model.
+  const bodyEl = document.getElementById('cnBodyInput');
+  if (!bodyEl) return;
+  
+  // Briefly reset the height to 'auto' so we can get the true scrollHeight
+  bodyEl.style.height = 'auto';
+  // Force the textarea to grow to the exact height of its text content
+  bodyEl.style.height = bodyEl.scrollHeight + 'px';
 }
 
 // ── MARKDOWN PREVIEW ──
