@@ -933,5 +933,178 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+// ── [[ AUTOCOMPLETE STATE & LOGIC ──
+let acActive = false;
+let acStartIndex = -1;
+let acSelectedIndex = 0;
+let acMatches = [];
+
+const acMenu = document.getElementById('cnAutocompleteMenu');
+const acBodyInputEl = document.getElementById('cnBodyInput');
+
+// 1. Listen for typing in the editor
+if (cnBodyInputEl) {
+  cnBodyInputEl.addEventListener('input', handleAutocompleteInput);
+  cnBodyInputEl.addEventListener('keydown', handleAutocompleteKeydown);
+}
+
+function handleAutocompleteInput(e) {
+  const t = e.target;
+  const val = t.value;
+  const cursor = t.selectionStart;
+  
+  // Look backward from the cursor to find "[["
+  const textBeforeCursor = val.slice(0, cursor);
+  const match = textBeforeCursor.match(/\[\[([^\]\n]*)$/);
+
+  if (match) {
+    // We are actively typing inside a [[ link
+    acActive = true;
+    acStartIndex = cursor - match[1].length;
+    const query = match[1].toLowerCase();
+    
+    // Filter existing notes by query
+    const allNotes = getCnNotes();
+    acMatches = allNotes.filter(n => 
+      n.id !== cnActiveId && // Don't link to the note we are currently editing
+      (n.title || 'Untitled').toLowerCase().includes(query)
+    );
+
+    if (acMatches.length > 0) {
+      renderAutocompleteMenu(t);
+    } else {
+      closeAutocomplete();
+    }
+  } else {
+    closeAutocomplete();
+  }
+}
+
+// 2. Render the floating menu
+function renderAutocompleteMenu(textarea) {
+  if (!acMenu) return;
+  acMenu.innerHTML = '';
+  acMenu.style.display = 'flex';
+
+  // Ensure selected index is within bounds
+  if (acSelectedIndex >= acMatches.length) acSelectedIndex = 0;
+
+  acMatches.forEach((n, idx) => {
+    const item = document.createElement('div');
+    item.className = 'cn-ac-item' + (idx === acSelectedIndex ? ' selected' : '');
+    const icon = NOTE_TYPES[noteTypeOf(n)] ? NOTE_TYPES[noteTypeOf(n)].icon : '✎';
+    
+    item.innerHTML = `<span class="cn-ac-icon">${icon}</span> ${esc(n.title || 'Untitled')}`;
+    
+    // Handle mouse click and mobile touch
+    const commitFn = (e) => {
+      e.preventDefault(); // Prevents keyboard from dropping on mobile!
+      commitAutocomplete(n.title);
+    };
+    item.addEventListener('mousedown', commitFn);
+    item.addEventListener('touchstart', commitFn, { passive: false });
+    
+    acMenu.appendChild(item);
+  });
+
+  // Get relative caret coordinates inside the textarea
+  const { top, left } = getCaretCoordinates(textarea, textarea.selectionEnd);
+  
+  // Get the textarea's actual position on the screen
+  const rect = textarea.getBoundingClientRect();
+  
+  // Fix the menu to the viewport exactly where the cursor is
+  acMenu.style.position = 'fixed';
+  acMenu.style.top = (rect.top + top + 24) + 'px'; 
+  acMenu.style.left = Math.min(rect.left + left, window.innerWidth - 290) + 'px'; // Prevents it from clipping off the right edge
+}
+
+// 3. Handle Keyboard Navigation (Up, Down, Enter, Escape)
+function handleAutocompleteKeydown(e) {
+  if (!acActive) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acSelectedIndex = Math.min(acSelectedIndex + 1, acMatches.length - 1);
+    renderAutocompleteMenu(e.target);
+  } 
+  else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acSelectedIndex = Math.max(acSelectedIndex - 1, 0);
+    renderAutocompleteMenu(e.target);
+  } 
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (acMatches[acSelectedIndex]) {
+      commitAutocomplete(acMatches[acSelectedIndex].title);
+    }
+  } 
+  else if (e.key === 'Escape') {
+    closeAutocomplete();
+  }
+}
+
+// 4. Insert the selected link
+function commitAutocomplete(title) {
+  const t = document.getElementById('cnBodyInput');
+  const val = t.value;
+  const cursor = t.selectionStart;
+
+  const beforeStr = val.slice(0, acStartIndex);
+  const afterStr = val.slice(cursor);
+  
+  // Insert the title and close the brackets
+  const insertStr = title + ']]';
+  
+  t.value = beforeStr + insertStr + afterStr;
+  
+  // Set cursor right after the closing brackets
+  const newCursor = acStartIndex + insertStr.length;
+  t.setSelectionRange(newCursor, newCursor);
+  t.focus();
+  
+  closeAutocomplete();
+  queueCNSave();
+}
+
+function closeAutocomplete() {
+  acActive = false;
+  acSelectedIndex = 0;
+  if (acMenu) acMenu.style.display = 'none';
+}
+
+// ── LIGHTWEIGHT CARET COORDINATE TRACKER ──
+// This creates a hidden clone of the textarea to measure exact pixel location
+function getCaretCoordinates(element, position) {
+  const div = document.createElement('div');
+  const style = div.style;
+  const computed = window.getComputedStyle(element);
+
+  style.whiteSpace = 'pre-wrap';
+  style.wordWrap = 'break-word';
+  style.position = 'absolute';
+  style.visibility = 'hidden';
+
+  // Copy necessary text styles
+  const properties = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'padding', 'border', 'boxSizing', 'width'];
+  properties.forEach(prop => style[prop] = computed[prop]);
+
+  div.textContent = element.value.substring(0, position);
+  
+  const span = document.createElement('span');
+  span.textContent = element.value.substring(position) || '.';
+  div.appendChild(span);
+  
+  document.body.appendChild(div);
+  
+  const coordinates = {
+    top: span.offsetTop - element.scrollTop,
+    left: span.offsetLeft - element.scrollLeft
+  };
+  
+  document.body.removeChild(div);
+  return coordinates;
+}
+
 // ── EXPORTS ──
 export { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf };
