@@ -661,23 +661,24 @@
   </style>
 
   <style id="design-v2-overrides">
-  /* 1. Remove content card shadows */
-  .item-card, .active-hero, .icon-btn { box-shadow: none !important; }
+  /* 1. Remove content shadows */
+  .section > div:not(.sec-header), .reflect-card, .cn-note-card, .sheet, .icon-btn { box-shadow: none !important; }
 
-  /* 2. Hub button shadows */
-  .hub-btn { box-shadow: none !important; }
-  .hub-btn.active { box-shadow: 0 8px 24px -6px rgba(0,0,0,0.25) !important; }
+  /* 2. Hub active shadow only */
+  body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
+    box-shadow: 0 8px 24px -6px rgba(0,0,0,0.25) !important;
+  }
 
-  /* 3. Non-hub tabs get equal active bubble */
-  .nav-item.status-tab.active {
+  /* 3. Reflect + Notes tabs get active bubble */
+  .nav-item.tab-btn.active {
     background: var(--text-1) !important;
     color: var(--bg-canvas) !important;
     border-radius: 20px !important;
     transform: scale(1.06) !important;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
   }
-  .nav-item.status-tab.active .nav-icon { stroke: var(--bg-canvas); }
-  .nav-item.status-tab.active .nav-label { color: var(--bg-canvas); }
+  .nav-item.tab-btn.active .nav-icon { stroke: var(--bg-canvas); fill: none; }
+  .nav-item.tab-btn.active .nav-label { color: var(--bg-canvas); }
 
   /* 4. Liquid Glass nav */
   .glass-panel {
@@ -694,14 +695,14 @@
   }
 
   /* 5. Liquid Glass quick-add pill */
-  .quick-add-wrap {
+  #quickAddWrap {
     background: rgba(255,255,255,0.42) !important;
     backdrop-filter: blur(28px) saturate(210%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(210%) !important;
     box-shadow: 0 22px 48px -12px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.06) !important;
     border: 1px solid rgba(255,255,255,0.65) !important;
   }
-  [data-theme="dark"] .quick-add-wrap {
+  [data-theme="dark"] #quickAddWrap {
     background: rgba(24,24,26,0.42) !important;
     box-shadow: 0 22px 48px -12px rgba(0,0,0,0.62), 0 4px 16px rgba(0,0,0,0.22) !important;
     border: 1px solid rgba(255,255,255,0.09) !important;
@@ -709,7 +710,10 @@
 
   /* 6. Desktop */
   @media (min-width: 768px) {
-    .nav-item.status-tab.active { transform: scale(1.0) !important; width: 100% !important; }
+    .nav-item.tab-btn.active { transform: scale(1.0) !important; width: 100% !important; }
+    body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .hub-btn {
+      box-shadow: 0 8px 24px -6px rgba(0,0,0,0.25) !important;
+    }
   }
 </style>
 </head>
