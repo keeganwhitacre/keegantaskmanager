@@ -167,10 +167,16 @@ function autoResizeBody() {
   const bodyEl = document.getElementById('cnBodyInput');
   if (!bodyEl) return;
   
-  // Briefly reset the height to 'auto' so we can get the true scrollHeight
+  // 1. Grab the scrolling container and save its exact position
+  const scrollContainer = document.getElementById('cnDetailView');
+  const currentScroll = scrollContainer.scrollTop;
+
+  // 2. Do the resize recalculation
   bodyEl.style.height = 'auto';
-  // Force the textarea to grow to the exact height of its text content
   bodyEl.style.height = bodyEl.scrollHeight + 'px';
+
+  // 3. Instantly restore the scroll position before Safari can jump
+  scrollContainer.scrollTop = currentScroll;
 }
 
 // ── MARKDOWN PREVIEW ──
