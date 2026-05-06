@@ -599,6 +599,67 @@
     }
 
     body.cn-note-open .glass-nav-wrap,
+
+    /* ══════════════════════════════════════════════════════════════════
+   MISSING CSS COMPONENT STYLES
+══════════════════════════════════════════════════════════════════ */
+
+/* ── BEL TAB ── */
+.bel-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+.bel-item:last-child { border-bottom: none; }
+.bel-cb { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border-md); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.bel-cb.checked { background: var(--text-3); border-color: transparent; }
+.bel-cb.checked::after { content: ''; width: 6px; height: 10px; border: solid var(--bg-canvas); border-width: 0 2px 2px 0; transform: rotate(45deg) translateY(-1px); }
+.bel-text { flex: 1; font-size: 16px; color: var(--text-1); cursor: text; outline: none; }
+.bel-text.checked { color: var(--text-3); text-decoration: line-through; }
+.bel-del { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,59,48,0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; flex-shrink: 0; opacity: 0.4; transition: opacity 0.2s; }
+.bel-item:hover .bel-del { opacity: 1; }
+
+/* ── BACKLINKS ── */
+.cn-backlinks-toggle { display: flex; align-items: center; gap: 8px; width: 100%; background: none; border: none; padding: 12px 0; cursor: pointer; text-align: left; border-top: 1px solid var(--border); margin-top: 16px; transition: opacity 0.2s; }
+.cn-backlinks-toggle:hover { opacity: 0.7; }
+.cn-backlinks-arrow { font-size: 10px; color: var(--text-3); transition: transform 0.2s; }
+.cn-backlinks-toggle.open .cn-backlinks-arrow { transform: rotate(90deg); }
+.cn-backlinks-label-text { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; }
+.cn-backlinks-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: var(--bg-input); padding: 2px 8px; border-radius: 12px; }
+.cn-backlink-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--bg-surface); border: 0.5px solid var(--border); border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s; }
+.cn-backlink-item:hover { background: var(--bg-input); }
+.cn-backlink-icon { font-size: 18px; }
+.cn-backlink-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+.cn-backlink-preview { font-size: 13px; color: var(--text-3); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── DASHBOARD / INSIGHTS ── */
+.ins-section { margin-bottom: 32px; }
+.ins-label { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 12px; }
+.ins-sub { font-size: 12px; font-weight: 500; color: var(--text-3); }
+.ins-empty { font-size: 14px; color: var(--text-3); text-align: center; padding: 24px; border: 1px dashed var(--border); border-radius: 12px; }
+
+/* Affect Calendar */
+.ins-cal-wrap { overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.ins-cal-wrap::-webkit-scrollbar { display: none; }
+.ins-cal-day-labels { display: flex; gap: 4px; margin-bottom: 4px; padding-left: 40px; }
+.ins-cal-day-labels span { width: 14px; font-size: 10px; font-weight: 600; color: var(--text-4); text-align: center; }
+.ins-cal-grid { display: flex; flex-direction: column; gap: 4px; min-width: max-content; }
+.ins-cal-row { display: flex; gap: 4px; align-items: center; }
+.ins-cal-month { font-size: 11px; font-weight: 600; color: var(--text-3); width: 36px; text-align: right; flex-shrink: 0; }
+.ins-cal-cell { width: 14px; height: 14px; border-radius: 3px; border: 0.5px solid rgba(0,0,0,0.05); }
+.ins-cal-cell.future { border-style: dashed; border-color: var(--border); }
+
+/* Affect Scatter & Trend */
+.ins-scatter-wrap { position: relative; width: 100%; max-width: 300px; aspect-ratio: 1; border: 0.5px solid var(--border-md); border-radius: 12px; margin-top: 8px; background: var(--bg-surface); }
+.ins-scatter-axis-h { position: absolute; top: 50%; left: 0; right: 0; height: 0.5px; background: var(--border); }
+.ins-scatter-axis-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 0.5px; background: var(--border); }
+.ins-scatter-point { position: absolute; width: 8px; height: 8px; border-radius: 50%; transform: translate(-50%, -50%); opacity: 0.75; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.ins-trend-wrap { width: 100%; height: 60px; margin-top: 12px; border-bottom: 1px solid var(--border); }
+
+/* Habit Rates */
+.ins-habit-rates { display: flex; flex-direction: column; gap: 12px; }
+.ins-habit-row { display: flex; flex-direction: column; gap: 6px; }
+.ins-habit-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; }
+.ins-habit-name { color: var(--text-1); }
+.ins-habit-pct { color: var(--text-3); font-variant-numeric: tabular-nums; }
+.ins-habit-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.ins-habit-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
     body.cn-note-open #quickAddWrap { display: none !important; }
 
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
