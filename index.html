@@ -533,7 +533,16 @@
      }
     /* cn-no-note: managed by JS via showDesktopEmptyState() */
     
-    .cn-detail-topbar { padding: calc(var(--safe-top) + 16px) 20px 8px; display: flex; align-items: center; gap: 12px; }
+    .cn-detail-topbar { 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      background: var(--bg-canvas); /* Required for sticky to hide text behind it */
+      padding: calc(var(--safe-top) + 16px) 20px 8px; 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+    }
     .cn-back-btn { background: none; border: none; color: var(--accent); display: flex; align-items: center; gap: 4px; font-size: 16px; cursor: pointer;}
     .cn-back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .cn-detail-topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; text-align: center; }
@@ -551,8 +560,20 @@
     
     .cn-editor-divider { height: 1px; background: var(--border); margin: 0 0 24px 0; opacity: 0.5; }
     
-    .cn-detail-body-input { width: 100%; min-height: 60vh; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; box-sizing: border-box; }
-    
+    .cn-detail-body-input { 
+      width: 100%; 
+      min-height: 60vh; 
+      border: none; 
+      outline: none; 
+      background: transparent; 
+      font-size: 18px; 
+      line-height: 1.7; 
+      color: var(--text-1); 
+      resize: none; 
+      box-sizing: border-box; 
+      overflow-y: hidden;    /* Kills the internal iOS scrollbar */
+      padding-bottom: 50vh;  /* Crucial iOS keyboard buffer */
+    }
     /* ── MARKDOWN PREVIEW EXTENDED STYLING ── */
     .cn-md-preview blockquote {
       border-left: 3px solid var(--accent);
@@ -810,7 +831,7 @@
 
     /* ── DESKTOP RESPONSIVENESS (macOS Style Dock) ── */
     @media (min-width: 768px) {
-      body { padding-left: 120px} /* Room for left dock */
+      body { padding-left: 120px; zoom: 1.1; } /* Room for left dock */
       .header {
         padding: calc(var(--safe-top) + 20px) 0px 8px;
         background: var(--bg-canvas); z-index: 10;
