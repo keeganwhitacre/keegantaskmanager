@@ -779,6 +779,17 @@ document.getElementById('searchBtn').addEventListener('click', function() {
 });
 document.getElementById('searchInput').addEventListener('input', render);
 
+const refreshBtn = document.getElementById('refreshBtn');
+if (refreshBtn) {
+  refreshBtn.addEventListener('click', function() {
+    const btn = this;
+    btn.style.opacity = '0.5'; // Visual feedback
+    showToast('Syncing...');
+    ghFetch();
+    setTimeout(() => btn.style.opacity = '', 500);
+  });
+}
+
 document.getElementById('settingsBtn').addEventListener('click', function() {
   loadSettingsUI(); openSheet('settingsSheet');
 });
