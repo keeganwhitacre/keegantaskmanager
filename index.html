@@ -511,6 +511,54 @@
     
     .cn-detail-body-input { width: 100%; min-height: 60vh; border: none; outline: none; background: transparent; font-size: 18px; line-height: 1.7; color: var(--text-1); resize: none; box-sizing: border-box; }
     
+    /* ── MARKDOWN PREVIEW EXTENDED STYLING ── */
+    .cn-md-preview blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 16px;
+      margin: 16px 0;
+      color: var(--text-3);
+      font-style: italic;
+    }
+    .cn-md-preview hr {
+      border: none;
+      height: 1px;
+      background: var(--border-md);
+      margin: 24px 0;
+    }
+    .cn-md-preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 16px 0;
+      border: 0.5px solid var(--border);
+    }
+    .cn-md-preview pre {
+      background: var(--bg-surface);
+      padding: 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      border: 0.5px solid var(--border);
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .cn-md-preview code {
+      font-family: ui-monospace, monospace;
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 14px;
+      border: 0.5px solid var(--border);
+    }
+    .cn-md-preview pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+    }
+    .cn-md-preview input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: var(--accent);
+      transform: translateY(1px); /* Aligns nicely with text */
+    }  
+
     /* Markdown Preview Overrides */
     .cn-md-preview { font-size: 18px; line-height: 1.7; color: var(--text-1); padding-bottom: 60px;}
     .cn-md-preview h1, .cn-md-preview h2 { color: var(--text-1); font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em;}
@@ -599,6 +647,62 @@
     }
 
     body.cn-note-open .glass-nav-wrap,
+    body.cn-note-open #quickAddWrap { display: none !important; }
+
+/* ── MARKDOWN TOOLBAR ── */
+    .cn-md-toolbar {
+      display: none; /* Hidden by default (for mobile) */
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 0.5px solid var(--border);
+      user-select: none;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cn-md-toolbar::-webkit-scrollbar { display: none; }
+    
+    .cn-md-divider {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+      margin: 0 6px;
+      border-radius: 1px;
+    }
+    
+    .cn-md-toolbar button {
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3); /* Subtle by default */
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .cn-md-toolbar button:hover { 
+      background: var(--bg-input); 
+      color: var(--text-1); /* Highlights on hover */
+    }
+    .cn-md-toolbar button:active {
+      transform: scale(0.92);
+    }
+    
+    .cn-md-toolbar button svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none; stroke-width: 2; 
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Only show toolbar on desktop layout */
+    @media (min-width: 768px) {
+      .cn-md-toolbar { display: flex; }
+    }
 
     /* ══════════════════════════════════════════════════════════════════
    MISSING CSS COMPONENT STYLES
@@ -721,8 +825,8 @@
       #cnEditorInner { overflow: hidden; }
       #cnDetailView.cn-no-note { opacity: 1; pointer-events: auto; }
       
-      .cn-detail-topbar { padding: 24px 60px 0px; }
-      .cn-editor-body { padding: 0px 60px 60px; max-width: 900px; overflow-y: auto; }
+      .cn-detail-topbar { padding: 24px 100px 0px; }
+      .cn-editor-body { padding: 0px 60px 60px; max-width: 1000px; overflow-y: auto; }
       .cn-detail-title-input { font-size: 40px; margin-top: 0; margin-bottom: 16px; letter-spacing: -0.04em; }
       .cn-back-btn { display: none; } /* No back button needed on split view */
       
@@ -902,6 +1006,30 @@
         </button>
         
         <div class="cn-editor-divider"></div>
+        <div class="cn-md-toolbar" id="cnMdToolbar">
+          <button data-md="bold" title="Bold (Cmd+B)"><svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+          <button data-md="italic" title="Italic (Cmd+I)"><svg viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+          <button data-md="strike" title="Strikethrough"><svg viewBox="0 0 24 24"><path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><line x1="4" y1="12" x2="20" y2="12"/></svg></button>
+          
+          <div class="cn-md-divider"></div>
+          
+          <button data-md="h1" title="Heading 1" style="font-weight:800; font-size:13px; color:currentColor;">H1</button>
+          <button data-md="h2" title="Heading 2" style="font-weight:700; font-size:12px; color:currentColor;">H2</button>
+          
+          <div class="cn-md-divider"></div>
+          
+          <button data-md="bullet" title="Bullet List"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+          <button data-md="number" title="Numbered List"><svg viewBox="0 0 24 24"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></button>
+          <button data-md="task" title="Task List"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></button>
+          <button data-md="quote" title="Quote"><svg viewBox="0 0 24 24"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1.5.5 1.5 1.5L5 15c0 1.5.5 4-2 6zm10 0c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1.5.5 1.5 1.5L15 15c0 1.5.5 4-2 6z"/></svg></button>
+          
+          <div class="cn-md-divider"></div>
+          
+          <button data-md="code" title="Inline Code"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+          <button data-md="link" title="Link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+          <button data-md="image" title="Image"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+          <button data-md="hr" title="Divider Line"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="20" y2="12"/></svg></button>
+        </div>
         <textarea class="cn-detail-body-input" id="cnBodyInput" placeholder="Write something…"></textarea>
         <div class="cn-md-preview" id="cnMdPreview" style="display:none;"></div>
         
