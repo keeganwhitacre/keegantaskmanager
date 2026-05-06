@@ -171,18 +171,20 @@ function autoResizeBody() {
 // ── MARKDOWN PREVIEW ──
 // FIX #3: Do NOT call saveCNDetailNow from here — previewing a note
 // should never touch updatedAt. Save is only triggered by actual input events.
+// ── MARKDOWN PREVIEW ──
 function toggleMdPreview(mode) {
   const bodyEl    = document.getElementById('cnBodyInput');
   const previewEl = document.getElementById('cnMdPreview');
   const toggleBtn = document.getElementById('cnMdToggle');
   const metaEl    = document.getElementById('cnDetailMeta');
+  const mdToolbar = document.getElementById('cnMdToolbar'); // Grab the toolbar
+
   if (!bodyEl || !previewEl || !toggleBtn) return;
 
   if (mode === undefined) mode = cnMdPreview ? 'off' : 'on';
 
   if (mode !== 'off') {
     cnMdPreview = true;
-    // NOTE: removed saveCNDetailNow() call here — opening preview is read-only
 
     // 1. Process [[Internal Links]]
     const rawContent = bodyEl.value || '';
@@ -216,7 +218,11 @@ function toggleMdPreview(mode) {
 
     bodyEl.style.display = 'none';
     previewEl.style.display = 'block';
-    if (metaEl) metaEl.style.display = 'block';
+    
+    // Toggle UI visibility for preview
+    if (metaEl) metaEl.style.display = 'block'; 
+    if (mdToolbar) mdToolbar.style.display = 'none'; // Hide Toolbar
+
     toggleBtn.textContent = 'edit';
     toggleBtn.classList.add('md-active');
   } else {
@@ -224,7 +230,11 @@ function toggleMdPreview(mode) {
     previewEl.style.display = 'none';
     previewEl.innerHTML = '';
     bodyEl.style.display = '';
+    
+    // Toggle UI visibility for editing
     if (metaEl) metaEl.style.display = 'none';
+    if (mdToolbar) mdToolbar.style.display = 'flex'; // Show Toolbar
+
     toggleBtn.textContent = 'preview';
     toggleBtn.classList.remove('md-active');
     if (mode !== 'off_no_focus') bodyEl.focus();
@@ -829,6 +839,99 @@ document.addEventListener('keydown', function(e) {
     if (detailEl) detailEl.style.display = 'none';
   }
 })();
+
+// ── MARKDOWN TOOLBAR LOGIC ──
+function insertMarkdown(action) {
+  const t = document.getElementById('cnBodyInput');
+  if (!t) return;
+  
+  const start = t.selectionStart;
+  const end = t.selectionEnd;
+  const text = t.value;
+  const selected = text.slice(start, end);
+
+  let replacement = '';
+  let newCursor = start;
+
+  const wraps = {
+    'bold': ['**', '**'],
+    'italic': ['*', '*'],
+    'strike': ['~~', '~~'],
+    'code': ['`', '`'],
+    'codeblock': ['\n```\n', '\n```\n']
+  };
+
+  const prefixes = {
+    'h1': '# ',
+    'h2': '## ',
+    'h3': '### ',
+    'quote': '> ',
+    'bullet': '- ',
+    'number': '1. ',
+    'task': '- [ ] '
+  };
+
+  if (wraps[action]) {
+    const [w1, w2] = wraps[action];
+    replacement = w1 + selected + w2;
+    newCursor = selected ? start + replacement.length : start + w1.length;
+    
+  } else if (prefixes[action]) {
+    // Quality of Life: If multiple lines are highlighted, prefix ALL of them
+    if (selected.includes('\n')) {
+      const lines = selected.split('\n');
+      replacement = lines.map(l => prefixes[action] + l).join('\n');
+      newCursor = start + replacement.length;
+    } else {
+      replacement = prefixes[action] + selected;
+      newCursor = selected ? start + replacement.length : start + prefixes[action].length;
+    }
+    
+  } else if (action === 'link') {
+    replacement = `[${selected || 'link text'}](https://)`;
+    newCursor = start + replacement.length - 1; 
+  } else if (action === 'image') {
+    replacement = `![${selected || 'alt text'}](https://)`;
+    newCursor = start + replacement.length - 1;
+  } else if (action === 'hr') {
+    // Ensure horizontal rules have breathing room
+    replacement = `\n---\n`;
+    newCursor = start + replacement.length;
+  }
+
+  // Update textarea and refocus
+  t.value = text.slice(0, start) + replacement + text.slice(end);
+  t.focus();
+  t.setSelectionRange(newCursor, newCursor);
+  
+  queueCNSave();
+  autoResizeBody();
+}
+
+// Intercept mousedown to stop the textarea from losing highlighted text
+document.addEventListener('mousedown', function(e) {
+  const btn = e.target.closest('#cnMdToolbar button');
+  if (btn) {
+    e.preventDefault(); 
+  }
+});
+
+// Handle the actual click insertion
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('#cnMdToolbar button');
+  if (btn) {
+    insertMarkdown(btn.getAttribute('data-md'));
+  }
+});
+
+// Keyboard shortcuts (Cmd+B, Cmd+I)
+document.addEventListener('keydown', function(e) {
+  // Only trigger if we are actively editing a note (not in preview mode)
+  if (cnActiveId && !cnMdPreview && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'b') { e.preventDefault(); insertMarkdown('bold'); }
+    if (e.key === 'i') { e.preventDefault(); insertMarkdown('italic'); }
+  }
+});
 
 // ── EXPORTS ──
 export { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf };
