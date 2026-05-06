@@ -214,7 +214,7 @@
     .dock-bottom-actions {
       display: none;
       flex-direction: column; align-items: center; gap: 16px;
-      margin-top: 32px; padding-top: 24px;
+      margin-top: 24px; padding-top: 24px;
       border-top: 1px solid var(--border); width: 100%;
     }
     .dock-icon-btn { color: var(--text-4); cursor: pointer; transition: color 0.2s; background: none; border: none; display: flex; }
@@ -617,11 +617,26 @@
         width: 72px; height: auto; flex-direction: column; padding: 12px; border-radius: 40px;
       }
      .nav-slot { width: 100%; height: 52px; }
-      .nav-btn { position: absolute; }
-      .nav-btn:hover { background: rgba(0,0,0,0.06); }
+      .nav-btn {
+        position: relative;
+        width: 44px; height: 44px;
+        min-width: 44px;
+        align-self: center;
+        transform: none;
+        color: var(--text-3);
+      }
+      .nav-btn:hover { background: rgba(0,0,0,0.06); color: var(--text-1); }
       [data-theme="dark"] .nav-btn:hover { background: rgba(255,255,255,0.06); }
-      .nav-btn.active { transform: translateX(14px) rotate(3deg); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+      .nav-btn.active {
+        position: relative;
+        width: 48px; height: 48px;
+        min-width: 48px; min-height: 48px;
+        transform: translateX(14px) rotate(3deg);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      }
       .nav-btn.active:active { transform: translateX(14px) scale(0.9) rotate(3deg); }
+      .nav-btn svg { width: 22px; height: 22px; }
+      .nav-btn.active svg { width: 26px; height: 26px; }
       .nav-dot { display: none; }
 
       .header { background: transparent; }
