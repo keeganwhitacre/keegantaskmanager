@@ -251,7 +251,7 @@ function toggleMdPreview(mode) {
     
     // Toggle UI visibility for editing
     if (metaEl) metaEl.style.display = 'none';
-    if (mdToolbar) mdToolbar.style.display = 'flex'; // Show Toolbar
+    if (mdToolbar) mdToolbar.style.display = ''; // Show Toolbar
 
     toggleBtn.textContent = 'preview';
     toggleBtn.classList.remove('md-active');

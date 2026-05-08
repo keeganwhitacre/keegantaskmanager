@@ -572,7 +572,7 @@
       resize: none; 
       box-sizing: border-box; 
       overflow-y: hidden;    /* Kills the internal iOS scrollbar */
-      padding-bottom: 40px;  
+      padding-bottom: 80px;  
     }
     /* ── MARKDOWN PREVIEW EXTENDED STYLING ── */
     .cn-md-preview blockquote {
@@ -714,16 +714,23 @@
 
 /* ── MARKDOWN TOOLBAR ── */
     .cn-md-toolbar {
-      display: none; /* Hidden by default (for mobile) */
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 0.5px solid var(--border);
-      user-select: none;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
+  display: flex; /* Make it visible on mobile */
+  position: fixed; /* Fixed relative to the screen/keyboard */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 150;
+  background: var(--bg-surface);
+  /* Use env() to respect the iPhone home bar when keyboard is closed */
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); 
+  border-top: 0.5px solid var(--border);
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
     .cn-md-toolbar::-webkit-scrollbar { display: none; }
     
     .cn-md-divider {
@@ -905,6 +912,21 @@
         padding-bottom: 4px;
       }
       .filter-scroll::-webkit-scrollbar { display: none; }
+
+      .cn-md-toolbar { 
+    position: sticky;
+    top: 0; /* Sticks to the top of the scrolling container */
+    bottom: auto; /* Kills the mobile fixed bottom */
+    left: auto;
+    right: auto;
+    background: var(--bg-canvas);
+    margin: 0 0 16px 0;
+    padding: 16px 0 12px;
+    border-top: none;
+    border-bottom: 0.5px solid var(--border-md);
+    box-shadow: none; /* Kills the mobile shadow */
+    z-index: 100;
+  }
 
       /* Disable Slide-to-Hide on Desktop */
       body.scrolling-down .glass-nav-wrap,
