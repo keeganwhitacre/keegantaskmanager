@@ -530,6 +530,7 @@
        position: absolute; inset: 0; background: var(--bg-canvas); z-index: 10;
       display: none; flex-direction: column; overflow-y: auto;
        -webkit-overflow-scrolling: touch;
+       scroll-padding-bottom: 80px;
      }
     /* cn-no-note: managed by JS via showDesktopEmptyState() */
     
@@ -547,7 +548,7 @@
     .cn-back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .cn-detail-topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); flex: 1; text-align: center; }
     
-    .cn-editor-body { flex: 1; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
+    .cn-editor-body { flex: 1; padding: 20px 20px 100px 20px; max-width: 800px; margin: 0 auto; width: 100%; }
     .cn-detail-title-input { width: 100%; border: none; outline: none; background: transparent; font-size: 36px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); margin-bottom: 16px; line-height: 1.2; }
     .cn-detail-title-input::placeholder { color: var(--text-4); }
     
@@ -572,7 +573,7 @@
       resize: none; 
       box-sizing: border-box; 
       overflow-y: hidden;    /* Kills the internal iOS scrollbar */
-      padding-bottom: 80px;  
+      padding-bottom: 40px;
     }
     /* ── MARKDOWN PREVIEW EXTENDED STYLING ── */
     .cn-md-preview blockquote {
@@ -712,19 +713,18 @@
     body.cn-note-open .glass-nav-wrap,
     body.cn-note-open #quickAddWrap { display: none !important; }
 
-/* ── MARKDOWN TOOLBAR ── */
-    .cn-md-toolbar {
-  display: flex; /* Make it visible on mobile */
-  position: fixed; /* Fixed relative to the screen/keyboard */
+.cn-md-toolbar {
+  display: flex; 
+  position: fixed; 
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 150;
-  background: var(--bg-surface);
-  /* Use env() to respect the iPhone home bar when keyboard is closed */
+  background: var(--bg-canvas); /* Matches desktop background */
+  /* Respect iPhone home bar */
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); 
-  border-top: 0.5px solid var(--border);
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  border-top: 0.5px solid var(--border); /* Minor divider on top */
+  box-shadow: none; /* Removed the drop shadow */
   align-items: center;
   gap: 4px;
   user-select: none;

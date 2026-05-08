@@ -167,7 +167,6 @@ function autoResizeBody() {
   const bodyEl = document.getElementById('cnBodyInput');
   if (!bodyEl) return;
   
-  // 1. Detect which container is scrolling based on screen width
   const isDesktop = window.matchMedia('(min-width: 768px)').matches;
   const scrollContainer = isDesktop 
     ? document.querySelector('.cn-editor-body') 
@@ -175,15 +174,23 @@ function autoResizeBody() {
 
   if (!scrollContainer) return;
 
-  // 2. Save exact position
+  // Save current scroll and the height BEFORE we resize
   const currentScroll = scrollContainer.scrollTop;
+  const oldHeight = bodyEl.offsetHeight;
 
-  // 3. Do the resize
+  // Do the resize
   bodyEl.style.height = 'auto';
-  bodyEl.style.height = bodyEl.scrollHeight + 'px';
+  const newHeight = bodyEl.scrollHeight;
+  bodyEl.style.height = newHeight + 'px';
 
-  // 4. Restore scroll for the correct container
-  scrollContainer.scrollTop = currentScroll;
+  // If hitting "Enter" made the box taller, force the container to scroll down
+  // by that exact amount so the caret doesn't slip behind the toolbar
+  if (newHeight > oldHeight && oldHeight > 0) {
+    scrollContainer.scrollTop = currentScroll + (newHeight - oldHeight);
+  } else {
+    // Otherwise, just restore the scroll
+    scrollContainer.scrollTop = currentScroll;
+  }
 }
 
 // ── MARKDOWN PREVIEW ──
