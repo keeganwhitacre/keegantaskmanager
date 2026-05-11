@@ -1387,5 +1387,43 @@
 </script>
 
 <script type="module" src="app.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const mdToolbar = document.getElementById('cnMdToolbar');
+    const topbar = document.querySelector('.cn-detail-topbar'); 
+    if (!mdToolbar) return;
+
+    // --- FIX 1: Prevent losing text selection/highlight ---
+    mdToolbar.addEventListener('mousedown', function(e) {
+      e.preventDefault(); 
+    });
+
+    // --- FIX 2: Keep Top Elements Visible when iOS Pans Up ---
+    if (window.visualViewport) {
+      function adjustTopElements() {
+        // Disable on desktop
+        if (window.innerWidth >= 768) {
+          mdToolbar.style.transform = '';
+          if (topbar) topbar.style.transform = '';
+          return;
+        }
+        
+        // offsetTop tells us how far off-screen the top of the layout has been pushed.
+        // We translate the sticky elements down by that exact amount to keep them in view.
+        const offset = window.visualViewport.offsetTop;
+        const transformVal = `translateY(${offset}px)`;
+        
+        mdToolbar.style.transform = transformVal;
+        // Also applying this to the topbar so your 'Back' button doesn't disappear!
+        if (topbar) topbar.style.transform = transformVal;
+      }
+
+      window.visualViewport.addEventListener('resize', adjustTopElements);
+      window.visualViewport.addEventListener('scroll', adjustTopElements);
+    }
+  });
+</script>
+  
 </body>
 </html>
