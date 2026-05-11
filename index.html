@@ -715,16 +715,13 @@
 
 .cn-md-toolbar {
   display: flex; 
-  position: fixed; 
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 150;
-  background: var(--bg-canvas); /* Matches desktop background */
-  /* Respect iPhone home bar */
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); 
-  border-top: 0.5px solid var(--border); /* Minor divider on top */
-  box-shadow: none; /* Removed the drop shadow */
+  position: sticky; 
+  top: calc(var(--safe-top) + 48px); /* Sits right below the top navigation */
+  z-index: 90; /* Keeps it under the topbar's z-index of 100 */
+  background: var(--bg-canvas);
+  margin: 0 0 16px 0;
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--border-md);
   align-items: center;
   gap: 4px;
   user-select: none;
