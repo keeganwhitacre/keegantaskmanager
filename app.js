@@ -515,7 +515,7 @@ function submitQuickAdd() {
   state.tasks.unshift({
     id: uid(), title, categories: [], status: 'active',
     priority: 'md', due: '', note: '', noteIsMono: false,
-    pinnedToday: false, done: false, pomodoros: 0,
+    pinnedToday: true, done: false, pomodoros: 0,
   });
   inp.value = '';
   saveLocal(); ghPush(); render(); showToast('Task added');
