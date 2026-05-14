@@ -771,6 +771,20 @@
       .cn-md-toolbar { display: flex; }
     }
 
+    .chip.exclude-active {
+  background: var(--text-1);
+  color: var(--bg-canvas);
+  border-color: transparent;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+/* Show a ≠ prefix via pseudo-element */
+.chip.exclude-active::before {
+  content: '≠ ';
+  font-style: normal;
+  opacity: 0.8;
+}
+
     /* ══════════════════════════════════════════════════════════════════
    MISSING CSS COMPONENT STYLES
 ══════════════════════════════════════════════════════════════════ */

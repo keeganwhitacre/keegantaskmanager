@@ -283,6 +283,7 @@ function filterTask(t) {
   if (f === 'all') return true;
   if (f === 'blocked') return t.status === 'blocked' || t.status === 'waiting';
   const cats = t.categories || [];
+  if (state.filterExclude) return cats.indexOf(f) === -1;
   return cats.indexOf(f) !== -1;
 }
 
@@ -765,9 +766,19 @@ document.getElementById('priRow').addEventListener('click', function(e) {
 
 document.getElementById('filterRow').addEventListener('click', function(e) {
   const chip = e.target.closest('.chip'); if (!chip) return;
-  document.querySelectorAll('#filterRow .chip').forEach(c => c.classList.remove('active'));
+  const val = chip.dataset.filter || 'all';
+  // If clicking the already-active non-all chip, toggle exclusion
+  if (val === state.filter && val !== 'all' && val !== 'archive' && val !== 'blocked') {
+    state.filterExclude = !state.filterExclude;
+  } else {
+    state.filterExclude = false;
+  }
+  document.querySelectorAll('#filterRow .chip').forEach(c => {
+    c.classList.remove('active', 'exclude-active');
+  });
   chip.classList.add('active');
-  state.filter = chip.dataset.filter || 'all';
+  if (state.filterExclude) chip.classList.add('exclude-active');
+  state.filter = val;
   render();
 });
 
