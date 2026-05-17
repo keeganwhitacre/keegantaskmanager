@@ -124,7 +124,8 @@ function renderCNList() {
     card.style.animationDelay = (i * 25) + 'ms';
     card.dataset.id = n.id;
 
-    const pinHtml  = n.pinned ? '<span class="cn-card-pin">📌</span>' : '';
+    const pinSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;display:inline-block;vertical-align:-1px;"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 11.2V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3v5.2a2 2 0 0 1-1.11 1.35l-1.78.9A2 2 0 0 0 5 15.24Z"></path></svg>';
+    const pinHtml  = n.pinned ? '<span class="cn-card-pin" style="color:var(--text-3); margin-right:4px;">' + pinSvg + '</span>' : '';
     const lockHtml = n.locked ? '<span class="cn-card-pin">🔒</span>' : '';
     const ageText  = cnTimeAgo(n.updatedAt || n.createdAt);
 
@@ -761,6 +762,7 @@ if (cnPinBtnEl) cnPinBtnEl.addEventListener('click', function() {
   n.pinned = !n.pinned;
   cnPinBtnEl.classList.toggle('pinned', n.pinned);
   saveCN(true);
+  renderCNList(); // <-- This line forces the list to refresh and re-sort immediately
   showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
 });
 
