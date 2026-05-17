@@ -126,7 +126,8 @@ function renderCNList() {
 
     const pinSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;display:inline-block;vertical-align:-1px;"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 11.2V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3v5.2a2 2 0 0 1-1.11 1.35l-1.78.9A2 2 0 0 0 5 15.24Z"></path></svg>';
     const pinHtml  = n.pinned ? '<span class="cn-card-pin" style="color:var(--text-3); margin-right:4px;">' + pinSvg + '</span>' : '';
-    const lockHtml = n.locked ? '<span class="cn-card-pin">🔒</span>' : '';
+const lockSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;display:inline-block;vertical-align:-1px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+    const lockHtml = n.locked ? '<span class="cn-card-pin" style="color:var(--text-3);">' + lockSvg + '</span>' : '';
     const ageText  = cnTimeAgo(n.updatedAt || n.createdAt);
 
     let statusHtml = '';
@@ -151,7 +152,7 @@ function renderCNList() {
         '<span class="cn-card-time">' + esc(ageText) + '</span>' +
       '</div>' +
       '<div class="cn-card-title">' + esc(n.title || 'Untitled') + '</div>' +
-      (n.body ? '<div class="cn-card-preview">' + esc((n.body || '').slice(0, 120)) + '</div>' : '') +
+      (n.body ? '<div class="cn-card-preview' + (n.locked ? ' cn-blurred' : '') + '">' + esc((n.body || '').slice(0, 120)) + '</div>' : '') +
       '<div class="cn-card-meta">' + statusHtml + staleHtml + '</div>';
 
     card.addEventListener('click', function() {
@@ -420,12 +421,16 @@ function _doOpenDetail(n) {
   const pinBtn = document.getElementById('cnPinBtn');
   if (pinBtn) pinBtn.classList.toggle('pinned', !!(n.pinned));
 
-  // Lock button
-  const lockBtn = document.getElementById('cnLockBtn');
-  if (lockBtn) {
-    lockBtn.style.display = hasPinSet() ? '' : 'none';
-    lockBtn.classList.toggle('locked', !!(n.locked));
+ // Lock button
+  const propLockBtn = document.getElementById('cnPropLockToggle');
+  if (propLockBtn) {
+    propLockBtn.style.display = hasPinSet() ? 'inline-flex' : 'none';
+    propLockBtn.classList.toggle('active', !!n.locked);
+    const lockedSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+    const unlockedSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>';
+    propLockBtn.innerHTML = n.locked ? lockedSvg + 'Locked' : unlockedSvg + 'Unlocked';
   }
+  
 
   // Created/updated meta
   const metaEl = document.getElementById('cnDetailMeta');
@@ -471,6 +476,7 @@ function closeCNDetail() {
   saveCNDetailNow();
   cnActiveId = null;
   _cnOpenSnapshot = null;
+  _pinUnlocked = false; // Re-lock the session when leaving the note
 
   // Restore nav pill and quick-add
   if (!window.matchMedia('(min-width: 768px)').matches) {
@@ -673,11 +679,16 @@ function requestPinUnlock(onSuccess) {
   if (!overlay) { onSuccess(); return; }
 
   overlay.style.display = 'flex';
+  // Add a tiny delay so the CSS fade-in animation triggers correctly
+  setTimeout(function() { overlay.classList.add('open'); }, 10);
+  
   if (input) { input.value = ''; input.focus(); }
   if (error) error.textContent = '';
 
   function cleanup() {
-    overlay.style.display = 'none';
+    overlay.classList.remove('open');
+    setTimeout(function() { overlay.style.display = 'none'; }, 300);
+    
     if (submit) submit.removeEventListener('click', tryUnlock);
     if (cancel) cancel.removeEventListener('click', doCancel);
     if (input)  input.removeEventListener('keydown', onKey);
@@ -766,24 +777,33 @@ if (cnPinBtnEl) cnPinBtnEl.addEventListener('click', function() {
   showToast(n.pinned ? 'Note pinned' : 'Note unpinned');
 });
 
-const cnLockBtnEl = document.getElementById('cnLockBtn');
-if (cnLockBtnEl) cnLockBtnEl.addEventListener('click', function() {
-  if (!cnActiveId) return;
-  const n = getCnNotes().find(x => x.id === cnActiveId);
-  if (!n) return;
-  if (n.locked) {
-    n.locked = false;
-    cnLockBtnEl.classList.remove('locked');
-    saveCN(true);
-    showToast('Note unlocked');
-  } else {
-    if (!hasPinSet()) { showToast('Set a PIN in Settings first'); return; }
-    n.locked = true;
-    cnLockBtnEl.classList.add('locked');
-    saveCN(true);
-    showToast('Note locked');
-  }
-});
+const cnPropLockToggle = document.getElementById('cnPropLockToggle');
+if (cnPropLockToggle) {
+  cnPropLockToggle.addEventListener('click', function() {
+    if (!cnActiveId) return;
+    const n = getCnNotes().find(x => x.id === cnActiveId);
+    if (!n) return;
+    
+    const lockedSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
+    const unlockedSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>';
+
+    if (n.locked) {
+      n.locked = false;
+      cnPropLockToggle.classList.remove('active');
+      cnPropLockToggle.innerHTML = unlockedSvg + 'Unlocked';
+      saveCN(true);
+      showToast('Note unlocked');
+    } else {
+      if (!hasPinSet()) { showToast('Set a PIN in Settings first'); return; }
+      n.locked = true;
+      cnPropLockToggle.classList.add('active');
+      cnPropLockToggle.innerHTML = lockedSvg + 'Locked';
+      saveCN(true);
+      showToast('Note locked');
+    }
+    renderCNList(); 
+  });
+}
 
 const cnDeleteBtnEl = document.getElementById('cnDeleteBtn');
 if (cnDeleteBtnEl) cnDeleteBtnEl.addEventListener('click', function() {
