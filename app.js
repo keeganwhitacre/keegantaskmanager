@@ -19,6 +19,7 @@ import { register, switchView, currentViewName } from './router.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflect, onReflectEnter, onReflectExit } from './dashboard.js';
 import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } from './confnotes.js';
+import { buildCategoryNav as dsBuildCategoryNav } from './desktop-sidebar.js';
 
 
 // Bulletproof keyboard dismissal reset
@@ -391,6 +392,9 @@ function render() {
     }
   }
 }
+
+window.render = render;  // ← add this line right after `function render() { ... }` block
+window.openEdit = openEdit;  // ← add after the openEdit function definition
 
 // ══════════════════════════════════════════════════════════════════
 // SHEETS
@@ -839,9 +843,9 @@ document.getElementById('addCatBtn').addEventListener('click', function() {
   container.appendChild(row);
 });
 
-// FIX: saveCatsBtn was wired to nothing — now saves categories and closes sheet
 document.getElementById('saveCatsBtn').addEventListener('click', function() {
   saveCategoriesFromUI();
+  if (typeof dsBuildCategoryNav === 'function') dsBuildCategoryNav();  // ← add this
   showToast('Categories saved');
   closeSheets();
 });

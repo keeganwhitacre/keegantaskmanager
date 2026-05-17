@@ -1,0 +1,569 @@
+/* ══════════════════════════════════════════════════════════════════
+   DESKTOP SHELL + MOBILE TOOLBAR FIX (v2)
+   - Mobile (<900px): only the toolbar fix applies.
+   - Desktop (≥900px): three-column grid with proper resize handling.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── MOBILE MD TOOLBAR FIX ──
+   Pin to top of viewport using fixed positioning. visualViewport
+   offsetTop translation in index.html keeps it visible during iOS
+   keyboard pan. */
+@media (max-width: 899px) {
+  .cn-md-toolbar {
+    position: fixed !important;
+    top: calc(var(--safe-top) + 48px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    padding: 8px 20px !important;
+    background: var(--bg-canvas) !important;
+    border-bottom: 0.5px solid var(--border-md);
+    border-top: none !important;
+    box-shadow: none !important;
+    z-index: 99 !important;
+  }
+  body.cn-note-open .cn-editor-body {
+    padding-top: 56px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DESKTOP SHELL (≥900px)
+   Layout: [sidebar 240] [list 1fr] [dashboard 380] for tasks view.
+   For notes/reflect/bel: [sidebar 240] [1fr] (dashboard hidden).
+   ══════════════════════════════════════════════════════════════════ */
+
+/* The sidebar and dashboard elements exist in the DOM at all sizes
+   (mounted by JS at boot), but they're hidden on mobile. */
+@media (max-width: 899px) {
+  .desktop-sidebar,
+  .desktop-dashboard { display: none !important; }
+}
+
+@media (min-width: 900px) {
+
+  /* ── HARD RESET of legacy desktop flex layout ──
+     The existing @media (min-width: 768px) rules set
+     body { padding-left: 120px; display: flex; flex-direction: column; }
+     We need to undo those before applying our grid. */
+  html, body {
+    overflow: hidden !important;
+  }
+  body {
+    /* Reset flex column layout */
+    padding-left: 0 !important;
+    display: grid !important;
+    grid-template-columns: 240px 1fr 380px;
+    grid-template-rows: 100%;
+    height: 100vh !important;
+    height: calc(var(--vh, 1vh) * 100) !important;
+    width: 100% !important;
+  }
+
+  /* Sidebar = column 1 */
+  .desktop-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    background: var(--bg-sidebar, var(--bg-canvas));
+    border-right: 0.5px solid var(--border);
+    padding: 28px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+  }
+
+  /* Each app-view becomes column 2 — these all share column 2 because
+     only one is display:flex at a time via body.xxx-mode classes. */
+  .app-view {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Dashboard = column 3 — visible only when on tasks view */
+  .desktop-dashboard {
+    grid-column: 3;
+    grid-row: 1;
+    background: var(--bg-surface);
+    border-left: 0.5px solid var(--border);
+    overflow-y: auto;
+    min-width: 0;
+    display: none; /* hidden by default; shown when tasks-mode (default) */
+  }
+  /* Default (no body class) means tasks view is active */
+  body:not(.reflect-mode):not(.notes-mode):not(.bel-mode) .desktop-dashboard {
+    display: block;
+  }
+  /* When NOT on tasks, the content column should span columns 2-3 */
+  body.reflect-mode,
+  body.notes-mode,
+  body.bel-mode {
+    grid-template-columns: 240px 1fr;
+  }
+
+  /* Hide mobile chrome on desktop */
+  .glass-nav-wrap { display: none !important; }
+  #quickAddWrap { display: none !important; }
+  .dock-bottom-actions { display: none !important; }
+
+  /* ══════════════════════════════════════════════════════════════
+     SIDEBAR
+     ══════════════════════════════════════════════════════════════ */
+  .ds-brand {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    padding: 2px 12px 16px;
+    color: var(--text-1);
+  }
+
+  .ds-quick-add {
+    margin: 0 4px 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--text-1);
+    color: var(--bg-canvas);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.12s, transform 0.12s;
+  }
+  .ds-quick-add:hover { opacity: 0.88; }
+  .ds-quick-add:active { transform: scale(0.97); }
+  .ds-quick-add svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 3; }
+
+  .ds-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 14px 12px 6px;
+  }
+
+  .ds-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-2);
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    transition: background 0.12s, color 0.12s;
+  }
+  .ds-nav-btn:hover { background: var(--bg-input); color: var(--text-1); }
+  .ds-nav-btn.active { background: var(--text-1); color: var(--bg-canvas); }
+  .ds-nav-btn.active.exclude-active {
+    /* Visual cue when filter is in exclusion mode */
+    background: var(--text-1);
+    text-decoration: line-through;
+    opacity: 0.85;
+  }
+  .ds-nav-btn.active.exclude-active::before {
+    content: '≠ ';
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 2px;
+  }
+  .ds-nav-btn svg { width: 16px; height: 16px; stroke-width: 2; flex-shrink: 0; }
+  .ds-nav-btn .ds-nav-label {
+    flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .ds-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+    min-width: 14px;
+    text-align: right;
+  }
+  .ds-nav-btn.active .ds-count { color: var(--bg-canvas); opacity: 0.6; }
+
+  .ds-cat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin: 0 3px;
+  }
+  .ds-cat-dot.cat-manuscript { background: var(--cat-manuscript); box-shadow: 0 0 6px var(--cat-manuscript); }
+  .ds-cat-dot.cat-lab        { background: var(--cat-lab);        box-shadow: 0 0 6px var(--cat-lab); }
+  .ds-cat-dot.cat-phd        { background: var(--cat-phd);        box-shadow: 0 0 6px var(--cat-phd); }
+  .ds-cat-dot.cat-conf       { background: var(--cat-conf);       box-shadow: 0 0 6px var(--cat-conf); }
+  .ds-cat-dot.cat-bel        { background: var(--cat-bel);        box-shadow: 0 0 6px var(--cat-bel); }
+  .ds-cat-dot.cat-personal   { background: var(--cat-personal);   box-shadow: 0 0 6px var(--cat-personal); }
+  .ds-cat-dot.cat-hobby      { background: var(--cat-hobby);      box-shadow: 0 0 6px var(--cat-hobby); }
+
+  .ds-spacer { flex: 1; min-height: 16px; }
+
+  .ds-bottom {
+    border-top: 0.5px solid var(--border);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+  .ds-icon-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: var(--text-3);
+    background: transparent; border: none; cursor: pointer;
+    width: 100%; text-align: left;
+    transition: background 0.12s, color 0.12s;
+  }
+  .ds-icon-row:hover { background: var(--bg-input); color: var(--text-1); }
+  .ds-icon-row svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .ds-sync-dot {
+    margin-left: auto; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--text-4);
+    transition: background 0.3s;
+  }
+  .ds-sync-dot.syncing { background: var(--warning); animation: dsSyncBlink 1s infinite; }
+  .ds-sync-dot.ok      { background: var(--success); }
+  .ds-sync-dot.err     { background: var(--danger); }
+  @keyframes dsSyncBlink { 50% { opacity: 0.3; } }
+
+  /* ══════════════════════════════════════════════════════════════
+     TASKS LIST COLUMN — hide redundant chrome, tighten cards
+     ══════════════════════════════════════════════════════════════ */
+
+  /* Hide the entire mobile header (title + icon row + filter chips +
+     search) on the tasks view. Sidebar shows the view name and
+     filters; search becomes a tasks-pane affordance below.
+     Keep notes/reflect/bel headers since they're more informative. */
+  #tasksView > .header { display: none !important; }
+
+  /* Reflect / Notes / Bel: still show their headers, but pull them
+     into the column with proper padding */
+  #reflectView > .header,
+  #confNotesView > .header,
+  #belView > .header {
+    padding: 28px 32px 12px !important;
+    background: transparent !important;
+  }
+  #reflectView .app-title,
+  #confNotesView .app-title,
+  #belView .app-title {
+    font-size: 26px !important;
+    letter-spacing: -0.03em;
+  }
+
+  /* Tasks list scroll container — full column width, real padding */
+  #tasksView .scroll-container {
+    padding: 28px 32px 40px !important;
+  }
+  #tasksView .content-centerer {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* A small in-column header for tasks: shows current filter name as
+     a heading. Injected via ::before on #taskList.
+     Note: we use ::before on a wrapper instead to allow JS to read
+     state. For simplicity, just show "Tasks" subtly or nothing. */
+
+  /* Section cards — tighter density to match lab */
+  #tasksView .section { margin-bottom: 18px; }
+  #tasksView .sec-header { margin: 16px 0 8px 2px !important; }
+  #tasksView .sec-title {
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  #tasksView .sec-count {
+    font-size: 11px;
+    background: transparent;
+    color: var(--text-3);
+    padding: 0 0 0 4px;
+    opacity: 0.7;
+  }
+  #tasksView .section > div:not(.sec-header) {
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+  }
+
+  /* Reflect / Bel: column padding */
+  #reflectView .scroll-container { padding: 0 32px 40px !important; }
+  #reflectView .content-centerer { max-width: none !important; margin: 0 !important; }
+  #belView .scroll-container { padding: 0 32px 40px !important; }
+  #belView .content-centerer { max-width: none !important; margin: 0 !important; }
+  body.bel-mode #closeBelBtn { display: none !important; }
+
+  /* ══════════════════════════════════════════════════════════════
+     NOTES VIEW — clean up split layout to live in column 2
+     ══════════════════════════════════════════════════════════════ */
+  #cnListView {
+    width: 360px !important;
+    flex: none !important;
+    padding: 0 20px calc(40px + var(--safe-bottom)) !important;
+    border-right: 0.5px solid var(--border) !important;
+    background: var(--bg-canvas);
+  }
+  #cnDetailView {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: var(--bg-surface);
+  }
+  .cn-detail-topbar { padding: 20px 32px 8px !important; background: var(--bg-surface) !important; }
+  .cn-editor-body { padding: 8px 48px 60px !important; }
+  .cn-detail-title-input { font-size: 32px !important; margin-top: 4px !important; }
+
+  /* ══════════════════════════════════════════════════════════════
+     DASHBOARD PANE (column 3, tasks view only)
+     ══════════════════════════════════════════════════════════════ */
+  .dd-inner {
+    padding: 32px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+
+  .dd-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .dd-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-1);
+    margin-bottom: 4px;
+  }
+  .dd-sub {
+    font-size: 13px;
+    color: var(--text-3);
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  /* 2x2 stat grid */
+  .dd-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .dd-stat {
+    background: var(--bg-canvas);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.12s;
+  }
+  .dd-stat:hover { background: var(--bg-input); }
+  .dd-stat:active { transform: scale(0.98); }
+  .dd-stat[data-stat-jump] { cursor: pointer; }
+  .dd-stat:not([data-stat-jump]) { cursor: default; }
+  .dd-stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-1);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .dd-stat-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dd-stat.is-danger .dd-stat-val { color: var(--danger); }
+
+  .dd-block-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin: 20px 0 10px;
+  }
+
+  .dd-card-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .dd-task-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--bg-canvas);
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.12s, transform 0.12s;
+  }
+  .dd-task-mini:hover { background: var(--bg-input); }
+  .dd-task-mini:active { transform: scale(0.99); }
+  .dd-task-mini-cb {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--border-md); flex-shrink: 0;
+  }
+  .dd-task-mini.is-overdue .dd-task-mini-cb { border-color: var(--danger); }
+  .dd-task-mini-body {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .dd-task-mini-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dd-task-mini-meta {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--text-3); font-weight: 500;
+  }
+  .dd-task-mini-due {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--text-3);
+  }
+  .dd-task-mini.is-overdue .dd-task-mini-due { color: var(--danger); }
+
+  /* Category bars */
+  .dd-bars { display: flex; flex-direction: column; gap: 4px; }
+  .dd-bar-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; border-radius: 8px;
+    background: transparent; border: none; cursor: pointer;
+    width: 100%; text-align: left;
+    transition: background 0.12s;
+  }
+  .dd-bar-row:hover { background: var(--bg-input); }
+  .dd-bar-label {
+    font-size: 12px; font-weight: 600; color: var(--text-2);
+    min-width: 80px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dd-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .dd-bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--text-2);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .dd-bar-num {
+    font-size: 11px; font-weight: 700; color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+    min-width: 16px; text-align: right;
+  }
+
+  /* Recently completed */
+  .dd-recent { display: flex; flex-direction: column; gap: 2px; }
+  .dd-recent-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 4px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .dd-recent-row:last-child { border-bottom: none; }
+  .dd-recent-check {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--success); color: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .dd-recent-check svg { width: 10px; height: 10px; stroke: currentColor; fill: none; }
+  .dd-recent-body { flex: 1; min-width: 0; }
+  .dd-recent-title {
+    font-size: 12px; font-weight: 500; color: var(--text-2);
+    text-decoration: line-through; text-decoration-color: var(--text-4);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .dd-recent-meta {
+    font-size: 10px; color: var(--text-3); font-weight: 500;
+    margin-top: 1px;
+  }
+
+  /* Empty state */
+  .dd-empty {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 40px 20px;
+    gap: 8px;
+  }
+  .dd-empty svg {
+    width: 44px; height: 44px;
+    color: var(--text-4); opacity: 0.5;
+    margin-bottom: 4px;
+  }
+  .dd-empty-title { font-weight: 700; font-size: 16px; color: var(--text-2); }
+  .dd-empty-sub { font-size: 12px; color: var(--text-3); max-width: 240px; line-height: 1.5; }
+
+  /* ══════════════════════════════════════════════════════════════
+     SHEETS stay centered overlay
+     ══════════════════════════════════════════════════════════════ */
+  .sheet {
+    left: 50% !important;
+    right: auto !important;
+    margin-left: -240px !important;
+    width: 480px !important;
+  }
+
+  /* Slide-to-hide doesn't apply (no nav to hide) */
+  body.scrolling-down .glass-nav-wrap,
+  body.scrolling-down #quickAddWrap {
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* Custom scrollbars */
+  .desktop-sidebar::-webkit-scrollbar,
+  .desktop-dashboard::-webkit-scrollbar { width: 6px; }
+  .desktop-sidebar::-webkit-scrollbar-thumb,
+  .desktop-dashboard::-webkit-scrollbar-thumb { background: var(--text-4); border-radius: 3px; }
+  .desktop-sidebar::-webkit-scrollbar-track,
+  .desktop-dashboard::-webkit-scrollbar-track { background: transparent; }
+}
+
+/* Wider screens: bigger sidebar + dashboard, more breathing room */
+@media (min-width: 1280px) {
+  body {
+    grid-template-columns: 260px 1fr 420px !important;
+  }
+  body.reflect-mode,
+  body.notes-mode,
+  body.bel-mode {
+    grid-template-columns: 260px 1fr !important;
+  }
+  #tasksView .scroll-container { padding: 32px 48px 40px !important; }
+  #reflectView .scroll-container { padding: 0 48px 40px !important; }
+  .dd-inner { padding: 36px 32px 40px; }
+}
