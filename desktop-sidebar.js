@@ -48,6 +48,9 @@ function initDesktopShell() {
   mountDashboard();
   wireGlobalEvents();
   refreshAll();
+
+  refreshCounts();
+  refreshActiveStates();
 }
 
 function mountSidebar() {

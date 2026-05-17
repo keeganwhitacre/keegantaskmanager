@@ -67,6 +67,8 @@
     grid-row: 1;
     background: var(--bg-sidebar, var(--bg-canvas));
     border-right: 0.5px solid var(--border);
+    will-change: transform;
+    transform: translateZ(0);
     padding: 28px 14px 18px;
     display: flex;
     flex-direction: column;

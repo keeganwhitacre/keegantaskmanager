@@ -956,6 +956,11 @@ initBel();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
 loadSettingsUI();
 initDesktopShell();
+if (typeof dsBuildCategoryNav === 'function') {
+    dsBuildCategoryNav();
+}
+
+
 render();
 
 // FIX: Removed desktop "New Task" button injection — quick add pill already does this.
