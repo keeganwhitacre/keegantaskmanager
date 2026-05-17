@@ -19,7 +19,7 @@ import { register, switchView, currentViewName } from './router.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflect, onReflectEnter, onReflectExit } from './dashboard.js';
 import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } from './confnotes.js';
-import { buildCategoryNav as dsBuildCategoryNav } from './desktop-sidebar.js';
+import { initDesktopShell, buildCategoryNav as dsBuildCategoryNav } from './desktop-sidebar.js';
 
 
 // Bulletproof keyboard dismissal reset
@@ -132,8 +132,9 @@ function refreshDynamicCatColors() {
     _assignCatColor(cat);
     const rgb = _catColorMap[cat];
     const cls = 'cat-' + cat.replace(/[^a-z0-9_-]/g, '_');
-    // FIX: target ::before for the dot, not the wrapper element
-    css += '.' + cls + '::before { background: rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); box-shadow: 0 0 6px rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); }\n';
+    
+    // REPLACE the old css += line with this updated one:
+    css += '.' + cls + '::before, .ds-cat-dot.' + cls + ' { background: rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); box-shadow: 0 0 6px rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + '); }\n';
   });
   styleEl.textContent = css;
 }
@@ -282,6 +283,7 @@ function filterTask(t) {
   if (f === 'archive') return t.done;
   if (t.done) return false;
   if (f === 'all') return true;
+  if (f === 'today') return isActuallyDueToday(t); // Add this line!
   if (f === 'blocked') return t.status === 'blocked' || t.status === 'waiting';
   const cats = t.categories || [];
   if (state.filterExclude) return cats.indexOf(f) === -1;
@@ -953,7 +955,7 @@ refreshDynamicCatColors();
 initBel();
 initDashboard({ isActuallyDueToday, dueClass, fmtDue });
 loadSettingsUI();
-
+initDesktopShell();
 render();
 
 // FIX: Removed desktop "New Task" button injection — quick add pill already does this.

@@ -117,7 +117,7 @@ function mountDashboard() {
 
 function wireGlobalEvents() {
   on('view-changed', () => { refreshActiveStates(); renderDashboard(); });
-  on('task-changed', () => { refreshCounts(); renderDashboard(); applyTodayFilterToDOM(); });
+  on('task-changed', () => { refreshCounts(); renderDashboard();});
   on('data-pulled',  () => { buildCategoryNav(); refreshCounts(); renderDashboard(); });
 
   // Observe taskList rebuilds so the dashboard stays in sync with the
@@ -128,7 +128,6 @@ function wireGlobalEvents() {
     new MutationObserver(() => {
       refreshActiveStates();
       renderDashboard();
-      applyTodayFilterToDOM();
     }).observe(list, { childList: true });
   };
   if (document.readyState === 'loading') {
@@ -210,7 +209,6 @@ function applyFilter(key) {
     if (typeof window.render === 'function') window.render();
     refreshActiveStates();
     renderDashboard();
-    setTimeout(applyTodayFilterToDOM, 0);
     return;
   }
 
@@ -295,18 +293,6 @@ function refreshActiveStates() {
 // ── TODAY DOM-FILTER PASS ─────────────────────────────────────────
 // app.js's filterTask doesn't know about 'today'. After it renders,
 // we hide rows that aren't today-tasks.
-function applyTodayFilterToDOM() {
-  if (state.filter !== 'today') return;
-  const todayIds = new Set((state.tasks || []).filter(isToday).map(t => t.id));
-  document.querySelectorAll('#taskList .task-wrap').forEach(w => {
-    w.style.display = todayIds.has(w.dataset.id) ? '' : 'none';
-  });
-  document.querySelectorAll('#taskList .section').forEach(sec => {
-    const visible = Array.from(sec.querySelectorAll('.task-wrap'))
-      .some(w => w.style.display !== 'none');
-    sec.style.display = visible ? '' : 'none';
-  });
-}
 
 // ── DASHBOARD PANE ────────────────────────────────────────────────
 function renderDashboard() {
@@ -514,12 +500,6 @@ function refreshAll() {
   renderDashboard();
 }
 
-// ── BOOT ──────────────────────────────────────────────────────────
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDesktopShell);
-} else {
-  initDesktopShell();
-}
 
 // Export buildCategoryNav so app.js can call it after category save
 export { initDesktopShell, buildCategoryNav, refreshAll, refreshCounts };

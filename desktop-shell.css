@@ -248,19 +248,55 @@
      Keep notes/reflect/bel headers since they're more informative. */
   #tasksView > .header { display: none !important; }
 
-  /* Reflect / Notes / Bel: still show their headers, but pull them
-     into the column with proper padding */
+ /* Replace the Reflect / Notes / Bel header block (around line 170) with this: */
   #reflectView > .header,
-  #confNotesView > .header,
   #belView > .header {
     padding: 28px 32px 12px !important;
     background: transparent !important;
   }
   #reflectView .app-title,
-  #confNotesView .app-title,
   #belView .app-title {
     font-size: 26px !important;
     letter-spacing: -0.03em;
+  }
+
+  /* Notes View */
+  #cnListView {
+    width: 360px !important;
+    flex: none !important;
+    padding: 0 0 calc(40px + var(--safe-bottom)) !important;
+    border-right: 0.5px solid var(--border) !important;
+    background: var(--bg-canvas);
+  }
+  #cnListView .header {
+    padding: 28px 20px 12px !important;
+    background: var(--bg-canvas) !important;
+  }
+  #cnListView .app-title {
+    font-size: 26px !important;
+    letter-spacing: -0.03em;
+  }
+  #cnNotesList {
+    padding: 0 0px !important;
+  }
+
+  /* Notes View */
+  #cnListView {
+    width: 360px !important;
+    flex: none !important;
+    padding: 0 0 calc(40px + var(--safe-bottom)) !important;
+    border-right: 0.5px solid var(--border) !important;
+    background: var(--bg-canvas);
+  }
+  
+  /* ADD THIS RULE to respect the expand button */
+  .notes-split.focus-mode #cnListView {
+    display: none !important;
+  }
+  
+  /* Fix Toolbar Background Clashing */
+  .cn-md-toolbar {
+    background: var(--bg-surface) !important;
   }
 
   /* Tasks list scroll container — full column width, real padding */
@@ -551,6 +587,24 @@
   .desktop-dashboard::-webkit-scrollbar-thumb { background: var(--text-4); border-radius: 3px; }
   .desktop-sidebar::-webkit-scrollbar-track,
   .desktop-dashboard::-webkit-scrollbar-track { background: transparent; }
+
+  /* Convert all bottom sheets to right-side drawer panels on desktop */
+  .sheet {
+    left: auto !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 440px !important; /* Adjust width to your preference */
+    border-radius: 24px 0 0 24px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    
+    /* Change the animation to slide horizontally instead of vertically */
+    transform: translateX(100%) !important; 
+  }
+  
+  .sheet.on {
+    transform: translateX(0) !important;
+  }
 }
 
 /* Wider screens: bigger sidebar + dashboard, more breathing room */
