@@ -18,7 +18,7 @@ import { ghFetch, ghPush, testGhConnection, showSync } from './sync.js';
 import { register, switchView, currentViewName } from './router.js';
 import { initBel, renderBel } from './bel.js';
 import { initDashboard, renderReflect, onReflectEnter, onReflectExit } from './dashboard.js';
-import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf } from './confnotes.js';
+import { renderCNList, createNewNote, rebuildCNChips, NOTE_TYPES, noteTypeOf, initFolderSettings } from './confnotes.js';
 import { initDesktopShell, buildCategoryNav as dsBuildCategoryNav } from './desktop-sidebar.js';
 
 
@@ -176,6 +176,7 @@ function makeTaskWrap(t, delay) {
   const statusHtml = (t.status && t.status !== 'active') ? '<span class="status ' + t.status + '">' + esc(statusMap[t.status] || t.status) + '</span>' : '';
   const dc = dueClass(t.due);
   const dueHtml = t.due ? '<span class="due ' + dc + '">' + esc(fmtDue(t.due)) + '</span>' : '';
+  const recurHtml = t.recur ? '<span class="recur-badge">↻ ' + esc(t.recur.freq) + '</span>' : '';
   const noteHtml = t.note
     ? '<div class="' + (t.noteIsMono ? 'note-mono' : 'note') + '">' + esc(t.note) + '</div>'
     : '';
@@ -185,7 +186,7 @@ function makeTaskWrap(t, delay) {
     '<div class="task-body">' +
       '<div class="task-title">' + esc(t.title) + '</div>' +
       noteHtml +
-      '<div class="task-meta">' + catHtml + statusHtml + dueHtml + '</div>' +
+      '<div class="task-meta">' + catHtml + statusHtml + dueHtml + recurHtml + '</div>' +
     '</div>';
 
   el.querySelector('.task-cb').addEventListener('click', function(e) {
@@ -200,14 +201,53 @@ function makeTaskWrap(t, delay) {
   return wrap;
 }
 
+function nextRecurDue(baseISO, recur) {
+  // baseISO: 'YYYY-MM-DD' or ''; recur: { freq, interval }
+  const base = baseISO ? new Date(baseISO + 'T00:00:00') : new Date();
+  if (isNaN(base)) return '';
+  const n = Math.max(1, recur.interval || 1);
+  if (recur.freq === 'daily')        base.setDate(base.getDate() + n);
+  else if (recur.freq === 'weekly')  base.setDate(base.getDate() + n * 7);
+  else if (recur.freq === 'monthly') base.setMonth(base.getMonth() + n);
+  else return '';
+  return base.toISOString().split('T')[0];
+}
+
 function toggleDone(id) {
   const t = state.tasks.find(x => x.id === id);
   if (!t) return;
   t.done = !t.done;
-  if (t.done) { t.completedAt = new Date().toISOString(); t.pinnedToday = false; }
-  else { delete t.completedAt; }
+  let spawned = false;
+  if (t.done) {
+    t.completedAt = new Date().toISOString();
+    t.pinnedToday = false;
+    // Recurring: spawn the next instance, then retire recurrence on the archived copy
+    if (t.recur && t.recur.freq) {
+      const nd = nextRecurDue(t.due, t.recur);
+      if (nd) {
+        state.tasks.unshift({
+          id: uid(),
+          title: t.title,
+          categories: (t.categories || []).slice(),
+          status: t.status || 'active',
+          priority: t.priority || 'md',
+          due: nd,
+          note: t.note || '',
+          noteIsMono: !!t.noteIsMono,
+          pinnedToday: false,
+          done: false,
+          pomodoros: 0,
+          recur: { freq: t.recur.freq, interval: t.recur.interval || 1 },
+        });
+        spawned = true;
+      }
+      delete t.recur; // archived copy is no longer the recurring anchor
+    }
+  } else {
+    delete t.completedAt;
+  }
   saveLocal(); render(); ghPush();
-  if (t.done) showToast('Done ✓');
+  if (t.done) showToast(spawned ? 'Done ✓ · next added' : 'Done ✓');
 }
 
 function deleteTask(id) {
@@ -456,6 +496,9 @@ function openAddSheet() {
   document.querySelectorAll('#statusRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === 'active'));
   document.querySelectorAll('#priRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === 'md'));
   document.getElementById('pinTodayChip').classList.remove('active');
+  document.querySelectorAll('#recurRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === 'none'));
+  document.getElementById('recurInterval').value = '1';
+  updateRecurUI();
   setTimeout(function() { openSheet('addSheet'); document.getElementById('taskTitleInput').focus(); }, 10);
 }
 
@@ -478,7 +521,12 @@ function openEdit(id) {
   document.querySelectorAll('#catRow .s-chip').forEach(c => c.classList.toggle('active', (t.categories || []).includes(c.dataset.val)));
   document.querySelectorAll('#statusRow .s-chip').forEach(c => c.classList.toggle('active', (t.status || 'active') === c.dataset.val));
   document.querySelectorAll('#priRow .s-chip').forEach(c => c.classList.toggle('active', (t.priority || 'md') === c.dataset.val));
-  document.getElementById('pinTodayChip').classList.toggle('active', !!t.pinnedToday);
+  document.getElementById('pinTodayChip').classList.toggle('active', !t.pinnedToday);
+
+  const rf = (t.recur && t.recur.freq) ? t.recur.freq : 'none';
+  document.querySelectorAll('#recurRow .s-chip').forEach(c => c.classList.toggle('active', c.dataset.val === rf));
+  document.getElementById('recurInterval').value = (t.recur && t.recur.interval) ? t.recur.interval : 1;
+  updateRecurUI();
 
   openSheet('addSheet');
 }
@@ -494,6 +542,9 @@ function saveTask() {
   const note = document.getElementById('taskNoteInput').value.trim();
   const noteIsMono = document.getElementById('monoToggle').classList.contains('mono-active');
   const pinnedToday = document.getElementById('pinTodayChip').classList.contains('active');
+  const recurFreq = (document.querySelector('#recurRow .s-chip.active') || {}).dataset?.val || 'none';
+  const recurInterval = Math.max(1, parseInt(document.getElementById('recurInterval').value, 10) || 1);
+  const recur = recurFreq === 'none' ? null : { freq: recurFreq, interval: recurInterval };
 
   if (state.editingId) {
     const t = state.tasks.find(x => x.id === state.editingId);
@@ -501,14 +552,17 @@ function saveTask() {
       t.title = title; t.categories = cats; t.status = status;
       t.priority = priority; t.due = due; t.note = note;
       t.noteIsMono = noteIsMono; t.pinnedToday = pinnedToday;
+      if (recur) t.recur = recur; else delete t.recur;
     }
     showToast('Task saved');
   } else {
-    state.tasks.unshift({
+    const newTask = {
       id: uid(), title, categories: cats, status, priority,
       due, note, noteIsMono, pinnedToday,
       done: false, pomodoros: 0,
-    });
+    };
+    if (recur) newTask.recur = recur;
+    state.tasks.unshift(newTask);
     showToast('Task added');
   }
 
@@ -659,6 +713,7 @@ function loadSettingsUI() {
   updateGhUI(!!state.settings.ghToken);
   loadCategoriesUI();
   loadHabitsUI();
+  initFolderSettings();
   updatePinUI();
   const theme = document.documentElement.getAttribute('data-theme') || 'light';
   document.querySelectorAll('.theme-swatch').forEach(sw => {
@@ -768,6 +823,21 @@ document.getElementById('priRow').addEventListener('click', function(e) {
   const c = e.target.closest('.s-chip'); if (!c) return;
   document.querySelectorAll('#priRow .s-chip').forEach(x => x.classList.remove('active'));
   c.classList.add('active');
+});
+
+function updateRecurUI() {
+  const active = (document.querySelector('#recurRow .s-chip.active') || {}).dataset?.val || 'none';
+  const wrap = document.getElementById('recurIntervalWrap');
+  if (wrap) wrap.style.display = active === 'none' ? 'none' : 'flex';
+  const unit = document.getElementById('recurUnitLabel');
+  if (unit) unit.textContent = active === 'daily' ? 'day(s)' : active === 'weekly' ? 'week(s)' : active === 'monthly' ? 'month(s)' : '';
+}
+const recurRowEl = document.getElementById('recurRow');
+if (recurRowEl) recurRowEl.addEventListener('click', function(e) {
+  const c = e.target.closest('.s-chip'); if (!c) return;
+  document.querySelectorAll('#recurRow .s-chip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  updateRecurUI();
 });
 
 document.getElementById('filterRow').addEventListener('click', function(e) {

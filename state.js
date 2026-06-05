@@ -13,6 +13,7 @@ const KEYS = {
   migrated:  'kw_migrated_v1',
   theme:     'kw_theme_v3',
   confnotes: 'kw_confnotes_v1',
+  folders:   'kw_folders_v1',
 };
 
 // ── CATEGORIES ──
@@ -65,6 +66,7 @@ let dState = {
 };
 
 let cnNotes = [];
+let folders = []; // [{ id, name }]
 
 // ── UTILITIES ──
 function uid() {
@@ -178,6 +180,9 @@ function loadLocal() {
 
   // ── CONFNOTES ──
   cnNotes = _tryParse(KEYS.confnotes, []);
+
+  // ── FOLDERS ──
+  folders = _tryParse(KEYS.folders, []);
 }
 
 // ── PERSISTENCE: SAVE ──
@@ -197,6 +202,11 @@ function saveDash(sync) {
 
 function saveCN(sync) {
   try { localStorage.setItem(KEYS.confnotes, JSON.stringify(cnNotes)); } catch (e) { /* */ }
+  if (sync) emit('request-sync');
+}
+
+function saveFolders(sync) {
+  try { localStorage.setItem(KEYS.folders, JSON.stringify(folders)); } catch (e) { /* */ }
   if (sync) emit('request-sync');
 }
 
@@ -242,6 +252,7 @@ function buildSyncPayload() {
     bel:      belState,
     dash:     dState,
     cnNotes:  cnNotes,
+    folders:  folders,
     settings: {
       customCats:   state.settings.customCats,
       customHabits: state.settings.customHabits,
@@ -260,7 +271,8 @@ function applySyncPayload(dec) {
 
   if (dec.bel)      belState = dec.bel;
   if (dec.dash)     Object.assign(dState, dec.dash);
-  if (dec.cnNotes)  cnNotes = dec.cnNotes;
+ if (dec.cnNotes)  cnNotes = dec.cnNotes;
+  if (dec.folders)  folders = dec.folders; 
 
   // Custom settings
   if (dec.settings) {
@@ -289,6 +301,7 @@ function applySyncPayload(dec) {
   saveBel(false);
   saveDash(false);
   try { localStorage.setItem(KEYS.confnotes, JSON.stringify(cnNotes)); } catch (e) { /* */ }
+  try { localStorage.setItem(KEYS.folders, JSON.stringify(folders)); } catch (e) { /* */ }
 }
 
 // ── EXPORTS ──
@@ -314,6 +327,7 @@ export {
   saveBel,
   saveDash,
   saveCN,
+  saveFolders,
   saveSettings,
   savePending,
   saveCollapsed,
@@ -328,5 +342,7 @@ export function setCnNotes(notes)  { cnNotes = notes; }
 export function setBelState(obj)   { belState = obj; }
 export function setDState(obj)     { Object.assign(dState, obj); }
 export function getCnNotes()       { return cnNotes; }
+export function getFolders()       { return folders; }
+export function setFolders(f)      { folders = f; }
 export function getBelState()      { return belState; }
 export function getDState()        { return dState; }

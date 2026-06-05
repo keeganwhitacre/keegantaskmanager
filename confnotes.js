@@ -7,6 +7,7 @@
 import {
   uid, esc, showToast,
   getCnNotes, setCnNotes, saveCN,
+  getFolders, setFolders, saveFolders,
   CAT_LABEL, state,
 } from './state.js';
 
@@ -16,8 +17,6 @@ const NOTE_TYPES = {
   paper: { label: 'Paper', icon: '📄', color: 'paper' },
   idea:  { label: 'Idea',  icon: '💡', color: 'idea' },
 };
-
-const TAGS = ['manuscript', 'lab', 'phd', 'conf', 'personal', 'hobby'];
 
 const PAPER_TEMPLATE = `## Summary
 What does this paper argue?
@@ -34,9 +33,114 @@ function noteTypeOf(n) {
   return NOTE_TYPES[t] ? t : 'memo';
 }
 
-// ── FILTER STATE ──
-let cnFilter = 'all';
+let cnFilter = 'all';        // legacy, now unused
 let cnTypeFilter = 'all';
+let cnFolderFilter = 'all';
+
+// ── FOLDERS ──
+function folderName(id) {
+  if (!id) return '';
+  const f = getFolders().find(x => x.id === id);
+  return f ? f.name : '';
+}
+
+function createFolder(name) {
+  name = (name || '').trim();
+  if (!name) return null;
+  const folders = getFolders();
+  let f = folders.find(x => x.name.toLowerCase() === name.toLowerCase());
+  if (!f) { f = { id: uid(), name }; folders.push(f); setFolders(folders); saveFolders(true); }
+  return f;
+}
+
+export function getCnFolderFilter() { return cnFolderFilter; }
+export function setCnFolderFilter(id) {
+  cnFolderFilter = id || 'all';
+  rebuildCNChips();
+  renderCNList();
+}
+
+// Desktop sidebar folder rail (built into #dsFolderNav, which lives in the sidebar)
+export function buildDesktopFolderRail() {
+  const wrap = document.getElementById('dsFolderNav');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const folderSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+  const mk = (id, label) => {
+    const btn = document.createElement('button');
+    btn.className = 'ds-nav-btn' + (cnFolderFilter === id ? ' active' : '');
+    btn.dataset.dsKey = id;
+    const count = id === 'all'
+      ? getCnNotes().length
+      : getCnNotes().filter(n => (n.folderId || '') === id).length;
+    btn.innerHTML = folderSvg +
+      '<span class="ds-nav-label">' + esc(label) + '</span>' +
+      '<span class="ds-count">' + (count || '') + '</span>';
+    btn.addEventListener('click', function() {
+      cnFolderFilter = id;
+      rebuildCNChips();
+      renderCNList();
+      buildDesktopFolderRail();
+    });
+    wrap.appendChild(btn);
+  };
+  mk('all', 'All Notes');
+  getFolders().forEach(f => mk(f.id, f.name));
+  const add = document.createElement('button');
+  add.className = 'ds-nav-btn';
+  add.style.color = 'var(--accent)';
+  add.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span class="ds-nav-label">New folder</span>';
+  add.addEventListener('click', function() {
+    const name = prompt('New folder name');
+    if (!name) return;
+    createFolder(name);
+    rebuildCNChips();
+    buildDesktopFolderRail();
+  });
+  wrap.appendChild(add);
+}
+
+// Settings: rename / delete folders
+function renderFolderSettings() {
+  const container = document.getElementById('folderSettingsList');
+  if (!container) return;
+  container.innerHTML = '';
+  getFolders().forEach(function(f) {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+    row.innerHTML =
+      '<input class="input" value="' + esc(f.name) + '" style="flex:1; margin:0;">' +
+      '<button class="folder-del-btn" style="background:none;border:none;color:var(--danger);font-size:20px;cursor:pointer;line-height:1;">&times;</button>';
+    const input = row.querySelector('input');
+    input.addEventListener('change', function() {
+      const nm = input.value.trim();
+      if (nm) { f.name = nm; setFolders(getFolders()); saveFolders(true); rebuildCNChips(); buildDesktopFolderRail(); }
+    });
+    row.querySelector('.folder-del-btn').addEventListener('click', function() {
+      if (!confirm('Delete folder "' + f.name + '"? Notes inside move to All Notes.')) return;
+      setFolders(getFolders().filter(x => x.id !== f.id));
+      getCnNotes().forEach(n => { if (n.folderId === f.id) n.folderId = ''; });
+      saveFolders(false); saveCN(true);
+      if (cnFolderFilter === f.id) cnFolderFilter = 'all';
+      renderFolderSettings(); rebuildCNChips(); buildDesktopFolderRail(); renderCNList();
+    });
+    container.appendChild(row);
+  });
+}
+
+export function initFolderSettings() {
+  renderFolderSettings();
+  const addBtn = document.getElementById('addFolderBtn');
+  if (addBtn && !addBtn._wired) {
+    addBtn._wired = true;
+    addBtn.addEventListener('click', function() {
+      const name = prompt('New folder name');
+      if (!name) return;
+      createFolder(name);
+      renderFolderSettings(); rebuildCNChips(); buildDesktopFolderRail();
+    });
+  }
+}
 
 // ── ACTIVE NOTE ──
 let cnActiveId = null;
@@ -67,15 +171,15 @@ function rebuildCNChips() {
   row.innerHTML = '';
 
   const allChip = document.createElement('div');
-  allChip.className = 'chip' + (cnFilter === 'all' && cnTypeFilter === 'all' ? ' active' : '');
-  allChip.dataset.cnfilter = 'all'; allChip.textContent = 'All';
+  allChip.className = 'chip' + (cnFolderFilter === 'all' ? ' active' : '');
+  allChip.dataset.cnfilter = 'all'; allChip.textContent = 'All Notes';
   row.appendChild(allChip);
 
-  Object.keys(NOTE_TYPES).forEach(function(type) {
+  getFolders().forEach(function(f) {
     const chip = document.createElement('div');
-    chip.className = 'chip' + (cnTypeFilter === type ? ' active' : '');
-    chip.dataset.cnfilter = '_type_' + type;
-    chip.textContent = NOTE_TYPES[type].label;
+    chip.className = 'chip' + (cnFolderFilter === f.id ? ' active' : '');
+    chip.dataset.cnfilter = f.id;
+    chip.textContent = f.name;
     row.appendChild(chip);
   });
 }
@@ -93,8 +197,8 @@ function renderCNList() {
 
   const filtered = cnNotes.filter(function(n) {
     if (cnTypeFilter !== 'all' && noteTypeOf(n) !== cnTypeFilter) return false;
-    if (cnFilter !== 'all') {
-      if (!(n.tags || []).includes(cnFilter)) return false;
+    if (cnFolderFilter !== 'all') {
+      if ((n.folderId || '') !== cnFolderFilter) return false;
     }
     if (searchQ) {
       const hay = ((n.title||'') + ' ' + (n.body||'') + ' ' + (n.url||'')).toLowerCase();
@@ -130,6 +234,9 @@ const lockSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stro
     const lockHtml = n.locked ? '<span class="cn-card-pin" style="color:var(--text-3);">' + lockSvg + '</span>' : '';
     const ageText  = cnTimeAgo(n.updatedAt || n.createdAt);
 
+    const _fname = folderName(n.folderId);
+    const folderHtml = _fname ? '<span class="cn-folder-chip">' + esc(_fname) + '</span>' : '';
+
     let statusHtml = '';
     if (nType === 'idea' && n.ideaStatus) {
       const sc = n.ideaStatus.replace(/\s+/g, '-').toLowerCase();
@@ -153,7 +260,7 @@ const lockSvg = '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stro
       '</div>' +
       '<div class="cn-card-title">' + esc(n.title || 'Untitled') + '</div>' +
       (n.body ? '<div class="cn-card-preview' + (n.locked ? ' cn-blurred' : '') + '">' + esc((n.body || '').slice(0, 120)) + '</div>' : '') +
-      '<div class="cn-card-meta">' + statusHtml + staleHtml + '</div>';
+      '<div class="cn-card-meta">' + folderHtml + statusHtml + staleHtml + '</div>';
 
     card.addEventListener('click', function() {
       document.querySelectorAll('.cn-note-card').forEach(c => c.classList.remove('cn-active-note'));
@@ -275,12 +382,11 @@ function updatePropsSummary() {
   if (!btn) return;
   const activeType = document.querySelector('#cnTypeRow .cn-type-chip.active');
   const typeLabel = activeType ? activeType.textContent : 'Note';
-  const tagsCount = document.querySelectorAll('#cnTagRow .cn-tag-chip.active').length;
-  
+  const activeFolder = document.querySelector('#cnFolderRow .cn-tag-chip.active');
+  const fname = activeFolder ? activeFolder.textContent : '';
+
   let text = typeLabel;
-  if (tagsCount > 0) {
-    text += ' · ' + tagsCount + (tagsCount === 1 ? ' tag' : ' tags');
-  }
+  if (fname && fname !== 'None') text += ' · ' + fname;
   btn.textContent = text;
 }
 
@@ -370,22 +476,25 @@ function _doOpenDetail(n) {
     });
   }
 
-  // Tag row
-  const tagRow = document.getElementById('cnTagRow');
-  if (tagRow) {
-    tagRow.innerHTML = '';
-    TAGS.forEach(function(t) {
+  // Folder row
+  const folderRow = document.getElementById('cnFolderRow');
+  if (folderRow) {
+    folderRow.innerHTML = '';
+    const mkFolderChip = (val, label) => {
       const chip = document.createElement('div');
-      chip.className = 'cn-tag-chip s-chip' + ((n.tags || []).includes(t) ? ' active' : '');
-      chip.dataset.val = t;
-      chip.textContent = CAT_LABEL[t] || t;
-      chip.addEventListener('click', function() { 
-        chip.classList.toggle('active'); 
+      chip.className = 'cn-tag-chip s-chip' + (((n.folderId || '') === val) ? ' active' : '');
+      chip.dataset.val = val;
+      chip.textContent = label;
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('#cnFolderRow .cn-tag-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
         updatePropsSummary();
-        queueCNSave(); 
+        queueCNSave();
       });
-      tagRow.appendChild(chip);
-    });
+      folderRow.appendChild(chip);
+    };
+    mkFolderChip('', 'None');
+    getFolders().forEach(f => mkFolderChip(f.id, f.name));
   }
 
   // URL input visibility
@@ -557,8 +666,9 @@ function saveCNDetailNow() {
   const activeIdea = document.querySelector('#cnIdeaStatusRow .cn-idea-chip.active');
   if (activeIdea) n.ideaStatus = activeIdea.textContent;
 
-  // Tags
-  n.tags = Array.from(document.querySelectorAll('#cnTagRow .cn-tag-chip.active')).map(c => c.dataset.val);
+  // Folder
+  const activeFolder = document.querySelector('#cnFolderRow .cn-tag-chip.active');
+  n.folderId = activeFolder ? (activeFolder.dataset.val || '') : (n.folderId || '');
 
   // Only update timestamp if something actually changed
   if (titleChanged || bodyChanged) {
@@ -582,8 +692,9 @@ function createNewNote(type) {
   const cnNotes = getCnNotes();
   const n = {
     id: uid(), title: '', body: type === 'paper' ? PAPER_TEMPLATE : '',
-    tags: [], bodyIsMono: false, pinned: false, locked: false,
+    bodyIsMono: false, pinned: false, locked: false,
     type, url: '',
+    folderId: (cnFolderFilter && cnFolderFilter !== 'all') ? cnFolderFilter : '',
     ideaStatus: type === 'idea' ? 'raw' : '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -731,8 +842,8 @@ document.addEventListener('click', function(e) {
     saveCNDetailNow();
     const newNote = {
       id: uid(), title: targetTitle, body: '',
-      tags: [], bodyIsMono: false, pinned: false, locked: false,
-      type: 'memo', url: '', ideaStatus: '',
+      bodyIsMono: false, pinned: false, locked: false,
+      type: 'memo', url: '', ideaStatus: '', folderId: '',
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     };
     getCnNotes().unshift(newNote);
@@ -763,6 +874,19 @@ if (cnMonoToggleBtn) cnMonoToggleBtn.addEventListener('click', function() {
   const isMono = bodyEl.classList.toggle('mono');
   cnMonoToggleBtn.classList.toggle('mono-active', isMono);
   queueCNSave(); autoResizeBody();
+});
+
+const cnNewFolderBtn = document.getElementById('cnNewFolderBtn');
+if (cnNewFolderBtn) cnNewFolderBtn.addEventListener('click', function() {
+  const name = prompt('New folder name');
+  if (!name) return;
+  const f = createFolder(name);
+  if (f && cnActiveId) {
+    const n = getCnNotes().find(x => x.id === cnActiveId);
+    if (n) { n.folderId = f.id; saveCN(true); _doOpenDetail(n); } // reopen to refresh folder row
+  }
+  rebuildCNChips();
+  buildDesktopFolderRail();
 });
 
 const cnPinBtnEl = document.getElementById('cnPinBtn');
@@ -852,10 +976,8 @@ if (cnFilterRow) {
     if (!chip) return;
     document.querySelectorAll('#cnFilterRow .chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    const val = chip.dataset.cnfilter;
-    if (val === 'all') { cnFilter = 'all'; cnTypeFilter = 'all'; }
-    else if (val && val.startsWith('_type_')) { cnTypeFilter = val.replace('_type_', ''); cnFilter = 'all'; }
-    else { cnFilter = val || 'all'; cnTypeFilter = 'all'; }
+    cnFolderFilter = chip.dataset.cnfilter || 'all';
+    buildDesktopFolderRail();
     renderCNList();
   });
 }

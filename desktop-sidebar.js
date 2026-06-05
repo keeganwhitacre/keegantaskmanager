@@ -15,6 +15,7 @@
 
 import { state, CAT_LABEL, on, esc } from './state.js';
 import { switchView, currentViewName } from './router.js';
+import { buildDesktopFolderRail } from './confnotes.js';
 
 const VIEW_NAV = [
   { key: 'tasks',   label: 'Tasks',
@@ -68,11 +69,18 @@ function mountSidebar() {
     <div class="ds-section-label">Views</div>
     <div id="dsViewNav"></div>
 
-    <div class="ds-section-label">Filters</div>
-    <div id="dsFilterNav"></div>
+    <div id="dsTaskScope">
+      <div class="ds-section-label">Filters</div>
+      <div id="dsFilterNav"></div>
 
-    <div class="ds-section-label">Categories</div>
-    <div id="dsCatNav"></div>
+      <div class="ds-section-label">Categories</div>
+      <div id="dsCatNav"></div>
+    </div>
+
+    <div id="dsNotesScope" style="display:none;">
+      <div class="ds-section-label">Folders</div>
+      <div id="dsFolderNav"></div>
+    </div>
 
     <div class="ds-spacer"></div>
 
@@ -119,9 +127,22 @@ function mountDashboard() {
 }
 
 function wireGlobalEvents() {
-  on('view-changed', () => { refreshActiveStates(); renderDashboard(); });
+  on('view-changed', () => {
+    refreshActiveStates(); renderDashboard();
+    const notes = currentViewName() === 'notes';
+    const taskScope  = document.getElementById('dsTaskScope');
+    const notesScope = document.getElementById('dsNotesScope');
+    if (taskScope)  taskScope.style.display  = notes ? 'none' : '';
+    if (notesScope) notesScope.style.display = notes ? '' : 'none';
+    const brand = document.querySelector('.ds-brand');
+    if (brand) brand.textContent = notes ? 'Notes' : (currentViewName() === 'reflect' ? 'Reflect' : 'Tasks');
+    if (notes) buildDesktopFolderRail();
+  });
   on('task-changed', () => { refreshCounts(); renderDashboard();});
-  on('data-pulled',  () => { buildCategoryNav(); refreshCounts(); renderDashboard(); });
+  on('data-pulled',  () => {
+    buildCategoryNav(); refreshCounts(); renderDashboard();
+    if (currentViewName() === 'notes') buildDesktopFolderRail();
+  });
 
   // Observe taskList rebuilds so the dashboard stays in sync with the
   // main list (filter changes, deletions, etc.)
