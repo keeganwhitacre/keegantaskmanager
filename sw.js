@@ -1,4 +1,4 @@
-var CACHE_VERSION = 'kw-v10'; // Bumped to v10 to clear out the old bloated caches
+var CACHE_VERSION = 'kw-v11'; // Bumped to v10 to clear out the old bloated caches
 var STATIC_ASSETS = [
   '/',
   '/index.html',
